@@ -11,5 +11,6 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="lib/saxon-9.3.jar"/>
 	<classpathentry kind="lib" path="lib/rewriter-0.3-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/openrdf-sesame-2.6.2-onejar.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
