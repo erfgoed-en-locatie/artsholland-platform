@@ -21,5 +21,9 @@
             <dependent-object/>
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="waag.artsholland.parsers.jar" deploy-path="/" handle="module:/resource/waag.artsholland.parsers/waag.artsholland.parsers">
+            <dependent-object/>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
     </wb-module>
 </project-modules>

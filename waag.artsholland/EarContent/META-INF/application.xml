@@ -19,4 +19,7 @@
   <module>
     <ejb>waag.artsholland.scheduler.jar</ejb>
   </module>
+  <module>
+    <ejb>waag.artsholland.parsers.jar</ejb>
+  </module>
 </application>

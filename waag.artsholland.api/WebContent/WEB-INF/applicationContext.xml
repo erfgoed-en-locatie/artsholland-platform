@@ -16,15 +16,15 @@
 
   <mvc:annotation-driven />
   
-  <bean id="entityManagerFactory" class="org.waag.artsholland.api.EmpireFactoryBean">
+<!--   <bean id="entityManagerFactory" class="org.waag.artsholland.api.EmpireFactoryBean">
     <property name="config">
       <map>
         <entry key="factory" value="sesame"/>
-        <!--  entry key="url" value="http://localhost:8080/openrdf-sesame"/-->
+         entry key="url" value="http://localhost:8080/openrdf-sesame"/
         <entry key="dir" value="/tmp"/>
         <entry key="repo" value="rest-incoming"/>
       </map>
     </property>
-  </bean>
+  </bean> -->
  
 </beans>
