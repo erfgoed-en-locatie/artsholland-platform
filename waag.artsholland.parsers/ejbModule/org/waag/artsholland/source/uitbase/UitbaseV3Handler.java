@@ -1,4 +1,5 @@
-//package org.waag.artsholland.parser.uitbase;
+package org.waag.artsholland.source.uitbase;
+//package org.waag.artsholland.source.uitbase;
 //
 //import java.io.InputStream;
 //

@@ -1,5 +1,3 @@
-import java.io.BufferedWriter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -26,14 +24,20 @@ public class parser {
 	public static void main(String[] args) {
 		URLConnection conn = null;
 		try {
-			FileWriter fstream = new FileWriter("out.txt");
-			BufferedWriter out = new BufferedWriter(fstream);
+//			FileWriter fstream = new FileWriter("out.txt");
+//			BufferedWriter out = new BufferedWriter(fstream);
+//			BufferedWriter out = new BufferedWriter(System.out);
 					
+			conn =  new URL("http://127.0.0.1/ah/dos/2011_jaarboek_1816.xls").openConnection();
+			
 //			conn =  new URL("http://127.0.0.1/ah/nub/events.xml").openConnection();
-			conn =  new URL("http://127.0.0.1/ah/nub/amsterdam.xml").openConnection();
+//			conn =  new URL("http://127.0.0.1/ah/nub/amsterdam.xml").openConnection();
 //			conn =  new URL("http://test.publisher.uitburo.nl/agenda/search.do?key=e17c6b21b6852e1ab43abdfdf034f752&locationText=Amsterdam&start=0&rows=500").openConnection();
+
 //			Map<String, List<String>> header = conn.getHeaderFields();
-			StreamingContentHandler handler = new StreamingContentHandler(out); 
+
+//			StreamingContentHandler handler = new StreamingContentHandler(out); 
+			StreamingContentHandler handler = new StreamingContentHandler(System.out); 
 			InputStream stream = conn.getInputStream();
 			Metadata metadata = new Metadata();
 			Parser parser = new AutoDetectParser();
@@ -44,7 +48,7 @@ public class parser {
 //			System.out.println(metadata);
 //			System.out.println(handler.toString());
 			stream.close();
-			out.close();
+//			out.close();
 			
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
@@ -56,5 +60,4 @@ public class parser {
 			e.printStackTrace();
 		}
 	}
-
 }

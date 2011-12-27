@@ -1,4 +1,4 @@
-package org.waag.artsholland.parser.uitbase;
+package org.waag.artsholland.source.uitbase;
 
 import java.io.BufferedReader;
 import java.io.IOException;

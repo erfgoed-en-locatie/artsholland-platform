@@ -2,6 +2,8 @@ package org.waag.artsholland.parser.sax;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.Date;
@@ -29,7 +31,11 @@ public class StreamingContentHandler extends ContentHandlerDecorator {
 		}
 		super.setContentHandler(handler);
 	}
-
+    
+	public StreamingContentHandler(OutputStream stream) {
+        this(new OutputStreamWriter(stream));
+    }
+    
 	protected StreamingContentHandler(ContentHandler handler) {
 		super(handler);
 	}
