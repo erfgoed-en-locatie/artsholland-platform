@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:application="http://java.sun.com/xml/ns/javaee/application_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_6.xsd" version="6">
+  <display-name>Arts Holland</display-name>
+  <module>
+    <web>
+      <web-uri>waag.artsholland.admin.war</web-uri>
+      <context-root>admin</context-root>
+    </web>
+  </module>
+  <module>
+    <web>
+      <web-uri>waag.artsholland.api.war</web-uri>
+      <context-root>api</context-root>
+    </web>
+  </module>
+  <module>
+    <ejb>waag.artsholland.importer.jar</ejb>
+  </module>
+  <module>
+    <ejb>waag.artsholland.scheduler.jar</ejb>
+  </module>
+</application>

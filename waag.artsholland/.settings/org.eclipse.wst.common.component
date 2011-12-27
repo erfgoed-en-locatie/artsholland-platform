@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="waag.artsholland">
+        <wb-resource deploy-path="/" source-path="/EarContent"/>
+        <dependent-module archiveName="waag.artsholland.config.jar" deploy-path="/lib" handle="module:/resource/waag.artsholland.config/waag.artsholland.config">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="waag.artsholland.admin.war" deploy-path="/" handle="module:/resource/waag.artsholland.admin/waag.artsholland.admin">
+            <dependent-object/>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="waag.artsholland.api.war" deploy-path="/" handle="module:/resource/waag.artsholland.api/waag.artsholland.api">
+            <dependent-object/>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="waag.artsholland.importer.jar" deploy-path="/" handle="module:/resource/waag.artsholland.importer/waag.artsholland.importer">
+            <dependent-object/>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="waag.artsholland.scheduler.jar" deploy-path="/" handle="module:/resource/waag.artsholland.scheduler/waag.artsholland.scheduler">
+            <dependent-object/>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+    </wb-module>
+</project-modules>

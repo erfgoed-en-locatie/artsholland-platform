@@ -1,0 +1,18 @@
+<configuration 
+    xmlns="urn:hornetq"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="urn:hornetq /schema/hornetq-jms.xsd">
+
+  <queue name="Scheduler">
+    <entry name="/queue/schedule"/>
+  </queue>
+  
+  <queue name="Importer">
+    <entry name="/queue/import"/>
+  </queue>
+  
+  <queue name="Persistence">
+    <entry name="/queue/storage"/>
+  </queue>
+  
+</configuration>

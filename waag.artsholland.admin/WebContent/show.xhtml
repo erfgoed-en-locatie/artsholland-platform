@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core">
+<head>
+    <title>List of movies</title>
+</head>
+<body>
+  <h:form>
+      <h:dataTable value="#{movieSessionBean.movies}" var="m" >
+          <h:column><f:facet name="header">Name</f:facet>#{m.name}</h:column>
+          <h:column><f:facet name="header">Year</f:facet>#{m.year}</h:column>
+          <h:column><f:facet name="header">Language</f:facet>#{m.language}</h:column>
+      </h:dataTable>
+  </h:form>
+</body>
+</html>
