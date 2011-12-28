@@ -4,11 +4,9 @@
 	<comment></comment>
 	<projects>
 		<project>waag.artsholland.config</project>
-		<project>waag.artsholland.admin</project>
 		<project>waag.artsholland.api</project>
 		<project>waag.artsholland.importer</project>
 		<project>waag.artsholland.scheduler</project>
-		<project>waag.artsholland.parsers</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

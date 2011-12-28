@@ -3,12 +3,6 @@
   <display-name>Arts Holland</display-name>
   <module>
     <web>
-      <web-uri>waag.artsholland.admin.war</web-uri>
-      <context-root>admin</context-root>
-    </web>
-  </module>
-  <module>
-    <web>
       <web-uri>waag.artsholland.api.war</web-uri>
       <context-root>api</context-root>
     </web>
@@ -18,8 +12,5 @@
   </module>
   <module>
     <ejb>waag.artsholland.scheduler.jar</ejb>
-  </module>
-  <module>
-    <ejb>waag.artsholland.parsers.jar</ejb>
   </module>
 </application>
