@@ -29,5 +29,6 @@ public class DOSAParser extends AbstractParser { //CompositeParser
 	public void parse(InputStream stream, ContentHandler handler,
 			Metadata metadata, ParseContext context) throws IOException,
 			SAXException, TikaException {
+		System.out.println(metadata);
 	}
 }
