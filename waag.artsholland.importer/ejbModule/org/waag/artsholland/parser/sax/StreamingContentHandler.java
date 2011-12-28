@@ -17,7 +17,7 @@ public class StreamingContentHandler extends ContentHandlerDecorator {
 	private ByteArrayOutputStream stream;
 	private ToXMLContentHandler handler;
 	private long startTime;
-	private long recordCount;
+//	private long recordCount;
 	private Writer writer;
 
 	public StreamingContentHandler(Writer writer) {
@@ -43,7 +43,7 @@ public class StreamingContentHandler extends ContentHandlerDecorator {
 	@Override
 	public void startDocument() throws SAXException {
 		stream.reset();
-		recordCount++;
+//		recordCount++;
 		super.startDocument();
 		if (startTime == 0) {
 			startTime = new Date().getTime();

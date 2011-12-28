@@ -27,12 +27,13 @@ public class parser {
 //			FileWriter fstream = new FileWriter("out.txt");
 //			BufferedWriter out = new BufferedWriter(fstream);
 //			BufferedWriter out = new BufferedWriter(System.out);
-					
-			conn =  new URL("http://127.0.0.1/ah/dos/2011_jaarboek_1816.xls").openConnection();
 			
-//			conn =  new URL("http://127.0.0.1/ah/nub/events.xml").openConnection();
-//			conn =  new URL("http://127.0.0.1/ah/nub/amsterdam.xml").openConnection();
-//			conn =  new URL("http://test.publisher.uitburo.nl/agenda/search.do?key=e17c6b21b6852e1ab43abdfdf034f752&locationText=Amsterdam&start=0&rows=500").openConnection();
+//			String sourceURL = "http://127.0.0.1/ah/nub/events.xml";
+//			String sourceURL = "http://127.0.0.1/ah/nub/amsterdam.xml";
+//			String sourceURL = "http://test.publisher.uitburo.nl/agenda/search.do?key=e17c6b21b6852e1ab43abdfdf034f752&locationText=Amsterdam&start=0&rows=500";
+			String sourceURL = "http://127.0.0.1/ah/dos/2011_jaarboek_1816.xls";
+			
+			conn =  new URL(sourceURL).openConnection();
 
 //			Map<String, List<String>> header = conn.getHeaderFields();
 
@@ -40,6 +41,7 @@ public class parser {
 			StreamingContentHandler handler = new StreamingContentHandler(System.out); 
 			InputStream stream = conn.getInputStream();
 			Metadata metadata = new Metadata();
+			metadata.set(Metadata.RESOURCE_NAME_KEY, sourceURL);
 			Parser parser = new AutoDetectParser();
 			ParseContext parseContext = new ParseContext();
 			
