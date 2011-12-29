@@ -17,8 +17,9 @@ public class DOSAParser extends AbstractParser { //CompositeParser
 	private static final long serialVersionUID = -3133605121375062159L;
 	
 	private static final Set<MediaType> SUPPORTED_TYPES = Collections.singleton(
-    		MediaType.application("vnd.waag.dosa-excel"));
-    public static final String UITBASEV3_MIME_TYPE = "application/vnd.waag.dosa-excel";
+    		MediaType.application("x-waag-dosa-excel"));
+	
+    public static final String DOSAXLS_MIME_TYPE = "application/x-waag-dosa-excel";
 
 	@Override
 	public Set<MediaType> getSupportedTypes(ParseContext context) {

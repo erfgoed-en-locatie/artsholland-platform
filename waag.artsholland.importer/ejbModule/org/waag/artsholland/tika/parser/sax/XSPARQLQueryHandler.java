@@ -1,4 +1,4 @@
-package org.waag.artsholland.parser.sax;
+package org.waag.artsholland.tika.parser.sax;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -19,7 +19,7 @@ import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.ContentHandlerDecorator;
 import org.apache.tika.sax.ToXMLContentHandler;
 import org.deri.xsparql.rewriter.XSPARQLProcessor;
-import org.waag.artsholland.parser.rdf.TurtleParser;
+import org.waag.artsholland.tika.parser.rdf.TurtleParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;

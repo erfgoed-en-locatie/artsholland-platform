@@ -18,17 +18,17 @@ import org.apache.tika.sax.TaggedContentHandler;
 import org.apache.tika.sax.xpath.Matcher;
 import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
-import org.waag.artsholland.parser.sax.XSPARQLQueryHandler;
+import org.waag.artsholland.tika.parser.sax.XSPARQLQueryHandler;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 public class UitbaseParser extends AbstractParser {
-
 	private static final long serialVersionUID = 116487633414164925L;
 
 	private static final Set<MediaType> SUPPORTED_TYPES = Collections.singleton(
-    		MediaType.application("vnd.artsholland.nub-uitbase-v3+xml"));
-    public static final String UITBASEV3_MIME_TYPE = "application/vnd.artsholland.nub-uitbase-v3+xml";
+    		MediaType.application("x-waag-nub-uitbase-v3+xml"));
+	
+    public static final String UITBASEV3_MIME_TYPE = "application/x-waag-nub-uitbase-v3+xml";
 
 	@Override
 	public Set<MediaType> getSupportedTypes(ParseContext context) {

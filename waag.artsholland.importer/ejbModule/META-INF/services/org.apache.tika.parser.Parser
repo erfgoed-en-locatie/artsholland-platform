@@ -1,3 +1,3 @@
-org.waag.artsholland.parser.rdf.TurtleParser
+org.waag.artsholland.tika.parser.rdf.TurtleParser
 org.waag.artsholland.source.dosa.DOSAParser
 org.waag.artsholland.source.uitbase.UitbaseParser

@@ -1,4 +1,4 @@
-package org.waag.artsholland.parser.rdf;
+package org.waag.artsholland.tika.parser.rdf;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

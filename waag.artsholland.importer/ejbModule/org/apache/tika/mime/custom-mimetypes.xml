@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mime-info>
-  <mime-type type="application/vnd.artsholland.nub-uitbase-v3+xml">
+  <mime-type type="application/x-waag-dosa-excel">
     <sub-class-of type="application/vnd.ms-excel"/>
     <acronym>DOSAXLS</acronym>
     <_comment>Dienst onderzoek en statistiek (Amsterdam) Excel</_comment>
     <glob pattern="http://127.0.0.1/ah/dos/*.xls"/>
   </mime-type>
-  <mime-type type="application/vnd.artsholland.nub-uitbase-v3+xml">
+  <mime-type type="application/x-waag-uitbase-v3+xml">
     <sub-class-of type="application/xml"/>
     <acronym>NUBXML</acronym>
     <_comment>NUB UitBase V3</_comment>
