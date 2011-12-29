@@ -1,5 +1,5 @@
-package org.waag.artsholland.source.uitbase;
-//package org.waag.artsholland.source.uitbase;
+package org.waag.ah.source.uitbase;
+//package org.waag.ah.source.uitbase;
 //
 //import java.io.InputStream;
 //
@@ -11,7 +11,7 @@ package org.waag.artsholland.source.uitbase;
 //import org.apache.tika.sax.xpath.MatchingContentHandler;
 //import org.apache.tika.sax.xpath.XPathParser;
 //import org.xml.sax.ContentHandler;
-//import org.waag.artsholland.parser.sax.XSPARQLQueryHandler;
+//import org.waag.ah.parser.sax.XSPARQLQueryHandler;
 //
 //
 //public class UitbaseV3Handler extends ContentHandlerDecorator {

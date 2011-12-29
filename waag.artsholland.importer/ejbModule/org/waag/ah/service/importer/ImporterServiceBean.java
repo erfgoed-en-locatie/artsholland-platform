@@ -1,4 +1,4 @@
-package org.waag.artsholland.service.importer;
+package org.waag.ah.service.importer;
 
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;

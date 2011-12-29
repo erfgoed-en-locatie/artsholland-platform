@@ -1,4 +1,4 @@
-package org.waag.artsholland.tika.parser.sax;
+package org.waag.ah.tika.parser.sax;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

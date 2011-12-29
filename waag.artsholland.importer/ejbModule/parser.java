@@ -9,7 +9,7 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
-import org.waag.artsholland.tika.parser.sax.StreamingContentHandler;
+import org.waag.ah.tika.parser.sax.StreamingContentHandler;
 import org.xml.sax.SAXException;
 
 
@@ -33,12 +33,14 @@ public class parser {
 
 //			StreamingContentHandler handler = new StreamingContentHandler(out); 
 			StreamingContentHandler handler = new StreamingContentHandler(System.out); 
+//			ToTextContentHandler handler = new ToTextContentHandler(System.out); 
+//			ToTextContentHandler handler = new ToXMLContentHandler(System.out, "UTF-8"); 
 			
 			Parser parser = new AutoDetectParser();
 			parser.parse(stream, handler, metadata, new ParseContext());
 			
-			System.out.println(conn.getHeaderFields());
-			System.out.println(metadata);
+//			System.out.println(conn.getHeaderFields());
+//			System.out.println(metadata);
 //			System.out.println(handler.toString());
 			stream.close();
 //			out.close();

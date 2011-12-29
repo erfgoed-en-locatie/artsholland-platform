@@ -1,4 +1,4 @@
-package org.waag.artsholland.service.importer;
+package org.waag.ah.service.importer;
 
 
 public interface ImporterService {

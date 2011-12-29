@@ -1,4 +1,4 @@
-package org.waag.artsholland.source.uitbase;
+package org.waag.ah.source.uitbase;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,7 +18,7 @@ import org.apache.tika.sax.TaggedContentHandler;
 import org.apache.tika.sax.xpath.Matcher;
 import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
-import org.waag.artsholland.tika.parser.sax.XSPARQLQueryHandler;
+import org.waag.ah.tika.parser.sax.XSPARQLQueryHandler;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -74,6 +74,10 @@ public class UitbaseParser extends AbstractParser {
 		return handler;
     }
     
+	/**
+	 * @todo Move to utility class.
+	 */
+	
     private String getFileContents(String fileName) throws IOException {
     	InputStream input = getClass().getResourceAsStream(fileName);
     	BufferedReader reader = new BufferedReader(new InputStreamReader(input));

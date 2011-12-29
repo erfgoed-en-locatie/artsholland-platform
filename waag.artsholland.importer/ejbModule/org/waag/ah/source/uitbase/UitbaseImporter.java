@@ -1,5 +1,5 @@
-package org.waag.artsholland.source.uitbase;
-//package org.waag.artsholland.source.uitbase;
+package org.waag.ah.source.uitbase;
+//package org.waag.ah.source.uitbase;
 //
 //import javax.ejb.ActivationConfigProperty;
 //import javax.ejb.MessageDriven;
@@ -22,7 +22,7 @@ package org.waag.artsholland.source.uitbase;
 //   }
 //}
 //
-////package org.waag.artsholland.source.uitbase;
+////package org.waag.ah.source.uitbase;
 ////
 ////import javax.annotation.Resource;
 ////import javax.ejb.ActivationConfigProperty;

@@ -1,4 +1,4 @@
-package org.waag.artsholland.source.dosa;
+package org.waag.ah.source.dosa;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,12 +8,15 @@ import java.util.Set;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
-import org.apache.tika.parser.AbstractParser;
+import org.apache.tika.mime.MediaTypeRegistry;
+import org.apache.tika.parser.CompositeParser;
 import org.apache.tika.parser.ParseContext;
+import org.apache.tika.parser.Parser;
+import org.apache.tika.parser.microsoft.OfficeParser;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-public class DOSAParser extends AbstractParser { //CompositeParser
+public class DOSAParser extends CompositeParser {
 	private static final long serialVersionUID = -3133605121375062159L;
 	
 	private static final Set<MediaType> SUPPORTED_TYPES = Collections.singleton(
@@ -25,11 +28,26 @@ public class DOSAParser extends AbstractParser { //CompositeParser
 	public Set<MediaType> getSupportedTypes(ParseContext context) {
 		return SUPPORTED_TYPES;
 	}
+	
+    public DOSAParser() {
+        super(new MediaTypeRegistry(), new OfficeParser());
+    }
 
 	@Override
 	public void parse(InputStream stream, ContentHandler handler,
 			Metadata metadata, ParseContext context) throws IOException,
 			SAXException, TikaException {
-		System.out.println(metadata);
+		
+		Parser parser = getParser(MediaType.application("vnd.ms-excel"));
+		
+//		System.out.println(MediaType.application("vnd.ms-excel").toString()+" : "+parser);
+		
+		parser.parse(stream, handler, metadata, context);
+	}
+	
+	private Parser getParser(MediaType mediaType) {
+		Metadata metadata = new Metadata();
+		metadata.set(Metadata.CONTENT_TYPE, mediaType.toString());
+		return super.getParser(metadata);
 	}
 }
