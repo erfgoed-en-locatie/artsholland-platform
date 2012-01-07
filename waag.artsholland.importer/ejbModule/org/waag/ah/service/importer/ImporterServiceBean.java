@@ -1,59 +1,95 @@
 package org.waag.ah.service.importer;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
+import javax.jms.TextMessage;
 
 import org.apache.log4j.Logger;
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.AutoDetectParser;
+import org.waag.ah.tika.parser.sax.StreamingContentHandler;
+import org.xml.sax.ContentHandler;
 
 
 @MessageDriven(
 	messageListenerInterface=MessageListener.class, 
 	activationConfig = {
 		@ActivationConfigProperty(propertyName="destinationType", propertyValue="javax.jms.Queue"),
-		@ActivationConfigProperty(propertyName="destination", propertyValue="queue/import"),
-		@ActivationConfigProperty(propertyName="messageSelector", propertyValue="url IS NOT NULL")})
+		@ActivationConfigProperty(propertyName="destination", propertyValue="queue/import")})
+//		@ActivationConfigProperty(propertyName="messageSelector", propertyValue="url IS NOT NULL")})
+//		@ActivationConfigProperty(propertyName="subscriptionDurability", propertyValue = "Durable")})
+//		@ActivationConfigProperty(
+//			propertyName = "acknowledgeMode", 
+//			propertyValue = "Client-acknowledge"), //Session.CLIENT_ACKNOWLEDGE
+//		})
 public class ImporterServiceBean implements ImporterService {
 	private Logger logger = Logger.getLogger(ImporterServiceBean.class);
-	
-	public void importSource(String url) {
-		logger.info("Importing URL: "+url);
-		
-//		try {
-			// Should use somwe kind of wrapper here which handles
-			// authentication on the remote endpoint.
-//			URLConnection conn = new URL(url).openConnection();
-//			Map<String, List<String>> header = conn.getHeaderFields();
-//			logger.info(header);
-//			
-//			StreamingContentHandler handler = new StreamingContentHandler(System.out); 
-//			InputStream stream = conn.getInputStream();
-//			Metadata metadata = new Metadata();
-//			Parser parser = new AutoDetectParser();
-//			ParseContext parseContext = new ParseContext();
-//			
-//			parser.parse(stream, handler, metadata, parseContext);
-//			stream.close();
-			
-		// All exceptions should provide some feedback to the message sender.
-//		} catch (MalformedURLException e) {
-//			e.printStackTrace();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		} catch (SAXException e) {
-//			e.printStackTrace();
-//		} catch (TikaException e) {
-//			e.printStackTrace();
-//		}
+	private AutoDetectParser parser;
+	private ContentHandler handler;
+	private JmsQueueWriter queueWriter;
+
+	@PostConstruct
+	public void create() throws Exception {
+		queueWriter = new JmsQueueWriter("queue/store");
+		handler = new StreamingContentHandler(queueWriter);
+		parser = new AutoDetectParser();
 	}
 
-	public void onMessage(Message msg) {
+	@PreDestroy
+	public void destroy() {
 		try {
-			importSource(msg.getStringProperty("url"));
-		} catch (JMSException e) {
+			queueWriter.close();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/**
+	 * 
+	 * @param sourceURL
+	 * @throws MalformedURLException
+	 * @throws IOException
+	 *
+	 * @author	Raoul Wissink <raoul@raoul.net>
+	 * @since	Jan 4, 2012
+	 * 
+	 * @todo Wrap parse exceptions with something less implementation-specific.
+	 */
+	public void importUrl(URL url) throws IOException {
+		URLConnection conn = url.openConnection();
+		InputStream stream = conn.getInputStream();
+
+		try {
+			Metadata metadata = new Metadata();
+			metadata.set(Metadata.CONTENT_ENCODING, 
+					new InputStreamReader(stream).getEncoding());
+			metadata.set(Metadata.RESOURCE_NAME_KEY, url.toString());
+
+			try {
+				parser.parse(stream, handler, metadata);
+			} catch (Exception e) {
+				throw new IOException(e.getMessage(), e);
+			}
+			
+			logger.debug("Import finished: metadata="+metadata);
+		} finally {
+			stream.close();
+		}
+	}
+
+	public void onMessage(Message msg) throws IOException, JMSException {
+		importUrl(new URL(((TextMessage)msg).getText()));
 	}
 }

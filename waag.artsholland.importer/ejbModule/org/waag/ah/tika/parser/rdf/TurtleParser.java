@@ -3,6 +3,7 @@ package org.waag.ah.tika.parser.rdf;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Set;
@@ -56,9 +57,10 @@ public class TurtleParser extends AbstractParser {
 			e.printStackTrace();
 		}
 		
+		InputStreamReader r = new InputStreamReader(stream);
 		TaggedContentHandler tagged = new TaggedContentHandler(handler);
         context.getSAXParser().parse(
-                new CloseShieldInputStream(new ByteArrayInputStream(rdfXmlData.toString().getBytes())),
+                new CloseShieldInputStream(new ByteArrayInputStream(rdfXmlData.toString().getBytes(r.getEncoding()))),
                 new OfflineContentHandler(tagged));
 	}
 }

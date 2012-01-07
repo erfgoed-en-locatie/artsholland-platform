@@ -124,10 +124,10 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 						new ByteArrayInputStream(combined.toString().getBytes()), 
 						handler, metadata, context);
 
-			} catch (SAXParseException e) {
-				System.out.println(xmlCollector.toString());
-				System.out.println(data);
-				throw e;
+//			} catch (SAXParseException e) {
+//				System.out.println(xmlCollector.toString());
+//				System.out.println(data);
+//				throw e;
 			} catch (SaxonApiException e) {
 				e.printStackTrace();
 			} catch (IOException e) {

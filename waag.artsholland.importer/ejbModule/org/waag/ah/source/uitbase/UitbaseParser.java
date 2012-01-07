@@ -26,9 +26,9 @@ public class UitbaseParser extends AbstractParser {
 	private static final long serialVersionUID = 116487633414164925L;
 
 	private static final Set<MediaType> SUPPORTED_TYPES = Collections.singleton(
-    		MediaType.application("x-waag-nub-uitbase-v3+xml"));
+    		MediaType.application("x-waag-uitbase-v3+xml"));
 	
-    public static final String UITBASEV3_MIME_TYPE = "application/x-waag-nub-uitbase-v3+xml";
+    public static final String UITBASEV3_MIME_TYPE = "application/x-waag-uitbase-v3+xml";
 
 	@Override
 	public Set<MediaType> getSupportedTypes(ParseContext context) {
@@ -63,7 +63,7 @@ public class UitbaseParser extends AbstractParser {
 					new MatchingContentHandler(
 						new XSPARQLQueryHandler(handler, 
 							metadata, context, 
-							getFileContents("META-INF/uitbase_v3.txt")), 
+							getFileContents(getClass(), "META-INF/uitbase_v3.txt")), 
 						getXPathMatcher("/nubxml/events/descendant::node()"));
 			} catch (TikaException e) {
 				e.printStackTrace();
@@ -78,8 +78,8 @@ public class UitbaseParser extends AbstractParser {
 	 * @todo Move to utility class.
 	 */
 	
-    private String getFileContents(String fileName) throws IOException {
-    	InputStream input = getClass().getResourceAsStream(fileName);
+    public static String getFileContents(Class<?> clazz, String fileName) throws IOException {
+    	InputStream input = clazz.getResourceAsStream(fileName);
     	BufferedReader reader = new BufferedReader(new InputStreamReader(input));
     	String str = "";
     	StringBuffer buffer = new StringBuffer();

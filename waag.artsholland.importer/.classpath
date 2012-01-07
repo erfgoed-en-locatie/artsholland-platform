@@ -17,12 +17,7 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/openrdf-sesame-2.6.2-onejar.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="lib/rewriter-0.3-SNAPSHOT.jar">
+	<classpathentry exported="true" kind="lib" path="lib/rewriter-0.3-SNAPSHOT.jar" sourcepath="/Users/raoul/dev/checkouts/xsparql/trunk/rewriter/target/generated-sources/antlr3">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XML-to-RDF 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:os="http://linkeddata.few.vu.nl/os-amsterdam/schema/"
+    xmlns:sdmxc="http://purl.org/linked-data/sdmx/2009/concept#"
+    xmlns:sdmxd="http://purl.org/linked-data/sdmx/2009/dimension#"
+    xmlns:sdmxm="http://purl.org/linked-data/sdmx/2009/measure#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+  <structure sheet="2011_jaarboek_1816" name="os:Jaarboek_1816">
+    <layout type="crosstab" offsetx="3" rows="os:location" cols="os:nationality" vals="os:population"/>
+    <properties>
+      <property type="dimension" lobel="Location" name="os:location" range="os:Plaats" extends="sdmxd:refArea" concept="sdmxc:refArea"/>
+      <property type="dimension" lobel="Nationality" name="os:nationality" range="os:Plaats" extends="sdmxd:refArea" concept="sdmxc:refArea"/>
+      <property type="measure" label="Population" name="os:population" range="xsd:nonNegativeInteger" extends="sdmxm:absValue"/>
+    </properties>
+    <subjects>
+      <sdmx-subject>1.4</sdmx-subject>
+      <sdmx-subject>3.2</sdmx-subject>
+    </subjects>
+  </structure>
+</XML-to-RDF>
