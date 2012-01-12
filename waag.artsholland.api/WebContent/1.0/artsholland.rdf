@@ -1,0 +1,180 @@
+<?xml version="1.0"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:spin="http://spinrdf.org/spin#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns="http://artsholland.com/artsholland#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xml:base="http://artsholland.com/artsholland">
+  <owl:Ontology rdf:about="">
+    <owl:imports rdf:resource="http://www.w3.org/2003/01/geo/wgs84_pos"/>
+    <owl:imports rdf:resource="http://purl.org/dc/terms/"/>
+    <owl:imports rdf:resource="http://purl.org/dc/elements/1.1/"/>
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >V-0.1 Waag Society, Nederlands Uitburo</owl:versionInfo>
+    <owl:imports rdf:resource="http://xmlns.com/foaf/0.1/"/>
+    <spin:imports rdf:resource="http://topbraid.org/spin/owlrl-all"/>
+  </owl:Ontology>
+  <owl:Class rdf:ID="Venue">
+    <rdfs:comment xml:lang="en">Place or locality where cultural events can take place.</rdfs:comment>
+    <rdfs:comment xml:lang="nl">Locatie of ruimte waar culturele uitingen plaats kunnen vinden.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Venue</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class>
+        <owl:intersectionOf rdf:parseType="Collection">
+          <owl:Restriction>
+            <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+            >1</owl:maxCardinality>
+            <owl:onProperty>
+              <owl:DatatypeProperty rdf:ID="cidn"/>
+            </owl:onProperty>
+          </owl:Restriction>
+          <owl:Restriction>
+            <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+            >1</owl:cardinality>
+            <owl:onProperty rdf:resource="http://purl.org/dc/elements/1.1/title"/>
+          </owl:Restriction>
+        </owl:intersectionOf>
+      </owl:Class>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="Party">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Party</rdfs:label>
+    <owl:equivalentClass rdf:resource="http://xmlns.com/foaf/0.1/Agent"/>
+    <rdfs:comment xml:lang="en">A group, person or orgaization that perfroms in or organizes a cultural event.</rdfs:comment>
+    <rdfs:comment xml:lang="nl">Een groep, persoon of entiteit welke participeert in een culturele uiting.</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:ID="Event">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Event</rdfs:label>
+    <rdfs:comment xml:lang="nl">Een culturele uiting op een bepaalde plaats en een bepaald tijdstip.</rdfs:comment>
+    <rdfs:comment xml:lang="en">A cultural production at a specific location and time.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <rdfs:subClassOf>
+      <owl:Class>
+        <owl:intersectionOf rdf:parseType="Collection">
+          <owl:Restriction>
+            <owl:onProperty>
+              <owl:ObjectProperty rdf:ID="atLocation"/>
+            </owl:onProperty>
+            <owl:someValuesFrom rdf:resource="#Venue"/>
+          </owl:Restriction>
+          <owl:Restriction>
+            <owl:onProperty>
+              <rdf:Property rdf:ID="production"/>
+            </owl:onProperty>
+            <owl:someValuesFrom>
+              <owl:Class rdf:ID="Production"/>
+            </owl:someValuesFrom>
+          </owl:Restriction>
+          <owl:Restriction>
+            <owl:onProperty>
+              <owl:DatatypeProperty rdf:about="#cidn"/>
+            </owl:onProperty>
+            <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+            >1</owl:maxCardinality>
+          </owl:Restriction>
+        </owl:intersectionOf>
+      </owl:Class>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="#Production">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Production</rdfs:label>
+    <rdfs:comment xml:lang="nl">Een specifieke productie van een cultureel stuk.</rdfs:comment>
+    <rdfs:comment xml:lang="en">A specific prodcution of a cultural piece.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://purl.org/dc/elements/1.1/title"/>
+        <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+        >1</owl:cardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty>
+          <owl:DatatypeProperty rdf:about="#cidn"/>
+        </owl:onProperty>
+        <owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"
+        >1</owl:maxCardinality>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:ID="Room">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Room</rdfs:label>
+    <rdfs:comment xml:lang="nl">Een kamer of zaal in een grotere publieke ruimte of theater.</rdfs:comment>
+    <rdfs:comment xml:lang="en">A room or hall as part of a bigger venue.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+  </owl:Class>
+  <owl:ObjectProperty rdf:about="#atLocation">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >at location</rdfs:label>
+    <rdfs:comment xml:lang="en">The venue an event is held at.</rdfs:comment>
+    <rdfs:domain rdf:resource="#Event"/>
+    <rdfs:range rdf:resource="#Venue"/>
+    <rdfs:comment xml:lang="nl">De lokatie waar een event plaatsvind.</rdfs:comment>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="inRoom">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >in room</rdfs:label>
+    <rdfs:domain rdf:resource="#Event"/>
+    <rdfs:range rdf:resource="#Room"/>
+    <rdfs:comment xml:lang="nl">Zaal of ruimte in een lokatie waar het event plaatsvind.</rdfs:comment>
+    <rdfs:comment xml:lang="en">Hall or room in a venue where the event takes place.</rdfs:comment>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:ID="hasRoom">
+    <rdfs:range rdf:resource="#Room"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >has room</rdfs:label>
+    <rdfs:domain rdf:resource="#Venue"/>
+  </owl:ObjectProperty>
+  <rdf:Property rdf:about="#production">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >production</rdfs:label>
+    <rdfs:comment xml:lang="en">A production at an event.</rdfs:comment>
+  </rdf:Property>
+  <owl:DatatypeProperty rdf:about="#cidn">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >cidn</rdfs:label>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:comment xml:lang="en">The unique  'cultural identification number' as issued by the Nederlands Uitburo.</rdfs:comment>
+    <rdfs:comment xml:lang="nl">Het unieke 'cultural identification number' zoals uitgegeven door het Nederlands Uitburo.</rdfs:comment>
+  </owl:DatatypeProperty>
+  <Event rdf:ID="Event_1">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Event 1</rdfs:label>
+    <production>
+      <Production rdf:ID="Reservoir_Dogs">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Reservoir Dogs</rdfs:label>
+      </Production>
+    </production>
+    <cidn rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >12345</cidn>
+    <atLocation>
+      <Venue rdf:ID="Waag">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Waag</rdfs:label>
+        <dc:title rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Waag Society</dc:title>
+      </Venue>
+    </atLocation>
+  </Event>
+  <Room rdf:ID="mestelaarsgildekamer">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >mestelaarsgildekamer</rdfs:label>
+  </Room>
+  <Room rdf:ID="teatrum_anatomicum">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >teatrum anatomicum</rdfs:label>
+  </Room>
+</rdf:RDF>
+
+<!-- Created with TopBraid -->
