@@ -15,15 +15,22 @@
   
   <context:annotation-config/>
   
-  <bean id="accessConfirmationController" class="org.waag.artsholland.api.controller.OAuthAccessConfirmationController"/>
-    
+  <!-- This is needed for "mvc:resources" to work. -->
+  <mvc:annotation-driven/>
+  
+  <bean id="accessConfirmationController" 
+      class="org.waag.artsholland.api.controller.OAuthAccessConfirmationController"/>
+  
+  <mvc:resources mapping="/*.*/artsholland.rdf" location="/vocabulary/"/>
+  
   <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
     <property name="order" value="1"/>
     <property name="defaultContentType" value="application/json"/>
     <property name="mediaTypes">
       <map>
-        <entry key="json" value="application/json" />
-        <entry key="xml" value="application/xml" />
+        <entry key="json" value="application/json"/>
+        <entry key="rdf" value="application/rdf+xml"/>
+        <entry key="xml" value="application/xml"/>
       </map>
     </property>
     <property name="defaultViews">
@@ -39,7 +46,8 @@
     <!-- property name="ignoreAcceptHeader" value="true" / -->
   </bean>
   
-  <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+  <bean id="viewResolver" 
+      class="org.springframework.web.servlet.view.InternalResourceViewResolver">
     <property name="order" value="2"/>
     <property name="prefix" value="/WEB-INF/jsp/" />
     <property name="suffix" value=".jsp" />

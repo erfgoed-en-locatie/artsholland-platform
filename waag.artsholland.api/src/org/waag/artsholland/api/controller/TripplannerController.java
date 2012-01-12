@@ -1,3 +1,4 @@
+package org.waag.artsholland.api.controller;
 //package org.waag.artsholland.api.controller;
 //
 //import javax.annotation.Resource;

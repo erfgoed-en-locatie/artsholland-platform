@@ -13,7 +13,7 @@ import org.waag.artsholland.api.service.ProfileService;
 
 
 @Controller
-public class RestProfileController {
+public class UserProfileController {
 	  
 	@Resource(name="profileService")
 	private ProfileService profileService;
