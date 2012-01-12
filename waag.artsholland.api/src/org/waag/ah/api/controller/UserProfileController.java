@@ -1,4 +1,4 @@
-package org.waag.artsholland.api.controller;
+package org.waag.ah.api.controller;
 
 import javax.annotation.Resource;
 
@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.waag.artsholland.api.domain.Profile;
-import org.waag.artsholland.api.service.ProfileService;
+import org.waag.ah.api.domain.Profile;
+import org.waag.ah.api.service.ProfileService;
 
 
 @Controller

@@ -1,4 +1,5 @@
-//package org.waag.artsholland.api;
+package org.waag.ah.api;
+//package org.waag.ah.api;
 //
 //import java.util.Map;
 //

@@ -1,9 +1,10 @@
-//package org.waag.artsholland.api.service;
+package org.waag.ah.api.service;
+//package org.waag.ah.api.service;
 //
 //import java.util.logging.Logger;
 //
 //import org.springframework.stereotype.Service;
-//import org.waag.artsholland.model.Trip;
+//import org.waag.ah.model.Trip;
 //
 //@Service("tripService")
 //public class TripService {

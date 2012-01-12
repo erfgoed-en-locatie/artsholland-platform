@@ -19,7 +19,7 @@
   <mvc:annotation-driven/>
   
   <bean id="accessConfirmationController" 
-      class="org.waag.artsholland.api.controller.OAuthAccessConfirmationController"/>
+      class="org.waag.ah.api.controller.OAuthAccessConfirmationController"/>
   
   <mvc:resources mapping="/*.*/artsholland.rdf" location="/vocabulary/"/>
   
@@ -28,6 +28,7 @@
     <property name="defaultContentType" value="application/json"/>
     <property name="mediaTypes">
       <map>
+        <entry key="html" value="text/html"/>
         <entry key="json" value="application/json"/>
         <entry key="rdf" value="application/rdf+xml"/>
         <entry key="xml" value="application/xml"/>

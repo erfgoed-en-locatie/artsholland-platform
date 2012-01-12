@@ -1,10 +1,10 @@
-package org.waag.artsholland.api.service;
+package org.waag.ah.api.service;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.springframework.stereotype.Service;
-import org.waag.artsholland.api.domain.Profile;
+import org.waag.ah.api.domain.Profile;
 
 @Service("profileService")
 public class ProfileService {

@@ -12,11 +12,11 @@
         http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
   
   <context:annotation-config/>
-  <context:component-scan base-package="org.waag.artsholland.api" />
+  <context:component-scan base-package="org.waag.ah.api" />
 
   <mvc:annotation-driven />
   
-<!--   <bean id="entityManagerFactory" class="org.waag.artsholland.api.EmpireFactoryBean">
+<!--   <bean id="entityManagerFactory" class="org.waag.ah.api.EmpireFactoryBean">
     <property name="config">
       <map>
         <entry key="factory" value="sesame"/>

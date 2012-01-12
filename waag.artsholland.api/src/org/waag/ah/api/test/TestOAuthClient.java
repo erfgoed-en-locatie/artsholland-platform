@@ -1,4 +1,4 @@
-package org.waag.artsholland.api.test;
+package org.waag.ah.api.test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

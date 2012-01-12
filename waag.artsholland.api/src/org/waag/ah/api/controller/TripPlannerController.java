@@ -1,5 +1,5 @@
-package org.waag.artsholland.api.controller;
-//package org.waag.artsholland.api.controller;
+package org.waag.ah.api.controller;
+//package org.waag.ah.api.controller;
 //
 //import javax.annotation.Resource;
 //
@@ -8,8 +8,8 @@ package org.waag.artsholland.api.controller;
 //import org.springframework.web.bind.annotation.RequestMapping;
 //import org.springframework.web.bind.annotation.RequestMethod;
 //import org.springframework.web.bind.annotation.ResponseBody;
-//import org.waag.artsholland.api.service.TripService;
-//import org.waag.artsholland.model.Trip;
+//import org.waag.ah.api.service.TripService;
+//import org.waag.ah.model.Trip;
 //
 //@Controller
 //@RequestMapping("/trip")

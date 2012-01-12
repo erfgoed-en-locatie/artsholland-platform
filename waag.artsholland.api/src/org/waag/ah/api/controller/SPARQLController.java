@@ -1,4 +1,4 @@
-package org.waag.artsholland.api.controller;
+package org.waag.ah.api.controller;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class SPARQLController {
 	
 	@RequestMapping(method = RequestMethod.GET) 
-	public ModelAndView query(
+	public ModelAndView getQuery(
 			@RequestParam(value="q", required=false) String query) {
       ModelAndView mav = new ModelAndView();
       mav.setViewName("sparql");
@@ -23,6 +23,11 @@ public class SPARQLController {
     	  mav.addObject("queryResults", doQuery(query));
       }
       return mav;
+	}
+	
+	@RequestMapping(method = RequestMethod.POST) 
+	public ModelAndView postQuery(@RequestParam("q") String query) {
+		return getQuery(query);
 	}
 	
 	private List<String> doQuery(String query) {

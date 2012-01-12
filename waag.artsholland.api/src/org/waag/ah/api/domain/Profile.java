@@ -1,4 +1,4 @@
-package org.waag.artsholland.api.domain;
+package org.waag.ah.api.domain;
 
 import java.net.URL;
 
@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 //@Namespaces({"foaf", "http://xmlns.com/foaf/0.1/"})
 //@RdfsClass("foaf:Person")
 @XmlRootElement(name="profile")
-public class Profile implements /*SupportsRdfId,*/ org.waag.artsholland.model.Profile {
+public class Profile implements /*SupportsRdfId,*/ org.waag.ah.model.Profile {
 	private String name;
 	private String email;
 	private URL url;

@@ -1,4 +1,4 @@
-package org.waag.artsholland.model;
+package org.waag.ah.model;
 
 import java.net.URL;
 
