@@ -1,13 +1,12 @@
 package org.waag.ah.service.importer;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
@@ -19,8 +18,8 @@ import javax.jms.TextMessage;
 import org.apache.log4j.Logger;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
+import org.waag.ah.persistence.SesameWriter;
 import org.waag.ah.tika.parser.sax.StreamingContentHandler;
-import org.xml.sax.ContentHandler;
 
 
 @MessageDriven(
@@ -37,37 +36,25 @@ import org.xml.sax.ContentHandler;
 public class ImporterServiceBean implements ImporterService {
 	private Logger logger = Logger.getLogger(ImporterServiceBean.class);
 	private AutoDetectParser parser;
-	private ContentHandler handler;
-	private JmsQueueWriter queueWriter;
+	private DocumentWriter jmsQueueWriter;
 
-	@PostConstruct
-	public void create() throws Exception {
-		queueWriter = new JmsQueueWriter("queue/store");
-		handler = new StreamingContentHandler(queueWriter);
+	public ImporterServiceBean() throws IOException {
+		logger.info("Start ImporterServiceBean");
+		jmsQueueWriter = new SesameWriter();
 		parser = new AutoDetectParser();
 	}
 
 	@PreDestroy
 	public void destroy() {
 		try {
-			queueWriter.close();
+			jmsQueueWriter.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	/**
-	 * 
-	 * @param sourceURL
-	 * @throws MalformedURLException
-	 * @throws IOException
-	 *
-	 * @author	Raoul Wissink <raoul@raoul.net>
-	 * @since	Jan 4, 2012
-	 * 
-	 * @todo Wrap parse exceptions with something less implementation-specific.
-	 */
 	public void importUrl(URL url) throws IOException {
+		logger.info("Start import");
 		URLConnection conn = url.openConnection();
 		InputStream stream = conn.getInputStream();
 
@@ -76,20 +63,26 @@ public class ImporterServiceBean implements ImporterService {
 			metadata.set(Metadata.CONTENT_ENCODING, 
 					new InputStreamReader(stream).getEncoding());
 			metadata.set(Metadata.RESOURCE_NAME_KEY, url.toString());
-
+			
 			try {
-				parser.parse(stream, handler, metadata);
+				parser.parse(stream, 
+						new StreamingContentHandler(jmsQueueWriter, metadata), 
+						metadata);
 			} catch (Exception e) {
 				throw new IOException(e.getMessage(), e);
 			}
 			
-			logger.debug("Import finished: metadata="+metadata);
+			logger.info("Import finished: metadata="+metadata);
 		} finally {
 			stream.close();
 		}
 	}
 
 	public void onMessage(Message msg) throws IOException, JMSException {
-		importUrl(new URL(((TextMessage)msg).getText()));
+		try {
+			importUrl(new URL(((TextMessage)msg).getText()));
+		} catch (FileNotFoundException e) {
+			logger.warn(e.getMessage());
+		}
 	}
 }

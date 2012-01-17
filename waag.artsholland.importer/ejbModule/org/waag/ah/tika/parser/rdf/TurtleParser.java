@@ -15,7 +15,6 @@ import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.AbstractParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.OfflineContentHandler;
-import org.apache.tika.sax.TaggedContentHandler;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFParseException;
 import org.openrdf.rio.rdfxml.RDFXMLWriter;
@@ -50,7 +49,7 @@ public class TurtleParser extends AbstractParser {
 		turtleParser.setRDFHandler(new RDFXMLWriter(rdfXmlData));
 		
 		try {
-			turtleParser.parse(stream, "http://localhost/");
+			turtleParser.parse(stream, metadata.get(Metadata.RESOURCE_NAME_KEY));
 		} catch (RDFParseException e) {
 			e.printStackTrace();
 		} catch (RDFHandlerException e) {
@@ -58,9 +57,9 @@ public class TurtleParser extends AbstractParser {
 		}
 		
 		InputStreamReader r = new InputStreamReader(stream);
-		TaggedContentHandler tagged = new TaggedContentHandler(handler);
         context.getSAXParser().parse(
-                new CloseShieldInputStream(new ByteArrayInputStream(rdfXmlData.toString().getBytes(r.getEncoding()))),
-                new OfflineContentHandler(tagged));
+                new CloseShieldInputStream(new ByteArrayInputStream(
+                		rdfXmlData.toString().getBytes(r.getEncoding()))),
+                new OfflineContentHandler(handler));
 	}
 }

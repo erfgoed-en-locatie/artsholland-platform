@@ -15,16 +15,14 @@
   <context:component-scan base-package="org.waag.ah.api" />
 
   <mvc:annotation-driven />
-  
-<!--   <bean id="entityManagerFactory" class="org.waag.ah.api.EmpireFactoryBean">
-    <property name="config">
-      <map>
-        <entry key="factory" value="sesame"/>
-         entry key="url" value="http://localhost:8080/openrdf-sesame"/
-        <entry key="dir" value="/tmp"/>
-        <entry key="repo" value="rest-incoming"/>
-      </map>
-    </property>
+
+  <!-- <bean id="connectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean">
+    <property name="jndiName" value="java:global/SailConnectionFactory"/>
   </bean> -->
+
+<!--   <bean id="repositoryConnection"
+      class=""
+      factory-bean="connectionFactory"
+      factory-method="getConnection"/> -->  
  
 </beans>

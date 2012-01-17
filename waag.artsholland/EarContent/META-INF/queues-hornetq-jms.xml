@@ -12,7 +12,7 @@
   </queue>
   
   <queue name="Persistence">
-    <entry name="/queue/storage"/>
+    <entry name="/queue/store"/>
   </queue>
   
 </configuration>

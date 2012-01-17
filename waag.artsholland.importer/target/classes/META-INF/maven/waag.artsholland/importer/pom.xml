@@ -20,6 +20,10 @@
           <artifactId>xmlbeans</artifactId>
           <groupId>org.apache.xmlbeans</groupId>
         </exclusion>
+        <exclusion>
+          <artifactId>slf4j-api</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
       </exclusions>
     </dependency>             
     <dependency>
@@ -31,6 +35,23 @@
       <groupId>org.openrdf.sesame</groupId>
       <artifactId>sesame-runtime</artifactId>
       <version>2.6.2</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>slf4j-api</artifactId>
+          <groupId>org.slf4j</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.openrdf.alibaba</groupId>
+      <artifactId>alibaba-runtime</artifactId>
+      <version>2.0-beta14</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>javassist</artifactId>
+          <groupId>javassist</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 <!--     <dependency>
       <groupId>org.deri.xsparql</groupId>

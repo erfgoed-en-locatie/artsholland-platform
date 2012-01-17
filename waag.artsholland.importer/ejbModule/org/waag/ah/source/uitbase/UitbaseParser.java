@@ -7,12 +7,13 @@ import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.io.CloseShieldInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
-import org.apache.tika.parser.AbstractParser;
 import org.apache.tika.parser.ParseContext;
+import org.apache.tika.parser.xml.XMLParser;
 import org.apache.tika.sax.OfflineContentHandler;
 import org.apache.tika.sax.TaggedContentHandler;
 import org.apache.tika.sax.xpath.Matcher;
@@ -22,7 +23,8 @@ import org.waag.ah.tika.parser.sax.XSPARQLQueryHandler;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-public class UitbaseParser extends AbstractParser {
+public class UitbaseParser extends XMLParser {
+	private Logger logger = Logger.getLogger(UitbaseParser.class);
 	private static final long serialVersionUID = 116487633414164925L;
 
 	private static final Set<MediaType> SUPPORTED_TYPES = Collections.singleton(
@@ -44,6 +46,7 @@ public class UitbaseParser extends AbstractParser {
       }
 
       TaggedContentHandler tagged = new TaggedContentHandler(handler);
+      
       try {
           context.getSAXParser().parse(
                   new CloseShieldInputStream(stream),
@@ -59,12 +62,10 @@ public class UitbaseParser extends AbstractParser {
     		Metadata metadata, ParseContext context) {
     	if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV3_MIME_TYPE)) {
     		try {
-				return 
-					new MatchingContentHandler(
-						new XSPARQLQueryHandler(handler, 
-							metadata, context, 
-							getFileContents(getClass(), "META-INF/uitbase_v3.txt")), 
-						getXPathMatcher("/nubxml/events/descendant::node()"));
+    			String xquery = getFileContents(getClass(), "META-INF/uitbase_v3.txt");
+				return new MatchingContentHandler(
+					new XSPARQLQueryHandler(handler, metadata, context, xquery), 
+					getXPathMatcher("/nubxml/events/descendant::node()"));
 			} catch (TikaException e) {
 				e.printStackTrace();
 			} catch (IOException e) {

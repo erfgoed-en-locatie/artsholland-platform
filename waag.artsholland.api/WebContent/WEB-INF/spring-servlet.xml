@@ -16,12 +16,12 @@
   <context:annotation-config/>
   
   <!-- This is needed for "mvc:resources" to work. -->
-  <mvc:annotation-driven/>
+  <!-- <mvc:annotation-driven/> -->
   
   <bean id="accessConfirmationController" 
       class="org.waag.ah.api.controller.OAuthAccessConfirmationController"/>
   
-  <mvc:resources mapping="/*.*/artsholland.rdf" location="/vocabulary/"/>
+  <mvc:resources mapping="/vocabulary/**" location="/vocabulary/"/>
   
   <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
     <property name="order" value="1"/>

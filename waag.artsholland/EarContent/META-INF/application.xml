@@ -4,7 +4,7 @@
   <module>
     <web>
       <web-uri>waag.artsholland.api.war</web-uri>
-      <context-root>api</context-root>
+      <context-root>/</context-root>
     </web>
   </module>
   <module>

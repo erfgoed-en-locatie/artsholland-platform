@@ -17,5 +17,8 @@
             <dependent-object/>
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="bigdata-1.1.0.jar" deploy-path="/lib" handle="module:/classpath/lib/external.bigdata/ant-build/bigdata-1.1.0.jar">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
     </wb-module>
 </project-modules>

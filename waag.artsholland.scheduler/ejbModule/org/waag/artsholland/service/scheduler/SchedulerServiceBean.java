@@ -7,6 +7,7 @@ import javax.annotation.PreDestroy;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
 import javax.ejb.Schedule;
+import javax.jms.IllegalStateException;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -15,7 +16,6 @@ import javax.jms.QueueConnection;
 import javax.jms.QueueConnectionFactory;
 import javax.jms.QueueSender;
 import javax.jms.QueueSession;
-import javax.jms.TextMessage;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
@@ -42,14 +42,18 @@ public class SchedulerServiceBean implements SchedulerService {
 			ctx = new InitialContext();
 	        factory = (QueueConnectionFactory) ctx.lookup("ConnectionFactory");
 	        connection = factory.createQueueConnection();
-	        session = connection.createQueueSession(false, QueueSession.AUTO_ACKNOWLEDGE);
 	        queue = (Queue) ctx.lookup("queue/import");
-			sender = session.createSender(queue);
+	        connect();
 		} catch (NamingException e) {
 			e.printStackTrace();
 		} catch (JMSException e) {
 			e.printStackTrace();
 		}		
+	}
+
+	private void connect() throws JMSException {
+        session = connection.createQueueSession(false, QueueSession.AUTO_ACKNOWLEDGE);
+		sender = session.createSender(queue);
 	}
 
 	@PreDestroy
@@ -66,11 +70,15 @@ public class SchedulerServiceBean implements SchedulerService {
     @Schedule(persistent=false, minute="*/1", hour="*")
     public void automaticTimeout() {
     	try {
-			TextMessage msg = session.createTextMessage();
-			msg.setStringProperty("url", "http://127.0.0.1/ah/nub/events.xml");
-			sender.send(msg);
+    		sender.send(session.createTextMessage("http://waxworks.nl/events.xml"));
 			this.setLastScheduledImport(new Date());
 			logger.info("Message sent successfully to import queue");
+    	} catch (IllegalStateException e) {
+    		try {
+				connect();
+			} catch (JMSException e1) {
+				logger.error("Reconnecting with JMS queue failed");
+			}
 		} catch (JMSException e) {
 			logger.error("Error while sending message to import queue", e);
 			e.printStackTrace();
