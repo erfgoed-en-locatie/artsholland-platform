@@ -23,7 +23,6 @@ import org.waag.ah.tika.parser.rdf.TurtleParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	private XQueryEvaluator evaluator;
@@ -33,12 +32,14 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	private TurtleParser turtleParser;
 	private ParseContext context;
 	private String data;
+	private Metadata metadata;
 
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata, 
 			ParseContext context, String query)	throws TikaException {
 		super(handler);
 		this.context = context; 
 		this.handler = handler; 
+		this.metadata = metadata; 
 		this.turtleParser = new TurtleParser();
 		try {
 			XSPARQLProcessor xp = new XSPARQLProcessor();
@@ -114,15 +115,16 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 					combined.append(item);
 				}
 				
-				Metadata metadata = new Metadata();
-				metadata.set(Metadata.CONTENT_TYPE, "text/turtle");
+				Metadata mdata = new Metadata();
+				mdata.set(Metadata.CONTENT_TYPE, "text/turtle");
+				mdata.set(Metadata.RESOURCE_NAME_KEY, metadata.get(Metadata.RESOURCE_NAME_KEY));
             
 				// Handler stringbuffer fills up, causing an OutOfMemoryError.
 				data = combined.toString();
 //				System.out.println(data);
 				turtleParser.parse(
 						new ByteArrayInputStream(combined.toString().getBytes()), 
-						handler, metadata, context);
+						handler, mdata, context);
 
 //			} catch (SAXParseException e) {
 //				System.out.println(xmlCollector.toString());

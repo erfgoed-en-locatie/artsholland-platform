@@ -1,8 +1,10 @@
 package org.waag.ah.persistence;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Map;
 
 import javax.naming.InitialContext;
 
@@ -14,7 +16,7 @@ import org.openrdf.model.ValueFactory;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.RDFFormat;
-import org.waag.ah.service.importer.DocumentWriter;
+import org.waag.ah.DocumentWriter;
 
 public class SesameWriter implements DocumentWriter {
 	private Logger logger = Logger.getLogger(SesameWriter.class);
@@ -46,7 +48,7 @@ public class SesameWriter implements DocumentWriter {
 	}
 
 	@Override
-	public void write(String message, Metadata metadata) throws IOException {
+	public void write(String message, Map<String, String> metadata) throws IOException {
 		String baseURL = metadata.get(Metadata.RESOURCE_NAME_KEY);
 		URI context = valueFactory.createURI(baseURL);
 //		logger.info("CONTEXT: "+context.stringValue());
@@ -60,7 +62,7 @@ public class SesameWriter implements DocumentWriter {
 			connection.add(reader, baseURL, RDFFormat.RDFXML, context);
 			connection.commit();
 			logger.info("After loading, repository contains " + connection.size(context) +
-	                " triples in context '" + context + "'\n    and   " +
+	                " triples in context '" + context + "' and " +
 	                connection.size((Resource)null) + " triples in context 'null'.");
 		} catch (NullPointerException e) {
 			// Appearantly, when running in "full feature" mode, BigData returns
@@ -75,6 +77,12 @@ public class SesameWriter implements DocumentWriter {
 			}
 			throw new IOException(e.getMessage(), e);
 		}
-		logger.info("Written RDF data");
+//		logger.info("Written RDF data");
+	}
+
+	@Override
+	public void write(InputStream inputStream, Map<String, String> metadata)
+			throws IOException {
+		throw new UnsupportedOperationException();
 	}
 }
