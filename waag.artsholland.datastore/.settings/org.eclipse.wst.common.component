@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="waag.artsholland.datastore">
+        <wb-resource deploy-path="/" source-path="/ejbModule"/>
+        <property name="java-output-path" value="/waag.artsholland.datastore/build/classes"/>
+        <property name="ClientProject" value="waag.persistenceClient"/>
+        <property name="ClientJARURI" value="waag.persistenceClient.jar"/>
+    </wb-module>
+</project-modules>
