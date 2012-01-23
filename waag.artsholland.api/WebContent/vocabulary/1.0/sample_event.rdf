@@ -1,22 +1,19 @@
 <?xml version="1.0"?>
 <rdf:RDF
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:ah="http://purl.org/artsholland/1,0/"
+    xmlns:time="http://www.w3.org/2006/time#"
+    xmlns:vcard="http://www.w3.org/2006/vcard/ns#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:spin="http://spinrdf.org/spin#"
+    xmlns:foaf="http://xmlns.com/foaf/0.1/"
+    xmlns:gr="http://purl.org/goodrelations/v1#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:dct="http://purl.org/dc/terms/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns="http://purl.org/artsholland/1.0/"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
  	xml:base="http://purl.org/artsholland/1.0/">
-
-  <vcard:VCard rdf:about="http://purl.org/artsholland/1.0/Gert_Jochems">
-    <vcard:role rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >Acteur</vcard:role>
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >Gert Jochems</rdfs:label>
-    <vcard:org>
-      <Party rdf:about="http://purl.org/artsholland/1.0/Het_paleis">
-        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-        >Het paleis</rdfs:label>
-        <vcard:organization-name rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-        >Het paleis</vcard:organization-name>
-      </Party>
-    </vcard:org>
-  </vcard:VCard>
 
   <Event rdf:about="http://api.artsholland.com/artsholland/1.0#2011-A-001-0402778-nl_NL">
     <inRoom>
@@ -285,6 +282,22 @@ Gratis openbaar vervoer: met uw toegangskaart voor de Stadsschouwburg kunt u gra
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Nele Goossens</rdfs:label>
   </vcard:VCard>
+  <vcard:VCard rdf:about="http://purl.org/artsholland/1.0/Gert_Jochems">
+    <vcard:role rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Acteur</vcard:role>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Gert Jochems</rdfs:label>
+    <vcard:org>
+      <Party rdf:about="http://purl.org/artsholland/1.0/Het_paleis">
+        <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Het paleis</rdfs:label>
+        <vcard:organization-name rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+        >Het paleis</vcard:organization-name>
+      </Party>
+    </vcard:org>
+  </vcard:VCard>
+
+  
 </rdf:RDF>
 
 <!-- Created with TopBraid -->
