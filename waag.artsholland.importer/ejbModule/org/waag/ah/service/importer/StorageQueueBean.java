@@ -2,129 +2,111 @@ package org.waag.ah.service.importer;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
 import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.MessageFormatException;
 import javax.jms.MessageListener;
+import javax.jms.MessageNotReadableException;
 import javax.jms.TextMessage;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 import org.apache.log4j.Logger;
-import org.jboss.ejb3.annotation.Depends;
-import org.jboss.ejb3.annotation.Management;
-import org.jboss.ejb3.annotation.Service;
+import org.eclipse.jetty.util.log.Log;
 import org.openrdf.OpenRDFException;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
-import org.openrdf.rio.RDFHandler;
 import org.openrdf.rio.RDFHandlerException;
+import org.openrdf.rio.helpers.RDFHandlerBase;
 import org.openrdf.rio.rdfxml.RDFXMLParser;
-import org.waag.ah.ServiceManagement;
 import org.waag.ah.jms.Properties;
 import org.waag.ah.persistence.RepositoryConnectionFactory;
-import org.waag.ah.persistence.SAILConnectionFactory;
 
-@Service(objectName = StorageQueueBean.OBJECT_NAME)
-@Management(ServiceManagement.class)
-@Depends(SAILConnectionFactory.OBJECT_NAME)
 @MessageDriven(
 	messageListenerInterface=MessageListener.class, 
 	activationConfig = {
 		@ActivationConfigProperty(propertyName="destinationType", propertyValue="javax.jms.Queue"),
 		@ActivationConfigProperty(propertyName="destination", propertyValue="queue/importer/store"),
 		@ActivationConfigProperty(propertyName="messageSelector", propertyValue=Properties.CONTENT_TYPE+"='application/rdf+xml'")})
-public class StorageQueueBean implements ServiceManagement {
+public class StorageQueueBean {
 	private Logger logger = Logger.getLogger(StorageQueueBean.class);
 	private RDFXMLParser parser;
 	private RDFStorageHandler handler;
-	private RepositoryConnection connection;
 	
-	public final static String OBJECT_NAME = "artsholland:service=StorageService";
-
-//	@PostConstruct
-	@Override
-	public void create() throws NamingException, RepositoryException, IOException {
-		logger.info("Creating service "+OBJECT_NAME);
-		InitialContext context = new InitialContext();
+	@PostConstruct
+	public void create() throws Exception {
+		InitialContext ctx = new InitialContext();
 		RepositoryConnectionFactory cf = (RepositoryConnectionFactory) 
-				context.lookup("java:global/"+SAILConnectionFactory.OBJECT_NAME);
-		connection = cf.getConnection();		
+				ctx.lookup("java:global/SAILConnectionFactory");
 		
-//		System.setProperty("org.xml.sax.driver", "org.apache.xerces.parsers.SAXParser");
-		handler = new RDFStorageHandler(connection);
+		handler = new RDFStorageHandler(cf);
 		parser = new RDFXMLParser();
 		parser.setRDFHandler(handler);
-//		parser.setParseErrorListener(myParseErrorListener);
-		parser.setVerifyData(true);
 		parser.setStopAtFirstError(false);
 	}
 	
-//	@PreDestroy
-	@Override
-	public void destroy() {
-		logger.info("Closing connection"+connection);
+	public void onMessage(Message msg) throws JMSException {
 		try {
-			connection.close();
-		} catch (IllegalMonitorStateException e) {
-			logger.warn("Error closing repository connection: "+e.getMessage());
-		} catch (RepositoryException e) {
-			logger.warn("Error closing repository connection: "+e.getMessage());
-		}
-	}
-	
-	public void onMessage(Message msg) throws IOException, JMSException {
-		String messageText = ((TextMessage)msg).getText();
-		logger.info("Storing RDF document: size="+messageText.length());
-		try {
-			parser.parse(new StringReader(messageText), 
+			String messageText = ((TextMessage)msg).getText();
+			logger.info("Storing RDF document: size="+messageText.length()+", uri="+
 					msg.getStringProperty(Properties.SOURCE_URL));
-			logger.info("Repository contains "+handler.connection.size()+" triples");
+			parser.parse(new StringReader(messageText),
+					msg.getStringProperty(Properties.SOURCE_URL));
 		} catch (OpenRDFException e) {
-			logger.warn("Error parsing RDF document: "+e.getMessage());
+			throw new MessageFormatException(e.getMessage());
+		} catch (IOException e) {
+			throw new MessageNotReadableException(e.getMessage());
 		}
 	}
-	
-	public void storeDocument(String document) {
-	}
 
-	private class RDFStorageHandler implements RDFHandler {
-		private RepositoryConnection connection;
+	private class RDFStorageHandler extends RDFHandlerBase {
+		private List<Statement> statements = new ArrayList<Statement>();
+		private RepositoryConnectionFactory cf;
 
-		public RDFStorageHandler(RepositoryConnection connection) {
-			this.connection = connection;
-		}
-
-		@Override
-		public void startRDF() throws RDFHandlerException {
-		}
-	
-		@Override
-		public void endRDF() throws RDFHandlerException {
-		}
-	
-		@Override
-		public void handleNamespace(String prefix, String uri)
-				throws RDFHandlerException {
+		public RDFStorageHandler(RepositoryConnectionFactory cf) {
+			this.cf = cf;
 		}
 	
 		@Override
 		public void handleStatement(Statement statement) throws RDFHandlerException {
-//			logger.info("Storing statement: "+statement);
+			statements.add(statement);
+		}
+		
+		@Override
+		public void endRDF() throws RDFHandlerException {
+			RepositoryConnection conn;
 			try {
-				connection.add(statement);
-				connection.commit();
-//				logger.info("Statement context: "+statement.getContext());
-			} catch (RepositoryException e) {
+				conn = cf.getConnection();
+			} catch (Exception e) {
 				throw new RDFHandlerException(e.getMessage(), e);
 			}
-		}
-	
-		@Override
-		public void handleComment(String comment) throws RDFHandlerException {
+			try {
+				conn.add(statements);
+				conn.commit();
+				logger.info("Repository contains "+conn.size()+" triples");
+			} catch (RepositoryException e) {
+				logger.error("Exception while adding data to DB: message="+e.getMessage());
+				try {
+					conn.rollback();
+				} catch (RepositoryException e1) {
+					logger.warn("Execption while rolling back transaction: "+e1.getMessage());
+//					throw new RDFHandlerException(e1.getMessage(), e1);
+				}
+				throw new RDFHandlerException(e.getMessage(), e);
+			} finally {
+				statements.clear();
+				try {
+					conn.close();
+				} catch (RepositoryException e) {
+					Log.warn("Error closing connection: "+e.getMessage());
+				}
+			}
 		}
 	}
 }

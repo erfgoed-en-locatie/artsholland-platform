@@ -13,7 +13,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/bigdata-1.1.0.jar">
+	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/bigdata-1.1.0.jar" sourcepath="/external.bigdata/bigdata-sails/src/java">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
@@ -118,11 +118,6 @@
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/log4j-1.2.15.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/lucene-analyzers-3.0.0.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
@@ -134,21 +129,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/nxparser-6-22-2010.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/slf4j-api-1.6.1.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/slf4j-log4j12-1.6.1.jar">
-		<attributes>
-			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/waag.artsholland.core">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>

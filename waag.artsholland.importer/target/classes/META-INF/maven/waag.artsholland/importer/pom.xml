@@ -53,11 +53,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-<!--     <dependency>
-      <groupId>org.deri.xsparql</groupId>
-      <artifactId>rewriter</artifactId>
-      <version>0.3-SNAPSHOT</version>
-    </dependency> -->
     <dependency>
       <groupId>org.ostermiller</groupId>
       <artifactId>utils</artifactId>

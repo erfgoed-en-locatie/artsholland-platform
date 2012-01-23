@@ -17,7 +17,7 @@ import com.bigdata.rdf.sail.BigdataSailRepositoryConnection;
 
 @Service(objectName = SAILConnectionFactory.OBJECT_NAME)
 @Management(ServiceManagement.class)
-@LocalBinding(jndiBinding = "java:global/"+SAILConnectionFactory.OBJECT_NAME)  
+@LocalBinding(jndiBinding = "java:global/SAILConnectionFactory")  
 public class SAILConnectionFactory extends AbstractConnectionFactory  
 		implements ServiceManagement, RepositoryConnectionFactory {
 	private Logger logger = Logger.getLogger(SAILConnectionFactory.class);
@@ -28,7 +28,6 @@ public class SAILConnectionFactory extends AbstractConnectionFactory
 	
 	public final static String OBJECT_NAME = "artsholland:service=SAILConnectionFactory";
 
-	@Override
 	public void create() throws IOException, RepositoryException {
 		logger.info("Creating service "+OBJECT_NAME);
 		Properties properties = loadProperties(PROPERTY_FILE);
@@ -36,14 +35,12 @@ public class SAILConnectionFactory extends AbstractConnectionFactory
 		repo.initialize();
 	}
 	
+	public void destroy() {
+		logger.info("Destroying service "+this);
+		close();
+	}
+	
 	public SailRepositoryConnection getConnection() throws RepositoryException { 
-//		if (repo == null) {
-//			synchronized (this) {
-//				if (repo == null) {
-//
-//				}
-//			}//com.bigdata.rdf.sail.isolatableIndices
-//		}
 		BigdataSailRepositoryConnection conn = 
 				(BigdataSailRepositoryConnection) repo.getReadWriteConnection();
 		conn.setAutoCommit(false);
@@ -57,7 +54,6 @@ public class SAILConnectionFactory extends AbstractConnectionFactory
 		return new BigdataSailRepository(sail);		
 	}
 
-//	@Override
 	public void close() {
 		logger.info("Closing repository "+repo);
 		try {
@@ -68,11 +64,4 @@ public class SAILConnectionFactory extends AbstractConnectionFactory
 			logger.warn(e.getMessage());
 		}
 	}	
-	
-//	@PreDestroy
-	@Override
-	public void destroy() {
-		logger.info("Destroying service "+this);
-		close();
-	}
 }

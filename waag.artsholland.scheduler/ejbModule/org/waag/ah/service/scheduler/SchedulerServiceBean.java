@@ -72,14 +72,14 @@ public class SchedulerServiceBean {
     @Schedule(persistent=false, minute="*/1", hour="*")
     public void automaticTimeout() {
     	if (sender == null) {
-    		// TODO: Make sure sender is not null :)
-    		logger.warn("Got null sender, are we starting up or shutting down? (closing connection)");
-    		try {
-				connection.close();
-			} catch (JMSException e) {
-				logger.warn("Connection already closed or never opened.");
-				return;
-			}
+//    		// TODO: Make sure sender is not null :)
+//    		logger.warn("Got null sender, are we starting up or shutting down? (closing connection)");
+//    		try {
+//				connection.close();
+//			} catch (JMSException e) {
+//				logger.warn("Connection already closed or never opened.");
+//				return;
+//			}
     		return;
     	}
     	try {

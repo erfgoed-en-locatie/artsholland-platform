@@ -17,9 +17,8 @@ public class UrlDetector implements Detector {
 	public UrlDetector() throws MimeTypeException, IOException {
 		this.types = MimeTypesFactory.create("custom-mimetypes.xml");
 	}
-	
+
 	@SuppressWarnings("deprecation")
-	@Override
 	public MediaType detect(InputStream input, Metadata metadata)
 			throws IOException {
 		String url = metadata.get(Metadata.RESOURCE_NAME_KEY);

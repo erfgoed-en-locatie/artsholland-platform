@@ -3,7 +3,5 @@
     <wb-module deploy-name="waag.artsholland.scheduler">
         <wb-resource deploy-path="/" source-path="/ejbModule"/>
         <property name="java-output-path" value="/waag.artsholland.scheduler/build/classes"/>
-        <property name="ClientProject" value="waag.artsholland.schedulerClient"/>
-        <property name="ClientJARURI" value="waag.artsholland.schedulerClient.jar"/>
     </wb-module>
 </project-modules>

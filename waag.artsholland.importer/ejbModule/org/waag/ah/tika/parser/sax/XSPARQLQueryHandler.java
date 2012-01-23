@@ -31,7 +31,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	private ContentHandler handler;
 	private TurtleParser turtleParser;
 	private ParseContext context;
-	private String data;
+//	private String data;
 	private Metadata metadata;
 
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata, 
@@ -120,7 +120,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				mdata.set(Metadata.RESOURCE_NAME_KEY, metadata.get(Metadata.RESOURCE_NAME_KEY));
             
 				// Handler stringbuffer fills up, causing an OutOfMemoryError.
-				data = combined.toString();
+//				data = combined.toString();
 //				System.out.println(data);
 				turtleParser.parse(
 						new ByteArrayInputStream(combined.toString().getBytes()), 
