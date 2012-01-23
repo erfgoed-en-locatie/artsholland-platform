@@ -51,9 +51,8 @@ public class SPARQLService {
 		try {
 			URL url = new URL(SPARQL_ENDPOINT.expand(query).encode().toUriString());
 			logger.info(url.toExternalForm());
+			response.setContentType("application/xml");
 			URLConnection conn = url.openConnection();
-//			conn.setRequestProperty("Accept", request.getContentType());
-//			conn.setRequestProperty("Accept", "application/x-turtle");
 			IOUtils.copy(conn.getInputStream(), response.getOutputStream());
 		} catch (MalformedURLException e) {
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

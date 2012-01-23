@@ -34,8 +34,7 @@ public class StreamingContentHandler extends ContentHandlerDecorator {
 		this.documentProps = new HashMap<String, String>();
 		this.documentProps.put(Properties.SOURCE_URL, 
 				metadata.get(Metadata.RESOURCE_NAME_KEY));
-		this.documentProps.put(Properties.CONTENT_TYPE, 
-				metadata.get(Metadata.CONTENT_TYPE));
+		this.documentProps.put(Properties.CONTENT_TYPE, "application/rdf+xml");
 		this.documentProps.put(Properties.CHARSET, 
 				metadata.get(Metadata.CONTENT_ENCODING));
 		

@@ -44,7 +44,8 @@ public class SchedulerServiceBean {
 	        queue = (Queue) ctx.lookup("queue/importer/fetch");
 	        connect();
 		} catch (NamingException e) {
-			e.printStackTrace();
+//			e.printStackTrace();
+			logger.warn(e.getMessage());
 		} catch (JMSException e) {
 			e.printStackTrace();
 		}		
@@ -58,7 +59,9 @@ public class SchedulerServiceBean {
 	@PreDestroy
 	public void destroy() {
 		try {
-			connection.close();
+			if (connection != null) {
+				connection.close();
+			}
 		} catch (JMSException e) {
 			e.printStackTrace();
 		}		
@@ -68,6 +71,17 @@ public class SchedulerServiceBean {
 	
     @Schedule(persistent=false, minute="*/1", hour="*")
     public void automaticTimeout() {
+    	if (sender == null) {
+    		// TODO: Make sure sender is not null :)
+    		logger.warn("Got null sender, are we starting up or shutting down? (closing connection)");
+    		try {
+				connection.close();
+			} catch (JMSException e) {
+				logger.warn("Connection already closed or never opened.");
+				return;
+			}
+    		return;
+    	}
     	try {
     		sender.send(session.createTextMessage("http://waxworks.nl/events.xml"));
 			this.setLastScheduledImport(new Date());

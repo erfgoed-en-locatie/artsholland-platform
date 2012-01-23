@@ -26,11 +26,11 @@ import org.waag.ah.jms.QueueWriter;
 	activationConfig = {
 		@ActivationConfigProperty(propertyName="destinationType", propertyValue="javax.jms.Queue"),
 		@ActivationConfigProperty(propertyName="destination", propertyValue="queue/importer/fetch")})
-public class FetcherServiceBean {
-	private Logger logger = Logger.getLogger(FetcherServiceBean.class);
+public class FetcherQueueBean {
+	private Logger logger = Logger.getLogger(FetcherQueueBean.class);
 	private DocumentWriter queueWriter;
 
-	public FetcherServiceBean() throws Exception {
+	public FetcherQueueBean() throws Exception {
 		queueWriter = new QueueWriter("queue/importer/parse");
 	}
 
@@ -58,7 +58,7 @@ public class FetcherServiceBean {
 	public void onMessage(Message msg) throws IOException, JMSException {
 		try {
 			URL url = new URL(((TextMessage)msg).getText());
-			logger.info("Fetching URL: "+url);
+			logger.debug("Fetching URL: "+url);
 			importUrl(url);
 		} catch (MalformedURLException e) {
 			logger.warn(e.getMessage());

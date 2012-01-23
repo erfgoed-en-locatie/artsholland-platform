@@ -28,12 +28,12 @@ import com.Ostermiller.util.CircularByteBuffer;
 	activationConfig = {
 		@ActivationConfigProperty(propertyName="destinationType", propertyValue="javax.jms.Queue"),
 		@ActivationConfigProperty(propertyName="destination", propertyValue="queue/importer/parse")})
-public class ParserServiceBean {
-	private Logger logger = Logger.getLogger(ParserServiceBean.class);
+public class ParserQueueBean {
+	private Logger logger = Logger.getLogger(ParserQueueBean.class);
 	private AutoDetectParser parser;
 	private DocumentWriter queueWriter;
 
-	public ParserServiceBean() throws Exception {
+	public ParserQueueBean() throws Exception {
 		queueWriter = new QueueWriter("queue/importer/store");
 		parser = new AutoDetectParser();
 	}

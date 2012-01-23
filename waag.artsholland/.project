@@ -8,6 +8,7 @@
 		<project>waag.artsholland.importer</project>
 		<project>waag.artsholland.scheduler</project>
 		<project>waag.artsholland.core</project>
+		<project>waag.artsholland.datastore</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

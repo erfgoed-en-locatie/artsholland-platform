@@ -17,15 +17,16 @@
 			<attribute name="owner.project.facets" value="java"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/saxon-9.3.jar">
+	<classpathentry exported="true" kind="lib" path="lib/saxon-9.3.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/rewriter-0.3-SNAPSHOT.jar">
+	<classpathentry exported="true" kind="lib" path="lib/rewriter-0.3-SNAPSHOT.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry combineaccessrules="false" kind="src" path="/waag.artsholland.datastore"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

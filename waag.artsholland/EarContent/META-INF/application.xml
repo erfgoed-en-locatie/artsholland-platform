@@ -13,4 +13,7 @@
   <module>
     <ejb>waag.artsholland.scheduler.jar</ejb>
   </module>
+  <module>
+    <ejb>waag.artsholland.datastore.jar</ejb>
+  </module>
 </application>
