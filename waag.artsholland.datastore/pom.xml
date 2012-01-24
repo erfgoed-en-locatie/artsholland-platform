@@ -3,4 +3,11 @@
   <groupId>waag.artsholland</groupId>
   <artifactId>datastore</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <dependencies>
+    <dependency>
+      <groupId>org.openrdf.sesame</groupId>
+      <artifactId>sesame-runtime</artifactId>
+      <version>2.5.1</version>
+    </dependency>
+  </dependencies>
 </project>
