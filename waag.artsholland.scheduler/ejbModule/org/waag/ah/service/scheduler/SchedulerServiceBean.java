@@ -69,21 +69,14 @@ public class SchedulerServiceBean {
 
 	public void onMessage(Message msg) {}
 	
-    @Schedule(persistent=false, minute="*/1", hour="*")
+    @Schedule(persistent=false, minute="*/5", hour="*")
     public void automaticTimeout() {
     	if (sender == null) {
-//    		// TODO: Make sure sender is not null :)
-//    		logger.warn("Got null sender, are we starting up or shutting down? (closing connection)");
-//    		try {
-//				connection.close();
-//			} catch (JMSException e) {
-//				logger.warn("Connection already closed or never opened.");
-//				return;
-//			}
     		return;
     	}
     	try {
-    		sender.send(session.createTextMessage("http://waxworks.nl/events.xml"));
+//    		sender.send(session.createTextMessage("http://waxworks.nl/events.xml"));
+    		sender.send(session.createTextMessage("http://waxworks.nl/amsterdam.xml"));
 			this.setLastScheduledImport(new Date());
 			logger.info("Message sent successfully to import queue");
     	} catch (IllegalStateException e) {

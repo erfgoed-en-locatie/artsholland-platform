@@ -44,7 +44,7 @@ public class SAILConnectionFactory extends AbstractConnectionFactory
 		BigdataSailRepositoryConnection conn = 
 				(BigdataSailRepositoryConnection) repo.getReadWriteConnection();
 		conn.setAutoCommit(false);
-		logger.info("Created connection: "+conn);
+//		logger.info("Created connection: "+conn);
 		return conn;
     }
 	

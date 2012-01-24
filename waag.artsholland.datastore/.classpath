@@ -13,122 +13,127 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/bigdata-1.1.0.jar" sourcepath="/external.bigdata/bigdata-sails/src/java">
+	<classpathentry exported="true" kind="lib" path="lib/bigdata-1.1.0.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/bnd-0.0.384.jar">
+	<classpathentry exported="true" kind="lib" path="lib/bnd-0.0.384.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/colt-1.2.0.jar">
+	<classpathentry exported="true" kind="lib" path="lib/colt-1.2.0.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/dsi-utils-1.0.6-020610.jar">
+	<classpathentry exported="true" kind="lib" path="lib/dsi-utils-1.0.6-020610.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/fastutil-5.1.5.jar">
+	<classpathentry exported="true" kind="lib" path="lib/fastutil-5.1.5.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/high-scale-lib-v1.1.2.jar">
+	<classpathentry exported="true" kind="lib" path="lib/high-scale-lib-v1.1.2.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/icu4j-4_8.jar">
+	<classpathentry exported="true" kind="lib" path="lib/icu4j-4_8.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/icu4j-charset-4_8.jar">
+	<classpathentry exported="true" kind="lib" path="lib/icu4j-charset-4_8.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/icu4j-localespi-4_8.jar">
+	<classpathentry exported="true" kind="lib" path="lib/icu4j-localespi-4_8.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/jetty-continuation-7.2.2.v20101205.jar">
+	<classpathentry exported="true" kind="lib" path="lib/jetty-continuation-7.2.2.v20101205.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/jetty-http-7.2.2.v20101205.jar">
+	<classpathentry exported="true" kind="lib" path="lib/jetty-http-7.2.2.v20101205.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/jetty-io-7.2.2.v20101205.jar">
+	<classpathentry exported="true" kind="lib" path="lib/jetty-io-7.2.2.v20101205.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/jetty-security-7.2.2.v20101205.jar">
+	<classpathentry exported="true" kind="lib" path="lib/jetty-security-7.2.2.v20101205.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/jetty-server-7.2.2.v20101205.jar">
+	<classpathentry exported="true" kind="lib" path="lib/jetty-server-7.2.2.v20101205.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/jetty-servlet-7.2.2.v20101205.jar">
+	<classpathentry exported="true" kind="lib" path="lib/jetty-servlet-7.2.2.v20101205.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/jetty-util-7.2.2.v20101205.jar">
+	<classpathentry exported="true" kind="lib" path="lib/jetty-util-7.2.2.v20101205.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/jetty-webapp-7.2.2.v20101205.jar">
+	<classpathentry exported="true" kind="lib" path="lib/jetty-webapp-7.2.2.v20101205.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/jetty-xml-7.2.2.v20101205.jar">
+	<classpathentry exported="true" kind="lib" path="lib/jetty-xml-7.2.2.v20101205.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/junit-3.8.1.jar">
+	<classpathentry exported="true" kind="lib" path="lib/junit-3.8.1.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/junit-ext-1.1-b3-dev.jar">
+	<classpathentry exported="true" kind="lib" path="lib/junit-ext-1.1-b3-dev.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/lgpl-utils-1.0.6-020610.jar">
+	<classpathentry exported="true" kind="lib" path="lib/lgpl-utils-1.0.6-020610.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/lucene-analyzers-3.0.0.jar">
+	<classpathentry exported="true" kind="lib" path="lib/log4j-1.2.15.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/lucene-core-3.0.0.jar">
+	<classpathentry exported="true" kind="lib" path="lib/lucene-analyzers-3.0.0.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry exported="true" kind="lib" path="/external.bigdata/ant-build/lib/nxparser-6-22-2010.jar">
+	<classpathentry exported="true" kind="lib" path="lib/lucene-core-3.0.0.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/nxparser-6-22-2010.jar">
 		<attributes>
 			<attribute name="org.eclipse.jst.component.dependency" value="../lib"/>
 		</attributes>

@@ -58,7 +58,7 @@ public class FetcherQueueBean {
 	public void onMessage(Message msg) throws IOException, JMSException {
 		try {
 			URL url = new URL(((TextMessage)msg).getText());
-			logger.debug("Fetching URL: "+url);
+			logger.info("Fetching URL: "+url);
 			importUrl(url);
 		} catch (MalformedURLException e) {
 			logger.warn(e.getMessage());
