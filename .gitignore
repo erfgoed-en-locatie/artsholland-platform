@@ -1,3 +1,4 @@
 waag.artsholland.datastore/ejbModule/rebel.xml
 waag.artsholland.scheduler/ejbModule/rebel.xml
 waag.artsholland.datastore/target
+waag.artsholland.importer/target
