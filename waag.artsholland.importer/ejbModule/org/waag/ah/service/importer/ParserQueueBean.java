@@ -1,12 +1,14 @@
 package org.waag.ah.service.importer;
 
-import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.concurrent.Future;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.ActivationConfigProperty;
+import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -24,22 +26,28 @@ import com.Ostermiller.util.CircularByteBuffer;
 
 
 @MessageDriven(
-	messageListenerInterface=MessageListener.class, 
 	activationConfig = {
 		@ActivationConfigProperty(propertyName="destinationType", propertyValue="javax.jms.Queue"),
 		@ActivationConfigProperty(propertyName="destination", propertyValue="queue/importer/parse")})
-public class ParserQueueBean {
+public class ParserQueueBean implements MessageListener {
 	private Logger logger = Logger.getLogger(ParserQueueBean.class);
 	private AutoDetectParser parser;
 	private DocumentWriter queueWriter;
+	private CircularByteBuffer cbb;
 
-	public ParserQueueBean() throws Exception {
+	@EJB
+	private AsyncBean async;
+	
+	@PostConstruct
+	public void create() throws Exception {
 		queueWriter = new QueueWriter("queue/importer/store");
 		parser = new AutoDetectParser();
+		cbb = new CircularByteBuffer();
 	}
 
 	@PreDestroy
 	public void destroy() {
+		logger.info("Destroying ParserQueueBean");
 		try {
 			queueWriter.close();
 		} catch (IOException e) {
@@ -60,23 +68,46 @@ public class ParserQueueBean {
 		}
 	}
 
-	public void onMessage(Message msg) throws IOException, JMSException {
-		Metadata metadata = new Metadata();
-		metadata.add(Metadata.RESOURCE_NAME_KEY, 
-				msg.getStringProperty(Properties.SOURCE_URL));
-
-		logger.info("Parsing document for URL: "+metadata.get(Metadata.RESOURCE_NAME_KEY));
+	/**
+	 * Uses a rather cumbersome method for converting convert the JMS 
+	 * outputstream to an inputstream.
+	 * 
+	 * @param msg
+	 * @throws IOException
+	 * @throws JMSException
+	 *
+	 * @author	Raoul Wissink <raoul@raoul.net>
+	 * @since	Jan 24, 2012
+	 * @see <a href="http://code.google.com/p/io-tools/wiki/ConvertOutputStreamInputStream">here</a>
+	 */
+	public void onMessage(Message msg) { //throws IOException, JMSException {
+		logger.info("onMessage START");
 		
-		CircularByteBuffer cbb = new CircularByteBuffer(CircularByteBuffer.INFINITE_SIZE);
-		BufferedOutputStream bufferedOutput = new BufferedOutputStream(cbb.getOutputStream());
-		InputStream inputStream = cbb.getInputStream();
-		
+//		PipedInputStream inputStream = null;
+//		PipedOutputStream outputStream = null;
+		Future<String> task = null;
 		try {
-			msg.setObjectProperty("JMS_HQ_SaveStream", bufferedOutput);		
-			parseDocument(inputStream, metadata);
+			Metadata metadata = new Metadata();
+			metadata.add(Metadata.RESOURCE_NAME_KEY, 
+					msg.getStringProperty(Properties.SOURCE_URL));
+	
+//			inputStream = new PipedInputStream();
+//			outputStream = new PipedOutputStream(inputStream);
+			
+			logger.info("onMessage COPY");
+			task = async.copyOutputStream(msg, cbb);
+			logger.info("onMessage COPYDONE");
+			parseDocument(cbb.getInputStream(), metadata);
+			logger.info("onMessage CLOSE");
+		} catch (Exception e) {
+			logger.error("PROCESSING ERROR, HANDLE ME!", e);
+			if (!task.isDone()) {
+				logger.info("CANCELLING TASK");
+				task.cancel(true);
+			}			
 		} finally {
-			bufferedOutput.close();
-			inputStream.close();
+			logger.info("onMessage FINISH");
+			cbb.clear();		
 		}
 	}
 }

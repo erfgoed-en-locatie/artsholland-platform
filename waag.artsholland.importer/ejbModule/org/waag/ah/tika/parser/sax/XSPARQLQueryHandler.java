@@ -36,9 +36,9 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata, 
 			ParseContext context, String query)	throws TikaException {
-		super(handler);
-		this.context = context; 
+//		this.handler = new EmbeddedContentHandler(handler); 
 		this.handler = handler; 
+		this.context = context;
 		this.metadata = metadata; 
 		this.turtleParser = new TurtleParser();
 		try {
@@ -51,6 +51,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		} catch (Exception e) {
 			throw new TikaException(e.getMessage(), e);
 		}			
+		super.setContentHandler(handler);
 	}
 
 	private boolean currentNode() {

@@ -29,15 +29,14 @@ public class SAILConnectionFactory extends AbstractConnectionFactory
 	public final static String OBJECT_NAME = "artsholland:service=SAILConnectionFactory";
 
 	public void create() throws IOException, RepositoryException {
-		logger.info("Creating service "+OBJECT_NAME);
+//		logger.info("Creating service "+OBJECT_NAME);
 		Properties properties = loadProperties(PROPERTY_FILE);
 		repo = createRepository(properties);
 		repo.initialize();
 	}
 	
 	public void destroy() {
-		logger.info("Destroying service "+this);
-		close();
+//		logger.info("Closing repository "+repo);
 	}
 	
 	public SailRepositoryConnection getConnection() throws RepositoryException { 
@@ -52,16 +51,5 @@ public class SAILConnectionFactory extends AbstractConnectionFactory
 	protected BigdataSailRepository createRepository(Properties properties) {
 		BigdataSail sail = new BigdataSail(properties);
 		return new BigdataSailRepository(sail);		
-	}
-
-	public void close() {
-		logger.info("Closing repository "+repo);
-		try {
-			if (repo != null) {
-				repo.shutDown();
-			}
-		} catch (RepositoryException e) {
-			logger.warn(e.getMessage());
-		}
 	}	
 }

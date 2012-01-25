@@ -92,16 +92,6 @@ public class XQueryContentHandler extends ContentHandlerDecorator {
         
 			System.out.println(combined.toString());
 			
-//			String ttl = "@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>." +
-//						 "@prefix dc: <http://purl.org/dc/elements/1.1/#>." +
-//						 "@prefix exterms: <http://www.example.org/terms/>." +
-//						 "<http://www.w3.org/TR/rdf-syntax-grammar>" +
-//						 "	dc:title \"RDF/XML Syntax Specification (Revised)\";" +
-//						 "	exterms:editor [" +
-//						 "		exterms:fullName \"Dave Beckett\";" +
-//						 "		exterms:homePage <http://purl.org/net/dajobe/>" +
-//						 "	]. ";
-//			System.out.println(ttl);
 			Charset charset = Charset.forName(this.metadata.get(Metadata.CONTENT_ENCODING));
 			turtleParser.parse(
 					new ByteArrayInputStream(combined.toString().getBytes(charset)), 

@@ -8,10 +8,10 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
-import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
@@ -30,16 +30,17 @@ public class FetcherQueueBean {
 	private Logger logger = Logger.getLogger(FetcherQueueBean.class);
 	private DocumentWriter queueWriter;
 
-	public FetcherQueueBean() throws Exception {
+	@PostConstruct
+	public void create() throws Exception {
 		queueWriter = new QueueWriter("queue/importer/parse");
 	}
-
+	
 	@PreDestroy
 	public void destroy() {
 		try {
 			queueWriter.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.warn(e);
 		}
 	}
 	
@@ -55,13 +56,15 @@ public class FetcherQueueBean {
 		}
 	}
 
-	public void onMessage(Message msg) throws IOException, JMSException {
+	public void onMessage(Message msg) {
 		try {
 			URL url = new URL(((TextMessage)msg).getText());
 			logger.info("Fetching URL: "+url);
 			importUrl(url);
 		} catch (MalformedURLException e) {
 			logger.warn(e.getMessage());
+		} catch (Exception e) {
+			logger.error(e);
 		}
 	}
 }

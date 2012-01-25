@@ -33,6 +33,7 @@ public class QueueWriter implements DocumentWriter {
 			Queue queue = (Queue) ctx.lookup(queueName);
 			this.connection = factory.createQueueConnection();
 			this.session = connection.createQueueSession(false, 
+//					QueueSession.CLIENT_ACKNOWLEDGE);
 					QueueSession.AUTO_ACKNOWLEDGE);
 			this.queueSender = session.createSender(queue);
 		} catch (Exception e) {
@@ -54,10 +55,9 @@ public class QueueWriter implements DocumentWriter {
 			throws IOException {
 		try {
 			BytesMessage msg = session.createBytesMessage();
-//			BufferedInputStream bufferedInput = 
-//					new BufferedInputStream(inputStream);
-			msg.setObjectProperty("JMS_HQ_InputStream", 
-					new BufferedInputStream(inputStream));
+			BufferedInputStream bufferedInput = 
+					new BufferedInputStream(inputStream);
+			msg.setObjectProperty("JMS_HQ_InputStream", bufferedInput);
 			send(msg, metadata);		
 		} catch (JMSException e) {
 			throw new IOException(e.getMessage(), e);

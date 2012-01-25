@@ -44,7 +44,6 @@ public class SPARQLConnectionFactory extends AbstractConnectionFactory
 	}
 
 	@PreDestroy
-	@Override
 	public void close() throws IOException {
 		try {
 			repository.shutDown();
