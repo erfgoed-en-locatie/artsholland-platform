@@ -20,6 +20,7 @@ import org.apache.tika.sax.xpath.Matcher;
 import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
 import org.waag.ah.tika.parser.sax.XSPARQLQueryHandler;
+import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -65,6 +66,8 @@ public class UitbaseParser extends XMLParser {
     			String xquery = getFileContents(getClass(), "META-INF/uitbase_v3.xquery");
     			// As we don't want to load the entire input document in memory
     			// for XQuery processing, we handle each event node seperately.
+//				return new XSPARQLQueryHandler(handler, metadata, context, 
+//						xquery,	getXPathMatcher("/nubxml/events/descendant::node()"));
 				return 
 					new MatchingContentHandler(
 					new XSPARQLQueryHandler(handler, metadata, context, xquery), 
@@ -98,4 +101,18 @@ public class UitbaseParser extends XMLParser {
     private Matcher getXPathMatcher(String selector) {
         return new XPathParser(null, "").parse(selector);
     }
+    
+//    private static class StreamingContentHandler extends MatchingContentHandler {
+//
+//		public StreamingContentHandler(ContentHandler delegate, Matcher matcher) {
+//			super(delegate, matcher);
+//		}
+//
+//		@Override
+//		public void startElement(String uri, String localName, String name,
+//				Attributes attributes) throws SAXException {
+//			super.startElement(uri, localName, name, attributes);
+//			System.out.println(name);
+//		}
+//    }
 }

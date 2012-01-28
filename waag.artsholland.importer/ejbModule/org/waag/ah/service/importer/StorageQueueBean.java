@@ -1,6 +1,5 @@
 package org.waag.ah.service.importer;
 
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,14 +7,15 @@ import javax.annotation.PostConstruct;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
+import javax.jms.BytesMessage;
 import javax.jms.Message;
 import javax.jms.MessageListener;
-import javax.jms.TextMessage;
 
 import org.apache.log4j.Logger;
 import org.jboss.ejb3.annotation.Depends;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.RepositoryConnection;
+import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.helpers.RDFHandlerBase;
 import org.openrdf.rio.rdfxml.RDFXMLParser;
@@ -50,35 +50,18 @@ public class StorageQueueBean implements MessageListener {
 		parser.setRDFHandler(handler);
 	}
 	
-//	@PreDestroy
-//	public void destroy() {
-//		logger.info("Closing connection: "+conn);
-//		try {
-//			conn.close();
-//		} catch (Exception e) {
-//			logger.error("Error closing repository connection", e);
-//		}
-//	}
-	
 	@Override
-	public void onMessage(Message msg) {
+	public void onMessage(Message message) {
 		try {
-			
-			String messageText = ((TextMessage)msg).getText();
-			parser.parse(new StringReader(messageText),
-					msg.getStringProperty(Properties.SOURCE_URL));
-			logger.info("Stored RDF document: size="+messageText.length());//+", uri="+
-//					msg.getStringProperty(Properties.SOURCE_URL)+", triples="+conn.size());
-//			msg.acknowledge();
+			streamHelper.readOutputStream((BytesMessage) message);
+//			logger.info(IOUtils.toString(streamHelper.getInputStream()));
+			parser.parse(streamHelper.getInputStream(),
+					message.getStringProperty(Properties.SOURCE_URL));
+			logger.info("Stored RDF document: triples="+conn.size());
 		} catch(Exception e) {
 			logger.error("Error while processing message: "+e.getMessage());
-//			msg.setJMSRedelivered()
-//		} catch (OpenRDFException e) {
-//			throw new MessageFormatException(e.getMessage());
-//		} catch (IOException e) {
-//			throw new MessageNotReadableException(e.getMessage());
-//		} catch (JMSException e) {
-//			e.printStackTrace();
+		} finally {
+			streamHelper.clear();
 		}
 	}
 
@@ -103,20 +86,20 @@ public class StorageQueueBean implements MessageListener {
 		
 		@Override
 		public void endRDF() throws RDFHandlerException {
-//			try {
-//				conn.add(statements);
-//				conn.commit();
-//			} catch (RepositoryException e) {
-//				logger.error("Exception while adding data to repository: message="+e.getMessage());
-//				try {
-//					conn.rollback();
-//				} catch (RepositoryException e1) {
-//					logger.warn("Execption while rolling back transaction: "+e1.getMessage());
-//				}
-//				throw new RDFHandlerException(e.getMessage(), e);
-//			} finally {
-//				statements.clear();
-//			}
+			try {
+				conn.add(statements);
+				conn.commit();
+			} catch (RepositoryException e) {
+				logger.error("Exception while adding data to repository: message="+e.getMessage());
+				try {
+					conn.rollback();
+				} catch (RepositoryException e1) {
+					logger.warn("Execption while rolling back transaction: "+e1.getMessage());
+				}
+				throw new RDFHandlerException(e.getMessage(), e);
+			} finally {
+				statements.clear();
+			}
 		}
 	}
 }
