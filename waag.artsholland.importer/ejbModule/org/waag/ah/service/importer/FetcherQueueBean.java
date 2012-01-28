@@ -2,6 +2,7 @@ package org.waag.ah.service.importer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -17,7 +18,6 @@ import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 
 import org.apache.log4j.Logger;
-import org.waag.ah.DocumentWriter;
 import org.waag.ah.jms.Properties;
 import org.waag.ah.jms.QueueWriter;
 
@@ -28,7 +28,7 @@ import org.waag.ah.jms.QueueWriter;
 		@ActivationConfigProperty(propertyName="destination", propertyValue="queue/importer/fetch")})
 public class FetcherQueueBean {
 	private Logger logger = Logger.getLogger(FetcherQueueBean.class);
-	private DocumentWriter queueWriter;
+	private QueueWriter queueWriter;
 
 	@PostConstruct
 	public void create() throws Exception {
@@ -50,7 +50,9 @@ public class FetcherQueueBean {
 		try {
 			Map<String, String> metadata = new HashMap<String, String>();
 			metadata.put(Properties.SOURCE_URL, url.toString());
-			queueWriter.write(stream, metadata);
+			metadata.put(Properties.CHARSET,
+					new InputStreamReader(stream).getEncoding());
+ 			queueWriter.write(stream, metadata);
 		} finally {
 			stream.close();
 		}

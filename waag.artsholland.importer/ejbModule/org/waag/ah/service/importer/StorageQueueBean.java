@@ -64,7 +64,7 @@ public class StorageQueueBean implements MessageListener {
 			String messageText = ((TextMessage)msg).getText();
 			parser.parse(new StringReader(messageText),
 					msg.getStringProperty(Properties.SOURCE_URL));
-			logger.info("Stored RDF document: size="+messageText.length());//+", uri="+
+//			logger.info("Stored RDF document: size="+messageText.length());//+", uri="+
 //					msg.getStringProperty(Properties.SOURCE_URL)+", triples="+conn.size());
 //			msg.acknowledge();
 		} catch(Exception e) {
@@ -100,20 +100,20 @@ public class StorageQueueBean implements MessageListener {
 		
 		@Override
 		public void endRDF() throws RDFHandlerException {
-			try {
-				conn.add(statements);
-				conn.commit();
-			} catch (RepositoryException e) {
-				logger.error("Exception while adding data to repository: message="+e.getMessage());
-				try {
-					conn.rollback();
-				} catch (RepositoryException e1) {
-					logger.warn("Execption while rolling back transaction: "+e1.getMessage());
-				}
-				throw new RDFHandlerException(e.getMessage(), e);
-			} finally {
-				statements.clear();
-			}
+//			try {
+//				conn.add(statements);
+//				conn.commit();
+//			} catch (RepositoryException e) {
+//				logger.error("Exception while adding data to repository: message="+e.getMessage());
+//				try {
+//					conn.rollback();
+//				} catch (RepositoryException e1) {
+//					logger.warn("Execption while rolling back transaction: "+e1.getMessage());
+//				}
+//				throw new RDFHandlerException(e.getMessage(), e);
+//			} finally {
+//				statements.clear();
+//			}
 		}
 	}
 }

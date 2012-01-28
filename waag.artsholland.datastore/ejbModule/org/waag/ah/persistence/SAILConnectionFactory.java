@@ -15,7 +15,7 @@ import com.bigdata.rdf.sail.BigdataSail;
 import com.bigdata.rdf.sail.BigdataSailRepository;
 import com.bigdata.rdf.sail.BigdataSailRepositoryConnection;
 
-@Service(objectName = SAILConnectionFactory.OBJECT_NAME)
+@Service(objectName=SAILConnectionFactory.OBJECT_NAME)
 @Management(ServiceManagement.class)
 @LocalBinding(jndiBinding = "java:global/SAILConnectionFactory")  
 public class SAILConnectionFactory extends AbstractConnectionFactory  

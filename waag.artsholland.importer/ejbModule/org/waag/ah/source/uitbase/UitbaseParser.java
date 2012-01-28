@@ -65,7 +65,8 @@ public class UitbaseParser extends XMLParser {
     			String xquery = getFileContents(getClass(), "META-INF/uitbase_v3.xquery");
     			// As we don't want to load the entire input document in memory
     			// for XQuery processing, we handle each event node seperately.
-				return new MatchingContentHandler(
+				return 
+					new MatchingContentHandler(
 					new XSPARQLQueryHandler(handler, metadata, context, xquery), 
 					getXPathMatcher("/nubxml/events/descendant::node()"));
 			} catch (TikaException e) {

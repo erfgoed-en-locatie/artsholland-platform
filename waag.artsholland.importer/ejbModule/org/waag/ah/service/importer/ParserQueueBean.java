@@ -1,70 +1,69 @@
 package org.waag.ah.service.importer;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
+import javax.jms.BytesMessage;
+import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
+import javax.jms.Queue;
+import javax.jms.QueueConnection;
+import javax.jms.QueueConnectionFactory;
+import javax.jms.QueueSender;
+import javax.jms.QueueSession;
+import javax.jms.Session;
 
 import org.apache.log4j.Logger;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.AutoDetectParser;
-import org.waag.ah.DocumentWriter;
 import org.waag.ah.jms.Properties;
-import org.waag.ah.jms.QueueWriter;
-import org.waag.ah.tika.parser.sax.StreamingContentHandler;
 
 import com.Ostermiller.util.CircularByteBuffer;
 
 
 @MessageDriven(
-	activationConfig = {
+	messageListenerInterface=MessageListener.class,
+	activationConfig={
 		@ActivationConfigProperty(propertyName="destinationType", propertyValue="javax.jms.Queue"),
 		@ActivationConfigProperty(propertyName="destination", propertyValue="queue/importer/parse")})
-public class ParserQueueBean implements MessageListener {
+public class ParserQueueBean implements MessageListener, ExceptionListener {
 	private Logger logger = Logger.getLogger(ParserQueueBean.class);
-	private AutoDetectParser parser;
-	private DocumentWriter queueWriter;
-	private CircularByteBuffer cbb;
+	private QueueConnection connection;
+	private CircularByteBuffer msgInBuf;
+	private CircularByteBuffer msgOutBuf;
+	
+	private final int BUFFER_SIZE = 65536;
+	
+	@Resource(mappedName = "ConnectionFactory")        
+	protected QueueConnectionFactory factory; 
 
+	@Resource(mappedName = "queue/importer/store")       
+	private Queue queue;
+	
 	@EJB
-	private AsyncBean async;
+	private StreamingMessageHelper streamHelper;
 	
 	@PostConstruct
-	public void create() throws Exception {
-		queueWriter = new QueueWriter("queue/importer/store");
-		parser = new AutoDetectParser();
-		cbb = new CircularByteBuffer();
+	public void create() throws JMSException {
+		connection = factory.createQueueConnection();
+		msgInBuf = new CircularByteBuffer(BUFFER_SIZE);
+		msgOutBuf = new CircularByteBuffer(BUFFER_SIZE);	
 	}
 
 	@PreDestroy
 	public void destroy() {
 		logger.info("Destroying ParserQueueBean");
-		try {
-			queueWriter.close();
-		} catch (IOException e) {
+		try {			
+			connection.close();
+		} catch (JMSException e) {
 			e.printStackTrace();
-		}
-	}
-	
-	public void parseDocument(InputStream stream, Metadata metadata) 
-			throws IOException {
-		try {
-			metadata.add(Metadata.CONTENT_ENCODING, 
-					new InputStreamReader(stream).getEncoding());
-			parser.parse(stream, 
-					new StreamingContentHandler(queueWriter, metadata), 
-					metadata);
-		} catch (Exception e) {
-			throw new IOException(e.getMessage(), e);
 		}
 	}
 
@@ -78,36 +77,49 @@ public class ParserQueueBean implements MessageListener {
 	 *
 	 * @author	Raoul Wissink <raoul@raoul.net>
 	 * @since	Jan 24, 2012
-	 * @see <a href="http://code.google.com/p/io-tools/wiki/ConvertOutputStreamInputStream">here</a>
 	 */
-	public void onMessage(Message msg) { //throws IOException, JMSException {
-		logger.info("onMessage START");
-		
-//		PipedInputStream inputStream = null;
-//		PipedOutputStream outputStream = null;
-		Future<String> task = null;
+	public void onMessage(Message msgIn) {
 		try {
-			Metadata metadata = new Metadata();
-			metadata.add(Metadata.RESOURCE_NAME_KEY, 
-					msg.getStringProperty(Properties.SOURCE_URL));
-	
-//			inputStream = new PipedInputStream();
-//			outputStream = new PipedOutputStream(inputStream);
+			QueueSession session = connection.createQueueSession(true, 
+					Session.SESSION_TRANSACTED); 
+			BytesMessage msgOut = session.createBytesMessage();
+			msgOut.setObjectProperty("JMS_HQ_InputStream", 
+					msgOutBuf.getInputStream());
 			
-			logger.info("onMessage COPY");
-			task = async.copyOutputStream(msg, cbb);
-			logger.info("onMessage COPYDONE");
-			parseDocument(cbb.getInputStream(), metadata);
-			logger.info("onMessage CLOSE");
+			streamHelper.readOutputStream((BytesMessage) msgIn, msgInBuf);
+			
+			Future<Boolean> parseResult = streamHelper.parseStreamMessage(
+					(BytesMessage) msgIn, 
+					msgInBuf.getInputStream(), 
+					msgOutBuf.getOutputStream());
+			
+			msgOut.setStringProperty(Properties.SOURCE_URL, 
+					msgIn.getStringProperty(Properties.SOURCE_URL));
+			msgOut.setStringProperty(Properties.CHARSET, 
+					msgIn.getStringProperty(Properties.CHARSET));
+			msgOut.setStringProperty(Properties.CONTENT_TYPE, 
+					"application/rdf+xml");
+
+			QueueSender queueSender = session.createSender(queue);
+			queueSender.send(msgOut);
+			
+			try {
+				parseResult.get();
+				session.commit();
+			} catch(ExecutionException e) {
+				logger.error(e.getCause().getMessage());
+				session.rollback();
+			}
 		} catch (Exception e) {
-			logger.error("PROCESSING ERROR, HANDLE ME!", e);
-			if (!task.isDone()) {
-				logger.info("CANCELLING TASK");
-				task.cancel(true);
-			}			
+			logger.error(e.getMessage());
 		} finally {
-			logger.info("onMessage FINISH");
-			cbb.clear();		
+			msgInBuf.clear();
+			msgOutBuf.clear();
 		}
+	}
+
+	@Override
+	public void onException(JMSException e) {
+		logger.error("Got JMS exception: "+e.getMessage());
 	}
 }
