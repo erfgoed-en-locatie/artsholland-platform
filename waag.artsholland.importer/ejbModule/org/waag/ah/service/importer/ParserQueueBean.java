@@ -1,6 +1,5 @@
 package org.waag.ah.service.importer;
 
-import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -11,7 +10,6 @@ import javax.ejb.ActivationConfigProperty;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
 import javax.jms.BytesMessage;
-import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -24,19 +22,18 @@ import javax.jms.Session;
 
 import org.apache.log4j.Logger;
 import org.waag.ah.jms.Properties;
+import org.waag.ah.jms.StreamingMessageBuffer;
 
 import com.Ostermiller.util.CircularByteBuffer;
 
 
 @MessageDriven(
-	messageListenerInterface=MessageListener.class,
 	activationConfig={
 		@ActivationConfigProperty(propertyName="destinationType", propertyValue="javax.jms.Queue"),
 		@ActivationConfigProperty(propertyName="destination", propertyValue="queue/importer/parse")})
-public class ParserQueueBean implements MessageListener, ExceptionListener {
+public class ParserQueueBean implements MessageListener {
 	private Logger logger = Logger.getLogger(ParserQueueBean.class);
 	private QueueConnection connection;
-	private CircularByteBuffer msgInBuf;
 	private CircularByteBuffer msgOutBuf;
 	
 	private final int BUFFER_SIZE = 65536;
@@ -47,37 +44,24 @@ public class ParserQueueBean implements MessageListener, ExceptionListener {
 	@Resource(mappedName = "queue/importer/store")       
 	private Queue queue;
 	
-	@EJB
-	private StreamingMessageHelper streamHelper;
+	private @EJB StreamingMessageBuffer msgInBuf;
+	private @EJB StreamingMessageParser streamParser;
 	
 	@PostConstruct
 	public void create() throws JMSException {
 		connection = factory.createQueueConnection();
-		msgInBuf = new CircularByteBuffer(BUFFER_SIZE);
 		msgOutBuf = new CircularByteBuffer(BUFFER_SIZE);	
 	}
 
 	@PreDestroy
 	public void destroy() {
-		logger.info("Destroying ParserQueueBean");
 		try {			
 			connection.close();
 		} catch (JMSException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 
-	/**
-	 * Uses a rather cumbersome method for converting convert the JMS 
-	 * outputstream to an inputstream.
-	 * 
-	 * @param msg
-	 * @throws IOException
-	 * @throws JMSException
-	 *
-	 * @author	Raoul Wissink <raoul@raoul.net>
-	 * @since	Jan 24, 2012
-	 */
 	public void onMessage(Message msgIn) {
 		try {
 			QueueSession session = connection.createQueueSession(true, 
@@ -86,9 +70,9 @@ public class ParserQueueBean implements MessageListener, ExceptionListener {
 			msgOut.setObjectProperty("JMS_HQ_InputStream", 
 					msgOutBuf.getInputStream());
 			
-			streamHelper.readOutputStream((BytesMessage) msgIn, msgInBuf);
+			msgInBuf.readOutputStream((BytesMessage) msgIn);
 			
-			Future<Boolean> parseResult = streamHelper.parseStreamMessage(
+			Future<Boolean> parseResult = streamParser.parseStreamMessage(
 					(BytesMessage) msgIn, 
 					msgInBuf.getInputStream(), 
 					msgOutBuf.getOutputStream());
@@ -116,10 +100,5 @@ public class ParserQueueBean implements MessageListener, ExceptionListener {
 			msgInBuf.clear();
 			msgOutBuf.clear();
 		}
-	}
-
-	@Override
-	public void onException(JMSException e) {
-		logger.error("Got JMS exception: "+e.getMessage());
 	}
 }

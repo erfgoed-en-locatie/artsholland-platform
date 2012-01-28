@@ -11,7 +11,6 @@ import javax.ejb.Stateless;
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
 
-import org.apache.log4j.Logger;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
@@ -25,15 +24,7 @@ import com.Ostermiller.util.CircularByteBuffer;
 
 @Stateless
 @Asynchronous
-public class StreamingMessageHelper {
-	private Logger logger = Logger.getLogger(StreamingMessageHelper.class);
-	
-	public Future<Boolean> readOutputStream(BytesMessage message, 
-			CircularByteBuffer buffer) throws JMSException {
-		message.setObjectProperty("JMS_HQ_SaveStream", buffer.getOutputStream());
-		return new AsyncResult<Boolean>(true);
-	}
-	
+public class StreamingMessageParser extends CircularByteBuffer {
 	public Future<Boolean> parseStreamMessage(BytesMessage message, InputStream in, OutputStream out) 
 			throws IOException, SAXException, TikaException, JMSException {
 		try {

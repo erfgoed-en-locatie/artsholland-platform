@@ -68,8 +68,8 @@ public class SchedulerServiceBean implements MessageListener {
 			session = conn.createQueueSession(false, QueueSession.AUTO_ACKNOWLEDGE);                   
 //			session = conn.createQueueSession(false, QueueSession.CLIENT_ACKNOWLEDGE);                   
 			sender = session.createSender(targetQueue);                   
-			TextMessage msg = session.createTextMessage("http://127.0.0.1/ah/nub/amsterdam.xml");                      
-//			TextMessage msg = session.createTextMessage("http://127.0.0.1/ah/nub/events.xml");                      
+//			TextMessage msg = session.createTextMessage("http://127.0.0.1/ah/nub/amsterdam.xml");                      
+			TextMessage msg = session.createTextMessage("http://127.0.0.1/ah/nub/events.xml");                      
 //			TextMessage msg = session.createTextMessage("http://waxworks.nl/amsterdam.xml");                      
 //			TextMessage msg = session.createTextMessage("http://waxworks.nl/events.xml");                      
 			sender.send(msg); 

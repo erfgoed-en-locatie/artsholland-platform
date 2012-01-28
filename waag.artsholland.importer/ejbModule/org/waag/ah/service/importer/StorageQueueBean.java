@@ -16,11 +16,11 @@ import org.apache.log4j.Logger;
 import org.jboss.ejb3.annotation.Depends;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.helpers.RDFHandlerBase;
 import org.openrdf.rio.rdfxml.RDFXMLParser;
 import org.waag.ah.jms.Properties;
+import org.waag.ah.jms.StreamingMessageBuffer;
 import org.waag.ah.persistence.RepositoryConnectionFactory;
 import org.waag.ah.persistence.SAILConnectionFactory;
 
@@ -39,6 +39,8 @@ public class StorageQueueBean implements MessageListener {
 	
 	@EJB(mappedName = "java:global/SAILConnectionFactory")
 	private RepositoryConnectionFactory cf;
+	
+	private @EJB StreamingMessageBuffer streamHelper;
 	
 	@PostConstruct
 	public void create() throws Exception {
@@ -61,10 +63,11 @@ public class StorageQueueBean implements MessageListener {
 	@Override
 	public void onMessage(Message msg) {
 		try {
+			
 			String messageText = ((TextMessage)msg).getText();
 			parser.parse(new StringReader(messageText),
 					msg.getStringProperty(Properties.SOURCE_URL));
-//			logger.info("Stored RDF document: size="+messageText.length());//+", uri="+
+			logger.info("Stored RDF document: size="+messageText.length());//+", uri="+
 //					msg.getStringProperty(Properties.SOURCE_URL)+", triples="+conn.size());
 //			msg.acknowledge();
 		} catch(Exception e) {
