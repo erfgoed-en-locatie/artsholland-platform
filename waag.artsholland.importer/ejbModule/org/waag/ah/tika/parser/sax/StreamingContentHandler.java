@@ -1,7 +1,6 @@
 package org.waag.ah.tika.parser.sax;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,11 +58,11 @@ public class StreamingContentHandler extends ContentHandlerDecorator {
 	@Override
 	public void endDocument() throws SAXException {
 		super.endDocument();
-		try {
-			writer.write(stream.toString(), documentProps);
-		} catch (IOException e) {
-			throw new SAXException("Could not write document", e);
-		}
+//		try {
+//			writer.write(stream.toString(), documentProps);
+//		} catch (IOException e) {
+//			throw new SAXException("Could not write document", e);
+//		}
 		logger.debug(String.format("%6d%8d: %d", recordCount, 
 				new Date().getTime()-startTime, stream.size()));
 	}

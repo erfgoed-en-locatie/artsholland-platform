@@ -10,4 +10,7 @@
   <module>
     <ejb>waag.artsholland.importer.jar</ejb>
   </module>
+  <module>
+    <ejb>waag.artsholland.core.jar</ejb>
+  </module>
 </application>

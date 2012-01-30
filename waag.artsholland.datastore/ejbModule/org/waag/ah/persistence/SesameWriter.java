@@ -9,7 +9,6 @@ import java.util.Map;
 import javax.naming.InitialContext;
 
 import org.apache.log4j.Logger;
-import org.apache.tika.metadata.Metadata;
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
@@ -17,6 +16,7 @@ import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.RDFFormat;
 import org.waag.ah.DocumentWriter;
+import org.waag.ah.jms.Properties;
 
 public class SesameWriter implements DocumentWriter {
 	private Logger logger = Logger.getLogger(SesameWriter.class);
@@ -36,7 +36,6 @@ public class SesameWriter implements DocumentWriter {
 		}
 	}
 	
-	@Override
 	public void close() throws IOException {
 		try {
 			connection.close();
@@ -49,7 +48,7 @@ public class SesameWriter implements DocumentWriter {
 
 	@Override
 	public void write(String message, Map<String, String> metadata) throws IOException {
-		String baseURL = metadata.get(Metadata.RESOURCE_NAME_KEY);
+		String baseURL = metadata.get(Properties.SOURCE_URL);
 		URI context = valueFactory.createURI(baseURL);
 //		logger.info("CONTEXT: "+context.stringValue());
 //		try {

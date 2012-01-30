@@ -1,10 +1,9 @@
 package org.waag.ah.tika.parser.rdf;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Set;
 
@@ -44,9 +43,9 @@ public class TurtleParser extends AbstractParser {
 	public void parse(InputStream stream, ContentHandler handler,
 			Metadata metadata, ParseContext context) throws IOException,
 			SAXException, TikaException {
-		
-		StringWriter rdfXmlData = new StringWriter();
-		turtleParser.setRDFHandler(new RDFXMLWriter(rdfXmlData));
+
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		turtleParser.setRDFHandler(new RDFXMLWriter(outputStream));
 		
 		try {
 			turtleParser.parse(stream, metadata.get(Metadata.RESOURCE_NAME_KEY));
@@ -56,10 +55,8 @@ public class TurtleParser extends AbstractParser {
 			e.printStackTrace();
 		}
 		
-		InputStreamReader r = new InputStreamReader(stream);
         context.getSAXParser().parse(
-                new CloseShieldInputStream(new ByteArrayInputStream(
-                		rdfXmlData.toString().getBytes(r.getEncoding()))),
+                new CloseShieldInputStream(new ByteArrayInputStream(outputStream.toByteArray())),
                 new OfflineContentHandler(handler));
 	}
 }

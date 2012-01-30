@@ -9,9 +9,6 @@
             <dependent-object/>
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="waag.artsholland.core.jar" deploy-path="/lib" handle="module:/resource/waag.artsholland.core/waag.artsholland.core">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="waag.artsholland.datastore.jar" deploy-path="/" handle="module:/resource/waag.artsholland.datastore/waag.artsholland.datastore">
             <dependent-object/>
             <dependency-type>uses</dependency-type>
@@ -20,6 +17,10 @@
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="waag.artsholland.importer.jar" deploy-path="/" handle="module:/resource/waag.artsholland.importer/waag.artsholland.importer">
+            <dependent-object/>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="waag.artsholland.core.jar" deploy-path="/" handle="module:/resource/waag.artsholland.core/waag.artsholland.core">
             <dependent-object/>
             <dependency-type>uses</dependency-type>
         </dependent-module>
