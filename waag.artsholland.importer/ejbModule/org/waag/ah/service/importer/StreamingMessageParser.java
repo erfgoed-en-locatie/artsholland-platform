@@ -11,6 +11,7 @@ import javax.ejb.Stateless;
 import javax.jms.BytesMessage;
 import javax.jms.JMSException;
 
+import org.apache.log4j.Logger;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
@@ -20,14 +21,15 @@ import org.waag.ah.jms.Properties;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-import com.Ostermiller.util.CircularByteBuffer;
-
 @Stateless
-@Asynchronous
-public class StreamingMessageParser extends CircularByteBuffer {
+public class StreamingMessageParser {
+	private Logger logger = Logger.getLogger(StreamingMessageParser.class);
+
+	@Asynchronous
 	public Future<Boolean> parseStreamMessage(BytesMessage message, InputStream in, OutputStream out) 
 			throws IOException, SAXException, TikaException, JMSException {
 		try {
+			logger.info("STARTED PARSING");
 			AutoDetectParser parser = new AutoDetectParser();
 			
 			Metadata metadata = new Metadata();
@@ -36,12 +38,19 @@ public class StreamingMessageParser extends CircularByteBuffer {
 			metadata.add(Metadata.CONTENT_ENCODING,
 					message.getStringProperty(Properties.CHARSET));
 			
-			ContentHandler handler = new ToXMLContentHandler(
-					out, metadata.get(Metadata.CONTENT_ENCODING));
+			ContentHandler handler = new ToXMLContentHandler(out,"UTF-8"); 
+//					metadata.get(Metadata.CONTENT_ENCODING));
 			
 			parser.parse(in, handler, metadata, new ParseContext());
+			
+			logger.info("FINISHED PARSING");
+			
+//			in.close();
+		} catch (Exception e) {
+			logger.error(e.getMessage());
 		} finally {
-			in.close();
+			logger.info("CLOSING OUTSTREAM");
+//			in.close();
 			out.close();
 		}
 		return new AsyncResult<Boolean>(true);

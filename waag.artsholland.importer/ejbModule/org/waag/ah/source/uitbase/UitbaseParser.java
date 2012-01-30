@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.io.CloseShieldInputStream;
 import org.apache.tika.metadata.Metadata;
@@ -20,12 +19,11 @@ import org.apache.tika.sax.xpath.Matcher;
 import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
 import org.waag.ah.tika.parser.sax.XSPARQLQueryHandler;
-import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 public class UitbaseParser extends XMLParser {
-	private Logger logger = Logger.getLogger(UitbaseParser.class);
+//	private Logger logger = Logger.getLogger(UitbaseParser.class);
 	private static final long serialVersionUID = 116487633414164925L;
 
 	private static final Set<MediaType> SUPPORTED_TYPES = Collections.singleton(
@@ -65,9 +63,7 @@ public class UitbaseParser extends XMLParser {
     		try {
     			String xquery = getFileContents(getClass(), "META-INF/uitbase_v3.xquery");
     			// As we don't want to load the entire input document in memory
-    			// for XQuery processing, we handle each event node seperately.
-//				return new XSPARQLQueryHandler(handler, metadata, context, 
-//						xquery,	getXPathMatcher("/nubxml/events/descendant::node()"));
+    			// we handle each event node seperately.
 				return 
 					new MatchingContentHandler(
 					new XSPARQLQueryHandler(handler, metadata, context, xquery), 
@@ -101,18 +97,4 @@ public class UitbaseParser extends XMLParser {
     private Matcher getXPathMatcher(String selector) {
         return new XPathParser(null, "").parse(selector);
     }
-    
-//    private static class StreamingContentHandler extends MatchingContentHandler {
-//
-//		public StreamingContentHandler(ContentHandler delegate, Matcher matcher) {
-//			super(delegate, matcher);
-//		}
-//
-//		@Override
-//		public void startElement(String uri, String localName, String name,
-//				Attributes attributes) throws SAXException {
-//			super.startElement(uri, localName, name, attributes);
-//			System.out.println(name);
-//		}
-//    }
 }
