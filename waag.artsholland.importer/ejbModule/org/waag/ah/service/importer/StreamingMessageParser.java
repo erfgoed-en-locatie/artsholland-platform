@@ -55,4 +55,19 @@ public class StreamingMessageParser {
 		}
 		return new AsyncResult<Boolean>(true);
 	}
+
+	@Asynchronous
+	public Future<Boolean> parse(InputStream in, OutputStream out) 
+			throws IOException, SAXException, TikaException, JMSException {
+		return parse(in, out, new Metadata());
+	}
+	
+	@Asynchronous
+	public Future<Boolean> parse(InputStream in, OutputStream out, Metadata metadata) 
+			throws IOException, SAXException, TikaException, JMSException {
+		AutoDetectParser parser = new AutoDetectParser();
+		ContentHandler handler = new ToXMLContentHandler(out,"UTF-8"); 
+		parser.parse(in, handler, metadata, new ParseContext());
+		return new AsyncResult<Boolean>(true);
+	}
 }
