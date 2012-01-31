@@ -47,15 +47,15 @@ return
           }
       }. 
       
-      $euri event:time _:b.
-      _:b a tl:Interval;
-          tl:beginsAtDateTime {$event/calendar/startdatetime}^^xsd:dateTime;
-          tl:endsAtDateTime {$event/calendar/enddatetime}^^xsd:dateTime.
+#      $euri event:time _:b.
+#      _:b a tl:Interval;
+#          tl:beginsAtDateTime {$event/calendar/startdatetime}^^xsd:dateTime;
+#          tl:endsAtDateTime {$event/calendar/enddatetime}^^xsd:dateTime.
           
-      $euri event:place _:b.
-      _:b a geo:Point;
-          geo:lat {data($address/geocode/latitude)}^^xsd:decimal;
-          geo:long {data($address/geocode/longitude)}^^xsd:decimal.
+#      $euri event:place _:b.
+#      _:b a geo:Point;
+#          geo:lat {data($address/geocode/latitude)}^^xsd:decimal;
+#          geo:long {data($address/geocode/longitude)}^^xsd:decimal.
           
       { for $image in $event/eventdetail/media//file[@type="afbeelding"]
           let $url := $image/hlink
@@ -83,17 +83,17 @@ return
       $ouri a foaf:Organization;
       foaf:name {waag:escape-for-regex($event/location/title)}^^xsd:string.
       
-      $ouri foaf:based_near _:b.
-      _:b a geo:Point;
-          geo:lat {$address/geocode/latitude}^^xsd:decimal;
-          geo:long {$address/geocode/longitude}^^xsd:decimal.
+#      $ouri foaf:based_near _:b.
+#      _:b a geo:Point;
+#          geo:lat {$address/geocode/latitude}^^xsd:decimal;
+#          geo:long {$address/geocode/longitude}^^xsd:decimal.
       
-      $ouri vcard:Organization _:b.
-      _:b vcard:organization-name {$event/location/title}^^xsd:string;
-          vcard:geo <{$luri}>;
-          vcard:adr <{$auri}>;
-          vcard:tel {$event/location/contactinfo/overall}^^xsd:string;
-          vcard:email {$event/location/contactinfo/mail}^^xsd:string.
+#      $ouri vcard:Organization _:b.
+#      _:b vcard:organization-name {$event/location/title}^^xsd:string;
+#          vcard:geo <{$luri}>;
+#          vcard:adr <{$auri}>;
+#          vcard:tel {$event/location/contactinfo/overall}^^xsd:string;
+#          vcard:email {$event/location/contactinfo/mail}^^xsd:string.
             
       { for $url in $event/location/urls//url
           construct {
@@ -121,10 +121,10 @@ return
             $puri a foaf:Person;
             foaf:name {$fullname}^^xsd:string;
             foaf:Organization <{$ouri}>.
-            $puri vcard:VCard _:b.
-            _:b vcard:fn {$fullname}^^xsd:string;
-                vcard:org <{$ouri}>;
-                vcard:role {$person/@position}^^xsd:string.
+ #           $puri vcard:VCard _:b.
+ #           _:b vcard:fn {$fullname}^^xsd:string;
+ #               vcard:org <{$ouri}>;
+ #               vcard:role {$person/@position}^^xsd:string.
           }
       }
     }

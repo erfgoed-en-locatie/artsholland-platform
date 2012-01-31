@@ -11,19 +11,14 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepositoryConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.ah.ServiceManagement;
 
 import com.bigdata.rdf.sail.BigdataSail;
 import com.bigdata.rdf.sail.BigdataSailRepository;
 import com.bigdata.rdf.sail.BigdataSailRepositoryConnection;
 
-//@Service(objectName=SAILConnectionFactory.OBJECT_NAME)
-//@ManagedBean//(ServiceManagement.class)
-//@LocalBinding(jndiBinding = "java:global/SAILConnectionFactory")  
-//@Local
 @Singleton
 public class SAILConnectionFactory extends AbstractConnectionFactory  
-		implements ServiceManagement, RepositoryConnectionFactory {
+		implements RepositoryConnectionFactory {
 	final static Logger logger = LoggerFactory.getLogger(SAILConnectionFactory.class);
 //	private Logger logger = Logger.getLogger(SAILConnectionFactory.class);
 	private static BigdataSailRepository repo = null;
