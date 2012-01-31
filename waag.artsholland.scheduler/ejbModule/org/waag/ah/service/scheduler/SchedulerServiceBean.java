@@ -16,51 +16,45 @@ import javax.jms.QueueSender;
 import javax.jms.QueueSession;
 import javax.jms.TextMessage;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 @MessageDriven(
 	activationConfig = {
 		@ActivationConfigProperty(propertyName="destination", propertyValue="queue/schedule")})
 public class SchedulerServiceBean implements MessageListener {
-	private Logger logger = Logger.getLogger(SchedulerServiceBean.class);
+	final static Logger logger = LoggerFactory.getLogger(SchedulerServiceBean.class);
 
-	@Resource(mappedName = "queue/importer/fetch")       
+	@Resource(lookup="java:/queue/importer/parse")       
 	private Queue targetQueue;
 	
-	@Resource(mappedName = "ConnectionFactory")        
-	private QueueConnectionFactory factory; 
+	@Resource(lookup="java:/ConnectionFactory")        
+	protected QueueConnectionFactory factory; 
 	
 	private QueueConnection conn;
 	
 	@PostConstruct  
 	public void init() {           
-		initConnection();               
-	}       
-	
-	@PreDestroy     
-	public void cleanUp() {                
-		closeConnection();             
-	}       
-	
-	private void initConnection() {         
 		try {                   
 			conn = factory.createQueueConnection();              
 		} catch (JMSException e) {                     
 			throw new RuntimeException("Could not initialize connection", e);              
-		}       
+		} 
 	}       
 	
-	private void closeConnection() {                
+	@PreDestroy     
+	public void cleanUp() {                
 		try {                   
 			conn.close();          
 		} catch (JMSException e) {                      
 			logger.error(e.getMessage());
-		}       
-	}
+		} 
+	}       
 	
 	public void onMessage(Message msg) {}
 	
-    @Schedule(persistent=false, minute="*/5", hour="*")
+    @Schedule(persistent=false, minute="*/1", hour="*")
     public void automaticTimeout() {
 		QueueSession session = null;         
 		QueueSender sender = null;  

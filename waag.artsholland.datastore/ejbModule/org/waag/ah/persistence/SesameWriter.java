@@ -8,18 +8,20 @@ import java.util.Map;
 
 import javax.naming.InitialContext;
 
-import org.apache.log4j.Logger;
 import org.openrdf.model.Resource;
 import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.RDFFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.waag.ah.DocumentWriter;
 import org.waag.ah.jms.Properties;
 
 public class SesameWriter implements DocumentWriter {
-	private Logger logger = Logger.getLogger(SesameWriter.class);
+	final static Logger logger = LoggerFactory.getLogger(SesameWriter.class);
+//	private Logger logger = Logger.getLogger(SesameWriter.class);
 	private RepositoryConnection connection;
 	private ValueFactory valueFactory;
 

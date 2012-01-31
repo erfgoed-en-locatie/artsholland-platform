@@ -16,11 +16,12 @@ import javax.jms.QueueSender;
 import javax.jms.QueueSession;
 import javax.naming.InitialContext;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.waag.ah.DocumentWriter;
 
 public class QueueWriter implements DocumentWriter {
-	private Logger logger = Logger.getLogger(QueueWriter.class);
+	final static Logger logger = LoggerFactory.getLogger(QueueWriter.class);
 	private QueueConnection connection;
 	private QueueSession session;
 	private QueueSender queueSender;
