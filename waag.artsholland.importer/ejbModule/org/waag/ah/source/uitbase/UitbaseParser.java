@@ -71,7 +71,7 @@ public class UitbaseParser extends XMLParser {
 			// As we don't want to load the entire input document in memory
 			// for XQuery processing, we handle each event node separately.
 			if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV3_MIME_TYPE)) {
-				String xquery = getFileContents(getClass(), "META-INF/uitbase_v3_new.xquery");    			
+				String xquery = getFileContents(getClass(), "META-INF/uitbase_v3.xquery");    			
 				return new MatchingContentHandler(
 					new XSPARQLQueryHandler(handler, metadata, context, xquery), 
 					getXPathMatcher("/nubxml/events/descendant::node()"));
