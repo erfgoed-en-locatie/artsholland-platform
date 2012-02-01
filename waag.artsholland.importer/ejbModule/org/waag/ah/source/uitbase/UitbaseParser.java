@@ -4,9 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.io.CloseShieldInputStream;
 import org.apache.tika.metadata.Metadata;
@@ -23,13 +24,20 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 public class UitbaseParser extends XMLParser {
-//	private Logger logger = Logger.getLogger(UitbaseParser.class);
+	private Logger logger = Logger.getLogger(UitbaseParser.class);
 	private static final long serialVersionUID = 116487633414164925L;
 
-	private static final Set<MediaType> SUPPORTED_TYPES = Collections.singleton(
-    		MediaType.application("x-waag-uitbase-v3+xml"));
+	@SuppressWarnings("serial")
+	private static final Set<MediaType> SUPPORTED_TYPES = new HashSet<MediaType>() {{ 
+		add(MediaType.application("x-waag-uitbase-v3+xml")); 
+		add(MediaType.application("x-waag-uitbase-v4+xml"));
+	}};
+	
+	/*private static final Set<MediaType> SUPPORTED_TYPES = Collections.singleton(
+    		MediaType.application("x-waag-uitbase-v3+xml"));*/
 	
     public static final String UITBASEV3_MIME_TYPE = "application/x-waag-uitbase-v3+xml";
+    public static final String UITBASEV4_MIME_TYPE = "application/x-waag-uitbase-v4+xml";
 
 	@Override
 	public Set<MediaType> getSupportedTypes(ParseContext context) {
@@ -58,22 +66,27 @@ public class UitbaseParser extends XMLParser {
 	}	
 
 	protected ContentHandler getContentHandler(ContentHandler handler, 
-    		Metadata metadata, ParseContext context) {
-    	if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV3_MIME_TYPE)) {
-    		try {
-    			String xquery = getFileContents(getClass(), "META-INF/uitbase_v3.xquery");
-    			// As we don't want to load the entire input document in memory
-    			// we handle each event node seperately.
-				return 
-					new MatchingContentHandler(
+    		Metadata metadata, ParseContext context) {		
+		try {
+			// As we don't want to load the entire input document in memory
+			// for XQuery processing, we handle each event node separately.
+			if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV3_MIME_TYPE)) {
+				String xquery = getFileContents(getClass(), "META-INF/uitbase_v3_new.xquery");    			
+				return new MatchingContentHandler(
 					new XSPARQLQueryHandler(handler, metadata, context, xquery), 
 					getXPathMatcher("/nubxml/events/descendant::node()"));
-			} catch (TikaException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
+			} else if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_MIME_TYPE)) {
+				String xquery = getFileContents(getClass(), "META-INF/uitbase_v4.xquery");    			
+				return new MatchingContentHandler(
+					new XSPARQLQueryHandler(handler, metadata, context, xquery), 
+					//getXPathMatcher("/"));
+					getXPathMatcher("/descendant::node()"));
 			}
-    	}
+		} catch (TikaException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return handler;
     }
     
@@ -89,8 +102,8 @@ public class UitbaseParser extends XMLParser {
         while ((str = reader.readLine()) != null) {
             buffer.append(str + "\n");
         }
-        reader.close();    
-        input.close();    
+        reader.close();
+        input.close();
         return buffer.toString();
     }
     
