@@ -7,7 +7,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.springframework.security.oauth.common.signature.SharedConsumerSecret;
 import org.springframework.security.oauth.common.signature.SignatureSecret;
 import org.springframework.security.oauth.consumer.BaseProtectedResourceDetails;
@@ -19,7 +19,6 @@ import org.springframework.security.oauth.consumer.client.CoreOAuthConsumerSuppo
 import org.springframework.security.oauth.consumer.net.DefaultOAuthURLStreamHandlerFactory;
 
 public class TestOAuthClient {
-	 
     protected static Logger log = Logger.getLogger(TestOAuthClient.class);
  
     private static final String SERVER_URL = "http://localhost:8080/api";

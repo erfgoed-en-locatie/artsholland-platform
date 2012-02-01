@@ -42,6 +42,7 @@ public class ParserQueueBean implements MessageListener {
 			stream = parse(uri);
 			parser.parse(stream, uri.toExternalForm());
 		} catch (Exception e) {
+			e.printStackTrace();
 			parser.cancel();
 		} finally {
 			try {

@@ -13,14 +13,15 @@
             <dependent-object/>
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="waag.artsholland.api.jar" deploy-path="/lib" handle="module:/resource/waag.artsholland.api/waag.artsholland.api">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <dependent-module archiveName="waag.artsholland.importer.jar" deploy-path="/" handle="module:/resource/waag.artsholland.importer/waag.artsholland.importer">
             <dependent-object/>
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <dependent-module archiveName="waag.artsholland.core.jar" deploy-path="/" handle="module:/resource/waag.artsholland.core/waag.artsholland.core">
+            <dependent-object/>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="waag.artsholland.api.war" deploy-path="/" handle="module:/resource/waag.artsholland.api/waag.artsholland.api">
             <dependent-object/>
             <dependency-type>uses</dependency-type>
         </dependent-module>
