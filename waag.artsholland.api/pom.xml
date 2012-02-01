@@ -3,6 +3,7 @@
   <groupId>waag.artsholland</groupId>
   <artifactId>api</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <packaging>war</packaging>
   <repositories>
     <repository>
       <id>spring-milestone</id>

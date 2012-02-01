@@ -4,6 +4,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
+import javax.ejb.DependsOn;
 import javax.ejb.MessageDriven;
 import javax.ejb.Schedule;
 import javax.jms.JMSException;
@@ -22,7 +23,9 @@ import org.slf4j.LoggerFactory;
 
 @MessageDriven(
 	activationConfig = {
+		@ActivationConfigProperty(propertyName="destinationType", propertyValue="javax.jms.Queue"),
 		@ActivationConfigProperty(propertyName="destination", propertyValue="queue/schedule")})
+@DependsOn(value="java:/ConnectionFactory")
 public class SchedulerServiceBean implements MessageListener {
 	final static Logger logger = LoggerFactory.getLogger(SchedulerServiceBean.class);
 
@@ -54,7 +57,7 @@ public class SchedulerServiceBean implements MessageListener {
 	
 	public void onMessage(Message msg) {}
 	
-    @Schedule(persistent=false, minute="*/1", hour="*")
+    @Schedule(persistent=false, minute="*/10", hour="*")
     public void automaticTimeout() {
 		QueueSession session = null;         
 		QueueSender sender = null;  

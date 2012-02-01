@@ -4,7 +4,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.jboss.logging.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,6 +14,7 @@ import org.waag.ah.api.service.SPARQLService;
 
 @Controller
 public class SPARQLController {
+	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger(SPARQLController.class);
 	  
 	@Resource(name="sparqlService")
