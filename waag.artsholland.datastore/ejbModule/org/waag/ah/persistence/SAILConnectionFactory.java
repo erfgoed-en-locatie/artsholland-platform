@@ -49,6 +49,14 @@ public class SAILConnectionFactory extends AbstractConnectionFactory
 		return conn;
     }
 	
+	public SailRepositoryConnection getReadOnlyConnection() throws RepositoryException { 
+		BigdataSailRepositoryConnection conn = 
+				(BigdataSailRepositoryConnection) repo.getReadOnlyConnection();
+		conn.setAutoCommit(false);
+//		logger.info("Created connection: "+conn);
+		return conn;
+	}	
+	
 	@Override
 	protected BigdataSailRepository createRepository(Properties properties) {
 		BigdataSail sail = new BigdataSail(properties);
