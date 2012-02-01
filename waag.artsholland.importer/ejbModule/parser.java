@@ -19,11 +19,15 @@ public class parser {
 	public static void main(String[] args) {
 		
 //		String sourceURL = "http://waxworks.nl/events.xml";
-		String sourceURL = "http://127.0.0.1/ah/nub/events.xml";
+//		String sourceURL = "http://127.0.0.1/ah/nub/events.xml";
 //		String sourceURL = "http://127.0.0.1/ah/nub/amsterdam.xml";
 //		String sourceURL = "http://test.publisher.uitburo.nl/agenda/search.do?key=e17c6b21b6852e1ab43abdfdf034f752&locationText=Amsterdam&start=0&rows=500";
 //		String sourceURL = "http://127.0.0.1/ah/dos/2011_jaarboek_1816.xls";
 
+		//String sourceURL = "http://localhost/ah/nub/v4/event.xml";
+		String sourceURL = "http://localhost/ah/nub/v4/production.xml";
+		//String sourceURL = "http://localhost/ah/nub/v4/combined.xml";
+							
 		try {
 			URLConnection conn = new URL(sourceURL).openConnection();
 			InputStream stream = conn.getInputStream();
