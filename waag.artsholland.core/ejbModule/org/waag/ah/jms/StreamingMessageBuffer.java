@@ -2,9 +2,7 @@ package org.waag.ah.jms;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.concurrent.Future;
 
-import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.jms.BytesMessage;
@@ -17,7 +15,7 @@ public class StreamingMessageBuffer {
 	private Logger logger = Logger.getLogger(StreamingMessageBuffer.class);
 
 	@Asynchronous
-	public Future<Boolean> pipedReader(BytesMessage message, 
+	public void pipedReader(BytesMessage message, 
 			OutputStream out) throws JMSException, IOException {
 		try {
 			message.setObjectProperty("JMS_HQ_SaveStream", out);
@@ -25,9 +23,9 @@ public class StreamingMessageBuffer {
 			logger.error(e.getMessage(), e);
 			throw e;
 		} finally {
-			logger.info("CLOSING STREAM");
 			out.close();
 		}
-		return new AsyncResult<Boolean>(true);
+		logger.info("FINISHED READING INPUT MESSAGE");
+//		return new AsyncResult<Boolean>(true);
 	}
 }

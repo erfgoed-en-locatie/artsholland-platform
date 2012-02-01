@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <faceted-project>
-  <runtime name="JBoss 6.x Runtime"/>
+  <runtime name="JBoss 7.1 Runtime"/>
   <fixed facet="jst.ear"/>
   <installed facet="jst.ear" version="6.0"/>
   <installed facet="jboss.m2" version="1.0"/>

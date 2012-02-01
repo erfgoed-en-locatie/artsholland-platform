@@ -20,10 +20,10 @@
           <artifactId>xmlbeans</artifactId>
           <groupId>org.apache.xmlbeans</groupId>
         </exclusion>
-        <exclusion>
+<!--         <exclusion>
           <artifactId>slf4j-api</artifactId>
           <groupId>org.slf4j</groupId>
-        </exclusion>
+        </exclusion> -->
       </exclusions>
     </dependency>             
     <dependency>
@@ -35,14 +35,14 @@
       <groupId>org.openrdf.sesame</groupId>
       <artifactId>sesame-runtime</artifactId>
       <version>2.6.2</version>
-      <exclusions>
+<!--       <exclusions>
         <exclusion>
           <artifactId>slf4j-api</artifactId>
           <groupId>org.slf4j</groupId>
         </exclusion>
-      </exclusions>
+      </exclusions> -->
     </dependency>
-    <dependency>
+<!--     <dependency>
       <groupId>org.openrdf.alibaba</groupId>
       <artifactId>alibaba-runtime</artifactId>
       <version>2.0-beta14</version>
@@ -52,11 +52,16 @@
           <groupId>javassist</groupId>
         </exclusion>
       </exclusions>
+    </dependency> -->
+    <dependency>
+      <groupId>net.sf.jsignature.io-tools</groupId>
+      <artifactId>easystream</artifactId>
+      <version>1.2.12</version>
     </dependency>
     <dependency>
-      <groupId>org.ostermiller</groupId>
-      <artifactId>utils</artifactId>
-      <version>1.07.00</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.6.4</version>
     </dependency>
   </dependencies>
 </project>
