@@ -49,7 +49,7 @@ public class StoringRDFParser extends RDFXMLParser {
 		try {
 			long cursize = conn.size();
 			super.parse(in, baseURI);
-			logger.info("ADDED "+(conn.size()-cursize)+" STATEMENTS");
+			logger.info("ADDED "+(conn.size()-cursize)+" NEW STATEMENTS");
 		} catch (RepositoryException e) {
 			logger.error(e.getMessage());
 		}
@@ -82,7 +82,7 @@ public class StoringRDFParser extends RDFXMLParser {
 				conn.add(statement.getContext(), source, baseURI);
 				counter++;
 				if (counter % 1024 == 0) {
-					logger.info("SCHEDULING "+counter+" STATEMENTS (ID: "+statement.getContext()+")");
+					logger.info("ADDING "+counter+" STATEMENTS (CTX: "+statement.getContext()+")");
 				}
 			} catch (RepositoryException e) {
 				try {
