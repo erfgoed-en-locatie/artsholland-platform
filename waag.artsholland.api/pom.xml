@@ -3,6 +3,39 @@
   <groupId>waag.artsholland</groupId>
   <artifactId>api</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jvnet.jaxb2.maven2</groupId>
+        <artifactId>maven-jaxb2-plugin</artifactId>
+        <version>0.8.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <args>
+                  <arg>-extension</arg>
+                  <arg>-Xinheritance</arg>
+              </args>
+              <schemaDirectory>WebContent/WEB-INF/xsd</schemaDirectory>
+              <generatePackage>org.waag.ah.api</generatePackage>
+              <removeOldOutput>false</removeOldOutput>
+              <verbose>true</verbose>
+              <plugins>
+                <plugin>
+                  <groupId>org.jvnet.jaxb2_commons</groupId>
+                  <artifactId>jaxb2-basics</artifactId>
+                  <version>0.6.3</version>
+                </plugin>
+              </plugins>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
   <repositories>
     <repository>
       <id>spring-milestone</id>
@@ -50,6 +83,17 @@
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-mapper-asl</artifactId>
       <version>1.9.4</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.ws</groupId>
+      <artifactId>spring-ws</artifactId>
+      <version>2.0.4.RELEASE</version>
+      <classifier>all</classifier>
+    </dependency>
+    <dependency>
+      <groupId>wsdl4j</groupId>
+      <artifactId>wsdl4j</artifactId>
+      <version>1.6.2</version>
     </dependency>
   </dependencies>
 </project>

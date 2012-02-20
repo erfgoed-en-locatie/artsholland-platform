@@ -1,0 +1,146 @@
+<?php
+
+/**
+ * @file
+ * Web service client UI - module file.
+ */
+
+define('WSCLIENT_UI_PATH', 'admin/config/services/wsclient');
+
+/**
+ * Implements hook_entity_info_alter().
+ */
+function wsclient_ui_entity_info_alter(&$entity_info) {
+  // Enable the entity API UI controller. See EntityDefaultUIController.
+  $entity_info['wsclient_service']['admin ui'] = array(
+    'controller class' => 'WSClientUIController',
+    'path' => WSCLIENT_UI_PATH,
+    'file' => 'wsclient_ui.inc',
+    'file path' => drupal_get_path('module', 'wsclient_ui'),
+  );
+  // Enable URI callback.
+  $entity_info['wsclient_service']['uri callback'] = 'wsclient_ui_uri';
+}
+
+/**
+ * Implements hook_menu().
+ */
+function wsclient_ui_menu() {
+  $items = array();
+  // Menu items to manage web service operations
+  $id_count = count(explode('/', WSCLIENT_UI_PATH)) + 1;
+  $items[WSCLIENT_UI_PATH . '/manage/%wsclient_service/add/operation'] = array(
+    'title' => 'Add operation',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('wsclient_ui_operation', $id_count, NULL, 'add'),
+    'access arguments' => array('administer web services'),
+    'file' => 'wsclient_ui.inc',
+  );
+  $op_count = $id_count + 2;
+  $items[WSCLIENT_UI_PATH . '/manage/%wsclient_service/operation/%wsclient_ui_operation'] = array(
+    'title' => 'Edit operation',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('wsclient_ui_operation', $id_count, $op_count, 'edit'),
+    'load arguments' => array($id_count),
+    'access arguments' => array('administer web services'),
+    'file' => 'wsclient_ui.inc',
+  );
+  $items[WSCLIENT_UI_PATH . '/manage/%wsclient_service/operation/%wsclient_ui_operation/delete'] = array(
+    'title' => 'Delete operation',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('wsclient_ui_operation_delete', $id_count, $op_count),
+    'load arguments' => array($id_count),
+    'access arguments' => array('administer web services'),
+    'file' => 'wsclient_ui.inc',
+  );
+  // Menu items to manage data types.
+  $items[WSCLIENT_UI_PATH . '/manage/%wsclient_service/add/type'] = array(
+    'title' => 'Add data type',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('wsclient_ui_type', $id_count, NULL, 'add'),
+    'access arguments' => array('administer web services'),
+    'file' => 'wsclient_ui.inc',
+  );
+  $items[WSCLIENT_UI_PATH . '/manage/%wsclient_service/type/%wsclient_ui_type'] = array(
+    'title' => 'Edit data type',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('wsclient_ui_type', $id_count, $op_count, 'edit'),
+    'load arguments' => array($id_count),
+    'access arguments' => array('administer web services'),
+    'file' => 'wsclient_ui.inc',
+  );
+  $items[WSCLIENT_UI_PATH . '/manage/%wsclient_service/type/%wsclient_ui_type/delete'] = array(
+    'title' => 'Delete data type',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('wsclient_ui_type_delete', $id_count, $op_count),
+    'load arguments' => array($id_count),
+    'access arguments' => array('administer web services'),
+    'file' => 'wsclient_ui.inc',
+  );
+  return $items;
+}
+
+/**
+ * Operation load callback.
+ */
+function wsclient_ui_operation_load($operation_name, $service_name) {
+  $service = wsclient_service_load($service_name);
+  if ($service && isset($service->operations[$operation_name])) {
+    $operation = $service->operations[$operation_name];
+    $operation['name'] = $operation_name;
+    return $operation;
+  }
+  return FALSE;
+}
+
+/**
+ * Data type load callback.
+ */
+function wsclient_ui_type_load($type_name, $service_name) {
+  $service = wsclient_service_load($service_name);
+  if ($service && isset($service->datatypes[$type_name])) {
+    $type = $service->datatypes[$type_name];
+    $type['name'] = $type_name;
+    return $type;
+  }
+  return FALSE;
+}
+
+/**
+ * Entity URI callback.
+ */
+function wsclient_ui_uri($service) {
+  return array('path' => WSCLIENT_UI_PATH . '/manage/' . $service->name);
+}
+
+/**
+ * Implements hook_theme().
+ */
+function wsclient_ui_theme() {
+  return array(
+    'wsclient_ui_parameter_form' => array(
+      'render element' => 'element',
+      'file' => 'wsclient_ui.inc',
+    ),
+    'wsclient_ui_property_form' => array(
+      'render element' => 'element',
+      'file' => 'wsclient_ui.inc',
+    ),
+  );
+}
+
+/**
+ * Controller class for customizing the default Entity UI.
+ */
+class WSClientUIController extends EntityDefaultUIController {
+
+  /**
+   * Overrides the default description of the top level menu item.
+   * @see EntityDefaultUIController::hook_menu()
+   */
+  function hook_menu() {
+    $items = parent::hook_menu();
+    $items[$this->path]['description'] = 'Manage Web Service Descriptions for Web service client.';
+    return $items;
+  }
+}

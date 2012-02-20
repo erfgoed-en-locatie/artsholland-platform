@@ -33,4 +33,11 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.jboss.tools.jst.web.kb.kbnature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>configuration</name>
+			<type>2</type>
+			<location>/Users/raoul/dev/conf/artsholland</location>
+		</link>
+	</linkedResources>
 </projectDescription>

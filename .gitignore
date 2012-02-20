@@ -1,10 +1,4 @@
-waag.artsholland/target
-waag.artsholland.api/target
-waag.artsholland.core/target
-waag.artsholland.datastore/target
-waag.artsholland.importer/target
-waag.artsholland.scheduler/target
+*/target
 
 .DS_Store*
 rebel.xml*
-

@@ -9,6 +9,9 @@
     </web>
   </module>
   <module>
+    <ejb>waag.artsholland.core.jar</ejb>
+  </module>
+  <module>
     <ejb>waag.artsholland.scheduler.jar</ejb>
   </module>
   <module>
@@ -18,6 +21,9 @@
     <ejb>waag.artsholland.importer.jar</ejb>
   </module>
   <module>
-    <ejb>waag.artsholland.core.jar</ejb>
+    <web>
+      <web-uri>services-0.2.9.war</web-uri>
+      <context-root>delving/services</context-root>
+    </web>
   </module>
 </application>

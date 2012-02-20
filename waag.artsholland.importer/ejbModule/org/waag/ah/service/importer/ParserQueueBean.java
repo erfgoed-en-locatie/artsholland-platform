@@ -37,8 +37,14 @@ public class ParserQueueBean implements MessageListener {
 //	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void onMessage(Message msgIn) {
 		InputStream stream = null;
+//		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+//            public void run() {
+//            	stream.close();
+//            }
+//		}));	
 		try {
 			URL uri = new URL(((TextMessage)msgIn).getText());
+			logger.info("Parsing URI: "+uri.toExternalForm());
 			stream = parse(uri);
 			parser.parse(stream, uri.toExternalForm());
 		} catch (Exception e) {
@@ -51,6 +57,7 @@ public class ParserQueueBean implements MessageListener {
 				logger.error(e.getMessage());
 			}
 		}
+		logger.info("Finished parsing");
 	}
 	
 	private InputStream parse(final URL uri) throws IOException {

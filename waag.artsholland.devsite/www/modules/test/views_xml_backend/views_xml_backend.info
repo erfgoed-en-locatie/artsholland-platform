@@ -1,0 +1,21 @@
+name = Views XML Backend
+description = Adds a views backend to query XML files.
+package = Views
+dependencies[] = views
+core = 7.x
+
+files[] = views_xml_backend_plugin_query_xml.inc
+; Handlers
+files[] = handlers/views_xml_backend_handler_field.inc
+files[] = handlers/views_xml_backend_handler_field_numeric.inc
+files[] = handlers/views_xml_backend_handler_field_markup.inc
+files[] = handlers/views_xml_backend_handler_filter.inc
+files[] = handlers/views_xml_backend_handler_filter_numeric.inc
+files[] = handlers/views_xml_backend_handler_sort.inc
+
+; Information added by drupal.org packaging script on 2012-02-02
+version = "7.x-1.0-alpha2"
+core = "7.x"
+project = "views_xml_backend"
+datestamp = "1328211650"
+

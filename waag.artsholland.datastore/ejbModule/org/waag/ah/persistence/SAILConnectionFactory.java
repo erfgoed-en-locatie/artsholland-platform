@@ -38,7 +38,12 @@ public class SAILConnectionFactory extends AbstractConnectionFactory
 	
 	@PreDestroy
 	public void destroy() {
-//		logger.info("Closing repository "+repo);
+		logger.info("Closing repository "+repo);
+//		try {
+//			repo.shutDown();
+//		} catch (RepositoryException e) {
+//			logger.error(e.getMessage());
+//		}
 	}
 	
 	public SailRepositoryConnection getConnection() throws RepositoryException { 

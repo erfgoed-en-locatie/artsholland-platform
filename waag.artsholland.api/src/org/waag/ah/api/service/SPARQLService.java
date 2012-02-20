@@ -14,8 +14,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.bigdata.rdf.sail.webapp.QueryServlet;
+
 @Service("sparqlService")
-public class SPARQLService {
+public class SPARQLService extends QueryServlet {
+	private static final long serialVersionUID = 5520647237936009532L;
 	private Logger logger = Logger.getLogger(SPARQLService.class);
 	private UriComponents SPARQL_ENDPOINT;
 	
