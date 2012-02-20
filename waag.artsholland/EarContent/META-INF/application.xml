@@ -20,10 +20,4 @@
   <module>
     <ejb>waag.artsholland.importer.jar</ejb>
   </module>
-  <module>
-    <web>
-      <web-uri>services-0.2.9.war</web-uri>
-      <context-root>delving/services</context-root>
-    </web>
-  </module>
 </application>

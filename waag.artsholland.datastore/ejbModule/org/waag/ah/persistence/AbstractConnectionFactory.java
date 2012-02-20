@@ -8,7 +8,7 @@ import java.util.Properties;
 
 import org.openrdf.repository.Repository;
 
-public abstract class AbstractConnectionFactory {
+public abstract class AbstractConnectionFactory implements RepositoryConnectionFactory {
 	
 	protected abstract Repository createRepository(Properties props);
 	
