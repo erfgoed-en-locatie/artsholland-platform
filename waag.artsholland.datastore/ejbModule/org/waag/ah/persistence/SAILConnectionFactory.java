@@ -17,20 +17,13 @@ import com.bigdata.rdf.sail.BigdataSailRepository;
 import com.bigdata.rdf.sail.BigdataSailRepositoryConnection;
 
 @Singleton
-public class SAILConnectionFactory extends AbstractConnectionFactory  
-		implements RepositoryConnectionFactory {
+public class SAILConnectionFactory extends AbstractConnectionFactory {
 	final static Logger logger = LoggerFactory.getLogger(SAILConnectionFactory.class);
-//	private Logger logger = Logger.getLogger(SAILConnectionFactory.class);
 	private static BigdataSailRepository repo = null;
-//	private static final String PROPERTY_FILE = "META-INF/bigdata_quads.properties";
-//	private static final String PROPERTY_FILE = "META-INF/bigdata_fullfeature.properties";
 	private static final String PROPERTY_FILE = "META-INF/bigdata.properties";
-	
-//	public final static String OBJECT_NAME = "artsholland:service=SAILConnectionFactory";
 
 	@PostConstruct
 	public void create() throws IOException, RepositoryException {
-//		logger.info("Creating service "+OBJECT_NAME);
 		Properties properties = loadProperties(PROPERTY_FILE);
 		repo = createRepository(properties);
 		repo.initialize();
@@ -50,9 +43,15 @@ public class SAILConnectionFactory extends AbstractConnectionFactory
 		BigdataSailRepositoryConnection conn = 
 				(BigdataSailRepositoryConnection) repo.getReadWriteConnection();
 		conn.setAutoCommit(false);
-//		logger.info("Created connection: "+conn);
 		return conn;
     }
+	
+	public SailRepositoryConnection getReadOnlyConnection() throws RepositoryException { 
+		BigdataSailRepositoryConnection conn = 
+				(BigdataSailRepositoryConnection) repo.getReadOnlyConnection();
+		conn.setAutoCommit(false);
+		return conn;
+	}	
 	
 	@Override
 	protected BigdataSailRepository createRepository(Properties properties) {

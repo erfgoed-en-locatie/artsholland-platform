@@ -11,4 +11,7 @@ import org.openrdf.repository.RepositoryException;
 public interface RepositoryConnectionFactory {
 	public RepositoryConnection getConnection() 
 			throws IOException, RepositoryException;
+	
+	public RepositoryConnection getReadOnlyConnection()
+		throws IOException, RepositoryException;
 }

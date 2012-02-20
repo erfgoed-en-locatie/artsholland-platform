@@ -10,6 +10,17 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.jboss.logging.Logger;
+import org.openrdf.query.BindingSet;
+import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.QueryEvaluationException;
+import org.openrdf.query.QueryLanguage;
+import org.openrdf.query.TupleQuery;
+import org.openrdf.query.TupleQueryResult;
+import org.openrdf.query.TupleQueryResultHandlerException;
+import org.openrdf.query.resultio.sparqljson.SPARQLResultsJSONWriter;
+import org.openrdf.repository.RepositoryConnection;
+import org.openrdf.repository.RepositoryException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -22,13 +33,16 @@ public class SPARQLService extends QueryServlet {
 	private Logger logger = Logger.getLogger(SPARQLService.class);
 	private UriComponents SPARQL_ENDPOINT;
 	
+	@Autowired
+	private RepositoryConnection connection;
+	
 	public SPARQLService() {
 		SPARQL_ENDPOINT = UriComponentsBuilder
-				.fromUriString("http://127.0.0.1:8080/bigdata/sparql?query={query}")
+				.fromUriString("http://127.0.0.1:8080/sparql?query={query}")
 				.build();
 	}
 	
-//	private RepositoryConnection connection;
+//		
 //
 //	public SPARQLService() throws NamingException, RepositoryException, IOException {
 //		InitialContext context = new InitialContext();
@@ -48,6 +62,33 @@ public class SPARQLService extends QueryServlet {
 //	private static class RDFHTMLHandler extends RDFHandlerBase {
 //		
 //	}
+	
+	public void tupleQuery(HttpServletRequest request,
+		HttpServletResponse response, String query) throws RepositoryException, 
+		MalformedQueryException, QueryEvaluationException, IOException, TupleQueryResultHandlerException {
+	
+		TupleQuery tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL, query);			
+		TupleQueryResult tupleQueryResult = tupleQuery.evaluate();
+				
+		SPARQLResultsJSONWriter resultsWriter = new SPARQLResultsJSONWriter(response.getOutputStream());
+							
+		/*
+		 * TODO: grijp uit properties
+		 */
+		Integer limit = 50; 
+		resultsWriter.startQueryResult(tupleQueryResult.getBindingNames());
+        try {
+            for (int i=0; tupleQueryResult.hasNext() && (limit == null || i < limit.intValue()); i++) {
+                BindingSet bindingSet = tupleQueryResult.next();
+                resultsWriter.handleSolution(bindingSet);
+            }
+        }
+        finally {
+            tupleQueryResult.close();
+        }
+        resultsWriter.endQueryResult();
+	}
+	
 
 	public void proxyQuery(HttpServletRequest request,
 			HttpServletResponse response, String query) {

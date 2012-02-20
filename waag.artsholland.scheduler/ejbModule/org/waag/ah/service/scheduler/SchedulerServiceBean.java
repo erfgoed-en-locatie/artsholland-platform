@@ -56,7 +56,7 @@ public class SchedulerServiceBean implements MessageListener {
 	
 	public void onMessage(Message msg) {}
 	
-//    @Schedule(persistent=false, minute="*/1", hour="*")
+    //@Schedule(persistent=false, minute="*/1", hour="*")
     public void automaticTimeout() {
 		QueueSession session = null;         
 		QueueSender sender = null;  

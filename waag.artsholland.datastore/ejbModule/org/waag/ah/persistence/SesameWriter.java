@@ -66,7 +66,7 @@ public class SesameWriter implements DocumentWriter {
 	                " triples in context '" + context + "' and " +
 	                connection.size((Resource)null) + " triples in context 'null'.");
 		} catch (NullPointerException e) {
-			// Appearantly, when running in "full feature" mode, BigData returns
+			// Apparently, when running in "full feature" mode, BigData returns
 			// this exception if all provided triples already exist in the
 			// repository.
 			logger.debug("No new data found at resource "+baseURL);

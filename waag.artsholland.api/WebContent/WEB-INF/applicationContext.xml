@@ -28,13 +28,24 @@
     <sws:xsd location="/WEB-INF/xsd/AdminInterface.xsd"/>
   </sws:dynamic-wsdl>
 
-  <!-- <bean id="connectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean">
-    <property name="jndiName" value="java:global/SailConnectionFactory"/>
-  </bean> -->
+	<!-- <bean id="connectionFactory" class="org.waag.ah.persistence.SAILConnectionFactory">
+		<property name="jndiName" value="java:app/waag.artsholland.datastore/SAILConnectionFactory"/>
+	</bean> -->
+	
+	
+	
+	<bean id="connectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="java:app/waag.artsholland.datastore/SAILConnectionFactory"/>
+	</bean>
 
-<!--   <bean id="repositoryConnection"
-      class=""
-      factory-bean="connectionFactory"
-      factory-method="getConnection"/> -->  
- 
+	<!-- 
+	  <bean id="connectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean">
+	    <property name="jndiName" value="java:global/SailConnectionFactory"/>
+	  </bean> -->
+	 
+	<bean id="repositoryConnection"
+	      class="org.openrdf.repository.sail.SailRepositoryConnection"
+	      factory-bean="connectionFactory"
+	      factory-method="getConnection"/> 
+	  
 </beans>
