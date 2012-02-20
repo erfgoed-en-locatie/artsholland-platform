@@ -23,6 +23,12 @@ return
     
 		let $auri := {concat($baseuri, "address/", replace($address/zipcode, " ", ""), $address/street/@number)}		
 		let $ouri := {concat($baseuri, "organization/", replace($event/location/title, " ", ""))}    
+		
+		#
+		# B-nodes weghalen
+		# Rooms uniek
+		# Onderscheid short desc., long desc
+		#
     
 		construct {     
 			$euri a ah:Event.
@@ -30,21 +36,24 @@ return
 			# =============================================================================================
 			# dc:created, dc:modified	
 			# =============================================================================================
+			
 			$euri dc:created {$event/@datecreated}^^xsd:string.
 			$euri dc:modified {$event/@datechanged}^^xsd:string.
 			
 			# =============================================================================================
 			# ah:hasProduction > ah:Production	
 			# =============================================================================================
+			
 			$euri ah:hasProduction _:b.
 				_:b a ah:Production;
 					dc:title {$event/eventdetail/title}^^xsd:string;
-					dc:description {waag:escape-for-regex($event/eventdetail/shortdescription)}^^xsd:string;
+					ah:shortdescription {waag:escape-for-regex($event/eventdetail/shortdescription)}^^xsd:string;
 					dc:description {waag:escape-for-regex($event/eventdetail/longdescription)}^^xsd:string.
 				
 			# =============================================================================================
 			# ah:atLocation > ah:Venue	
 			# =============================================================================================
+			
 			$euri ah:atLocation _:b.
        	_:b a ah:Venue;
        		dc:description {waag:escape-for-regex($event/location/shortdescription)}^^xsd:string;
@@ -53,6 +62,7 @@ return
 			# =============================================================================================
 			# ah:hasRoom > ah:Room
 			# =============================================================================================
+			
 			{ for $room in $event/location/rooms//room
        	construct {
        		_:b a ah:Room.
@@ -64,6 +74,7 @@ return
       # =============================================================================================
 			# ah:inRoom > ah:Room	
 			# =============================================================================================
+      
       { for $room in $event/location/rooms//room[@eventat="true"]
        	construct {
        		_:b a ah:Room.

@@ -5,6 +5,7 @@
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:mvc="http://www.springframework.org/schema/mvc"
     xmlns:sws="http://www.springframework.org/schema/web-services"
+    xmlns:mongo="http://www.springframework.org/schema/data/mongo"
     xsi:schemaLocation="http://www.springframework.org/schema/beans 
         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
         http://www.springframework.org/schema/context
@@ -12,9 +13,9 @@
         http://www.springframework.org/schema/mvc 
         http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
         http://www.springframework.org/schema/web-services
-        http://www.springframework.org/schema/web-services/web-services-2.0.xsd">
-  
-  <!-- <import resource="applicationContext-security.xml"/> -->
+        http://www.springframework.org/schema/web-services/web-services-2.0.xsd
+        http://www.springframework.org/schema/data/mongo 
+	http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd">
   
   <context:annotation-config/>
   <context:component-scan base-package="org.waag.ah.api" />
@@ -27,25 +28,24 @@
       locationUri="http://api.ah.local/admin/">
     <sws:xsd location="/WEB-INF/xsd/AdminInterface.xsd"/>
   </sws:dynamic-wsdl>
-
-	<!-- <bean id="connectionFactory" class="org.waag.ah.persistence.SAILConnectionFactory">
-		<property name="jndiName" value="java:app/waag.artsholland.datastore/SAILConnectionFactory"/>
-	</bean> -->
-	
-	
 	
 	<bean id="connectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean">
 		<property name="jndiName" value="java:app/waag.artsholland.datastore/SAILConnectionFactory"/>
 	</bean>
-
-	<!-- 
-	  <bean id="connectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean">
-	    <property name="jndiName" value="java:global/SailConnectionFactory"/>
-	  </bean> -->
 	 
 	<bean id="repositoryConnection"
 	      class="org.openrdf.repository.sail.SailRepositoryConnection"
 	      factory-bean="connectionFactory"
-	      factory-method="getConnection"/> 
+	      factory-method="getReadOnlyConnection"/> 
+	  
+	<!-- <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+   	<constructor-arg name="mongo" ref="mongo"/>
+   	<constructor-arg name="databaseName" value="test"/>
+   	<constructor-arg name="defaultCollectionName" value="test"/>
+	</bean>
+	
+	<bean id="mongo" class="org.springframework.data.mongodb.core.MongoFactoryBean">
+		<property name="host" value="localhost"/>
+	</bean>  -->
 	  
 </beans>

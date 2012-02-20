@@ -8,6 +8,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import javax.ejb.ActivationConfigProperty;
+import javax.ejb.DependsOn;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
 import javax.jms.Message;
@@ -30,6 +31,7 @@ import com.gc.iotools.stream.is.InputStreamFromOutputStream;
 		@ActivationConfigProperty(propertyName="destination", propertyValue="queue/importer/parse"),
 		@ActivationConfigProperty(propertyName="maxSession", propertyValue = "1"),
 		@ActivationConfigProperty(propertyName="transactionTimeout", propertyValue="900000")})
+@DependsOn(value="java:/ConnectionFactory")
 public class ParserQueueBean implements MessageListener {
 	private static final Logger logger = Logger.getLogger(ParserQueueBean.class.toString());
 	private @EJB StoringRDFParser parser;

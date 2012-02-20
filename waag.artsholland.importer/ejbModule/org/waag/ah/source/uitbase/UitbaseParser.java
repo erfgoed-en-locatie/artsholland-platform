@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.io.CloseShieldInputStream;
 import org.apache.tika.metadata.Metadata;
@@ -24,20 +23,26 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 public class UitbaseParser extends XMLParser {
-	private Logger logger = Logger.getLogger(UitbaseParser.class);
+	//private Logger logger = Logger.getLogger(UitbaseParser.class);
 	private static final long serialVersionUID = 116487633414164925L;
 
 	@SuppressWarnings("serial")
 	private static final Set<MediaType> SUPPORTED_TYPES = new HashSet<MediaType>() {{ 
 		add(MediaType.application("x-waag-uitbase-v3+xml")); 
-		add(MediaType.application("x-waag-uitbase-v4+xml"));
+		
+		add(MediaType.application("x-waag-uitbase-v4-event+xml"));
+		add(MediaType.application("x-waag-uitbase-v4-production+xml"));
+		add(MediaType.application("x-waag-uitbase-v4-location+xml"));
 	}};
 	
 	/*private static final Set<MediaType> SUPPORTED_TYPES = Collections.singleton(
     		MediaType.application("x-waag-uitbase-v3+xml"));*/
 	
     public static final String UITBASEV3_MIME_TYPE = "application/x-waag-uitbase-v3+xml";
-    public static final String UITBASEV4_MIME_TYPE = "application/x-waag-uitbase-v4+xml";
+    
+    public static final String UITBASEV4_EVENT_MIME_TYPE = "application/x-waag-uitbase-v4-event+xml";
+    public static final String UITBASEV4_PRODUCTION_MIME_TYPE = "application/x-waag-uitbase-v4-production+xml";
+    public static final String UITBASEV4_LOCATION_MIME_TYPE = "application/x-waag-uitbase-v4-location+xml";
 
 	@Override
 	public Set<MediaType> getSupportedTypes(ParseContext context) {
@@ -71,16 +76,25 @@ public class UitbaseParser extends XMLParser {
 			// As we don't want to load the entire input document in memory
 			// for XQuery processing, we handle each event node separately.
 			if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV3_MIME_TYPE)) {
+				
 				String xquery = getFileContents(getClass(), "META-INF/uitbase_v3.xquery");    			
 				return new MatchingContentHandler(
 					new XSPARQLQueryHandler(handler, metadata, context, xquery), 
 					getXPathMatcher("/nubxml/events/descendant::node()"));
-			} else if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_MIME_TYPE)) {
-				String xquery = getFileContents(getClass(), "META-INF/uitbase_v4.xquery");    			
+				
+			} else {
+				String xquery = null;
+				if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_EVENT_MIME_TYPE)) {
+					xquery = getFileContents(getClass(), "META-INF/uitbase_v4/event.xquery"); 	
+				} else if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_PRODUCTION_MIME_TYPE)) {
+					xquery = getFileContents(getClass(), "META-INF/uitbase_v4/production.xquery");
+				} else if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_LOCATION_MIME_TYPE)) {
+					xquery = getFileContents(getClass(), "META-INF/uitbase_v4/location.xquery");
+				}
 				return new MatchingContentHandler(
-					new XSPARQLQueryHandler(handler, metadata, context, xquery), 
-					//getXPathMatcher("/"));
-					getXPathMatcher("/descendant::node()"));
+						new XSPARQLQueryHandler(handler, metadata, context, xquery), 
+						//getXPathMatcher("/"));
+						getXPathMatcher("/descendant::node()"));
 			}
 		} catch (TikaException e) {
 			e.printStackTrace();

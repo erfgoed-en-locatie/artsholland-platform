@@ -40,16 +40,13 @@ public class SAILConnectionFactory extends AbstractConnectionFactory {
 	}
 	
 	public SailRepositoryConnection getConnection() throws RepositoryException { 
-		BigdataSailRepositoryConnection conn = 
-				(BigdataSailRepositoryConnection) repo.getReadWriteConnection();
+		BigdataSailRepositoryConnection conn = repo.getReadWriteConnection();
 		conn.setAutoCommit(false);
 		return conn;
     }
 	
 	public SailRepositoryConnection getReadOnlyConnection() throws RepositoryException { 
-		BigdataSailRepositoryConnection conn = 
-				(BigdataSailRepositoryConnection) repo.getReadOnlyConnection();
-		conn.setAutoCommit(false);
+		BigdataSailRepositoryConnection conn = repo.getReadOnlyConnection();
 		return conn;
 	}	
 	
