@@ -37,21 +37,22 @@ public class SAILConnectionFactory extends AbstractConnectionFactory
 	}
 	
 	@PreDestroy
-	public void destroy() {
-//		logger.info("Closing repository "+repo);
+	public void destroy() throws RepositoryException {
+		/*logger.info("Closing repository "+repo);
+		repo.shutDown();*/
 	}
 	
 	public SailRepositoryConnection getConnection() throws RepositoryException { 
-		BigdataSailRepositoryConnection conn = 
-				(BigdataSailRepositoryConnection) repo.getReadWriteConnection();
+		BigdataSailRepositoryConnection conn = repo.getReadWriteConnection();
 		conn.setAutoCommit(false);
 //		logger.info("Created connection: "+conn);
 		return conn;
     }
 	
 	public SailRepositoryConnection getReadOnlyConnection() throws RepositoryException { 
-		BigdataSailRepositoryConnection conn = 
-				(BigdataSailRepositoryConnection) repo.getReadOnlyConnection();
+		BigdataSailRepositoryConnection conn = repo.getReadOnlyConnection();
+		//BigdataSailRepositoryConnection conn = repo.getUnisolatedConnection();
+		 
 		conn.setAutoCommit(false);
 //		logger.info("Created connection: "+conn);
 		return conn;

@@ -36,9 +36,9 @@ public class SchedulerServiceBean implements MessageListener {
 	protected QueueConnectionFactory factory; 
 	
 	private QueueConnection conn;
-	
+		
 	@PostConstruct  
-	public void init() {           
+	public void init() {         
 		try {                   
 			conn = factory.createQueueConnection();              
 		} catch (JMSException e) {                     
@@ -61,16 +61,29 @@ public class SchedulerServiceBean implements MessageListener {
     public void automaticTimeout() {
 		QueueSession session = null;         
 		QueueSender sender = null;  
-		try {       	
+		try {
+			
 			session = conn.createQueueSession(false, QueueSession.AUTO_ACKNOWLEDGE);                   
 //			session = conn.createQueueSession(false, QueueSession.CLIENT_ACKNOWLEDGE);                   
 			sender = session.createSender(targetQueue);                   
-			TextMessage msg = session.createTextMessage("http://127.0.0.1/ah/nub/amsterdam.xml");                      
-//			TextMessage msg = session.createTextMessage("http://127.0.0.1/ah/nub/events.xml");                      
-//			TextMessage msg = session.createTextMessage("http://waxworks.nl/amsterdam.xml");                      
-//			TextMessage msg = session.createTextMessage("http://waxworks.nl/events.xml");                      
-			sender.send(msg); 
-			logger.info("Message sent successfully to import queue");
+			
+			String[] sourceURLs = {
+					"http://localhost/ah/nub/v4/event.xml",
+					"http://localhost/ah/nub/v4/production.xml",
+					"http://localhost/ah/nub/v4/location.xml"
+					//"http://127.0.0.1/ah/nub/amsterdam.xml"
+				};
+			
+			for (String sourceURL: sourceURLs) {
+				TextMessage msg = session.createTextMessage(sourceURL);
+				sender.send(msg);
+				logger.info("Message sent successfully to import queue");
+			}
+			
+//			TextMessage msg = session.createTextMessage("http://127.0.0.1/ah/nub/amsterdam.xml");
+//			TextMessage msg = session.createTextMessage("http://127.0.0.1/ah/nub/events.xml");
+//			TextMessage msg = session.createTextMessage("http://waxworks.nl/amsterdam.xml");
+//			TextMessage msg = session.createTextMessage("http://waxworks.nl/events.xml");
 		} catch (JMSException e) {                      
 			throw new RuntimeException(e);          
 		} finally {                     
