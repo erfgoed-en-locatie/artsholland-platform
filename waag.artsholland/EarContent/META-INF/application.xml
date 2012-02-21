@@ -9,6 +9,9 @@
     </web>
   </module>
   <module>
+    <ejb>waag.artsholland.core.jar</ejb>
+  </module>
+  <module>
     <ejb>waag.artsholland.scheduler.jar</ejb>
   </module>
   <module>
@@ -16,8 +19,5 @@
   </module>
   <module>
     <ejb>waag.artsholland.importer.jar</ejb>
-  </module>
-  <module>
-    <ejb>waag.artsholland.core.jar</ejb>
   </module>
 </application>

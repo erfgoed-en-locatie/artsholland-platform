@@ -8,6 +8,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import javax.ejb.ActivationConfigProperty;
+import javax.ejb.DependsOn;
 import javax.ejb.EJB;
 import javax.ejb.MessageDriven;
 import javax.jms.Message;
@@ -28,8 +29,9 @@ import com.gc.iotools.stream.is.InputStreamFromOutputStream;
 	activationConfig={
 		@ActivationConfigProperty(propertyName="destinationType", propertyValue="javax.jms.Queue"),
 		@ActivationConfigProperty(propertyName="destination", propertyValue="queue/importer/parse"),
-		@ActivationConfigProperty(propertyName="maxSession", propertyValue = "1"),
-		@ActivationConfigProperty(propertyName="transactionTimeout", propertyValue="900000")})
+		@ActivationConfigProperty(propertyName="maxSession", propertyValue = "1")})
+//		@ActivationConfigProperty(propertyName="transactionTimeout", propertyValue="900000")})
+@DependsOn(value="java:/ConnectionFactory")
 public class ParserQueueBean implements MessageListener {
 	private static final Logger logger = Logger.getLogger(ParserQueueBean.class.toString());
 	private @EJB StoringRDFParser parser;
@@ -37,8 +39,14 @@ public class ParserQueueBean implements MessageListener {
 //	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public void onMessage(Message msgIn) {
 		InputStream stream = null;
+//		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+//            public void run() {
+//            	stream.close();
+//            }
+//		}));	
 		try {
 			URL uri = new URL(((TextMessage)msgIn).getText());
+			logger.info("Parsing URI: "+uri.toExternalForm());
 			stream = parse(uri);
 			parser.parse(stream, uri.toExternalForm());
 		} catch (Exception e) {
@@ -51,6 +59,7 @@ public class ParserQueueBean implements MessageListener {
 				logger.error(e.getMessage());
 			}
 		}
+		logger.info("Finished parsing");
 	}
 	
 	private InputStream parse(final URL uri) throws IOException {

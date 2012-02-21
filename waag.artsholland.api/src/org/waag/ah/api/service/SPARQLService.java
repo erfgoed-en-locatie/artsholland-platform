@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
+import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,12 +29,15 @@ import org.openrdf.query.resultio.sparqljson.SPARQLResultsJSONWriter;
 import org.openrdf.query.resultio.sparqlxml.SPARQLResultsXMLWriter;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponents;
+import org.waag.ah.persistence.RepositoryConnectionFactory;
 
 @Service("sparqlService")
-public class SPARQLService {
+public class SPARQLService implements InitializingBean, DisposableBean {
+//	private static final long serialVersionUID = 5520647237936009532L;
 	private Logger logger = Logger.getLogger(SPARQLService.class);
 	private UriComponents SPARQL_ENDPOINT;
 	
@@ -44,12 +48,13 @@ public class SPARQLService {
 		MIME_APPLICATION_RDF_XML = "application/rdf+xml",
 		MIME_APPLICATION_RDF_JSON = "application/rdf+json",
 		MIME_SPARQL_RESULTS_XML = "application/sparql-results+xml",
-  	MIME_SPARQL_RESULTS_JSON = "application/sparql-results+json";
+		MIME_SPARQL_RESULTS_JSON = "application/sparql-results+json";
 
-	@Autowired
-	private RepositoryConnection connection;
+	@EJB(mappedName="java:app/waag.artsholland.datastore/SAILConnectionFactory")
+	private RepositoryConnectionFactory connFactory;
 
 	private ExecutorService executor;
+	private RepositoryConnection connection;
 	
 	public SPARQLService() {
 		executor = new ScheduledThreadPoolExecutor(5);
@@ -57,7 +62,16 @@ public class SPARQLService {
 		//		"http://127.0.0.1:8080/sparql?query={query}").build();
 
 	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		connection = connFactory.getReadOnlyConnection();
+	}
 	
+	@Override
+	public void destroy() throws Exception {
+		connection.close();
+	}
 	
 	//
 	//

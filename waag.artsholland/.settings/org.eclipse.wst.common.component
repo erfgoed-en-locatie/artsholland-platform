@@ -5,6 +5,14 @@
         <dependent-module archiveName="waag.artsholland.config.jar" deploy-path="/lib" handle="module:/resource/waag.artsholland.config/waag.artsholland.config">
             <dependency-type>uses</dependency-type>
         </dependent-module>
+        <dependent-module archiveName="waag.artsholland.core.jar" deploy-path="/" handle="module:/resource/waag.artsholland.core/waag.artsholland.core">
+            <dependent-object/>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="waag.artsholland.api.war" deploy-path="/" handle="module:/resource/waag.artsholland.api/waag.artsholland.api">
+            <dependent-object/>
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <dependent-module archiveName="waag.artsholland.scheduler.jar" deploy-path="/" handle="module:/resource/waag.artsholland.scheduler/waag.artsholland.scheduler">
             <dependent-object/>
             <dependency-type>uses</dependency-type>
@@ -17,11 +25,7 @@
             <dependent-object/>
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="waag.artsholland.core.jar" deploy-path="/" handle="module:/resource/waag.artsholland.core/waag.artsholland.core">
-            <dependent-object/>
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
-        <dependent-module archiveName="waag.artsholland.api.war" deploy-path="/" handle="module:/resource/waag.artsholland.api/waag.artsholland.api">
+        <dependent-module archiveName="services-0.2.9.war" deploy-path="/" handle="module:/classpath/lib/external.delving/services/target/services-0.2.9.war">
             <dependent-object/>
             <dependency-type>uses</dependency-type>
         </dependent-module>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<jxb:bindings version="1.0" xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+        xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:inheritance="http://jaxb2-commons.dev.java.net/basic/inheritance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/jaxb http://java.sun.com/xml/ns/jaxb/bindingschema_2_0.xsd">
+  <jxb:bindings schemaLocation="AdminInterface.xsd">
+    <jxb:bindings node="//xs:complexType[@name='ApplicationType']">
+      <inheritance:implements>org.waag.ah.model.Application</inheritance:implements>  
+    </jxb:bindings>  
+    <jxb:bindings node="//xs:complexType[@name='ImportTaskType']">
+      <inheritance:implements>org.waag.ah.model.ScheduledTask</inheritance:implements>      
+    </jxb:bindings>
+    <jxb:bindings node="//xs:complexType[@name='UserAccountType']">
+      <inheritance:implements>org.waag.ah.model.UserAccount</inheritance:implements>      
+    </jxb:bindings>    
+  </jxb:bindings>
+</jxb:bindings>

@@ -1,0 +1,13 @@
+name = Web service client SOAP
+description = Implements a SOAP endpoint to connect to SOAP services.
+package = Services
+core = 7.x
+files[] = wsclient_soap.module
+dependencies[] = wsclient
+
+; Information added by drupal.org packaging script on 2011-11-21
+version = "7.x-1.0-beta1"
+core = "7.x"
+project = "wsclient"
+datestamp = "1321882544"
+

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema 
+    xmlns:ah="http://artsholland.com/schema" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    targetNamespace="http://artsholland.com/schema">
+  <xsd:element name="CreateApplicationRequest">
+    <xsd:complexType>
+      <xsd:all>
+        <xsd:element name="Name" type="xsd:string"/>
+        <xsd:element name="Description" type="xsd:string"/>
+        <xsd:element name="URL" type="xsd:anyURI"/>
+        <xsd:element name="UserAccount" type="ah:UserAccountType"/>
+      </xsd:all>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="ApplicationListRequest">
+    <xsd:complexType/>
+  </xsd:element>
+  <xsd:element name="ApplicationListResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="Application" type="ah:ApplicationType" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="ScheduleTaskRequest">
+    <xsd:complexType>
+      <xsd:all>
+        <xsd:element name="Name" type="xsd:string"/>
+        <xsd:element name="Description" type="xsd:string"/>
+      </xsd:all>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="UserAccountRequest">
+    <xsd:complexType>
+      <xsd:all>
+        <xsd:element name="FirstName" type="xsd:string"/>
+        <xsd:element name="LastName" type="xsd:string"/>                               
+        <xsd:element name="CompanyName" type="xsd:string"/>                               
+        <xsd:element name="EmailAddress" type="xsd:string"/> 
+        <xsd:element name="Password" type="xsd:string"/> 
+      </xsd:all>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:complexType name="ApplicationType">
+    <xsd:sequence>
+      <xsd:element name="Name" type="xsd:string"></xsd:element>
+      <xsd:element name="Description" type="xsd:string"/>
+      <xsd:element name="URL" type="xsd:anyURI"/>
+      <xsd:element name="PublicKey" type="xsd:string"/>
+      <xsd:element name="PrivateKey" type="xsd:string"/>
+      <xsd:element name="UserAccount" type="ah:UserAccountType"/>                               
+    </xsd:sequence>                                                                   
+  </xsd:complexType>
+  <xsd:complexType name="UserAccountType">
+    <xsd:sequence>
+      <xsd:element name="FirstName" type="xsd:string"/>
+      <xsd:element name="LastName" type="xsd:string"/>                               
+      <xsd:element name="EmailAddress" type="xsd:string"/>                               
+    </xsd:sequence>                                                                   
+  </xsd:complexType>
+  <xsd:complexType name="ImportTaskType">
+    <xsd:sequence>
+      <xsd:element name="Name" type="xsd:string"/>
+      <xsd:element name="StartDate" type="xsd:dateTime"/>
+      <xsd:element name="SourceUrl" type="xsd:anyURI"/>
+    </xsd:sequence>                                                                   
+  </xsd:complexType>
+</xsd:schema>
