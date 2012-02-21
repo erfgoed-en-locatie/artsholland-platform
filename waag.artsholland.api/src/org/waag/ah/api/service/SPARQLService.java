@@ -44,11 +44,11 @@ public class SPARQLService implements InitializingBean, DisposableBean {
 	/**
 	 * Common MIME types for dynamic content.
 	 */
-//	public static final transient String
-	static String MIME_APPLICATION_RDF_XML = "application/rdf+xml";
-	static String MIME_APPLICATION_RDF_JSON = "application/rdf+json";
-	static String MIME_SPARQL_RESULTS_XML = "application/sparql-results+xml";
-	static String MIME_SPARQL_RESULTS_JSON = "application/sparql-results+json";
+	public static final transient String
+		MIME_APPLICATION_RDF_XML = "application/rdf+xml",
+		MIME_APPLICATION_RDF_JSON = "application/rdf+json",
+		MIME_SPARQL_RESULTS_XML = "application/sparql-results+xml",
+		MIME_SPARQL_RESULTS_JSON = "application/sparql-results+json";
 
 	@EJB(mappedName="java:app/waag.artsholland.datastore/SAILConnectionFactory")
 	private RepositoryConnectionFactory connFactory;

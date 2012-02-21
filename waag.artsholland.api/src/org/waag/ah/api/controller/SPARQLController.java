@@ -29,7 +29,7 @@ public class SPARQLController {
 	public void bert(final HttpServletRequest request,
 			final HttpServletResponse response,
 			@RequestParam("query") String query, @RequestHeader("Accept") String accept) throws InterruptedException, ExecutionException, IOException  {      	
-//		sparqlService.tupleQuery(request, response, query, accept);	
+		sparqlService.tupleQuery(request, response, query, accept);	
 	}
 
 	@RequestMapping(value = "/sparql", method = RequestMethod.GET, headers = "Accept=text/html")

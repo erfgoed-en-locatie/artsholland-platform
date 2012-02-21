@@ -29,8 +29,8 @@ import com.gc.iotools.stream.is.InputStreamFromOutputStream;
 	activationConfig={
 		@ActivationConfigProperty(propertyName="destinationType", propertyValue="javax.jms.Queue"),
 		@ActivationConfigProperty(propertyName="destination", propertyValue="queue/importer/parse"),
-		@ActivationConfigProperty(propertyName="maxSession", propertyValue = "1"),
-		@ActivationConfigProperty(propertyName="transactionTimeout", propertyValue="900000")})
+		@ActivationConfigProperty(propertyName="maxSession", propertyValue = "1")})
+//		@ActivationConfigProperty(propertyName="transactionTimeout", propertyValue="900000")})
 @DependsOn(value="java:/ConnectionFactory")
 public class ParserQueueBean implements MessageListener {
 	private static final Logger logger = Logger.getLogger(ParserQueueBean.class.toString());
