@@ -20,15 +20,17 @@ public class parser {
 			//"http://127.0.0.1/ah/nub/amsterdam.xml",
 			//"http://test.publisher.uitburo.nl/agenda/search.do?key=e17c6b21b6852e1ab43abdfdf034f752&locationText=Amsterdam&start=0&rows=500",
 			//"http://127.0.0.1/ah/dos/2011_jaarboek_1816.xls",
+							
+			//"http://localhost/ah/nub/v4/accept/events.xml"
+			//"http://localhost/ah/nub/v4/accept/productions.xml",
+			//"http://localhost/ah/nub/v4/accept/locations.xml"
+			//"http://accept.ps4.uitburo.nl/api/groups?key=505642b12881b9a60688411a333bc78b&rows=6"
 				
-			//"http://localhost/ah/nub/v4/event.xml",
-			//"http://localhost/ah/nub/v4/production.xml",
-			//"http://localhost/ah/nub/v4/location.xml"
-			
-			"http://accept.ps4.uitburo.nl/api/events?key=505642b12881b9a60688411a333bc78b&rows=6"/*,
-			"http://accept.ps4.uitburo.nl/api/productions?key=505642b12881b9a60688411a333bc78b&rows=6",
-			"http://accept.ps4.uitburo.nl/api/locations?key=505642b12881b9a60688411a333bc78b&rows=6",
-			"http://accept.ps4.uitburo.nl/api/groups?key=505642b12881b9a60688411a333bc78b&rows=6"*/
+				
+			"http://accept.ps4.uitburo.nl/api/events?key=505642b12881b9a60688411a333bc78b&rows=10000",
+			"http://accept.ps4.uitburo.nl/api/productions?key=505642b12881b9a60688411a333bc78b&rows=10000",
+			"http://accept.ps4.uitburo.nl/api/locations?key=505642b12881b9a60688411a333bc78b&rows=10000"
+			//"http://accept.ps4.uitburo.nl/api/groups?key=505642b12881b9a60688411a333bc78b&rows=6"
 		};
 							
 		try {

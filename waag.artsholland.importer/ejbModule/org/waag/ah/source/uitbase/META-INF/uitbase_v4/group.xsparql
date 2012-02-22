@@ -1,0 +1,30 @@
+declare namespace dc="http://purl.org/dc/elements/1.1/";
+declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+declare namespace xsd="http://www.w3.org/2001/XMLSchema#";
+declare namespace waag = "http://waag.org";
+declare namespace ah = "http://purl.org/artsholland/1.0/";
+declare namespace foaf="http://xmlns.com/foaf/0.1/";
+declare namespace vcard="http://www.w3.org/2006/vcard/ns#";
+declare namespace owl="http://www.w3.org/2002/07/owl#";
+
+declare function waag:escape-for-regex($arg as xs:string) as xs:string {
+	translate($arg, '":', "'&#x58;")
+};
+
+let $groups := //group
+
+let $baseuri := {"http://purl.org/artsholland/1.0/"}
+let $baseuriUitburo := {"http://resources.uitburo.nl/"}
+
+return
+	for $group in $groups
+		
+		let $cidn := {$group/cidn}
+		let $guri := {concat($baseuri, "groups/", $cidn)}
+		let $guriUitburo := {concat($baseuriUitburo, "groups/", $cidn)}
+			
+		construct {     
+			$guri a ah:Group.			
+			$guri owl:sameAs $guriUitburo.
+				
+		}

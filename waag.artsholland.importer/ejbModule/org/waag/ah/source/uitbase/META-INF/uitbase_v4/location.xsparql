@@ -1,0 +1,127 @@
+declare namespace dc="http://purl.org/dc/elements/1.1/";
+declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+declare namespace xsd="http://www.w3.org/2001/XMLSchema#";
+declare namespace waag = "http://waag.org";
+declare namespace ah = "http://purl.org/artsholland/1.0/";
+declare namespace geo="http://www.w3.org/2003/01/geo/wgs84_pos#";
+declare namespace foaf="http://xmlns.com/foaf/0.1/";
+declare namespace vcard="http://www.w3.org/2006/vcard/ns#";
+declare namespace owl="http://www.w3.org/2002/07/owl#";
+
+declare function waag:escape-for-regex($arg as xs:string) as xs:string {
+	translate($arg, '":', "'&#x58;")
+};
+
+declare function waag:capitalize-first-only($arg as xs:string) as xs:string {
+ concat(upper-case(substring($arg,1,1)),
+             substring($arg,2))
+};
+
+
+let $locations := //location
+
+let $baseuri := {"http://purl.org/artsholland/1.0/"}
+let $baseuriUitburo := {"http://resources.uitburo.nl/"}
+
+return
+	for $location in $locations
+		
+		let $cidn := {$location/cidn}
+		let $luri := {concat($baseuri, "venues/", $cidn)}
+		let $luriUitburo := {concat($baseuriUitburo, "locations/", $cidn)}
+		let $venueType := {concat("ah:VenueType", waag:capitalize-first-only(lower-case($location/type/@key)))}
+			
+		construct {     
+			$luri a ah:Venue.			
+			$luri owl:sameAs $luriUitburo.
+			
+			#	TODO: deze title of uit /languages/ ??
+			#$luri dc:title {waag:escape-for-regex($location/name)}^^xsd:string.
+				
+			# Wat doet functie data()???
+			$luri geo:lat {data($location/geocode/latitude)}^^xsd:decimal.
+			$luri geo:long {data($location/geocode/longitude)}^^xsd:decimal.
+
+			$luri dc:created {$location/@date-created}^^xsd:string.
+			$luri dc:modified {$location/@date-changed}^^xsd:string.
+			
+			{ for $room in $location/rooms//room
+				# TODO: maak algemene functie
+				let $ruri := {concat($luri, "/rooms/", translate(lower-case($room), '": ', "'&#x58;-"))}
+				construct {
+					$ruri a ah:Room.
+					$ruri rdf:Label {waag:escape-for-regex($room)}.
+					$luri ah:hasRoom $ruri.
+				}
+			}.
+			
+			{ for $url in $location/urls//url
+				construct {
+					#$luri vcard:url $url.	
+					$luri foaf:homepage $url.
+				}
+			}.
+			
+			$luri ah:hasVenueType $venueType.	
+			$venueType rdf:label {waag:escape-for-regex($location/type)}.		
+			
+			# TODO: gebruik counter, title komt vaker voor
+			#	http://stackoverflow.com/questions/5652397/xquery-counters-inside-a-for
+			{ for $medium in $location/media//medium
+				
+				# TODO: maak algemene functie
+				let $muri := {concat($luri, "/attachments/", translate(lower-case($medium/title), '": _<>', "'&#x58;--"))}				
+				construct {
+				
+				 	$luri ah:hasAttachment $muri.
+				 	$muri a ah:Attachment.
+          $muri dc:title {waag:escape-for-regex($medium/title)}^^xsd:string.
+          $muri dc:description {waag:escape-for-regex($medium/description)}^^xsd:string.
+          $muri foaf:depiction {$medium/ref}.
+            
+        	#	<title>A family again</title>
+          #	<ref>http://uitbase.aub.nl/gfx/content/family308.jpg</ref>
+          #	<alt>A family again</alt>
+          #	<description>Pic description</description>
+          #	<type>afbeelding</type>
+        }
+      }.
+			
+			$luri vcard:street-address {concat($location/street/name, " ", $location/street/number, $location/street/addition)}.
+			$luri vcard:locality {waag:escape-for-regex($location/place)}.
+			$luri vcard:postal-code {$location/postal-code}.
+	    	    
+			{ for $tag in $location/tags//tag
+				construct {						
+					$luri ah:hasTag $tag.
+				}
+			}.
+			
+			{ for $language in $location/languages//language
+				let $locale := {$language/@locale}
+				#	@nl
+				construct {
+					#	<sortname>Pathé Maastricht</sortname> 
+					$luri dc:title {waag:escape-for-regex($language/sortname)}^^xsd:string.
+					
+					$luri dc:description {waag:escape-for-regex($language/description)}^^xsd:string.
+					$luri ah:shortDescription {waag:escape-for-regex($language/short-description)}^^xsd:string.
+					
+					# TODO: gebruik waag:escape-for-regex()
+					# Probleem: functie mag niet worden aangeroepen met 'empty sequence' als argument,
+					# An empty sequence is not allowed as the first argument of waag:escape-for-regex()
+					
+					$luri ah:openingHours {waag:escape-for-regex($language/opening-hours)}^^xsd:string.
+					$luri ah:publicTransportInformation {waag:escape-for-regex($language/ov-info)}^^xsd:string.
+					
+					#	TODO: Gaat fout. Uitzoeken.
+					#$luri ah:disabilityInformation {$language/handicapped-info}^^xsd:string.
+					
+					$luri ah:pricingInformation {$language/pricing-information}^^xsd:string.					
+      		
+				}
+			}
+			
+			#	TODO:
+			#	editions		
+		}

@@ -71,10 +71,9 @@ public class SchedulerServiceBean implements MessageListener {
 //			TextMessage msg = session.createTextMessage("http://waxworks.nl/events.xml");                      
 			
 			String[] sourceURLs = {
-//					"http://localhost/ah/nub/v4/event.xml",
-//					"http://localhost/ah/nub/v4/production.xml",
-//					"http://localhost/ah/nub/v4/location.xml"
-				"http://127.0.0.1/ah/nub/amsterdam.xml"
+					"http://accept.ps4.uitburo.nl/api/events?key=505642b12881b9a60688411a333bc78b&rows=10000",
+					"http://accept.ps4.uitburo.nl/api/productions?key=505642b12881b9a60688411a333bc78b&rows=10000",
+					"http://accept.ps4.uitburo.nl/api/locations?key=505642b12881b9a60688411a333bc78b&rows=10000"
 			};
 			
 			for (String sourceURL: sourceURLs) {
