@@ -28,14 +28,14 @@
         <executions>
           <execution>
             <goals>
-              <goal>generate</goal>
+              <goal>generate-sources</goal>
             </goals>
             <configuration>
               <args>
                   <arg>-extension</arg>
                   <arg>-Xinheritance</arg>
               </args>
-              <schemaDirectory>WebContent/WEB-INF/xsd</schemaDirectory>
+              <schemaDirectory>src/main/webapp/WEB-INF/xsd</schemaDirectory>
               <generatePackage>org.waag.ah.api</generatePackage>
               <removeOldOutput>false</removeOldOutput>
               <verbose>true</verbose>
