@@ -1,0 +1,118 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.waag.artsholland</groupId>
+  <artifactId>parent</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>Parent</name>
+  
+  <organization>
+    <name>Waag Society</name>
+    <url>http://waag.org</url>
+  </organization>
+      
+  <developers>
+    <developer>
+        <name>Raoul Wissink</name>
+        <email>raoul@waag.org</email>
+        <roles>
+            <role>developer</role>
+        </roles>
+    </developer>
+    <developer>
+        <name>Bert Spaan</name>
+        <email>bert@waag.org</email>
+        <roles>
+            <role>developer</role>
+        </roles>
+    </developer>
+    <developer>
+        <name>Tom Demeyer</name>
+        <email>tom@waag.org</email>
+        <roles>
+            <role>developer</role>
+        </roles>
+    </developer>
+  </developers>
+
+  <modules>
+    <module>core</module>
+    <module>api</module>
+    <module>datastore</module>
+    <module>importer</module>
+ <!--    <module>scheduler</module> -->
+  </modules>
+                  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>jboss-maven-plugin</artifactId>
+        <version>1.5.0</version>
+        <configuration>
+          <hostName>api.artsholland.com</hostName>
+          <port>8080</port>
+          <fileNames>
+            <fileName>target/my-project.war</fileName>
+          </fileNames>
+        </configuration>        
+      </plugin>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.0.2</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-ejb-plugin</artifactId>
+        <version>2.3</version>
+        <configuration>
+          <ejbVersion>${ejb.version}</ejbVersion>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+  <repositories>
+    <repository>
+      <id>releases</id>
+      <name>waag</name>
+      <url>http://127.0.0.1:8081/nexus/content/groups/public</url>
+    </repository>
+    <repository>
+      <id>snapshots</id>
+      <name>waag</name>
+      <url>http://127.0.0.1:8081/nexus/content/repositories/snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+    
+  <dependencies>
+    <dependency>
+      <groupId>javax.jms</groupId>
+      <artifactId>jms-api</artifactId>
+      <version>1.1-rev-1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.as</groupId>
+      <artifactId>jboss-as-ejb3</artifactId>
+      <version>7.1.0.Final</version>
+    </dependency>
+  </dependencies>
+
+  <properties>
+    <jdkLevel>1.6</jdkLevel>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <ejb.version>3.1</ejb.version>
+    <spring.version>3.1.0.RELEASE</spring.version>
+    <sesame.version>2.6.3</sesame.version>
+  </properties>
+</project>

@@ -1,5 +1,5 @@
-*/target
-
-.DS_Store*
-rebel.xml*
-org.eclipse.core.resources.prefs
+.classpath
+.project
+.settings
+rebel.xml
+target
