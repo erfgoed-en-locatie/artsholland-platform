@@ -105,6 +105,11 @@
       <artifactId>jboss-as-ejb3</artifactId>
       <version>7.1.0.Final</version>
     </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.6.4</version>
+    </dependency>
   </dependencies>
 
   <properties>

@@ -69,7 +69,7 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
-      <version>3.1.0.RELEASE</version>
+      <version>${spring.version}</version>
     </dependency>
     <dependency>
       <groupId>cglib</groupId>
@@ -130,12 +130,12 @@
     <dependency>
       <groupId>org.openrdf.sesame</groupId>
       <artifactId>sesame-runtime</artifactId>
-      <version>2.6.3</version>
+      <version>${sesame.version}</version>
     </dependency>
     <dependency>
       <groupId>org.openrdf.sesame</groupId>
       <artifactId>sesame-queryresultio-sparqljson</artifactId>
-      <version>2.6.3</version>
+      <version>${sesame.version}</version>
     </dependency>
   </dependencies>
 </project>
