@@ -41,7 +41,7 @@
     <module>api</module>
     <module>datastore</module>
     <module>importer</module>
- <!--    <module>scheduler</module> -->
+    <module>scheduler</module>
   </modules>
                   
   <build>
