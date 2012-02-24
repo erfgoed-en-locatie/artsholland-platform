@@ -2,9 +2,6 @@ package org.waag.ah.api.service;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -15,7 +12,6 @@ import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.jboss.logging.Logger;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;
@@ -158,12 +154,12 @@ public class SPARQLService implements InitializingBean, DisposableBean {
 				e.printStackTrace();
 			}	
 			
+			// TODO: nee!
 			return 0;
 			
 		}
 		
-	}  
-
+	} 
 
 	public void tupleQuery(HttpServletRequest request,
 			HttpServletResponse response, String query, String accept) throws InterruptedException, ExecutionException, IOException {
@@ -173,7 +169,7 @@ public class SPARQLService implements InitializingBean, DisposableBean {
 	  future.get();	  
 	}
 
-	
+	/*
 	public void proxyQuery(HttpServletRequest request,
 			HttpServletResponse response, String query) {
 		try {
@@ -188,4 +184,5 @@ public class SPARQLService implements InitializingBean, DisposableBean {
 			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
 		}
 	}
+	*/
 }

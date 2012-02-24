@@ -126,6 +126,7 @@ public class UitbaseParser extends XMLParser {
 	 */
 	
     public static String getFileContents(Class<?> clazz, String fileName) throws IOException {
+    	
     	InputStream input = clazz.getResourceAsStream(fileName);
     	BufferedReader reader = new BufferedReader(new InputStreamReader(input));
     	String str = "";

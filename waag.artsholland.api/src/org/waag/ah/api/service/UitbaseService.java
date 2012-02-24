@@ -17,11 +17,15 @@ public class UitbaseService extends ProxyService {
 
 	private Logger logger = Logger.getLogger(UitbaseService.class);
 
-	private final String UITBASE_ENDPOINT = "http://test.publisher.uitburo.nl/agenda/search.do";
-	private final String UITBASE_APIKEY = "a9d8fc27e5cbde7bca8402b53fe5a725";
+	// Versie 3
+	//private final String UITBASE_ENDPOINT = "http://test.publisher.uitburo.nl/agenda/search.do";
+	//private final String UITBASE_APIKEY = "a9d8fc27e5cbde7bca8402b53fe5a725";
+	
+	private final String UITBASE_ENDPOINT = "http://accept.ps4.uitburo.nl/api/";
+	private final String UITBASE_APIKEY = "505642b12881b9a60688411a333bc78b";		
 
 	public UitbaseService() {
-		setUrl(UITBASE_ENDPOINT);
+		setBaseUrl(UITBASE_ENDPOINT);
 	}
 
 	@Override

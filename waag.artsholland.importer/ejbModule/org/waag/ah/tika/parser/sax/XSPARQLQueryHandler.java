@@ -58,13 +58,13 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		this.turtleParser = new TurtleParser();
 		this.rootElement = rootElement;
 		try {
-			XSPARQLProcessor xp = new XSPARQLProcessor();
+			XSPARQLProcessor xp = new XSPARQLProcessor();			
 			String q = xp.process(new StringReader(query));
 			Configuration config = new Configuration();
 			namepool = new NamespaceCollector();
 			config.setNamePool(namepool);
 			Processor processor = new Processor(config);
-			XQueryCompiler compiler = processor.newXQueryCompiler();
+			XQueryCompiler compiler = processor.newXQueryCompiler();			
 			evaluator = compiler.compile(q).load();	
 		} catch (Exception e) {
 			throw new TikaException(e.getMessage(), e);

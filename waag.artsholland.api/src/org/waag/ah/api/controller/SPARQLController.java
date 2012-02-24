@@ -16,39 +16,45 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 import org.waag.ah.api.service.SPARQLService;
 
 @Controller
 public class SPARQLController {
 	private Logger logger = Logger.getLogger(SPARQLController.class);
 
+	private static final String MAPPING = "/sparql";
+	
 	@Resource(name="sparqlService")
 	private SPARQLService sparqlService;
 	
-	@RequestMapping(value = "/sparql", method = RequestMethod.POST)	
-	public void bert(final HttpServletRequest request,
+	@RequestMapping(value = MAPPING, method = RequestMethod.POST /*, params = "query"*/)	
+	public void postQuery(final HttpServletRequest request,
 			final HttpServletResponse response,
 			@RequestParam("query") String query, @RequestHeader("Accept") String accept) throws InterruptedException, ExecutionException, IOException  {      	
 		sparqlService.tupleQuery(request, response, query, accept);	
 	}
-
-	@RequestMapping(value = "/sparql", method = RequestMethod.GET, headers = "Accept=text/html")
-	public void getQueryForm(final HttpServletRequest request,
-			final HttpServletResponse response) throws IOException {   		
-   		/*
-   		 * TODO: get url from properties? put in web.xml?
-   		 */
-		//response.sendRedirect("/snorql");
-		URL url = new URL("http://127.0.0.1:8080/snorql");		
-		response.setContentType("text/html");
-		URLConnection conn = url.openConnection();
-		IOUtils.copy(conn.getInputStream(), response.getOutputStream()); 		
+	
+	@RequestMapping(value = MAPPING, method = RequestMethod.GET /*, params = "query"*/, headers = "Accept=application/*")
+	public void getQuery(final HttpServletRequest request,
+			final HttpServletResponse response,
+			@RequestParam("query") String query, @RequestHeader("Accept") String accept) throws InterruptedException, ExecutionException, IOException  {      	
+		sparqlService.tupleQuery(request, response, query, accept);	
 	}
+	
+	@RequestMapping(value = MAPPING, method = RequestMethod.GET, params = "output")
+	public void getQueryOutput(final HttpServletRequest request,
+			final HttpServletResponse response,
+			@RequestParam("query") String query, @RequestParam("output") String output) throws InterruptedException, ExecutionException, IOException  {
+		// TODO: output=json, also support output=xml
+		sparqlService.tupleQuery(request, response, query, SPARQLService.MIME_SPARQL_RESULTS_JSON);	
+	}
+	
+	
+	@RequestMapping(value = "/sparql", method = RequestMethod.GET, headers = "Accept=text/html")
+	public ModelAndView getSnorql(final HttpServletRequest request,
+			final HttpServletResponse response) throws IOException { 
+		return new ModelAndView("snorql");
+	}	
 
-//	@RequestMapping(value = "/sparql-proxy", method = RequestMethod.POST, produces = "application/json;application/xml")
-//	public void postQuery(final HttpServletRequest request,
-//			final HttpServletResponse response,
-//			@RequestParam("query") String query) {
-//		sparqlService.proxyQuery(request, response, query);
-//	}
 }

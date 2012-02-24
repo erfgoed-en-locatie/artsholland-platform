@@ -16,20 +16,16 @@ import org.jboss.logging.Logger;
 public class UitbaseController {
 	private Logger logger = Logger.getLogger(UitbaseController.class);
 
+	private static final String MAPPING = "/uitbase/";
+	
 	@Resource(name = "uitbaseService")
 	private UitbaseService uitbaseService;
 	
-	@RequestMapping(value = "/uitbase", method = RequestMethod.GET)	
+	@RequestMapping(value = MAPPING + "**", method = RequestMethod.GET)	
 	public void proxy(final HttpServletRequest request,
-			final HttpServletResponse response) throws IOException  {		
-		uitbaseService.proxyQuery(request, response);
+			final HttpServletResponse response) throws IOException  {
+		
+		String path = request.getServletPath().substring(MAPPING.length());
+		uitbaseService.proxyQuery(request, response, path);
 	}
-
-	/*
-	@RequestMapping(value = "/sparql-proxy", method = RequestMethod.POST, produces = "application/json;application/xml")
-	public void mongo(final HttpServletRequest request,
-			final HttpServletResponse response,
-			@RequestParam("query") String query) {
-		sparqlService.proxyQuery(request, response, query);
-	}*/
 }

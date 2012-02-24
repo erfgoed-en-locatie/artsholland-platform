@@ -22,7 +22,7 @@
       class="org.waag.ah.api.controller.OAuthAccessConfirmationController"/>
   
   <mvc:resources mapping="/vocabulary/**" location="/vocabulary/"/>  
-  <mvc:resources mapping="/snorql/**" location="/snorql/"/>
+  <mvc:resources mapping="/static/**" location="/static/"/>
   
   <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
     <property name="order" value="1"/>
