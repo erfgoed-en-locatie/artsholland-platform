@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.jboss.logging.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +19,7 @@ import org.waag.ah.api.service.SPARQLService;
 
 @Controller
 public class SPARQLController {
-	private Logger logger = Logger.getLogger(SPARQLController.class);
+//	private Logger logger = Logger.getLogger(SPARQLController.class);
 
 	@Resource(name="sparqlService")
 	private SPARQLService sparqlService;

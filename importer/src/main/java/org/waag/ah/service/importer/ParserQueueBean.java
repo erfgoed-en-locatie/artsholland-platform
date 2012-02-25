@@ -19,7 +19,8 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.ToXMLContentHandler;
-import org.jboss.logging.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.waag.ah.persistence.StoringRDFParser;
 import org.xml.sax.ContentHandler;
 
@@ -33,7 +34,7 @@ import com.gc.iotools.stream.is.InputStreamFromOutputStream;
 //		@ActivationConfigProperty(propertyName="transactionTimeout", propertyValue="900000")})
 @DependsOn(value="java:/ConnectionFactory")
 public class ParserQueueBean implements MessageListener {
-	private static final Logger logger = Logger.getLogger(ParserQueueBean.class.toString());
+	private static final Logger logger = LoggerFactory.getLogger(ParserQueueBean.class);
 	private @EJB StoringRDFParser parser;
 	
 //	@TransactionAttribute(TransactionAttributeType.NEVER)
@@ -56,10 +57,10 @@ public class ParserQueueBean implements MessageListener {
 			try {
 				stream.close();
 			} catch (IOException e) {
-				logger.error(e.getMessage());
+//				logger.error(e.getMessage());
 			}
 		}
-		logger.info("Finished parsing");
+//		logger.info("Finished parsing");
 	}
 	
 	private InputStream parse(final URL uri) throws IOException {

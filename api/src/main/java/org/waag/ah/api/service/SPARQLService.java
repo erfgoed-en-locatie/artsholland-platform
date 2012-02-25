@@ -11,12 +11,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
-import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.jboss.logging.Logger;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
@@ -33,12 +31,10 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponents;
-import org.waag.ah.persistence.RepositoryConnectionFactory;
 
 @Service("sparqlService")
 public class SPARQLService implements InitializingBean, DisposableBean {
-//	private static final long serialVersionUID = 5520647237936009532L;
-	private Logger logger = Logger.getLogger(SPARQLService.class);
+//	private Logger logger = Logger.getLogger(SPARQLService.class);
 	private UriComponents SPARQL_ENDPOINT;
 	
 	/**
@@ -50,11 +46,12 @@ public class SPARQLService implements InitializingBean, DisposableBean {
 		MIME_SPARQL_RESULTS_XML = "application/sparql-results+xml",
 		MIME_SPARQL_RESULTS_JSON = "application/sparql-results+json";
 
-	@EJB(mappedName="java:app/waag.artsholland.datastore/SAILConnectionFactory")
-	private RepositoryConnectionFactory connFactory;
+//	@EJB(mappedName="java:app/datastore/SAILConnectionFactory")
+//	@EJB(mappedName="java:global/artsholland/datastore/SAILConnectionFactory")
+//	private RepositoryConnectionFactory connFactory;
 
 	private ExecutorService executor;
-	private RepositoryConnection connection;
+	private RepositoryConnection connection = null;
 	
 	public SPARQLService() {
 		executor = new ScheduledThreadPoolExecutor(5);
@@ -65,12 +62,12 @@ public class SPARQLService implements InitializingBean, DisposableBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		connection = connFactory.getReadOnlyConnection();
+//		connection = connFactory.getReadOnlyConnection();
 	}
 	
 	@Override
 	public void destroy() throws Exception {
-		connection.close();
+//		connection.close();
 	}
 	
 	//
@@ -178,7 +175,7 @@ public class SPARQLService implements InitializingBean, DisposableBean {
 			HttpServletResponse response, String query) {
 		try {
 			URL url = new URL(SPARQL_ENDPOINT.expand(query).encode().toUriString());
-			logger.info(url.toExternalForm());
+//			logger.info(url.toExternalForm());
 			response.setContentType("application/xml");
 			URLConnection conn = url.openConnection();
 			IOUtils.copy(conn.getInputStream(), response.getOutputStream());

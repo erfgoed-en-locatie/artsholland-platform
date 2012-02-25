@@ -17,6 +17,7 @@ import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.DocumentWriter;
+import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.jms.Properties;
 
 public class SesameWriter implements DocumentWriter {

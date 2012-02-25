@@ -7,8 +7,9 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 
 import org.openrdf.repository.Repository;
+import org.waag.ah.RepositoryConnectionFactory;
 
-public abstract class AbstractConnectionFactory implements RepositoryConnectionFactory {
+public abstract class AbstractConnectionFactory {
 	
 	protected abstract Repository createRepository(Properties props);
 	

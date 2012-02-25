@@ -9,13 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.NameValuePair;
-import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
 
 @Service("uitbaseService")
 public class UitbaseService extends ProxyService {
-
-	private Logger logger = Logger.getLogger(UitbaseService.class);
+//	private Logger logger = Logger.getLogger(UitbaseService.class);
 
 	private final String UITBASE_ENDPOINT = "http://test.publisher.uitburo.nl/agenda/search.do";
 	private final String UITBASE_APIKEY = "a9d8fc27e5cbde7bca8402b53fe5a725";

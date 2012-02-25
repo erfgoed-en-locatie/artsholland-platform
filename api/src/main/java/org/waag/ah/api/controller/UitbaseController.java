@@ -10,11 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.waag.ah.api.service.UitbaseService;
-import org.jboss.logging.Logger;
 
 @Controller
 public class UitbaseController {
-	private Logger logger = Logger.getLogger(UitbaseController.class);
+//	private Logger logger = Logger.getLogger(UitbaseController.class);
 
 	@Resource(name = "uitbaseService")
 	private UitbaseService uitbaseService;

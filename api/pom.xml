@@ -17,8 +17,16 @@
       <plugin>            
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
+        <version>2.2</version>
         <configuration>
-          <!-- <webXml>src\main\webapp\WEB-INF\web.xml</webXml> -->        
+          <!-- <webXml>src\main\webapp\WEB-INF\web.xml</webXml> -->
+<!--           <packagingExcludes>WEB-INF/core.jar</packagingExcludes>
+          <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <classpathPrefix>lib/</classpathPrefix>
+            </manifest>
+          </archive>  -->               
         </configuration>
       </plugin>    
       <plugin>
@@ -59,13 +67,7 @@
       <artifactId>core</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <type>ejb</type>
-    </dependency>  
-    <dependency>
-      <groupId>org.waag.artsholland</groupId>
-      <artifactId>datastore</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <type>ejb</type>
-    </dependency>  
+    </dependency>    
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>

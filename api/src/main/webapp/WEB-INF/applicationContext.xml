@@ -28,6 +28,11 @@
       locationUri="http://api.ah.local/admin/">
     <sws:xsd location="/WEB-INF/xsd/AdminInterface.xsd"/>
   </sws:dynamic-wsdl>
+
+  <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+    <property name="jndiName" value="java:comp/env/jdbc/mydb" />
+    <property name="resourceRef" value="true" />
+  </bean> 
 	  
 	<!-- <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
    	<constructor-arg name="mongo" ref="mongo"/>

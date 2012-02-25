@@ -18,12 +18,14 @@ import org.apache.tika.sax.TaggedContentHandler;
 import org.apache.tika.sax.xpath.Matcher;
 import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.waag.ah.tika.parser.sax.XSPARQLQueryHandler;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 public class UitbaseParser extends XMLParser {
-	//private Logger logger = Logger.getLogger(UitbaseParser.class);
+	private Logger logger = LoggerFactory.getLogger(UitbaseParser.class);
 	private static final long serialVersionUID = 116487633414164925L;
 
 	@SuppressWarnings("serial")
@@ -76,13 +78,14 @@ public class UitbaseParser extends XMLParser {
 			// As we don't want to load the entire input document in memory
 			// for XQuery processing, we handle each event node separately.
 			if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV3_MIME_TYPE)) {
-				
+				logger.info("Parsing V3 document");
 				String xquery = getFileContents(getClass(), "META-INF/uitbase_v3.xquery");    			
 				return new MatchingContentHandler(
 					new XSPARQLQueryHandler(handler, metadata, context, xquery), 
 					getXPathMatcher("/nubxml/events/descendant::node()"));
 				
 			} else {
+				logger.info("Parsing V4 document");
 				String xquery = null;
 				if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_EVENT_MIME_TYPE)) {
 					xquery = getFileContents(getClass(), "META-INF/uitbase_v4/event.xquery"); 	

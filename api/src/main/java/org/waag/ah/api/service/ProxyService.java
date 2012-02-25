@@ -1,6 +1,7 @@
 package org.waag.ah.api.service;
 
 import java.io.IOException;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -10,12 +11,11 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.lang.NotImplementedException;
-import org.jboss.logging.Logger;
 import org.springframework.stereotype.Service;
 
 @Service("proxyService")
 abstract class ProxyService {
-	private Logger logger = Logger.getLogger(ProxyService.class);
+//	private Logger logger = Logger.getLogger(ProxyService.class);
 
 	private String url;
 	private HttpMethod method;
