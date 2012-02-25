@@ -87,6 +87,6 @@
   <servlet-mapping>
     <servlet-name>soap</servlet-name>
     <url-pattern>/admin/*</url-pattern>
-  </servlet-mapping>  
+  </servlet-mapping>
   
 </web-app>

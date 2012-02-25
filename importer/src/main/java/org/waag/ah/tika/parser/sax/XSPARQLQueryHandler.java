@@ -48,7 +48,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	private Matcher matcher;
 
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata, 
-			ParseContext context, String query)	throws TikaException {
+			ParseContext context, String query, String rootElement)	throws TikaException {
 //		super(handler);
 		this.matcher = new XPathParser("rdf", RDF.NAMESPACE).parse("/rdf:RDF/descendant::node()");
 		this.handler = handler;
@@ -56,14 +56,15 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		this.context = context;
 		this.metadata = metadata; 
 		this.turtleParser = new TurtleParser();
+		this.rootElement = rootElement;
 		try {
-			XSPARQLProcessor xp = new XSPARQLProcessor();
+			XSPARQLProcessor xp = new XSPARQLProcessor();			
 			String q = xp.process(new StringReader(query));
 			Configuration config = new Configuration();
 			namepool = new NamespaceCollector();
 			config.setNamePool(namepool);
 			Processor processor = new Processor(config);
-			XQueryCompiler compiler = processor.newXQueryCompiler();
+			XQueryCompiler compiler = processor.newXQueryCompiler();			
 			evaluator = compiler.compile(q).load();	
 		} catch (Exception e) {
 			throw new TikaException(e.getMessage(), e);
@@ -96,10 +97,9 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
 		
-		// We want to match each root element against the XSPARQL query.
-		if (rootElement == null) {
+		/*if (rootElement == null) {
 			rootElement = localName;
-		}
+		}*/
 		
 		// Start collecting characters when we encounter our root element.
 		if (localName.equals(rootElement)) {
@@ -124,7 +124,8 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		if (currentNode()) {
 			xmlCollector.endElement(uri, localName, qName);
 		}
-		if (localName.equals(rootElement)) {	
+		if (localName.equals(rootElement)) {
+			
 			StreamSource xml = new StreamSource(
 					new StringReader(xmlCollector.toString()));	
 			

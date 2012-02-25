@@ -20,19 +20,25 @@
     <sub-class-of type="application/xml"/>
     <acronym>NUBXML</acronym>
     <_comment>NUB UitBase V4</_comment>
-    <root-XML localName="event"/>
+    <root-XML localName="events"/>
   </mime-type>
   <mime-type type="application/x-waag-uitbase-v4-production+xml">
     <sub-class-of type="application/xml"/>
     <acronym>NUBXML</acronym>
     <_comment>NUB UitBase V4</_comment>
-    <root-XML localName="production"/>
+    <root-XML localName="productions"/>
   </mime-type>
   <mime-type type="application/x-waag-uitbase-v4-location+xml">
     <sub-class-of type="application/xml"/>
     <acronym>NUBXML</acronym>
     <_comment>NUB UitBase V4</_comment>
-    <root-XML localName="location"/>
+    <root-XML localName="locations"/>
+  </mime-type>
+  <mime-type type="application/x-waag-uitbase-v4-group+xml">
+    <sub-class-of type="application/xml"/>
+    <acronym>NUBXML</acronym>
+    <_comment>NUB UitBase V4</_comment>
+    <root-XML localName="groups"/>
   </mime-type>
     
   <mime-type type="text/turtle">
