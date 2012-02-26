@@ -88,7 +88,7 @@ public class UitbaseParser extends XMLParser {
 			// (event/production/location/group).
 			if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV3_MIME_TYPE)) {
 				logger.info("Parsing V3 document");
-				String xquery = getFileContents(getClass(), "META-INF/uitbase_v3.xquery");    			
+				String xquery = getFileContents(getClass(), "v3/event.xsparql");    			
 				return new MatchingContentHandler(
 					new XSPARQLQueryHandler(handler, metadata, context, xquery, ""), 
 					getXPathMatcher("/nubxml/events/descendant::node()"));
@@ -98,16 +98,16 @@ public class UitbaseParser extends XMLParser {
 				String xquery = null;
 				String node = null;
 				if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_EVENT_MIME_TYPE)) {
-					xquery = getFileContents(getClass(), "META-INF/uitbase_v4/event.xsparql");
+					xquery = getFileContents(getClass(), "v4/event.xsparql");
 					node = "event";
 				} else if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_PRODUCTION_MIME_TYPE)) {
-					xquery = getFileContents(getClass(), "META-INF/uitbase_v4/production.xsparql");
+					xquery = getFileContents(getClass(), "v4/production.xsparql");
 					node = "production";
 				} else if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_LOCATION_MIME_TYPE)) {
-					xquery = getFileContents(getClass(), "META-INF/uitbase_v4/location.xsparql");
+					xquery = getFileContents(getClass(), "v4/location.xsparql");
 					node = "location";
 				}  else if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_GROUP_MIME_TYPE)) {
-					xquery = getFileContents(getClass(), "META-INF/uitbase_v4/group.xsparql");
+					xquery = getFileContents(getClass(), "v4/group.xsparql");
 					node = "group";
 				}
 				

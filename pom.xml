@@ -51,19 +51,11 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>2.0.2</version>
         <configuration>
-          <source>1.6</source>
-          <target>1.6</target>
-          <encoding>UTF-8</encoding>
+          <source>${jdkLevel}</source>
+          <target>${jdkLevel}</target>
+          <encoding>${project.reporting.outputEncoding}</encoding>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-ejb-plugin</artifactId>
-        <version>2.3</version>
-        <configuration>
-          <ejbVersion>${ejb.version}</ejbVersion>
-        </configuration>
-      </plugin>         
+      </plugin>       
     </plugins>
   </build>
 
@@ -84,11 +76,6 @@
   </repositories>
     
   <dependencies>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <version>1.6.4</version>
-    </dependency>
     <dependency>
       <groupId>javax</groupId>
       <artifactId>javaee-api</artifactId>

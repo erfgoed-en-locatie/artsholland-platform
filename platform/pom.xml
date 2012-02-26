@@ -20,15 +20,7 @@
         <version>2.7</version>
         <configuration>
           <defaultJavaBundleDir>lib/</defaultJavaBundleDir>
-          <fileNameMapping>no-version</fileNameMapping>
-          <!-- <skinnyWars>true</skinnyWars> -->
-<!--           <modules>
-            <ejbModule>
-              <groupId>artifactGroupId</groupId>
-              <artifactId>artifactId</artifactId>
-              <bundleFileName>anotherName-1.2.3.jar</bundleFileName>
-            </ejbModule>
-          </modules>  -->         
+          <fileNameMapping>no-version</fileNameMapping>       
         </configuration>
       </plugin>      
       <plugin>
