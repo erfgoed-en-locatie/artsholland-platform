@@ -20,8 +20,15 @@
         <version>2.7</version>
         <configuration>
           <defaultJavaBundleDir>lib/</defaultJavaBundleDir>
-          <fileNameMapping>no-version</fileNameMapping>       
-        </configuration>
+          <fileNameMapping>no-version</fileNameMapping>
+          <modules>
+            <webModule>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>api</artifactId>
+              <contextRoot>/</contextRoot>
+            </webModule>
+          </modules>
+        </configuration>        
       </plugin>      
       <plugin>
         <groupId>org.jboss.as.plugins</groupId>
