@@ -48,9 +48,9 @@ public class SPARQLService implements InitializingBean, DisposableBean {
 
 	@EJB(mappedName="java:app/waag.artsholland.datastore/SAILConnectionFactory")
 	private RepositoryConnectionFactory connFactory;
-
-	private ExecutorService executor;
 	private RepositoryConnection connection;
+	
+	private ExecutorService executor;
 	
 	public SPARQLService() {
 		executor = new ScheduledThreadPoolExecutor(5);
