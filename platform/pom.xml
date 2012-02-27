@@ -27,14 +27,7 @@
               <artifactId>api</artifactId>
               <contextRoot>/</contextRoot>
             </webModule>
-          </modules>
-<!--           <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <classpathLayoutType>custom</classpathLayoutType>
-              <customClasspathLayout>$${artifact.artifactId}.$${artifact.extension}</customClasspathLayout>
-            </manifest>
-          </archive> -->          
+          </modules>         
         </configuration>        
       </plugin>      
       <plugin>
@@ -44,6 +37,31 @@
         <configuration>
           <hostname>${jboss.hostname}</hostname>
         </configuration>
+        <executions>
+          <execution>
+            <id>add-jms-queue</id>
+            <phase>install</phase>
+            <goals>
+              <goal>add-resource</goal>
+            </goals>
+            <configuration>
+              <resource>
+                <address>subsystem=messaging,jms-queue=Scheduler</address>
+                <properties>
+                  <durable>true</durable>
+                  <entries>!!["java:/queue/scheduler"]</entries>
+                </properties>
+              </resource>
+              <resource>
+                <address>subsystem=messaging,jms-queue=Importer</address>
+                <properties>
+                  <durable>true</durable>
+                  <entries>!!["java:/queue/importer/parse"]</entries>
+                </properties>
+              </resource>
+            </configuration>
+          </execution>
+        </executions>        
       </plugin>      
     </plugins>
   </build>
