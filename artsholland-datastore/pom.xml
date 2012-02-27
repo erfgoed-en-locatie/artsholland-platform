@@ -2,14 +2,14 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	
   <modelVersion>4.0.0</modelVersion>
-	<artifactId>datastore</artifactId>
+	<artifactId>artsholland-datastore</artifactId>
   <packaging>ejb</packaging>
   <name>Datastore</name>
   <description>Arts Holland persistence module</description>
     
   <parent>
     <groupId>org.waag.artsholland</groupId>
-    <artifactId>parent</artifactId>
+    <artifactId>artsholland</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   
@@ -29,7 +29,7 @@
 	<dependencies>
     <dependency>
       <groupId>org.waag.artsholland</groupId>
-      <artifactId>core</artifactId>
+      <artifactId>artsholland-core</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <type>ejb</type>
     </dependency> 
