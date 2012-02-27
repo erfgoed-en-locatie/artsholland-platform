@@ -29,11 +29,14 @@
     <sws:xsd location="/WEB-INF/xsd/AdminInterface.xsd"/>
   </sws:dynamic-wsdl>
 
-  <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+<!--   <bean id="connectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean">
     <property name="jndiName" value="java:app/datastore/SAILConnectionFactory" />
-    <!-- <property name="resourceRef" value="true" /> -->
-  </bean> 
-	  
+  </bean>
+   
+  <bean id="repositoryConnection"
+      factory-bean="connectionFactory"
+      factory-method="getReadOnlyConnection"/> -->
+      	  
 	<!-- <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
    	<constructor-arg name="mongo" ref="mongo"/>
    	<constructor-arg name="databaseName" value="test"/>

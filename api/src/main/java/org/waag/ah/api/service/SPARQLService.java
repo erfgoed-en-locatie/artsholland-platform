@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
+import javax.naming.InitialContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,13 +26,14 @@ import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponents;
+import org.waag.ah.RepositoryConnectionFactory;
 
 @Service("sparqlService")
 public class SPARQLService implements InitializingBean, DisposableBean {
 //	private Logger logger = Logger.getLogger(SPARQLService.class);
-	private UriComponents SPARQL_ENDPOINT;
+//	private UriComponents SPARQL_ENDPOINT;
 	
 	/**
 	 * Common MIME types for dynamic content.
@@ -44,10 +46,14 @@ public class SPARQLService implements InitializingBean, DisposableBean {
 
 //	@EJB(mappedName="java:app/datastore/SAILConnectionFactory")
 //	@EJB(mappedName="java:global/artsholland/datastore/SAILConnectionFactory")
+//	@Autowired
+//	@Resource(mappedName="java:app/datastore/SAILConnectionFactory")
 //	private RepositoryConnectionFactory connFactory;
 
 	private ExecutorService executor;
-	private RepositoryConnection connection = null;
+	
+//	@Autowired
+	private RepositoryConnection connection;
 	
 	public SPARQLService() {
 		executor = new ScheduledThreadPoolExecutor(5);
@@ -58,12 +64,15 @@ public class SPARQLService implements InitializingBean, DisposableBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-//		connection = connFactory.getReadOnlyConnection();
+		InitialContext ctx = new InitialContext();
+		RepositoryConnectionFactory cf = (RepositoryConnectionFactory)
+		         ctx.lookup("java:app/datastore/SAILConnectionFactory");
+		connection = cf.getReadOnlyConnection();
 	}
 	
 	@Override
 	public void destroy() throws Exception {
-//		connection.close();
+		connection.close();
 	}
 	
 	//

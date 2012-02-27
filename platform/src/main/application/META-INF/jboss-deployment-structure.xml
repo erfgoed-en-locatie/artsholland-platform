@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss-deployment-structure>
+  <ear-subdeployments-isolated>true</ear-subdeployments-isolated>
+  <sub-deployment name="api.war">
+    <exclusions>
+      <module name="org.waag.ah" />
+    </exclusions>
+  </sub-deployment>
+</jboss-deployment-structure>

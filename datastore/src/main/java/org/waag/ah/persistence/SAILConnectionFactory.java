@@ -5,7 +5,7 @@ import java.util.Properties;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.ejb.Stateful;
+import javax.ejb.Singleton;
 
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
@@ -17,9 +17,8 @@ import com.bigdata.rdf.sail.BigdataSail;
 import com.bigdata.rdf.sail.BigdataSailRepository;
 import com.bigdata.rdf.sail.BigdataSailRepositoryConnection;
 
-@Stateful
-public class SAILConnectionFactory extends AbstractConnectionFactory 
-		implements RepositoryConnectionFactory {
+@Singleton
+public class SAILConnectionFactory extends AbstractConnectionFactory implements RepositoryConnectionFactory {
 	final static Logger logger = LoggerFactory.getLogger(SAILConnectionFactory.class);
 	private static BigdataSailRepository repo = null;
 	private static final String PROPERTY_FILE = "/bigdata.properties";
@@ -27,11 +26,10 @@ public class SAILConnectionFactory extends AbstractConnectionFactory
 	@PostConstruct
 	public void create() throws IOException, RepositoryException {
 		try {
-			if (repo == null) {
-				Properties properties = loadProperties(PROPERTY_FILE);
-				repo = createRepository(properties);
-				repo.initialize();
-			}
+			logger.info("STARING REPO");
+			Properties properties = loadProperties(PROPERTY_FILE);
+			repo = createRepository(properties);
+			repo.initialize();
 		} catch (org.openrdf.repository.RepositoryException e) {
 			throw (RepositoryException) e;
 		}

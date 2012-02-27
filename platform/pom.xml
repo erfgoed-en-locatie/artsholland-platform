@@ -46,7 +46,7 @@
       <groupId>org.waag.artsholland</groupId>
       <artifactId>api</artifactId>
       <version>0.0.1-SNAPSHOT</version>
-      <type>war</type>
+      <type>war</type>     
     </dependency>
     <dependency>
       <groupId>org.waag.artsholland</groupId>
