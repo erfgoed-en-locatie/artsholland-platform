@@ -13,7 +13,7 @@
   </parent>
 
   <build>
-    <finalName>${project.artifactId}</finalName>  
+    <finalName>platform</finalName>  
     <plugins>
       <plugin>
         <artifactId>maven-ear-plugin</artifactId>
