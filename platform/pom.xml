@@ -19,7 +19,7 @@
         <artifactId>maven-ear-plugin</artifactId>
         <version>2.7</version>
         <configuration>
-          <defaultJavaBundleDir>lib/</defaultJavaBundleDir>
+          <defaultLibBundleDir>lib/</defaultLibBundleDir>
           <fileNameMapping>no-version</fileNameMapping>
           <modules>
             <webModule>
@@ -28,6 +28,13 @@
               <contextRoot>/</contextRoot>
             </webModule>
           </modules>
+<!--           <archive>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <classpathLayoutType>custom</classpathLayoutType>
+              <customClasspathLayout>$${artifact.artifactId}.$${artifact.extension}</customClasspathLayout>
+            </manifest>
+          </archive> -->          
         </configuration>        
       </plugin>      
       <plugin>
