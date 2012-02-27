@@ -63,12 +63,12 @@
     <repository>
       <id>releases</id>
       <name>waag</name>
-      <url>http://127.0.0.1:8081/nexus/content/groups/public</url>
+      <url>http://api.artsholland.com:8081/nexus/content/groups/public</url>
     </repository>
     <repository>
       <id>snapshots</id>
       <name>waag</name>
-      <url>http://127.0.0.1:8081/nexus/content/repositories/snapshots</url>
+      <url>http://api.artsholland.com:8081/nexus/content/repositories/snapshots</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>

@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
+import javax.ejb.EJB;
 import javax.naming.InitialContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,7 +27,6 @@ import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.waag.ah.RepositoryConnectionFactory;
 
@@ -44,17 +44,12 @@ public class SPARQLService implements InitializingBean, DisposableBean {
 		MIME_SPARQL_RESULTS_XML = "application/sparql-results+xml",
 		MIME_SPARQL_RESULTS_JSON = "application/sparql-results+json";
 
-//	@EJB(mappedName="java:app/datastore/SAILConnectionFactory")
-//	@EJB(mappedName="java:global/artsholland/datastore/SAILConnectionFactory")
-//	@Autowired
-//	@Resource(mappedName="java:app/datastore/SAILConnectionFactory")
-//	private RepositoryConnectionFactory connFactory;
-
 	private ExecutorService executor;
-	
-//	@Autowired
 	private RepositoryConnection connection;
-	
+
+	@EJB(mappedName="java:app/datastore/SAILConnectionFactory")
+	private RepositoryConnectionFactory connFactory;
+
 	public SPARQLService() {
 		executor = new ScheduledThreadPoolExecutor(5);
 		//SPARQL_ENDPOINT = UriComponentsBuilder.fromUriString(
@@ -64,10 +59,7 @@ public class SPARQLService implements InitializingBean, DisposableBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		InitialContext ctx = new InitialContext();
-		RepositoryConnectionFactory cf = (RepositoryConnectionFactory)
-		         ctx.lookup("java:app/datastore/SAILConnectionFactory");
-		connection = cf.getReadOnlyConnection();
+		connection = connFactory.getReadOnlyConnection();
 	}
 	
 	@Override

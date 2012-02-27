@@ -19,14 +19,14 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>2.2</version>
         <configuration>
-          <packagingExcludes>WEB-INF/lib/core-0.0.1-SNAPSHOT.jar</packagingExcludes>
-          <packagingExcludes>WEB-INF/lib/sesame-*.jar</packagingExcludes>
-          <archive>
+          <!-- TODO: Move this to platform module as it is a deployment thang. -->
+          <packagingExcludes>WEB-INF/lib/core-*.jar,WEB-INF/lib/sesame-*.jar</packagingExcludes>
+<!--           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
               <classpathPrefix>lib/</classpathPrefix>
             </manifest>
-          </archive>
+          </archive> -->
         </configuration>
       </plugin>    
       <plugin>

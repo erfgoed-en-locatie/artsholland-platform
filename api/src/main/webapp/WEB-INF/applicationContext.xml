@@ -31,9 +31,9 @@
 
 <!--   <bean id="connectionFactory" class="org.springframework.jndi.JndiObjectFactoryBean">
     <property name="jndiName" value="java:app/datastore/SAILConnectionFactory" />
-  </bean>
+  </bean> -->
    
-  <bean id="repositoryConnection"
+  <!-- <bean id="repositoryConnection"
       factory-bean="connectionFactory"
       factory-method="getReadOnlyConnection"/> -->
       	  
