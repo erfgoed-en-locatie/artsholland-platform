@@ -19,8 +19,11 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>2.2</version>
         <configuration>
-          <!-- TODO: Move this to platform module as it is a deployment thang. -->
-          <packagingExcludes>WEB-INF/lib/artsholland-core-*.jar,WEB-INF/lib/sesame-*.jar</packagingExcludes>
+          <!-- TODO: Move this to EAR module as it is a deployment thang. -->
+          <packagingExcludes>
+            WEB-INF/lib/artsholland-core-*.jar,
+            WEB-INF/lib/sesame-*.jar
+          </packagingExcludes>
         </configuration>
       </plugin>    
       <plugin>

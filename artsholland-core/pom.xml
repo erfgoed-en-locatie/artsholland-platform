@@ -2,6 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   
   <artifactId>artsholland-core</artifactId>
+  <packaging>jar</packaging>  
   <name>Core</name>
   <description>Arts Holland core module</description>
   
@@ -11,13 +12,6 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
     
-<!--   <dependencies>
-    <dependency>
-      <groupId>org.ostermiller</groupId>
-      <artifactId>utils</artifactId>
-      <version>1.07.00</version>
-    </dependency>
-  </dependencies> -->
   <dependencies>
     <dependency>
       <groupId>org.openrdf.sesame</groupId>

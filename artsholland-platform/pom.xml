@@ -24,9 +24,30 @@
           <modules>
             <webModule>
               <groupId>${project.groupId}</groupId>
-              <artifactId>api</artifactId>
+              <artifactId>artsholland-api</artifactId>
+              <bundleFileName>api.war</bundleFileName>
               <contextRoot>/</contextRoot>
             </webModule>
+            <jarModule>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>artsholland-core</artifactId>
+              <bundleFileName>core.jar</bundleFileName>
+            </jarModule>            
+            <ejbModule>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>artsholland-datastore</artifactId>
+              <bundleFileName>datastore.jar</bundleFileName>
+            </ejbModule>            
+            <ejbModule>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>artsholland-importer</artifactId>
+              <bundleFileName>importer.jar</bundleFileName>
+            </ejbModule>            
+            <ejbModule>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>artsholland-scheduler</artifactId>
+              <bundleFileName>scheduler.jar</bundleFileName>
+            </ejbModule>            
           </modules>         
         </configuration>        
       </plugin>      
@@ -69,31 +90,31 @@
   <dependencies>
     <dependency>
       <groupId>org.waag.artsholland</groupId>
-      <artifactId>api</artifactId>
+      <artifactId>artsholland-api</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <type>war</type>     
     </dependency>
     <dependency>
       <groupId>org.waag.artsholland</groupId>
-      <artifactId>core</artifactId>
+      <artifactId>artsholland-core</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>  
+    <dependency>
+      <groupId>org.waag.artsholland</groupId>
+      <artifactId>artsholland-datastore</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <type>ejb</type>
     </dependency>  
     <dependency>
       <groupId>org.waag.artsholland</groupId>
-      <artifactId>datastore</artifactId>
+      <artifactId>artsholland-importer</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <type>ejb</type>
     </dependency>  
     <dependency>
       <groupId>org.waag.artsholland</groupId>
-      <artifactId>importer</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <type>ejb</type>
-    </dependency>  
-    <dependency>
-      <groupId>org.waag.artsholland</groupId>
-      <artifactId>scheduler</artifactId>
+      <artifactId>artsholland-scheduler</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <type>ejb</type>
     </dependency>  
