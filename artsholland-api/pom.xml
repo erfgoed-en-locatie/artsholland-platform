@@ -20,13 +20,7 @@
         <version>2.2</version>
         <configuration>
           <!-- TODO: Move this to platform module as it is a deployment thang. -->
-          <packagingExcludes>WEB-INF/lib/core-*.jar,WEB-INF/lib/sesame-*.jar</packagingExcludes>
-<!--           <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <classpathPrefix>lib/</classpathPrefix>
-            </manifest>
-          </archive> -->
+          <packagingExcludes>WEB-INF/lib/artsholland-core-*.jar,WEB-INF/lib/sesame-*.jar</packagingExcludes>
         </configuration>
       </plugin>    
       <plugin>
