@@ -98,7 +98,8 @@ public class UitbaseParser extends XMLParser {
 				String xquery = null;
 				String node = null;
 				if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_EVENT_MIME_TYPE)) {
-					xquery = getFileContents(getClass(), "v4/event.xsparql");
+					//xquery = getFileContents(getClass(), "v4/event.xsparql");
+					xquery = getFileContents(getClass(), "v4/event_test.xsparql");
 					node = "event";
 				} else if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_PRODUCTION_MIME_TYPE)) {
 					xquery = getFileContents(getClass(), "v4/production.xsparql");

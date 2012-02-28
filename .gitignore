@@ -3,3 +3,4 @@
 .settings
 rebel.xml
 target
+.DS_Store
