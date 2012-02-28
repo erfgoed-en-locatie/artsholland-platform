@@ -11,7 +11,7 @@ String.prototype.startsWith = function(str) {
 function Snorql() {
     // modify this._endpoint to point to your SPARQL endpoint
     //this._endpoint = document.location.href.match(/^([^?]*)snorql\//)[1] + 'sparql';
-	this._endpoint = 'http://localhost:8080/sparql'
+	this._endpoint = '/sparql';
     // modify these to your likeing
     this._poweredByLink = 'http://api.artsholland.com';
     this._poweredByLabel = 'Arts Holland';
