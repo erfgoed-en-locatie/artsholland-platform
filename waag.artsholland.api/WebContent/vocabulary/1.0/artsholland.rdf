@@ -25,6 +25,7 @@
     <owl:imports rdf:resource="http://purl.org/dc/terms/"/>
     <owl:imports rdf:resource="http://purl.org/dc/elements/1.1/"/>
   </owl:Ontology>
+  
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Party">
     <rdfs:comment xml:lang="en">A group, person or organization that perfroms in or organizes a cultural event.</rdfs:comment>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -32,40 +33,56 @@
     <rdfs:comment xml:lang="nl">Een groep, persoon of entiteit welke participeert in een culturele uiting.</rdfs:comment>
     <rdfs:subClassOf rdf:resource="http://www.w3.org/2006/vcard/ns#Organization"/>
   </owl:Class>
+
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Venue">
-    <rdfs:comment xml:lang="nl">Locatie of ruimte waar culturele uitingen plaats kunnen vinden.</rdfs:comment>
+    <rdfs:comment xml:lang="nl">Locatie of ruimte waar culturele uitingen plaatsvinden.</rdfs:comment>
     <rdfs:subClassOf rdf:resource="http://www.w3.org/2006/vcard/ns#VCard"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Venue</rdfs:label>
-    <rdfs:comment xml:lang="en">Place or locality where cultural events can take place.</rdfs:comment>
+    <rdfs:comment xml:lang="en">Place or locality where cultural events take place.</rdfs:comment>
   </owl:Class>
+
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/VenueType">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Venue type</rdfs:label>
+    <rdfs:comment xml:lang="en">The type of venue; i.e. a cinema, theater etc.</rdfs:comment>
+    <rdfs:comment xml:lang="nl">Het type locatie; i.e. een bioscoop, theater etc.</rdfs:comment>
   </owl:Class>
+
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Genre">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Genre</rdfs:label>
   </owl:Class>
+
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Attachment">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Attachment</rdfs:label>
+    <rdfs:comment xml:lang="nl">Media, in digitale vorm, behorend tot een event, productie of locatie.</rdfs:comment>
+    <rdfs:comment xml:lang="en">Digital media, illustrating an event, production or venue.</rdfs:comment>
   </owl:Class>
+
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/EventStatus">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Event status</rdfs:label>
+    <rdfs:comment xml:lang="nl">Status van de voorstelling; één van 'normaal', 'uitverkocht', 'geannuleerd' of 'uitgesteld'.</rdfs:comment>
+    <rdfs:comment xml:lang="en">Event status; one of 'normal', 'sold out', 'cancelled' or 'postponed'.</rdfs:comment>
   </owl:Class>
+
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/EventType">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Event type</rdfs:label>
+    <rdfs:comment xml:lang="nl">Type van de voorstelling; één van 'normaal', 'première' of 'try-out'.</rdfs:comment>
+    <rdfs:comment xml:lang="en">Event type; one of 'normal', 'premiere' or 'try-out'.</rdfs:comment>
   </owl:Class>
+
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Room">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Room</rdfs:label>
     <rdfs:comment xml:lang="nl">Een kamer of zaal in een grotere publieke ruimte of theater.</rdfs:comment>
-    <rdfs:comment xml:lang="en">A room or hall as part of a bigger venue.</rdfs:comment>
+    <rdfs:comment xml:lang="en">A room or hall as part of a bigger venue or space.</rdfs:comment>
     <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
   </owl:Class>
+
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Production">
     <rdfs:comment xml:lang="nl">Een specifieke productie van een cultureel stuk.</rdfs:comment>
     <rdfs:comment xml:lang="en">A specific prodcution of a cultural piece.</rdfs:comment>
@@ -73,6 +90,7 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Production</rdfs:label>
   </owl:Class>
+
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Event">
     <rdfs:comment xml:lang="en">A cultural production at a specific location and time.</rdfs:comment>
     <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
@@ -80,6 +98,7 @@
     >Event</rdfs:label>
     <rdfs:comment xml:lang="nl">Een culturele uiting op een bepaalde plaats en een bepaald tijdstip.</rdfs:comment>
   </owl:Class>
+  
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/room">
     <rdfs:domain>
       <owl:Class>
