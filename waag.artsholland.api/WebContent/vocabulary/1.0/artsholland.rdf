@@ -47,6 +47,18 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Genre</rdfs:label>
   </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/Attachment">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Attachment</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/EventStatus">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Event status</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/EventType">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Event type</rdfs:label>
+  </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Room">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Room</rdfs:label>
@@ -67,44 +79,22 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Event</rdfs:label>
     <rdfs:comment xml:lang="nl">Een culturele uiting op een bepaalde plaats en een bepaald tijdstip.</rdfs:comment>
-    <rdfs:subClassOf>
-      <owl:Class>
-        <owl:intersectionOf rdf:parseType="Collection">
-          <owl:Restriction>
-            <owl:onProperty>
-              <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/atLocation"/>
-            </owl:onProperty>
-            <owl:someValuesFrom rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
-          </owl:Restriction>
-          <owl:Restriction>
-            <owl:onProperty>
-              <rdf:Property rdf:about="http://purl.org/artsholland/1.0/hasProduction"/>
-            </owl:onProperty>
-            <owl:someValuesFrom rdf:resource="http://purl.org/artsholland/1.0/Production"/>
-          </owl:Restriction>
-          <owl:Restriction>
-            <owl:onProperty>
-              <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/hasGenre"/>
-            </owl:onProperty>
-            <owl:someValuesFrom rdf:resource="http://purl.org/artsholland/1.0/Genre"/>
-          </owl:Restriction>
-        </owl:intersectionOf>
-      </owl:Class>
-    </rdfs:subClassOf>
   </owl:Class>
-  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/inRoom">
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Event"/>
-    <rdfs:comment xml:lang="en">Hall or room in a venue where the event takes place.</rdfs:comment>
+  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/room">
+    <rdfs:domain>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <owl:Class rdf:about="http://purl.org/artsholland/1.0/Venue"/>
+          <owl:Class rdf:about="http://purl.org/artsholland/1.0/Event"/>
+        </owl:unionOf>
+      </owl:Class>
+    </rdfs:domain>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >in room</rdfs:label>
-    <rdfs:comment xml:lang="nl">Zaal of ruimte in een lokatie waar het event plaatsvind.</rdfs:comment>
+    >has room</rdfs:label>
     <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Room"/>
-  </owl:ObjectProperty>
-  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/memberOf">
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Party"/>
-    <rdfs:domain rdf:resource="http://www.w3.org/2006/vcard/ns#VCard"/>
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >member of</rdfs:label>
+    <owl:inverseOf>
+      <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/belongsToVenue"/>
+    </owl:inverseOf>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/performedByParty">
     <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Party"/>
@@ -127,16 +117,26 @@
     <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
     <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/VenueType"/>
   </owl:ObjectProperty>
-  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/hasTicket">
-    <rdfs:range rdf:resource="http://purl.org/goodrelations/v1#Offering"/>
+  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/eventType">
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/EventType"/>
     <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Event"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >has ticket</rdfs:label>
+    >event type</rdfs:label>
   </owl:ObjectProperty>
-  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/hasGenre">
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Genre"/>
+  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/belongsToVenue">
+    <owl:inverseOf rdf:resource="http://purl.org/artsholland/1.0/room"/>
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Room"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >has genre</rdfs:label>
+    >belongs to venue</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/ticket">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >has ticket</rdfs:label>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Event"/>
+    <rdfs:range rdf:resource="http://purl.org/goodrelations/v1#Offering"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/genre">
     <rdfs:domain>
       <owl:Class>
         <owl:unionOf rdf:parseType="Collection">
@@ -145,22 +145,41 @@
         </owl:unionOf>
       </owl:Class>
     </rdfs:domain>
-  </owl:ObjectProperty>
-  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/belongsToVenue">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >belongs to venue</rdfs:label>
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Room"/>
-    <owl:inverseOf>
-      <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/hasRoom"/>
-    </owl:inverseOf>
+    >has genre</rdfs:label>
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Genre"/>
   </owl:ObjectProperty>
-  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/hasRoom">
-    <owl:inverseOf rdf:resource="http://purl.org/artsholland/1.0/belongsToVenue"/>
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Room"/>
+  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/memberOf">
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Party"/>
+    <rdfs:domain rdf:resource="http://www.w3.org/2006/vcard/ns#VCard"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >has room</rdfs:label>
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
+    >member of</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/production">
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Production"/>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Event"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >production</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/attachment">
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Attachment"/>
+    <rdfs:domain>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <owl:Class rdf:about="http://purl.org/artsholland/1.0/Event"/>
+          <owl:Class rdf:about="http://purl.org/artsholland/1.0/Production"/>
+          <owl:Class rdf:about="http://purl.org/artsholland/1.0/Venue"/>
+        </owl:unionOf>
+      </owl:Class>
+    </rdfs:domain>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >attachment</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/eventStatus">
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/EventStatus"/>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Event"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >event status</rdfs:label>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/startsAt">
     <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Event"/>
@@ -168,13 +187,6 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >starts at</rdfs:label>
   </owl:ObjectProperty>
-  <rdf:Property rdf:about="http://purl.org/artsholland/1.0/hasProduction">
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Production"/>
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >hasProduction</rdfs:label>
-    <rdfs:comment xml:lang="en">A production at an event.</rdfs:comment>
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Event"/>
-  </rdf:Property>
   <owl:DatatypeProperty rdf:about="http://purl.org/artsholland/1.0/venueGeneralTicketInfo">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >venue general ticket info</rdfs:label>
@@ -186,6 +198,12 @@
     >venue boxoffice info</rdfs:label>
     <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://purl.org/artsholland/1.0/ageLimitUpper">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Production"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >age limit upper</rdfs:label>
   </owl:DatatypeProperty>
   <owl:DatatypeProperty rdf:about="http://purl.org/artsholland/1.0/venueGeneralDiscountInfo">
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
@@ -205,10 +223,20 @@
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     <rdfs:label xml:lang="en">venue public transport info</rdfs:label>
   </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://purl.org/artsholland/1.0/ageLimitLower">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >lower age limit</rdfs:label>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Production"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+  </owl:DatatypeProperty>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreKlassiekeMuziek">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Klassieke muziek</rdfs:label>
   </ah:Genre>
+  <ah:VenueType rdf:about="http://purl.org/artsholland/1.0/venueTypeOutdoor">
+    <rdfs:label xml:lang="nl">Buitenlocatie</rdfs:label>
+    <rdfs:label xml:lang="en">Outdoor location</rdfs:label>
+  </ah:VenueType>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreRondrit">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Rondrit</rdfs:label>
@@ -217,18 +245,22 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Overigen</rdfs:label>
   </ah:Genre>
-  <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreSpeelfilm">
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >Speelfilm</rdfs:label>
-  </ah:Genre>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreDebat">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Debat</rdfs:label>
+  </ah:Genre>
+  <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreSpeelfilm">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Speelfilm</rdfs:label>
   </ah:Genre>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreDance">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Dance</rdfs:label>
   </ah:Genre>
+  <ah:VenueType rdf:about="http://purl.org/artsholland/1.0/venueTypeTheater">
+    <rdfs:label xml:lang="nl">Theater</rdfs:label>
+    <rdfs:label xml:lang="en">Theater</rdfs:label>
+  </ah:VenueType>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreRondleiding">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Rondleiding</rdfs:label>
@@ -241,6 +273,10 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Markt</rdfs:label>
   </ah:Genre>
+  <ah:EventStatus rdf:about="http://purl.org/artsholland/1.0/eventStatusNormal">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >normal event</rdfs:label>
+  </ah:EventStatus>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreBuitenExpositie">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Buitenexpositie</rdfs:label>
@@ -253,13 +289,13 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Show</rdfs:label>
   </ah:Genre>
-  <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreMuseum">
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >Museum</rdfs:label>
-  </ah:Genre>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreFestival">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Festival</rdfs:label>
+  </ah:Genre>
+  <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreMuseum">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Museum</rdfs:label>
   </ah:Genre>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreOpera">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -269,14 +305,18 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Circus</rdfs:label>
   </ah:Genre>
+  <ah:EventType rdf:about="http://purl.org/artsholland/1.0/eventTypePremiere">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >event type premiere</rdfs:label>
+  </ah:EventType>
+  <ah:EventStatus rdf:about="http://purl.org/artsholland/1.0/eventStatusPostponed">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >event is postponed</rdfs:label>
+  </ah:EventStatus>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreJeugd">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Jeugd</rdfs:label>
   </ah:Genre>
-  <ah:VenueType rdf:about="http://purl.org/artsholland/1.0/VenueTypeCinema">
-    <rdfs:label xml:lang="en">Cinema</rdfs:label>
-    <rdfs:label xml:lang="nl">Bioscoop</rdfs:label>
-  </ah:VenueType>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreMusical">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Musical</rdfs:label>
@@ -289,10 +329,6 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Muziektheater</rdfs:label>
   </ah:Genre>
-  <ah:VenueType rdf:about="http://purl.org/artsholland/1.0/VenueTypeMuseum">
-    <rdfs:label xml:lang="nl">Museum</rdfs:label>
-    <rdfs:label xml:lang="en">Museum</rdfs:label>
-  </ah:VenueType>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreDocumentaire">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Documentaire</rdfs:label>
@@ -305,10 +341,10 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Wandeling</rdfs:label>
   </ah:Genre>
-  <ah:VenueType rdf:about="http://purl.org/artsholland/1.0/VenueTypeOutdoor">
-    <rdfs:label xml:lang="en">Outdoor location</rdfs:label>
-    <rdfs:label xml:lang="nl">Buitenlocatie</rdfs:label>
-  </ah:VenueType>
+  <ah:EventStatus rdf:about="http://purl.org/artsholland/1.0/eventStatusSoldOut">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >event is sold out</rdfs:label>
+  </ah:EventStatus>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreOpenstelling">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Openstelling</rdfs:label>
@@ -317,6 +353,10 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Literatuur</rdfs:label>
   </ah:Genre>
+  <ah:VenueType rdf:about="http://purl.org/artsholland/1.0/venueTypeMuseum">
+    <rdfs:label xml:lang="en">Museum</rdfs:label>
+    <rdfs:label xml:lang="nl">Museum</rdfs:label>
+  </ah:VenueType>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreOpenDag">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Open dag</rdfs:label>
@@ -333,13 +373,13 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Kermis</rdfs:label>
   </ah:Genre>
-  <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreBeurs">
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >Beurs</rdfs:label>
-  </ah:Genre>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genrePoppentheater">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Poppentheater</rdfs:label>
+  </ah:Genre>
+  <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreBeurs">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Beurs</rdfs:label>
   </ah:Genre>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreNietWesterseDans">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -349,13 +389,17 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Moderne dans</rdfs:label>
   </ah:Genre>
-  <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreCabaret">
+  <ah:EventType rdf:about="http://purl.org/artsholland/1.0/evenTypeTryout">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >Cabaret</rdfs:label>
-  </ah:Genre>
+    >even type tryout</rdfs:label>
+  </ah:EventType>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreWereldmuziek">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Wereldmuziek</rdfs:label>
+  </ah:Genre>
+  <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreCabaret">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Cabaret</rdfs:label>
   </ah:Genre>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreToneel">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -382,13 +426,17 @@
     >short description</rdfs:label>
     <rdfs:subPropertyOf rdf:resource="http://purl.org/dc/elements/1.1/description"/>
   </owl:AnnotationProperty>
+  <ah:EventStatus rdf:about="http://purl.org/artsholland/1.0/eventStatusCancelled">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >event is cancelled</rdfs:label>
+  </ah:EventStatus>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreSport">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Sport</rdfs:label>
   </ah:Genre>
-  <ah:VenueType rdf:about="http://purl.org/artsholland/1.0/VenueTypeGallery">
-    <rdfs:label xml:lang="en">Gallery</rdfs:label>
-    <rdfs:label xml:lang="nl">Gallerie</rdfs:label>
+  <ah:VenueType rdf:about="http://purl.org/artsholland/1.0/venueTypeCinema">
+    <rdfs:label xml:lang="nl">Bioscoop</rdfs:label>
+    <rdfs:label xml:lang="en">Cinema</rdfs:label>
   </ah:VenueType>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreBallet">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -398,6 +446,10 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Mime</rdfs:label>
   </ah:Genre>
+  <ah:EventType rdf:about="http://purl.org/artsholland/1.0/eventTypeNormal">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >event type normal</rdfs:label>
+  </ah:EventType>
 </rdf:RDF>
 
 <!-- Created with TopBraid -->
