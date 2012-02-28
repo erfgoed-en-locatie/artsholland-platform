@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   
-  <artifactId>api</artifactId>
+  <artifactId>artsholland-api</artifactId>
   <packaging>war</packaging>  
   <name>API</name>
   <description>Arts Holland API module</description>
     
   <parent>
     <groupId>org.waag.artsholland</groupId>
-    <artifactId>parent</artifactId>
+    <artifactId>artsholland</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
     
@@ -19,14 +19,11 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>2.2</version>
         <configuration>
-          <!-- TODO: Move this to platform module as it is a deployment thang. -->
-          <packagingExcludes>WEB-INF/lib/core-*.jar,WEB-INF/lib/sesame-*.jar</packagingExcludes>
-<!--           <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <classpathPrefix>lib/</classpathPrefix>
-            </manifest>
-          </archive> -->
+          <!-- TODO: Move this to EAR module as it is a deployment thang. -->
+          <packagingExcludes>
+            WEB-INF/lib/artsholland-core-*.jar,
+            WEB-INF/lib/sesame-*.jar
+          </packagingExcludes>
         </configuration>
       </plugin>    
       <plugin>
@@ -64,7 +61,7 @@
   <dependencies>
     <dependency>
       <groupId>org.waag.artsholland</groupId>
-      <artifactId>core</artifactId>
+      <artifactId>artsholland-core</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <type>ejb</type>
     </dependency>    
