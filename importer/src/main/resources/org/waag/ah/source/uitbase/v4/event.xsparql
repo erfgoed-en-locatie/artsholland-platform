@@ -7,8 +7,6 @@ declare namespace time="http://www.w3.org/2006/time#";
 declare namespace gr="http://purl.org/goodrelations/v1#";
 declare namespace foaf="http://xmlns.com/foaf/0.1/";
 
-import module namespace waag = "http://waag.org" at "http://localhost:8080/static/xquery/waag.xquery";
-
 let $events := //event
 
 let $baseuri := {"http://purl.org/artsholland/1.0/"}
@@ -22,16 +20,7 @@ return
 		let $euriUitburo := {concat($baseuriUitburo, "events/", $cidn)}
 			
 		let $puri := {concat($baseuri, "productions/", $event/link[@type="production"]/@cidn)}
-		let $luri := {concat($baseuri, "venues/", $event/link[@type="location"]/@cidn)}
-			
-		let $type := {$event/type/@key}
-		let $eventType := {if ($type eq "") then () else concat("ah:EventType", waag:capitalize-first-only(data($type)))}
-		
-		let $status :={$event/status/@key}
-		let $eventStatus := {if ($status eq "") then () else concat("ah:EventStatus", waag:capitalize-first-only(data($status)))}				
-			
-		let $room := {$event/room}
-		let $ruri := {if ($room eq "") then () else concat($luri, "/rooms/", waag:make-uri($room))}
+		let $luri := {concat($baseuri, "venues/", $event/link[@type="location"]/@cidn)}			
 				
 		construct { 
 		
@@ -41,76 +30,6 @@ return
 			$euri ah:atLocation $luri.
 			$euri ah:hasProduction $puri.
 			
-			$euri dc:created {$event/@date-created}^^xsd:string.
-			$euri dc:modified {$event/@date-changed}^^xsd:string.
 			
-			$euri dc:title {waag:replace-characters($event/title)}^^xsd:string.
-			$euri dc:description {waag:replace-characters($event/description)}^^xsd:string.
-			
-			$euri ah:hasEventType $eventType.
-			$eventType a ah:EventType.			
-			$eventType rdf:label {$event/type}.
-			
-			$euri ah:hasEventStatus $eventStatus.
-			$eventStatus a ah:EventStatus.			
-			$eventStatus rdf:label {$event/status}.
-			
-			{ for $pricetag in $event/pricetags//pricetag
-	
-				# Als er events zijn met pricetags met zelfde type: gebruik $pos in uri
-				let $turi := {concat($euri, "/tickets/", waag:make-uri($pricetag/type))}
-				let $puri := {concat($turi, "/price")}
-				
-				construct {
-				
-					$euri ah:hasTicket $turi.
-					$turi a gr:Offering.
-			
-					$turi dc:description {waag:replace-characters($pricetag/description)}^^xsd:string.
-					$turi gr:name	{waag:replace-characters($pricetag/type)}^^xsd:string.
-						
-					# TODO:
-					#	<ticketsalesinformation>kvk info</ticketsalesinformation>
-					#	<ticketsalesphone>kvk telefoon</ticketsalesphone>
-					#	<ticketsalesurl>kvk url</ticketsalesurl>
-			
-					$turi gr:hasPriceSpecification $puri.
-					$puri a gr:UnitPriceSpecification.
-			
-					$puri gr:hasMinCurrencyValue {$pricetag/lowest}.			
-					$puri gr:hasMaxCurrencyValue {$pricetag/highest}.
-					$puri gr:hasCurrency "EUR".
-								
-				}
-			}.
-			
-			# $pos is counter (http://stackoverflow.com/questions/5652397/xquery-counters-inside-a-for)
-			{ for $medium at $pos in $event/media//medium				
-				
-				let $muri := {concat($euri, "/attachments/", $pos)}				
-				
-				construct {
-				
-				 	$euri ah:hasAttachment $muri.
-				 	$muri a ah:Attachment.
-					$muri dc:title {waag:replace-characters($medium/title)}^^xsd:string.
-					$muri dc:description {waag:replace-characters($medium/description)}^^xsd:string.
-					$muri foaf:depiction {$medium/ref}.
-	
-					# TODO:
-					#	<alt>A family again</alt>
-					#	<type>afbeelding</type>
-					
-				}
-			}.
-			
-			$ruri a ah:Room.
-			$ruri rdf:Label {if ($room eq "") then () else $room}.
-			$euri ah:inRoom $ruri.
-			$luri ah:hasRoom $ruri.		
-	
-			# TODO: converteren naar correct formaat??
-			$euri time:hasBeginning {$event/datetime-start}.
-			$euri time:hasEnd {$event/datetime-end}.
 				 	
 		}

@@ -462,7 +462,7 @@ function SPARQLResultFormatter(json, namespaces) {
             var externalLink = document.createElement('a');
             externalLink.href = node.value;
             img = document.createElement('img');
-            img.src = '/snorql/link.png';
+            img.src = '/static/snorql/link.png';
             img.alt = '[' + match[1] + ']';
             img.title = 'Go to Web page';
             externalLink.appendChild(img);
