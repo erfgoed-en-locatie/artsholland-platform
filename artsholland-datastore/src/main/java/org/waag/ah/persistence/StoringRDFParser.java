@@ -17,11 +17,13 @@ import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.RDFParseException;
 import org.openrdf.rio.helpers.RDFHandlerBase;
 import org.openrdf.rio.rdfxml.RDFXMLParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.waag.ah.RepositoryConnectionFactory;
 
 @Stateful
 public class StoringRDFParser extends RDFXMLParser {
-//	private static final Logger logger = Logger.
+	final static Logger logger = LoggerFactory.getLogger(StoringRDFParser.class);
 	private RepositoryConnection conn;
 	private ValueFactory vf;
 	private URI baseURI;
@@ -38,7 +40,7 @@ public class StoringRDFParser extends RDFXMLParser {
 			vf = conn.getValueFactory();
 			source = vf.createURI("http://purl.org/artsholland/1.0/metadata/source");
 		} catch (Exception e) {
-//			logger.error(e.getMessage());
+			logger.error(e.getMessage());
 		}
 	}
 	
@@ -49,9 +51,9 @@ public class StoringRDFParser extends RDFXMLParser {
 		try {
 			long cursize = conn.size();
 			super.parse(in, baseURI);
-//			logger.info("ADDED "+(conn.size()-cursize)+" NEW STATEMENTS");
+			logger.info("ADDED "+(conn.size()-cursize)+" NEW STATEMENTS");
 		} catch (RepositoryException e) {
-//			logger.error(e.getMessage());
+			logger.error(e.getMessage());
 		}
 	}
 
@@ -64,10 +66,10 @@ public class StoringRDFParser extends RDFXMLParser {
 
 	public void cancel() {
 		try {
-//			logger.info("CANCEL REQUESTED!");
+			logger.info("CANCEL REQUESTED!");
 			conn.rollback();
 		} catch (RepositoryException e) {
-//			logger.warn("Error rolling back transaction: "+e.getMessage());
+			logger.warn("Error rolling back transaction: "+e.getMessage());
 		}
 	}
 	
@@ -82,7 +84,7 @@ public class StoringRDFParser extends RDFXMLParser {
 				conn.add(statement.getContext(), source, baseURI);
 				counter++;
 				if (counter % 1024 == 0) {
-//					logger.info("ADDING "+counter+" STATEMENTS (CTX: "+statement.getContext()+")");
+					logger.info("ADDING "+counter+" STATEMENTS (CTX: "+statement.getContext()+")");
 				}
 			} catch (RepositoryException e) {
 				try {
@@ -101,7 +103,7 @@ public class StoringRDFParser extends RDFXMLParser {
 		@Override
 		public void endRDF() throws RDFHandlerException {
 			try {
-//				logger.info("COMMITTING "+counter+" STATEMENTS");
+				logger.info("COMMITTING "+counter+" STATEMENTS");
 				conn.commit();
 			} catch (RepositoryException e) {
 				try {
