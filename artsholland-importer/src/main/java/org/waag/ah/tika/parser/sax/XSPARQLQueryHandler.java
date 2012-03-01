@@ -2,6 +2,7 @@ package org.waag.ah.tika.parser.sax;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +18,7 @@ import net.sf.saxon.s9api.XQueryCompiler;
 import net.sf.saxon.s9api.XQueryEvaluator;
 import net.sf.saxon.s9api.XdmItem;
 
+import org.antlr.runtime.RecognitionException;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
@@ -26,7 +28,7 @@ import org.apache.tika.sax.ToXMLContentHandler;
 import org.apache.tika.sax.xpath.Matcher;
 import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
-import org.deri.xsparql.rewriter.XSPARQLProcessor;
+import org.deri.xsparql.XSPARQLProcessor;
 import org.openrdf.model.vocabulary.RDF;
 import org.waag.ah.tika.parser.rdf.TurtleParser;
 import org.xml.sax.Attributes;
@@ -48,7 +50,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	private Matcher matcher;
 
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata, 
-			ParseContext context, String query, String rootElement)	throws TikaException {
+			ParseContext context, InputStream xquery, String rootElement)	throws TikaException {
 //		super(handler);
 		this.matcher = new XPathParser("rdf", RDF.NAMESPACE).parse("/rdf:RDF/descendant::node()");
 		this.handler = handler;
@@ -59,15 +61,22 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		this.rootElement = rootElement;
 		try {
 			XSPARQLProcessor xp = new XSPARQLProcessor();			
-			String q = xp.process(new StringReader(query));
+			String q = xp.process(xquery);//.process(new StringReader(query));
 			Configuration config = new Configuration();
 			namepool = new NamespaceCollector();
 			config.setNamePool(namepool);
 			Processor processor = new Processor(config);
 			XQueryCompiler compiler = processor.newXQueryCompiler();			
 			evaluator = compiler.compile(q).load();	
+		} catch (SaxonApiException e) {
+			e.printStackTrace();
+		} catch (RecognitionException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		} catch (Exception e) {
-			throw new TikaException(e.getMessage(), e);
+			e.printStackTrace();
+		} finally {
 		}			
 	}
 

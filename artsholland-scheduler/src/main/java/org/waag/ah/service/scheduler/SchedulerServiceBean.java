@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 @MessageDriven(
 	activationConfig = {
 		@ActivationConfigProperty(propertyName="destinationType", propertyValue="javax.jms.Queue"),
-		@ActivationConfigProperty(propertyName="destination", propertyValue="queue/schedule")})
+		@ActivationConfigProperty(propertyName="destination", propertyValue="queue/scheduler")})
 public class SchedulerServiceBean implements MessageListener {
 	final static Logger logger = LoggerFactory.getLogger(SchedulerServiceBean.class);
 
@@ -55,7 +55,7 @@ public class SchedulerServiceBean implements MessageListener {
 	
 	public void onMessage(Message msg) {}
 	
-//    @Schedule(persistent=false, minute="*/5", hour="*")
+    @Schedule(persistent=false, minute="*/1", hour="*")
     public void automaticTimeout() {
 		QueueSession session = null;         
 		QueueSender sender = null;  
@@ -76,7 +76,7 @@ public class SchedulerServiceBean implements MessageListener {
 //				"http://localhost/ah/nub/v4/location.xml",
 //				"http://127.0.0.1/ah/nub/amsterdam.xml",
 //				"http://127.0.0.1/ah/nub/events.xml",
-				"http://accept.ps4.uitburo.nl/api/events?key=505642b12881b9a60688411a333bc78b&rows=10",
+				"http://accept.ps4.uitburo.nl/api/events?key=505642b12881b9a60688411a333bc78b&rows=500",
 //				"http://accept.ps4.uitburo.nl/api/productions?key=505642b12881b9a60688411a333bc78b&rows=10000",
 //				"http://accept.ps4.uitburo.nl/api/locations?key=505642b12881b9a60688411a333bc78b&rows=10000"
 			};

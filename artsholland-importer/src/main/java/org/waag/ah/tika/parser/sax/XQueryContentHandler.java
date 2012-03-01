@@ -2,6 +2,7 @@ package org.waag.ah.tika.parser.sax;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 
@@ -22,7 +23,7 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.ContentHandlerDecorator;
 import org.apache.tika.sax.ToXMLContentHandler;
-import org.deri.xsparql.rewriter.XSPARQLProcessor;
+import org.deri.xsparql.XSPARQLProcessor;
 import org.waag.ah.tika.parser.rdf.TurtleParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -33,12 +34,12 @@ public class XQueryContentHandler extends ContentHandlerDecorator {
 	private ContentHandler handler;
 	private XQueryEvaluator evaluator;
 	private ToXMLContentHandler xmlCollector;
-	private String query;
+	private InputStream query;
 	private TurtleParser turtleParser;
 	private ParseContext context;
 	private Metadata metadata;
 
-	public XQueryContentHandler(ContentHandler handler, String query, 
+	public XQueryContentHandler(ContentHandler handler, InputStream query, 
 			Metadata metadata, ParseContext context)
 			throws TikaException {
 		super(handler);
@@ -69,7 +70,7 @@ public class XQueryContentHandler extends ContentHandlerDecorator {
 
 		try {
 			XSPARQLProcessor xp = new XSPARQLProcessor();
-			String q = xp.process(new StringReader(query));
+			String q = xp.process(query);//new StringReader(query));
 			Configuration config = new Configuration();
 			Processor processor = new Processor(config);
 			XQueryCompiler compiler = processor.newXQueryCompiler();

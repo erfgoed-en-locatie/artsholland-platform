@@ -1,9 +1,7 @@
 package org.waag.ah.source.uitbase;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -88,18 +86,18 @@ public class UitbaseParser extends XMLParser {
 			// (event/production/location/group).
 			if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV3_MIME_TYPE)) {
 				logger.info("Parsing V3 document");
-				String xquery = getFileContents(getClass(), "v3/event.xsparql");    			
+				InputStream xquery = getFileContents(getClass(), "v3/event.xsparql");    			
 				return new MatchingContentHandler(
 					new XSPARQLQueryHandler(handler, metadata, context, xquery, ""), 
 					getXPathMatcher("/nubxml/events/descendant::node()"));
 				
 			} else {
 				logger.info("Parsing V4 document");
-				String xquery = null;
+				InputStream xquery = null;
 				String node = null;
 				if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_EVENT_MIME_TYPE)) {
 					//xquery = getFileContents(getClass(), "v4/event.xsparql");
-					xquery = getFileContents(getClass(), "v4/event_test.xsparql");
+					xquery = getFileContents(getClass(), "v4/event.xsparql");
 					node = "event";
 				} else if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_PRODUCTION_MIME_TYPE)) {
 					xquery = getFileContents(getClass(), "v4/production.xsparql");
@@ -129,18 +127,18 @@ public class UitbaseParser extends XMLParser {
 	 * @todo Move to utility class.
 	 */
 	
-    public static String getFileContents(Class<?> clazz, String fileName) throws IOException {
-    	
+    public static InputStream getFileContents(Class<?> clazz, String fileName) throws IOException {
     	InputStream input = clazz.getResourceAsStream(fileName);
-    	BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-    	String str = "";
-    	StringBuffer buffer = new StringBuffer();
-        while ((str = reader.readLine()) != null) {
-            buffer.append(str + "\n");
-        }
-        reader.close();
-        input.close();
-        return buffer.toString();
+//    	BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+    	return input;
+//    	String str = "";
+//    	StringBuffer buffer = new StringBuffer();
+//        while ((str = reader.readLine()) != null) {
+//            buffer.append(str + "\n");
+//        }
+//        reader.close();
+//        input.close();
+//        return buffer.toString();
     }
     
     private Matcher getXPathMatcher(String selector) {

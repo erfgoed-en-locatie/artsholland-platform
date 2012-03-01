@@ -43,7 +43,7 @@ public class DOSAParser extends CompositeParser {
 			SAXException, TikaException {
 		
 		Map<String, String> vars = new HashMap<String, String>();
-		vars.put("config", UitbaseParser.getFileContents(getClass(), "META-INF/tables.xml"));
+//		vars.put("config", UitbaseParser.getFileContents(getClass(), "META-INF/tables.xml"));
 		
 		Parser parser = getParser(MediaType.application("vnd.ms-excel"));
 		parser.parse(stream, new XQueryContentHandler(handler, 
