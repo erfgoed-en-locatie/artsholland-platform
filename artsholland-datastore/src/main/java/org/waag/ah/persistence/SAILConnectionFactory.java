@@ -60,5 +60,9 @@ public class SAILConnectionFactory extends AbstractConnectionFactory implements 
 	protected BigdataSailRepository createRepository(Properties properties) {
 		BigdataSail sail = new BigdataSail(properties);
 		return new BigdataSailRepository(sail);		
-	}	
+	}
+	
+	protected BigdataSailRepository getRepository() {
+		return repo;
+	}
 }
