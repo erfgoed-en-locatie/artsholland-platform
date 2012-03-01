@@ -39,6 +39,11 @@
       <version>${sesame.version}</version>
     </dependency>
     <dependency>
+			<groupId>org.openrdf.alibaba</groupId>
+			<artifactId>alibaba-repository-object</artifactId>
+			<version>${alibaba.version}</version>
+		</dependency> 
+    <dependency>
       <groupId>cglib</groupId>
       <artifactId>cglib</artifactId>
       <version>2.2.2</version>

@@ -14,4 +14,5 @@ public interface RepositoryConnectionFactory {
 	
 	public RepositoryConnection getReadOnlyConnection()
 		throws IOException, RepositoryException;
+
 }
