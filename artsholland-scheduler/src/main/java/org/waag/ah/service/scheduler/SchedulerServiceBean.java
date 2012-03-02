@@ -1,5 +1,7 @@
 package org.waag.ah.service.scheduler;
 
+import java.util.ArrayList;
+
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
@@ -76,12 +78,18 @@ public class SchedulerServiceBean implements MessageListener {
 //				"http://localhost/ah/nub/v4/location.xml",
 //				"http://127.0.0.1/ah/nub/amsterdam.xml",
 //				"http://127.0.0.1/ah/nub/events.xml",
+					
+					
+					//"http://accept.ps4.uitburo.nl/api/productions?key=505642b12881b9a60688411a333bc78b&rows=1&start=8"
+					
 				"http://accept.ps4.uitburo.nl/api/events?key=505642b12881b9a60688411a333bc78b&rows=500",
-//				"http://accept.ps4.uitburo.nl/api/productions?key=505642b12881b9a60688411a333bc78b&rows=10000",
-//				"http://accept.ps4.uitburo.nl/api/locations?key=505642b12881b9a60688411a333bc78b&rows=10000"
+				"http://accept.ps4.uitburo.nl/api/productions?key=505642b12881b9a60688411a333bc78b&rows=500",
+				"http://accept.ps4.uitburo.nl/api/locations?key=505642b12881b9a60688411a333bc78b&rows=500"
 			};
 			
-			for (String sourceURL: sourceURLs) {
+			ArrayList<String> sourceURLs2 = UitbaseURLGenerator.getURLs();
+			
+			for (String sourceURL: sourceURLs2) {
 				logger.info("Scheduling URL for import: "+sourceURL);
 				TextMessage msg = session.createTextMessage(sourceURL);
 				sender.send(msg);

@@ -1,7 +1,10 @@
 module namespace waag = "http://waag.org";
 
 declare function waag:replace-characters($arg as xs:string?) as xs:string {
-	translate($arg, '":<>', "'&#58;&#60;$#62;")
+	(: See https://redmine.waag.org/issues/6297 :)
+	replace(replace(replace(replace($arg, ":", "[[waag_colon]]"), "<", "[[waag_less_than]]"), ">", "[[waag_greater_than]]"), '"', '\\"')
+	
+	(: translate($arg, '":<>', "'&#58;&#60;$#62;") :)
 	
 	(: translate($arg, '":', "'&#x58;") :)
 };

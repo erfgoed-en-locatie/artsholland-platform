@@ -1,11 +1,13 @@
 declare namespace dc="http://purl.org/dc/elements/1.1/";
 declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+declare namespace rdfs="http://www.w3.org/2000/01/rdf-schema#";
 declare namespace xsd="http://www.w3.org/2001/XMLSchema#";
 declare namespace ah="http://purl.org/artsholland/1.0/";
 declare namespace owl="http://www.w3.org/2002/07/owl#";
 declare namespace time="http://www.w3.org/2006/time#"; 
 declare namespace gr="http://purl.org/goodrelations/v1#";
 declare namespace foaf="http://xmlns.com/foaf/0.1/";
+declare namespace nub="http://resources.uitburo.nl/";
 
 import module namespace waag = "http://waag.org" at "http://localhost:8080/static/xquery/waag.xquery";
 
@@ -22,7 +24,7 @@ return
 		let $euriUitburo := {concat($baseuriUitburo, "events/", $cidn)}
 			
 		let $puri := {concat($baseuri, "productions/", $event/link[@type="production"]/@cidn)}
-		let $luri := {concat($baseuri, "venues/", $event/link[@type="location"]/@cidn)}
+		let $vuri := {concat($baseuri, "venues/", $event/link[@type="location"]/@cidn)}
 			
 		let $type := {$event/type/@key}
 		let $eventType := {if ($type eq "") then () else concat("ah:EventType", waag:capitalize-first-only(data($type)))}
@@ -31,29 +33,36 @@ return
 		let $eventStatus := {if ($status eq "") then () else concat("ah:EventStatus", waag:capitalize-first-only(data($status)))}				
 			
 		let $room := {$event/room}
-		let $ruri := {if ($room eq "") then () else concat($luri, "/rooms/", waag:make-uri($room))}
+		let $ruri := {if ($room eq "") then () else concat($vuri, "/rooms/", waag:make-uri($room))}
 				
+		let $title := {waag:replace-characters($event/title)}
+		let $description := {waag:replace-characters($event/description)}
+		
 		construct { 
 		
 			$euri a ah:Event.
 			$euri owl:sameAs $euriUitburo.
 			
-			$euri ah:atLocation $luri.
-			$euri ah:hasProduction $puri.
+			$euri ah:cidn {$cidn}^^xsd:string.
+			
+			$euri ah:venue $vuri.
+			$euri ah:production $puri.
 			
 			$euri dc:created {$event/@date-created}^^xsd:string.
 			$euri dc:modified {$event/@date-changed}^^xsd:string.
 			
-			$euri dc:title {waag:replace-characters($event/title)}^^xsd:string.
-			$euri dc:description {waag:replace-characters($event/description)}^^xsd:string.
+			$euri dc:title {if ($title eq "") then () else $title}^^xsd:string.
+			$euri dc:description {if ($description eq "") then () else $description}^^xsd:string.
 			
-			$euri ah:hasEventType $eventType.
+			$euri ah:eventType $eventType.
 			$eventType a ah:EventType.			
+			#TODO: check of leeg.
 			$eventType rdf:label {$event/type}.
 			
-			$euri ah:hasEventStatus $eventStatus.
+			$euri ah:eventStatus $eventStatus.
 			$eventStatus a ah:EventStatus.			
-			$eventStatus rdf:label {$event/status}.
+			#TODO: check of leeg.
+			$eventStatus rdfs:label {$event/status}.
 			
 			{ for $pricetag in $event/pricetags//pricetag
 	
@@ -61,13 +70,16 @@ return
 				let $turi := {concat($euri, "/tickets/", waag:make-uri($pricetag/type))}
 				let $puri := {concat($turi, "/price")}
 				
+				let $name := {waag:replace-characters($pricetag/type)}
+				let $description := {waag:replace-characters($pricetag/description)}			
+				
 				construct {
 				
-					$euri ah:hasTicket $turi.
-					$turi a gr:Offering.
-			
-					$turi dc:description {waag:replace-characters($pricetag/description)}^^xsd:string.
-					$turi gr:name	{waag:replace-characters($pricetag/type)}^^xsd:string.
+					$euri ah:ticket $turi.
+					$turi a gr:Offering.			
+					
+					$turi gr:name	{if ($name eq "") then () else $name}^^xsd:string.
+					$turi dc:description {if ($description eq "") then () else $description}^^xsd:string.					
 						
 					# TODO:
 					#	<ticketsalesinformation>kvk info</ticketsalesinformation>
@@ -77,9 +89,9 @@ return
 					$turi gr:hasPriceSpecification $puri.
 					$puri a gr:UnitPriceSpecification.
 			
-					$puri gr:hasMinCurrencyValue {$pricetag/lowest}.			
-					$puri gr:hasMaxCurrencyValue {$pricetag/highest}.
-					$puri gr:hasCurrency "EUR".
+					$puri gr:hasMinCurrencyValue {$pricetag/lowest}^^xsd:decimal.			
+					$puri gr:hasMaxCurrencyValue {$pricetag/highest}^^xsd:decimal.
+					$puri gr:hasCurrency "EUR"^^xsd:string.
 								
 				}
 			}.
@@ -87,14 +99,16 @@ return
 			# $pos is counter (http://stackoverflow.com/questions/5652397/xquery-counters-inside-a-for)
 			{ for $medium at $pos in $event/media//medium				
 				
-				let $muri := {concat($euri, "/attachments/", $pos)}				
+				let $muri := {concat($euri, "/attachments/", $pos)}	
+				let $description := {waag:replace-characters($medium/description)}
+				let $title := {waag:replace-characters($medium/title)}			
 				
 				construct {
 				
-				 	$euri ah:hasAttachment $muri.
+				 	$euri ah:attachment $muri.
 				 	$muri a ah:Attachment.
-					$muri dc:title {waag:replace-characters($medium/title)}^^xsd:string.
-					$muri dc:description {waag:replace-characters($medium/description)}^^xsd:string.
+					$muri dc:title {if ($title eq "") then () else $title}^^xsd:string.
+					$muri dc:description {if ($description eq "") then () else $description}^^xsd:string.
 					$muri foaf:depiction {$medium/ref}.
 	
 					# TODO:
@@ -106,10 +120,13 @@ return
 			
 			$ruri a ah:Room.
 			$ruri rdf:Label {if ($room eq "") then () else $room}.
-			$euri ah:inRoom $ruri.
-			$luri ah:hasRoom $ruri.		
+			$euri ah:room $ruri.
+			$vuri ah:room $ruri.		
 	
 			# TODO: converteren naar correct formaat??
+			# TODO: Timezone?
+			# TODO: zomertijd/wintertijd?
+			
 			$euri time:hasBeginning {$event/datetime-start}.
 			$euri time:hasEnd {$event/datetime-end}.
 				 	
