@@ -4,34 +4,71 @@
     xmlns:beans="http://www.springframework.org/schema/beans"
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:oauth="http://www.springframework.org/schema/security/oauth"
+    xmlns:util="http://www.springframework.org/schema/util"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="
-        http://www.springframework.org/schema/beans 
-        http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-        http://www.springframework.org/schema/context
-        http://www.springframework.org/schema/context/spring-context-3.0.xsd
-        http://www.springframework.org/schema/security 
-        http://www.springframework.org/schema/security/spring-security-3.1.xsd
-        http://www.springframework.org/schema/security/oauth 
-        http://www.springframework.org/schema/security/spring-security-oauth-1.0.xsd">
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+        http://www.springframework.org/schema/security/oauth http://www.springframework.org/schema/security/spring-security-oauth-1.0.xsd
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+  <global-method-security secured-annotations="enabled" pre-post-annotations="enabled" />
   
-  <!-- beans:bean id="oauthEntryPoint" class="org.springframework.security.oauth.provider.OAuthProcessingFilterEntryPoint"/-->
-  <!-- http create-session="stateless" entry-point-ref="oauthEntryPoint"--> <!-- requires-channel="https"/-->
-  <http auto-config="true"> <!-- requires-channel="https"/-->
-    <intercept-url pattern="/rest/**" access="ROLE_USER"/>
+  <http 
+      auto-config="false"
+      create-session="stateless"
+      entry-point-ref="authenticationEntryPoint"> <!-- requires-channel="https"/-->
+    <custom-filter position="FORM_LOGIN_FILTER" ref="apiKeyAuthenticationFilter" />
     <intercept-url pattern="/oauth/**" access="ROLE_USER"/>
     <intercept-url pattern="/request_token_authorized.jsp" access="ROLE_USER"/>
-    <!-- intercept-url pattern="/**" access="ROLE_USER"/-->
     <intercept-url pattern="/**" access="IS_AUTHENTICATED_ANONYMOUSLY"/> 
-    <form-login 
-        authentication-failure-url="/login.jsp" 
-        default-target-url="/index.jsp" 
-        login-page="/login.jsp" 
-        login-processing-url="/login.do"/>
-    <logout logout-success-url="/index.jsp" logout-url="/logout.do"/>
   </http>
 
-	<oauth:provider 
+  <authentication-manager alias="authenticationManager">
+    <authentication-provider ref="apiKeyAuthenticationProvider"/>
+  </authentication-manager>
+
+  <beans:bean id="authenticationEntryPoint"
+      class="org.springframework.security.web.authentication.DelegatingAuthenticationEntryPoint">
+    <beans:constructor-arg>
+      <beans:map>
+        <beans:entry>
+          <beans:key>
+            <beans:bean class="org.waag.spring.security.ApiKeyRequestMatcher"/>
+          </beans:key>
+          <beans:ref bean="defaultEntryPoint"/>
+        </beans:entry>
+      </beans:map>
+    </beans:constructor-arg>
+    <beans:property name="defaultEntryPoint" ref="oauthEntryPoint" />
+  </beans:bean>
+   
+  <beans:bean id="defaultEntryPoint" 
+      class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint"/>
+  <beans:bean id="oauthEntryPoint" 
+      class="org.springframework.security.oauth.provider.OAuthProcessingFilterEntryPoint"/>
+
+  <beans:bean id="apiKeyAuthenticationProvider" 
+      class="org.waag.spring.security.ApiKeyAuthenticationProvider"/>
+  
+  <beans:bean id="apiKeyAuthenticationFilter" 
+      class="org.waag.spring.security.ApiKeyAuthenticationFilter">
+    <beans:constructor-arg ref="authenticationManager"/>
+    <beans:constructor-arg ref="apiKeyService"/>
+  </beans:bean>
+  
+  <beans:bean id="userDetailsService" class="org.waag.spring.service.ApiUserDetailsService">
+    <beans:constructor-arg>
+      <util:properties location="classpath:users.properties" />
+    </beans:constructor-arg>
+  </beans:bean>
+
+  <beans:bean id="apiKeyService" class="org.waag.spring.security.ApiKeyServices">
+    <beans:constructor-arg ref="userDetailsService"/>
+  </beans:bean>
+   
+ 	<oauth:provider 
       consumer-details-service-ref="consumerDetails"
       token-services-ref="tokenServices"
       request-token-url="/oauth/request_token"
@@ -40,18 +77,7 @@
       access-granted-url="/request_token_authorized.jsp"
       access-token-url="/oauth/access_token"
       require10a="false"/>
-
-  <!-- Arts Holland user accounts. -->
-  <authentication-manager>
-    <authentication-provider>
-      <user-service>
-        <user name="marissa" password="koala" authorities="ROLE_USER" />
-        <user name="paul" password="emu" authorities="ROLE_USER" />
-      </user-service>
-    </authentication-provider>
-  </authentication-manager>
   
-  <!-- Arts Holland developer accounts. -->
   <oauth:consumer-details-service id="consumerDetails">
     <oauth:consumer 
         name="Tonr.com"
@@ -62,7 +88,6 @@
         requiredToObtainAuthenticatedToken="false"
         authorities="ROLE_USER"/>
   </oauth:consumer-details-service>
-
   <oauth:token-services id="tokenServices"/>
 
 </beans:beans>

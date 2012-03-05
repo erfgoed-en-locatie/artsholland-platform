@@ -5,8 +5,6 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth.provider.ConsumerDetails;
 import org.springframework.security.oauth.provider.ConsumerDetailsService;
@@ -18,7 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class OAuthAccessConfirmationController {
-	protected final Log logger = LogFactory.getLog(getClass());
+//	private static final Logger logger = LoggerFactory.getLogger(OAuthAccessConfirmationController.class);
 	
 	@Autowired
 	private OAuthProviderTokenServices tokenServices;
