@@ -1,13 +1,15 @@
 declare namespace dc="http://purl.org/dc/elements/1.1/";
 declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+declare namespace rdfs="http://www.w3.org/2000/01/rdf-schema#";
 declare namespace xsd="http://www.w3.org/2001/XMLSchema#";
 declare namespace ah="http://purl.org/artsholland/1.0/";
 declare namespace owl="http://www.w3.org/2002/07/owl#";
 declare namespace time="http://www.w3.org/2006/time#"; 
 declare namespace gr="http://purl.org/goodrelations/v1#";
 declare namespace foaf="http://xmlns.com/foaf/0.1/";
+declare namespace nub="http://resources.uitburo.nl/";
 
-import module namespace waag = "http://waag.org" at "http://localhost:8080/static/xquery/waag.xquery";
+import module namespace waag = "http://waag.org" at "http://localhost:8080/static/xquery/waag.xquery.jsp";
 
 let $groups := //group
 
@@ -24,5 +26,7 @@ return
 		construct { 
 			$guri a ah:Group.			
 			$guri owl:sameAs $guriUitburo.
+			
+			$guri ah:cidn {$cidn}^^xsd:string.
 				
 		}

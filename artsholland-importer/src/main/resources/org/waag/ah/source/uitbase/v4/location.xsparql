@@ -1,13 +1,15 @@
 declare namespace dc = "http://purl.org/dc/elements/1.1/";
 declare namespace rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+declare namespace rdfs="http://www.w3.org/2000/01/rdf-schema#";
 declare namespace xsd = "http://www.w3.org/2001/XMLSchema#";
 declare namespace ah = "http://purl.org/artsholland/1.0/";
 declare namespace geo = "http://www.w3.org/2003/01/geo/wgs84_pos#";
 declare namespace foaf = "http://xmlns.com/foaf/0.1/";
 declare namespace vcard = "http://www.w3.org/2006/vcard/ns#";
 declare namespace owl = "http://www.w3.org/2002/07/owl#";
+declare namespace nub="http://resources.uitburo.nl/";
 
-import module namespace waag = "http://waag.org" at "http://localhost:8080/static/xquery/waag.xquery";
+import module namespace waag = "http://waag.org" at "http://localhost:8080/static/xquery/waag.xquery.jsp";
 
 let $locations := //location
 
@@ -18,68 +20,77 @@ return
 	for $location in $locations
 		
 		let $cidn := {$location/cidn}
-		let $luri := {concat($baseuri, "venues/", $cidn)}
-		let $luriUitburo := {concat($baseuriUitburo, "locations/", $cidn)}
+		let $vuri := {concat($baseuri, "venues/", $cidn)}
+		let $vuriUitburo := {concat($baseuriUitburo, "locations/", $cidn)}
 		let $venueType := {concat("ah:VenueType", waag:capitalize-first-only($location/type/@key))}
 			
 		construct {
-			$luri a ah:Venue.			
-			$luri owl:sameAs $luriUitburo.
+			$vuri a ah:Venue.			
+			$vuri owl:sameAs $vuriUitburo.
 			
-			#	TODO: deze title of uit /languages/ ??
-			#$luri dc:title {waag:replace-characters($location/name)}^^xsd:string.
+			$vuri ah:cidn {$cidn}^^xsd:string.
+						
+			$vuri dc:title {if ($location/name eq "") then () else waag:replace-characters($location/name)}^^xsd:string.
 
-			$luri geo:lat {data($location/geocode/latitude)}^^xsd:decimal.
-			$luri geo:long {data($location/geocode/longitude)}^^xsd:decimal.
+			$vuri geo:lat {data($location/geocode/latitude)}^^xsd:decimal.
+			$vuri geo:long {data($location/geocode/longitude)}^^xsd:decimal.
 
-			$luri dc:created {$location/@date-created}^^xsd:string.
-			$luri dc:modified {$location/@date-changed}^^xsd:string.
+			$vuri dc:created {$location/@date-created}^^xsd:string.
+			$vuri dc:modified {$location/@date-changed}^^xsd:string.
 			
 			{ for $room in $location/rooms//room
-				let $ruri := {concat($luri, "/rooms/", waag:make-uri($room))}
+				let $ruri := {concat($vuri, "/rooms/", waag:make-uri($room))}
 				construct {
 					$ruri a ah:Room.
-					$ruri rdf:Label {waag:replace-characters($room)}.
-					$luri ah:hasRoom $ruri.
+					$ruri rdfs:label {waag:replace-characters($room)}.
+					$vuri ah:room $ruri.
 				}
 			}.
 			
 			{ for $url in $location/urls//url
-				construct {
-					#$luri vcard:url $url.	
-					$luri foaf:homepage $url.
+				construct {					
+					
+					$vuri foaf:homepage {if ($url eq "") then () else waag:replace-characters($url)}^^xsd:string.
+					
 				}
 			}.
 			
-			$luri ah:hasVenueType $venueType.
+			$vuri ah:venueType $venueType.
 			$venueType a ah:VenueType.	
-			$venueType rdf:label {waag:replace-characters($location/type)}.
+			$venueType rdfs:label {waag:replace-characters($location/type)}.
 
 			# $pos is counter (http://stackoverflow.com/questions/5652397/xquery-counters-inside-a-for)
 			{ for $medium at $pos in $location/media//medium				
 				
-				let $muri := {concat($luri, "/attachments/", $pos)}				
+				let $muri := {concat($vuri, "/attachments/", $pos)}
+				let $description := {waag:replace-characters($medium/description)}
+				let $title := {waag:replace-characters($medium/title)}
+				
 				construct {
 				
-					$luri ah:hasAttachment $muri.
+					$vuri ah:attachment $muri.
 					$muri a ah:Attachment.					
-					$muri dc:title {waag:replace-characters($medium/title)}^^xsd:string.
-					$muri dc:description {waag:replace-characters($medium/description)}^^xsd:string.
+					$muri dc:title {if ($title eq "") then () else $title}^^xsd:string.
+					$muri dc:description {if ($description eq "") then () else $description}^^xsd:string.					
 					$muri foaf:depiction {$medium/ref}.
 										
 					# TODO:
-					#	<alt>A family again</alt>
-					#	<description>Pic description</description>
+					#	<alt>A family again</alt>	
+					#	<type>afbeelding</type>
+									
 				}
 			}.
 			
-			$luri vcard:street-address {concat($location/street/name, " ", $location/street/number, $location/street/addition)}.
-			$luri vcard:locality {waag:replace-characters($location/place)}.
-			$luri vcard:postal-code {$location/postal-code}.
+			$vuri vcard:street-address {concat($location/street/name, " ", $location/street/number, $location/street/addition)}.
+			$vuri vcard:locality {waag:replace-characters($location/place)}.
+			$vuri vcard:postal-code {$location/postal-code}.
 
 			{ for $tag in $location/tags//tag
-				construct {						
-					$luri ah:hasTag $tag.
+				
+				construct {	
+					
+					$vuri ah:tag {if ($tag eq "") then () else waag:replace-characters($tag)}.
+					
 				}
 			}.
 			
@@ -88,17 +99,25 @@ return
 				let $locale := {$language/@locale}
 				let $language-tag := {waag:get-language-tag($locale)}
 				
+				let $title := {waag:replace-characters($language/sortname)}
+				let $description := {waag:replace-characters($language/description)}
+				let $shortDescription := {waag:replace-characters($language/short-description)}					
+				let $openingHours := {waag:replace-characters($language/opening-hours)}
+				let $publicTransportInformation := {waag:replace-characters($language/ov-info)}
+				let $disabilityInformation := {waag:replace-characters($language/handicapped-info)}
+				let $pricingInformation := {waag:replace-characters($language/pricing-information)}
+				
 				construct {
 									 
-					$luri dc:title {waag:replace-characters($language/sortname)}@{$language-tag}.
+					$vuri dc:title {if ($title eq "") then () else $title}@{$language-tag}.
 					
-					$luri dc:description {waag:replace-characters($language/description)}@{$language-tag}.
-					$luri ah:shortDescription {waag:replace-characters($language/short-description)}@{$language-tag}.
+					$vuri dc:description {if ($description eq "") then () else $description}@{$language-tag}.
+					$vuri ah:shortDescription {if ($shortDescription eq "") then () else $shortDescription}@{$language-tag}.
 					
-					$luri ah:openingHours {waag:replace-characters($language/opening-hours)}@{$language-tag}.
-					$luri ah:publicTransportInformation {waag:replace-characters($language/ov-info)}@{$language-tag}.					
-					$luri ah:disabilityInformation {waag:replace-characters($language/handicapped-info)}@{$language-tag}.					
-					$luri ah:pricingInformation {waag:replace-characters($language/pricing-information)}@{$language-tag}.
+					$vuri ah:openingHours {if ($openingHours eq "") then () else $openingHours}@{$language-tag}.
+					$vuri ah:publicTransportInformation {if ($publicTransportInformation eq "") then () else $publicTransportInformation}@{$language-tag}.		
+					$vuri ah:disabilityInformation {if ($disabilityInformation eq "") then () else $disabilityInformation}@{$language-tag}.					
+					$vuri ah:pricingInformation {if ($pricingInformation eq "") then () else $pricingInformation}@{$language-tag}.
 
 				}
 			}

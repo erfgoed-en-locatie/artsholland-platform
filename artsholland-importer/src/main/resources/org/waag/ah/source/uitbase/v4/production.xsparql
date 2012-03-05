@@ -1,11 +1,13 @@
 declare namespace dc="http://purl.org/dc/elements/1.1/";
 declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+declare namespace rdfs="http://www.w3.org/2000/01/rdf-schema#";
 declare namespace xsd="http://www.w3.org/2001/XMLSchema#";
 declare namespace ah = "http://purl.org/artsholland/1.0/";
 declare namespace foaf="http://xmlns.com/foaf/0.1/";
 declare namespace owl="http://www.w3.org/2002/07/owl#";
+declare namespace nub="http://resources.uitburo.nl/";
 
-import module namespace waag = "http://waag.org" at "http://localhost:8080/static/xquery/waag.xquery";
+import module namespace waag = "http://waag.org" at "http://localhost:8080/static/xquery/waag.xquery.jsp";
 
 let $productions := //production
 
@@ -19,32 +21,42 @@ return
 		let $puri := {concat($baseuri, "productions/", $cidn)}
 		let $puriUitburo := {concat($baseuriUitburo, "productions/", $cidn)}
 	
-		let $genre := {$production/type/@key}
-		let $productionGenre := {if ($genre eq "") then () else concat("ah:ProductionGenre", waag:capitalize-first-only(data($genre)))}
+		let $title := {waag:replace-characters($production/title)}
+		
+		let $typeKey := {$production/type/@key}
+		let $typeClass := {if ($typeKey eq "") then () else concat("ah:ProductionType", waag:capitalize-first-only(data($typeKey)))}
 			
 		construct {
 		
 			$puri a ah:Production.			
 			$puri owl:sameAs $puriUitburo.
 			
-			#	Title uit $production/title of uit $production/languages/language/title ?
-			#	$puri dc:title {$production/title}^^xsd:string.
-				
-			$puri ah:hasProductionGenre $productionGenre.
-			$productionGenre a ah:ProductionGenre.			
-			$productionGenre rdf:label {$production/type}.
-				
-			#	En wat is dit dan??
-			# <genres>
-			# 	<genre key="FILM">Film</genre>
-			# </genres>
+			$puri ah:cidn {$cidn}^^xsd:string.
 			
-			{ for $url in $production/urls//url
-			
-				construct {
+			$puri dc:title {if ($title eq "") then () else $title}^^xsd:string.
 				
-					#$puri vcard:url $url.
-					$puri foaf:homepage $url.
+			$puri ah:productionType $typeClass.
+			$typeClass a ah:ProductionType.			
+			$typeClass rdfs:label {if ($production/type eq "") then () else $production/type}^^xsd:string.
+			
+			{ for $genre in $production/genres//genre
+				
+				let $genreKey := {$genre/@key}
+				let $genreClass := {if ($genreKey eq "") then () else concat("ah:Genre", waag:capitalize-first-only(data($genreKey)))}
+				
+				construct {				
+					
+					$puri ah:genre $genreClass.
+					$genreClass a ah:Genre.			
+					$genreClass rdfs:label {if ($genre eq "") then () else $genre}^^xsd:string.
+					
+				}
+			}.
+			
+			{ for $url in $production/urls//url			
+				construct {				
+					
+					$puri foaf:homepage {if ($url eq "") then () else waag:replace-characters($url)}^^xsd:string.
 					
 				}
 			}.
@@ -54,27 +66,33 @@ return
 				let $locale := {$language/@locale}
 				let $language-tag := {waag:get-language-tag($locale)}
 				
-				construct {
-									 
-					$puri dc:title {waag:replace-characters($language/sortname)}@{$language-tag}.
+				let $title := {waag:replace-characters($language/sortname)}					
+				let $description := {waag:replace-characters($language/description)}
+				let $shortDescription := {waag:replace-characters($language/short-description)}					
+				let $party := {waag:replace-characters($language/party)}
+				let $people := {waag:replace-characters($language/people)}
+				
+				construct {				
 					
-					$puri dc:description {waag:replace-characters($language/description)}@{$language-tag}.
-					$puri ah:shortDescription {waag:replace-characters($language/short-description)}@{$language-tag}.
+					$puri dc:title {if ($title eq "") then () else $title}@{$language-tag}.
 					
-					$puri ah:party {waag:replace-characters($language/party)}@{$language-tag}.
-					$puri ah:people {waag:replace-characters($language/people)}@{$language-tag}.					
+					$puri dc:description {if ($description eq "") then () else $description}@{$language-tag}.
+					$puri ah:shortDescription {if ($shortDescription eq "") then () else $shortDescription}@{$language-tag}.
+					
+					$puri ah:party {if ($party eq "") then () else $party}@{$language-tag}.
+					$puri ah:people {if ($people eq "") then () else $people}@{$language-tag}.								
 
 				}
 			}.
 			
-			$puri ah:hasAgeLimitLower {$production/age/lower}.
-			$puri ah:hasAgeLimitUpper {$production/age/upper}.
+			$puri ah:ageLimitLower {$production/age/lower}^^xsd:integer.
+			$puri ah:ageLimitUpper {$production/age/upper}^^xsd:integer.
 			
 			{ for $tag in $production/tags//tag
 			
 				construct {
 										
-					$puri ah:hasTag $tag.
+					$puri ah:tag $tag.
 					
 				}
 			}

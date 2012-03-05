@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -30,6 +31,7 @@ import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
 import org.deri.xsparql.XSPARQLProcessor;
 import org.openrdf.model.vocabulary.RDF;
+import org.waag.ah.XSPARQLCharacterEncoder;
 import org.waag.ah.tika.parser.rdf.TurtleParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -135,8 +137,9 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		}
 		if (localName.equals(rootElement)) {
 			
-			StreamSource xml = new StreamSource(
-					new StringReader(xmlCollector.toString()));	
+			String xmlString = /*XSPARQLCharacterEncoder.encode*/(xmlCollector.toString());
+			
+			StreamSource xml = new StreamSource(new StringReader(xmlString));	
 			
 //			System.out.println(xmlCollector.toString());
 			try {
@@ -150,9 +153,11 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				Metadata mdata = new Metadata();
 				mdata.set(Metadata.CONTENT_TYPE, "text/turtle");
 				mdata.set(Metadata.RESOURCE_NAME_KEY, metadata.get(Metadata.RESOURCE_NAME_KEY));
-            
+       				
+				String turtleString = XSPARQLCharacterEncoder.decode(combined.toString());
+				
 				turtleParser.parse(
-						new ByteArrayInputStream(combined.toString().getBytes()), 
+						new ByteArrayInputStream(turtleString.getBytes()), 
 						new MatchingContentHandler(
 						new EmbeddedContentHandler(this.handler), matcher), mdata, context);
 				
