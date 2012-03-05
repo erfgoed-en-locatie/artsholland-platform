@@ -31,6 +31,7 @@ import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
 import org.deri.xsparql.XSPARQLProcessor;
 import org.openrdf.model.vocabulary.RDF;
+import org.waag.ah.XSPARQLCharacterEncoder;
 import org.waag.ah.tika.parser.rdf.TurtleParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -49,52 +50,6 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	private NamespaceCollector namepool;
 	private ContentHandler handler;
 	private Matcher matcher;
-	
-	/*
-	 * Class is needed because current version of XSPARQL parser
-	 * incorrectly parses string literals which contain ":", "<" and ">".
-	 * 
-	 * TODO: check if still necessary with future version of XSPARQL
-	 * See https://redmine.waag.org/issues/6297
-	 */
-	private static class XSPARQLCharacterEncoder {
-		
-		//(: translate($arg, '":<>', "'&#58;&#60;$#62;") :)
-		
-		private static final String PREFIX = "[[waag_";
-		private static final String SUFFIX = "]]";
-
-		private static final Map<String, String> ENCODINGS = createMap();
-
-    private static Map<String, String> createMap() {
-        Map<String, String> result = new HashMap<String, String>();
-        result.put(":", "colon");
-        result.put("<", "less_than");
-        result.put(">", "greater_than");
-        return Collections.unmodifiableMap(result);
-    }
-    
-    private static String completeEncoding(String encoding) {
-    	return PREFIX + encoding + SUFFIX;
-    }
-		
-    /*
-		public static String encode(String xml) {
-			for (Entry<String, String> encoding : ENCODINGS.entrySet()) {
-				xml = xml.replace(encoding.getKey(),  completeEncoding(encoding.getValue()));
-			}
-			return xml;
-		}
-		*/
-		
-		public static String decode(String turtle) {
-			for (Entry<String, String> encoding : ENCODINGS.entrySet()) {
-				turtle = turtle.replace(completeEncoding(encoding.getValue()), encoding.getKey());
-			}
-			return turtle;
-		}
-		
-	}
 
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata, 
 			ParseContext context, InputStream xquery, String rootElement)	throws TikaException {

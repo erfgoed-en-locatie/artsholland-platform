@@ -9,7 +9,7 @@ declare namespace gr="http://purl.org/goodrelations/v1#";
 declare namespace foaf="http://xmlns.com/foaf/0.1/";
 declare namespace nub="http://resources.uitburo.nl/";
 
-import module namespace waag = "http://waag.org" at "http://localhost:8080/static/xquery/waag.xquery";
+import module namespace waag = "http://waag.org" at "http://localhost:8080/static/xquery/waag.xquery.jsp";
 
 let $events := //event
 

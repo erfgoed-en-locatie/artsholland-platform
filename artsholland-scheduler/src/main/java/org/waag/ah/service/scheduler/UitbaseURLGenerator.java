@@ -1,6 +1,7 @@
 package org.waag.ah.service.scheduler;
 
 import java.io.BufferedReader;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -45,6 +46,7 @@ public class UitbaseURLGenerator {
 			int i = 0;
 			while (i < count) {
 				
+				// TODO: use something like URLBuilder 
 				String url = addAPIKey(BASE_URL + resource) + "&rows=" + ROWS + "&start=" + i;
 				urls.add(url);
 				i += ROWS;
@@ -79,7 +81,13 @@ public class UitbaseURLGenerator {
 	}
 
 	private static String readURL(String url) throws IOException {		
-    BufferedReader reader = new BufferedReader(
+    /*
+		HttpClient client = new HttpClient();
+		method = new GetMethod(baseUrl);
+		method.getResponseBodyAsString()
+		*/
+		
+		BufferedReader reader = new BufferedReader(
     		new InputStreamReader(new URL(url).openStream()));  
     
     StringBuilder sb = new StringBuilder();

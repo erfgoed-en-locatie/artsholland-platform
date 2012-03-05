@@ -57,7 +57,7 @@ public class SchedulerServiceBean implements MessageListener {
 	
 	public void onMessage(Message msg) {}
 	
-    @Schedule(persistent=false, minute="*/1", hour="*")
+    @Schedule(persistent=false, minute="*/10", hour="*")
     public void automaticTimeout() {
 		QueueSession session = null;         
 		QueueSender sender = null;  
@@ -82,13 +82,15 @@ public class SchedulerServiceBean implements MessageListener {
 					
 					//"http://accept.ps4.uitburo.nl/api/productions?key=505642b12881b9a60688411a333bc78b&rows=1&start=8"
 					
-				"http://accept.ps4.uitburo.nl/api/events?key=505642b12881b9a60688411a333bc78b&rows=500",
-				"http://accept.ps4.uitburo.nl/api/productions?key=505642b12881b9a60688411a333bc78b&rows=500",
-				"http://accept.ps4.uitburo.nl/api/locations?key=505642b12881b9a60688411a333bc78b&rows=500"
+//				"http://accept.ps4.uitburo.nl/api/events?key=505642b12881b9a60688411a333bc78b&rows=500",
+//				"http://accept.ps4.uitburo.nl/api/productions?key=505642b12881b9a60688411a333bc78b&rows=500",
+//				"http://accept.ps4.uitburo.nl/api/locations?key=505642b12881b9a60688411a333bc78b&rows=500"
+//				
+					"http://accept.ps4.uitburo.nl/api/productions?key=505642b12881b9a60688411a333bc78b&rows=1&start=1483"
 			};
 			
 			ArrayList<String> sourceURLs2 = UitbaseURLGenerator.getURLs();
-			
+
 			for (String sourceURL: sourceURLs2) {
 				logger.info("Scheduling URL for import: "+sourceURL);
 				TextMessage msg = session.createTextMessage(sourceURL);

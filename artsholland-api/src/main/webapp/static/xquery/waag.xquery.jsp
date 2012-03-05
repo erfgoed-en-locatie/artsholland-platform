@@ -1,12 +1,14 @@
+<%@ page import="java.util.*" %>
+<%@ page import="org.waag.ah.XSPARQLCharacterEncoder" %>
+<%@page contentType="text/html" %>
+<%
+	String replace = XSPARQLCharacterEncoder.getXQueryReplaceString();
+%>
 module namespace waag = "http://waag.org";
 
 declare function waag:replace-characters($arg as xs:string?) as xs:string {
 	(: See https://redmine.waag.org/issues/6297 :)
-	replace(replace(replace(replace($arg, ":", "[[waag_colon]]"), "<", "[[waag_less_than]]"), ">", "[[waag_greater_than]]"), '"', '\\"')
-	
-	(: translate($arg, '":<>', "'&#58;&#60;$#62;") :)
-	
-	(: translate($arg, '":', "'&#x58;") :)
+	replace(<%= replace %>, '"', '\\"')
 };
 
 declare function waag:capitalize-first-only($arg as xs:string?) as xs:string {
