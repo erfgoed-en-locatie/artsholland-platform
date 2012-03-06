@@ -23,6 +23,7 @@
   
   <mvc:resources mapping="/vocabulary/**" location="/vocabulary/"/>  
   <mvc:resources mapping="/static/**" location="/static/"/>
+  <mvc:resources mapping="/favicon.ico" location="/static/favicon.ico"/>
   
   <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
     <property name="order" value="1"/>
