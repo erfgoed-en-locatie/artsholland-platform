@@ -1,6 +1,6 @@
 <%@ page import="java.util.*" %>
 <%@ page import="org.waag.ah.XSPARQLCharacterEncoder" %>
-<%@page contentType="text/html" %>
+<%@ page contentType="text/html" %>
 <%
 	String replace = XSPARQLCharacterEncoder.getXQueryReplaceString();
 %>

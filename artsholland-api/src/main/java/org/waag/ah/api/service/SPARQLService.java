@@ -2,170 +2,132 @@ package org.waag.ah.api.service;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.FutureTask;
 
-import javax.ejb.EJB;
+import javax.naming.OperationNotSupportedException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.QueryEvaluationException;
-import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.TupleQuery;
-import org.openrdf.query.TupleQueryResult;
-import org.openrdf.query.TupleQueryResultHandlerException;
-import org.openrdf.query.resultio.TupleQueryResultWriter;
-import org.openrdf.query.resultio.sparqljson.SPARQLResultsJSONWriter;
-import org.openrdf.query.resultio.sparqlxml.SPARQLResultsXMLWriter;
-import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.springframework.beans.factory.DisposableBean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
-import org.waag.ah.RepositoryConnectionFactory;
+import org.waag.bigdata.BigdataService;
+import org.waag.bigdata.BigdataService.QueryTask;
+
+import com.bigdata.journal.TimestampUtility;
 
 @Service("sparqlService")
-public class SPARQLService implements InitializingBean, DisposableBean {
-//	private Logger logger = Logger.getLogger(SPARQLService.class);
-//	private UriComponents SPARQL_ENDPOINT;
-	
-	/**
-	 * Common MIME types for dynamic content.
-	 */
+public class SPARQLService implements InitializingBean {
+	private static final Logger logger = LoggerFactory.getLogger(SPARQLService.class);
+	private BigdataService context;
+
 	public static final transient String
-		MIME_APPLICATION_RDF_XML = "application/rdf+xml",
-		MIME_APPLICATION_RDF_JSON = "application/rdf+json",
-		MIME_SPARQL_RESULTS_XML = "application/sparql-results+xml",
-		MIME_SPARQL_RESULTS_JSON = "application/sparql-results+json";
+		MIME_TEXT_PLAIN 			= "text/plain",
+		MIME_APPLICATION_XML 		= "application/xml",
+		MIME_APPLICATION_RDF_XML 	= "application/rdf+xml",
+		MIME_APPLICATION_RDF_JSON 	= "application/rdf+json",
+		MIME_SPARQL_RESULTS_XML 	= "application/sparql-results+xml",
+		MIME_SPARQL_RESULTS_JSON 	= "application/sparql-results+json";
 
-	private ExecutorService executor;
-	private RepositoryConnection connection;
+//	private RepositoryConnection connection;
 
-	@EJB(mappedName="java:app/datastore/SAILConnectionFactory")
-	private RepositoryConnectionFactory connFactory;
-
-	public SPARQLService() {
-		executor = new ScheduledThreadPoolExecutor(5);
-		//SPARQL_ENDPOINT = UriComponentsBuilder.fromUriString(
-		//		"http://127.0.0.1:8080/sparql?query={query}").build();
-
-	}
+//	@EJB(mappedName="java:app/datastore/SAILConnectionFactory")
+//	private RepositoryConnectionFactory connFactory;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		connection = connFactory.getReadOnlyConnection();
+//		connection = connFactory.getReadOnlyConnection();
+		context = new BigdataService();
 	}
-	
-	@Override
-	public void destroy() throws Exception {
-		connection.close();
-	}
-	
-	//
-	//
-	// public SPARQLService() throws NamingException, RepositoryException,
-	// IOException {
-	// InitialContext context = new InitialContext();
-	// RepositoryConnectionFactory connectionFactory =
-	// (RepositoryConnectionFactory)
-	// context.lookup("java:global/SPARQLConnectionFactory");
-	// connection = connectionFactory.getConnection();
-	// }
-	//
-	// public void query(String query) throws RepositoryException,
-	// MalformedQueryException, QueryEvaluationException, RDFHandlerException {
-	// GraphQuery graphQuery = connection.prepareGraphQuery(
-	// QueryLanguage.SPARQL, query);
-	// RDFHTMLHandler resultHandler = new RDFHTMLHandler();
-	// graphQuery.evaluate(resultHandler);
-	// }
-	//
-	// private static class RDFHTMLHandler extends RDFHandlerBase {
-	//
-	// }	
-	
-	
-	private class QueryTask implements Callable<Integer> {
 
-		private String query;
-		private String accept;
-		private OutputStream outputStream;
-		
-		QueryTask(HttpServletRequest request,	HttpServletResponse response, String query, String accept) throws IOException{
-		  this.query = query;
-		  this.accept = accept;
-		  this.outputStream = response.getOutputStream();
-		}
+	public void query(HttpServletRequest request, HttpServletResponse response, String format) 
+			throws IOException {
+		final OutputStream out = response.getOutputStream();
+		final String query = request.getParameter("query");
+        final String baseURI = request.getRequestURL().toString();
+        final String accept = (format != null ? format : request.getHeader("Accept"));
+//      final boolean explain = request.getParameter(BigdataService.EXPLAIN) != null;
+//      final String timestamp = request.getParameter("timestamp");
+        
+        try {
+            final QueryTask queryTask;
+            try {
+                queryTask = context.getQueryTask(query, baseURI, accept, out);
+            } catch (MalformedQueryException ex) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+                        ex.getLocalizedMessage());
+                return;
+            }
+            
+            final FutureTask<Void> ft = new FutureTask<Void>(queryTask);
 
-		public Integer call() {
-		  
-			TupleQuery tupleQuery;			
+            if (logger.isTraceEnabled()) {
+                logger.trace("Will run query: " + query);
+            }
+            
+            response.setStatus(HttpServletResponse.SC_OK);
+
+            if (queryTask.getExplain()) {
+//                response.setContentType(BigdataServlet.MIME_TEXT_HTML);
+//                final Writer w = new OutputStreamWriter(os, queryTask.getCharset());
+//                try {
+//                    // Begin executing the query (asynchronous)
+//                    getBigdataRDFContextWrapper().queryService.execute(ft);
+//                    // Send an explanation instead of the query results.
+//                    explainQuery(query, queryTask, ft, w);
+//                } finally {
+//                    w.flush();
+//                    w.close();
+//                    os.flush();
+//                    os.close();
+//                }
+            	throw new OperationNotSupportedException("Explain queries are not yet supported.");
+            } else {
+                response.setContentType(queryTask.getMimeType());
+
+                if (queryTask.getCharset() != null) {
+                    response.setCharacterEncoding(queryTask.getCharset().name());
+                }
+
+                if (isAttachment(queryTask.getMimeType())) {
+                    response.setHeader("Content-disposition",
+                            "attachment; filename=query" + queryTask.getQueryId()
+                                    + "." + queryTask.getFileExt());
+                }
+
+                if (TimestampUtility.isCommitTime(queryTask.getTimestamp())) {
+                    response.addHeader("Cache-Control", "public");
+                    // response.addHeader("Cache-Control", "no-cache");
+                }
+
+                context.executeQueryTask(ft);
+                ft.get();
+            }
+		} catch (Throwable e) {
 			try {
-				
-				//Query preparedQuery = connection.prepareQuery(QueryLanguage.SPARQL, query);				
-				//queryResult = preparedQuery.
-				
-				/*BooleanQuery vis = connection.prepareBooleanQuery(QueryLanguage.SPARQL, query);
-				GraphQuery koek = connection.prepareGraphQuery(QueryLanguage.SPARQL, query);
-				GraphQueryResult chips = koek.evaluate();
-				boolean hond = vis.evaluate();*/
-				
-				tupleQuery = connection.prepareTupleQuery(QueryLanguage.SPARQL, query);
-				TupleQueryResult tupleQueryResult = tupleQuery.evaluate();
-				
-				TupleQueryResultWriter resultsWriter = null;
-				if(accept.contains(MIME_SPARQL_RESULTS_XML)) {
-					resultsWriter = new SPARQLResultsXMLWriter(outputStream);
-				} else if(accept.contains(MIME_SPARQL_RESULTS_JSON)) {
-					resultsWriter = new SPARQLResultsJSONWriter(outputStream);
-				}
-				
-				if (resultsWriter != null) {
-					// TODO: grijp uit properties
-					Integer limit = 5000;
-					resultsWriter.startQueryResult(tupleQueryResult.getBindingNames());
-					try {
-						for (int i = 0; tupleQueryResult.hasNext()
-								&& (limit == null || i < limit.intValue()); i++) {
-							BindingSet bindingSet = tupleQueryResult.next();
-							resultsWriter.handleSolution(bindingSet);
-						}
-					} finally {
-						tupleQueryResult.close();
-					}
-					resultsWriter.endQueryResult();
-				}
-				
-			} catch (RepositoryException e) {
+//				throw BigdataRDFServlet.launderThrowable(e, response, query);
 				e.printStackTrace();
-			} catch (MalformedQueryException e) {
-				e.printStackTrace();
-			} catch (QueryEvaluationException e) {				
-				e.printStackTrace();
-			} catch (TupleQueryResultHandlerException e) {
-				e.printStackTrace();
-			}	
-			
-			// TODO: nee!
-			return 0;
-			
-		}
-		
-	} 
-
-	public void tupleQuery(HttpServletRequest request,
-			HttpServletResponse response, String query, String accept) throws InterruptedException, ExecutionException, IOException {
-
-		Callable<Integer> callable = new QueryTask(request, response, query, accept);	  
-	  Future<Integer> future = executor.submit(callable);
-	  future.get();	  
+			} catch (Exception e1) {
+				throw new RuntimeException(e);
+			}
+		}		
 	}
-
+	
+    private boolean isAttachment(final String mimeType) {
+        if(mimeType.equals(MIME_TEXT_PLAIN)) {
+            return false;
+        } else if(mimeType.equals(MIME_SPARQL_RESULTS_XML)) {
+            return false;
+        } else if(mimeType.equals(MIME_SPARQL_RESULTS_JSON)) {
+            return false;
+        } else if(mimeType.equals(MIME_APPLICATION_XML)) {
+            return false;
+        }
+        return true;
+    }
+    
 	/*
 	public void proxyQuery(HttpServletRequest request,
 			HttpServletResponse response, String query) {

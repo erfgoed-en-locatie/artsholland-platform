@@ -18,6 +18,22 @@
       <artifactId>sesame-repository-api</artifactId>
       <version>${sesame.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.openrdf.sesame</groupId>
+      <artifactId>sesame-queryparser-sparql</artifactId>
+      <version>${sesame.version}</version>
+    </dependency>   
+    <dependency>
+      <groupId>org.waag.bigdata</groupId>
+      <artifactId>bigdata</artifactId>
+      <version>1.1.0</version>
+      <type>jar</type>
+    </dependency>     
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>log4j-over-slf4j</artifactId>
+      <version>1.6.4</version>
+    </dependency>    
 <!--     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-core</artifactId>

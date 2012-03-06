@@ -21,8 +21,7 @@
         <configuration>
           <!-- TODO: Move this to EAR module as it is a deployment thang. -->
           <packagingExcludes>
-            WEB-INF/lib/artsholland-core-*.jar,
-            WEB-INF/lib/sesame-*.jar
+            WEB-INF/lib/artsholland-core-*.jar
           </packagingExcludes>
         </configuration>
       </plugin>    
@@ -111,6 +110,11 @@
       <version>${spring.version}</version>
     </dependency>     
     <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-web</artifactId>
+      <version>${spring.version}</version>
+    </dependency>    
+    <dependency>
       <groupId>org.springframework.ws</groupId>
       <artifactId>spring-ws</artifactId>
       <version>2.0.4.RELEASE</version>
@@ -152,9 +156,9 @@
       <version>${sesame.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>spring-security-web</artifactId>
-      <version>${spring.version}</version>
+      <groupId>org.openrdf.sesame</groupId>
+      <artifactId>sesame-queryparser-sparql</artifactId>
+      <version>${sesame.version}</version>
     </dependency>
   </dependencies>
 </project>
