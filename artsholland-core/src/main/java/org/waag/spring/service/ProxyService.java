@@ -1,4 +1,4 @@
-package org.waag.ah.api.service;
+package org.waag.spring.service;
 
 import java.io.IOException;
 

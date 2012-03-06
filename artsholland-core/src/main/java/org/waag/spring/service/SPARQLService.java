@@ -1,4 +1,4 @@
-package org.waag.ah.api.service;
+package org.waag.spring.service;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -11,15 +11,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.openrdf.query.MalformedQueryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.stereotype.Service;
 import org.waag.bigdata.BigdataService;
 import org.waag.bigdata.BigdataService.QueryTask;
 
 import com.bigdata.journal.TimestampUtility;
 
-@Service("sparqlService")
-public class SPARQLService implements InitializingBean {
+public class SPARQLService {
 	private static final Logger logger = LoggerFactory.getLogger(SPARQLService.class);
 	private BigdataService context;
 
@@ -30,16 +27,9 @@ public class SPARQLService implements InitializingBean {
 		MIME_APPLICATION_RDF_JSON 	= "application/rdf+json",
 		MIME_SPARQL_RESULTS_XML 	= "application/sparql-results+xml",
 		MIME_SPARQL_RESULTS_JSON 	= "application/sparql-results+json";
-
-//	private RepositoryConnection connection;
-
-//	@EJB(mappedName="java:app/datastore/SAILConnectionFactory")
-//	private RepositoryConnectionFactory connFactory;
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
-//		connection = connFactory.getReadOnlyConnection();
-		context = new BigdataService();
+	
+	public SPARQLService() {
+		 context = new BigdataService();
 	}
 
 	public void query(HttpServletRequest request, HttpServletResponse response, String format) 

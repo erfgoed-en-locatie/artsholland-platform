@@ -1,3 +1,4 @@
+package org.waag.spring.service;
 //package org.waag.ah.api.service;
 //
 //import java.io.ByteArrayOutputStream;

@@ -47,7 +47,12 @@
               <groupId>${project.groupId}</groupId>
               <artifactId>artsholland-scheduler</artifactId>
               <bundleFileName>scheduler.jar</bundleFileName>
-            </ejbModule>            
+            </ejbModule>
+            <jarModule>
+              <groupId>javax</groupId>
+              <artifactId>javaee-api</artifactId>
+              <excluded>true</excluded>
+            </jarModule>
           </modules>         
         </configuration>        
       </plugin>      

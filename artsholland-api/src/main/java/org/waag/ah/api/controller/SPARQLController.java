@@ -3,7 +3,6 @@ package org.waag.ah.api.controller;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.waag.ah.api.service.SPARQLService;
+import org.waag.spring.service.SPARQLService;
 
 //@Secured("ROLE_API_USER")
 @Controller
@@ -22,8 +21,8 @@ public class SPARQLController {
 	private static final Logger logger = LoggerFactory.getLogger(SPARQLController.class);
 	private static final String MAPPING = "/sparql";
     
-	@Resource(name="sparqlService")
-	private SPARQLService sparqlService;
+//	@Resource(name="sparqlService")
+	private SPARQLService sparqlService = new SPARQLService();
 	
 	@RequestMapping(value = "/sparql", method = RequestMethod.GET, headers = "Accept=text/html")
 	public ModelAndView getSnorql(final HttpServletRequest request,

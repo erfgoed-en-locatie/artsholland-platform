@@ -2,14 +2,13 @@ package org.waag.ah.api.controller;
 
 import java.io.IOException;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.waag.ah.api.service.UitbaseService;
+import org.waag.spring.service.UitbaseService;
 
 @Controller
 public class UitbaseController {
@@ -17,8 +16,8 @@ public class UitbaseController {
 
 	private static final String MAPPING = "/uitbase/";
 	
-	@Resource(name = "uitbaseService")
-	private UitbaseService uitbaseService;
+//	@Resource(name = "uitbaseService")
+	private UitbaseService uitbaseService = new UitbaseService();
 	
 	@RequestMapping(value = MAPPING + "**", method = RequestMethod.GET)	
 	public void proxy(final HttpServletRequest request,
