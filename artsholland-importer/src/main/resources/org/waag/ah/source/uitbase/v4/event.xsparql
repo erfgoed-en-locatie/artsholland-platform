@@ -2,18 +2,19 @@ declare namespace dc="http://purl.org/dc/elements/1.1/";
 declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace rdfs="http://www.w3.org/2000/01/rdf-schema#";
 declare namespace xsd="http://www.w3.org/2001/XMLSchema#";
-declare namespace ah="http://purl.org/artsholland/1.0/";
 declare namespace owl="http://www.w3.org/2002/07/owl#";
 declare namespace time="http://www.w3.org/2006/time#"; 
 declare namespace gr="http://purl.org/goodrelations/v1#";
 declare namespace foaf="http://xmlns.com/foaf/0.1/";
+
 declare namespace nub="http://resources.uitburo.nl/";
+declare namespace ah = "http://data.artsholland.com/";
 
 import module namespace waag = "http://waag.org" at "http://localhost:8080/static/xquery/waag.xquery.jsp";
 
 let $events := //event
 
-let $baseuri := {"http://purl.org/artsholland/1.0/"}
+let $baseuri := {"http://data.artsholland.com/"}
 let $baseuriUitburo := {"http://resources.uitburo.nl/"}
 
 return
@@ -57,7 +58,7 @@ return
 			$euri ah:eventType $eventType.
 			$eventType a ah:EventType.			
 			#TODO: check of leeg.
-			$eventType rdf:label {$event/type}.
+			$eventType rdfs:label {$event/type}.
 			
 			$euri ah:eventStatus $eventStatus.
 			$eventStatus a ah:EventStatus.			
@@ -119,13 +120,14 @@ return
 			}.
 			
 			$ruri a ah:Room.
-			$ruri rdf:Label {if ($room eq "") then () else $room}.
+			$ruri rdfs:label {if ($room eq "") then () else $room}.
 			$euri ah:room $ruri.
 			$vuri ah:room $ruri.		
 	
 			# TODO: converteren naar correct formaat??
 			# TODO: Timezone?
 			# TODO: zomertijd/wintertijd?
+			# TODO: andere naam?
 			
 			$euri time:hasBeginning {$event/datetime-start}.
 			$euri time:hasEnd {$event/datetime-end}.

@@ -1,6 +1,7 @@
 <%@ page import="java.util.*" %>
 <%@ page import="org.waag.ah.XSPARQLCharacterEncoder" %>
 <%@ page contentType="text/html" %>
+<%@ page trimDirectiveWhitespaces="true" %>
 <%
 	String replace = XSPARQLCharacterEncoder.getXQueryReplaceString();
 %>
