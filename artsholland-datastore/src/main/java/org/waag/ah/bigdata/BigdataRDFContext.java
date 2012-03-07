@@ -1,4 +1,4 @@
-package org.waag.bigdata;
+package org.waag.ah.bigdata;
 
 import java.io.OutputStream;
 import java.nio.charset.Charset;

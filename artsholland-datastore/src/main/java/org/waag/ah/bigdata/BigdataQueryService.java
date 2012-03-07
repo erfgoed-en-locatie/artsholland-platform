@@ -1,10 +1,12 @@
-package org.waag.bigdata;
+package org.waag.ah.bigdata;
 
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
+
+import javax.ejb.Singleton;
 
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.resultio.BooleanQueryResultFormat;
@@ -18,7 +20,7 @@ import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.RDFWriterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.bigdata.BigdataRDFContext.AbstractQueryTask;
+import org.waag.ah.bigdata.BigdataRDFContext.AbstractQueryTask;
 
 import com.bigdata.journal.IIndexManager;
 import com.bigdata.journal.ITx;
@@ -32,12 +34,13 @@ import com.bigdata.rdf.sail.webapp.SparqlEndpointConfig;
 import com.bigdata.rdf.sparql.ast.ASTContainer;
 import com.bigdata.rdf.sparql.ast.QueryType;
 
-public class BigdataService {
-	private static final Logger logger = LoggerFactory.getLogger(BigdataService.class);
+@Singleton
+public class BigdataQueryService {
+	private static final Logger logger = LoggerFactory.getLogger(BigdataQueryService.class);
 	private final BigdataRDFContextWrapper context;
 	public static final String EXPLAIN = BigdataRDFContextWrapper.EXPLAIN;
 	
-	public BigdataService() {
+	public BigdataQueryService() {
 		context = new BigdataRDFContextWrapper(getConfig(), getIndexManager());
 	}
 	
