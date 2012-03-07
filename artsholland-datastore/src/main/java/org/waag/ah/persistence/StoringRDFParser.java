@@ -3,6 +3,7 @@ package org.waag.ah.persistence;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.net.URL;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -60,7 +61,8 @@ public class StoringRDFParser extends RDFXMLParser {
 	@Override
 	public synchronized void parse(Reader reader, String baseURI)
 			throws IOException, RDFParseException, RDFHandlerException {
-		this.baseURI = vf.createURI(baseURI);
+//		this.baseURI = vf.createURI(baseURI);
+		this.baseURI = vf.createURI(new URL(baseURI).getHost());
 		super.parse(reader, baseURI);
 	}
 
