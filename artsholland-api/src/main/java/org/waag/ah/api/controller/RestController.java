@@ -1,26 +1,25 @@
 package org.waag.ah.api.controller;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.QueryEvaluationException;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.result.MultipleResultException;
-import org.openrdf.result.NoResultException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.waag.ah.api.service.RestService;
-import org.waag.ah.model.RoomImpl;
+import org.waag.ah.model.rdf.Event;
+import org.waag.ah.model.rdf.Production;
+import org.waag.ah.model.rdf.Room;
 
 @Controller
 public class RestController {
@@ -31,25 +30,28 @@ public class RestController {
 	private RestService restService;
 	
 	@RequestMapping(value = MAPPING + "{class}/{cidn}", method = RequestMethod.GET)	
-	public  @ResponseBody String getInstance(
+	public @ResponseBody String getInstance(
 			final HttpServletRequest request,	final HttpServletResponse response, 
 			@PathVariable("class") String classname, @PathVariable("cidn") String cidn,
 			@RequestParam(value="count", defaultValue="10", required=false) int count, 
 			@RequestParam(value="page", defaultValue="0", required=false) int page) throws IOException  {		
-		return restService.getClass(classname, cidn, count, page);		
+		return "Not yet implemented";		
 	}
 	
-	@RequestMapping(value = MAPPING + "rooms", method = RequestMethod.GET)	
-	public Set<RoomImpl> getRooms(
-			final HttpServletRequest request,	final HttpServletResponse response,
+	@RequestMapping(value = MAPPING + "{class}", method = RequestMethod.GET)	
+	public ModelAndView getInstance(
+			final HttpServletRequest request,	final HttpServletResponse response, 
+			@PathVariable("class") String classname,
 			@RequestParam(value="count", defaultValue="10", required=false) int count, 
-			@RequestParam(value="page", defaultValue="0", required=false) int page) throws IOException  {		
-		try {
-			return restService.getRooms(count, page);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;	
+			@RequestParam(value="page", defaultValue="0", required=false) int page) {	
+		
+		Set<?> result = restService.getList(classname, count, page);
+		
+	  ModelAndView mav = new ModelAndView();
+	  mav.setViewName("rest/json");
+	  mav.addObject("result", result);
+	  return mav;
+	  
 	}
 	
 	@RequestMapping(value = MAPPING + "geo", method = RequestMethod.GET)	

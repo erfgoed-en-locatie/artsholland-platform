@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -137,7 +136,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		}
 		if (localName.equals(rootElement)) {
 			
-			String xmlString = /*XSPARQLCharacterEncoder.encode*/(xmlCollector.toString());
+			String xmlString = xmlCollector.toString();
 			
 			StreamSource xml = new StreamSource(new StringReader(xmlString));	
 			

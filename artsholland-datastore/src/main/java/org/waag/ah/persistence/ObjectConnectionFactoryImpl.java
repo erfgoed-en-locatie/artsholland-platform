@@ -13,11 +13,9 @@ import org.openrdf.repository.object.config.ObjectRepositoryConfig;
 import org.openrdf.repository.object.config.ObjectRepositoryFactory;
 import org.openrdf.repository.object.exceptions.ObjectStoreConfigException;
 import org.waag.ah.ObjectConnectionFactory;
-import org.waag.ah.model.Production;
-import org.waag.ah.model.Room;
-import org.waag.ah.model.RoomImpl;
-
-import com.bigdata.rdf.sail.BigdataSailRepository;
+import org.waag.ah.model.rdf.EventImpl;
+import org.waag.ah.model.rdf.ProductionImpl;
+import org.waag.ah.model.rdf.RoomImpl;
 
 @Singleton
 public class ObjectConnectionFactoryImpl extends SAILConnectionFactory implements ObjectConnectionFactory {
@@ -37,8 +35,12 @@ public class ObjectConnectionFactoryImpl extends SAILConnectionFactory implement
 			if (getRepository() == null) {
 				super.create();
 			}		
-						
-			config.addConcept(RoomImpl.class);	
+			
+			config.addConcept(ProductionImpl.class);			
+			config.addConcept(RoomImpl.class);
+			config.addConcept(EventImpl.class);
+			
+			
 			//config.addBehaviour(RoomImpl.class);
 
 			repository = repositoryFactory.createRepository(config, getRepository());
