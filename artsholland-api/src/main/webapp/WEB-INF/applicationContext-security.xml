@@ -58,7 +58,7 @@
     <beans:constructor-arg ref="apiKeyService"/>
   </beans:bean>
   
-  <beans:bean id="userDetailsService" class="org.waag.spring.service.ApiUserDetailsService">
+  <beans:bean id="userDetailsService" class="org.waag.ah.spring.service.ApiUserDetailsService">
     <beans:constructor-arg>
       <util:properties location="classpath:users.properties" />
     </beans:constructor-arg>

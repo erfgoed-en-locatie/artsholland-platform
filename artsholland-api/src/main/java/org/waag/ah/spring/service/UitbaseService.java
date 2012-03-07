@@ -1,4 +1,4 @@
-package org.waag.spring.service;
+package org.waag.ah.spring.service;
 
 import java.util.ArrayList;
 import java.util.Enumeration;

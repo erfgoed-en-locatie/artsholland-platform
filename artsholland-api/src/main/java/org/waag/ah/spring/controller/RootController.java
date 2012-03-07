@@ -1,4 +1,4 @@
-package org.waag.ah.api.controller;
+package org.waag.ah.spring.controller;
 
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;

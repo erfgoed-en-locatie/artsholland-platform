@@ -1,4 +1,5 @@
-//package org.waag.ah.api.endpoint;
+package org.waag.ah.spring.endpoint;
+//package org.waag.ah.spring.endpoint;
 //
 //import java.util.List;
 //
@@ -12,7 +13,7 @@
 //import org.waag.ah.api.ApplicationListResponse;
 //import org.waag.ah.api.ObjectFactory;
 //import org.waag.ah.model.Application;
-//import org.waag.spring.service.AdminService;
+//import org.waag.ah.spring.service.AdminService;
 //
 //@Endpoint
 //public class AdminEndpoint implements ApiService {
