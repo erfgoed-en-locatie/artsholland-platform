@@ -1,8 +1,10 @@
-package org.waag.ah.persistence;
+package org.waag.ah.sesame;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -29,7 +31,7 @@ public class StoringRDFParser extends RDFXMLParser {
 	private URI baseURI;
 	private URI source;
 
-	@EJB(lookup="java:module/SAILConnectionFactory")
+	@EJB(lookup="java:module/BigdataConnectionService")
 	private RepositoryConnectionFactory cf;
 	
 	@PostConstruct
@@ -47,10 +49,11 @@ public class StoringRDFParser extends RDFXMLParser {
 	@Override
 	public synchronized void parse(InputStream in, String baseURI)
 			throws IOException, RDFParseException, RDFHandlerException {
-		this.baseURI = vf.createURI(baseURI);
+		this.baseURI = getBaseUri(baseURI);
 		try {
+			logger.info("USING BASE URI: "+this.baseURI);
 			long cursize = conn.size();
-			super.parse(in, baseURI);
+			super.parse(in, this.baseURI.toString());
 			logger.info("ADDED "+(conn.size()-cursize)+" NEW STATEMENTS");
 		} catch (RepositoryException e) {
 			logger.error(e.getMessage());
@@ -60,8 +63,13 @@ public class StoringRDFParser extends RDFXMLParser {
 	@Override
 	public synchronized void parse(Reader reader, String baseURI)
 			throws IOException, RDFParseException, RDFHandlerException {
-		this.baseURI = vf.createURI(baseURI);
-		super.parse(reader, baseURI);
+		this.baseURI = getBaseUri(baseURI);
+		super.parse(reader, this.baseURI.toString());
+	}
+	
+	private URI getBaseUri(String url) throws MalformedURLException {
+		URL parsedUrl = new URL(url);
+		return vf.createURI(parsedUrl.getProtocol()+"://"+parsedUrl.getHost());
 	}
 
 	public void cancel() {

@@ -1,9 +1,10 @@
-package org.waag.spring.service;
+package org.waag.ah.spring.service;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.concurrent.FutureTask;
 
+import javax.ejb.EJB;
 import javax.naming.OperationNotSupportedException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,14 +12,18 @@ import javax.servlet.http.HttpServletResponse;
 import org.openrdf.query.MalformedQueryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.bigdata.BigdataService;
-import org.waag.bigdata.BigdataService.QueryTask;
+import org.springframework.stereotype.Service;
+import org.waag.ah.bigdata.BigdataQueryService;
+import org.waag.ah.bigdata.BigdataQueryService.QueryTask;
 
 import com.bigdata.journal.TimestampUtility;
 
+@Service(value="sparqlService")
 public class SPARQLService {
 	private static final Logger logger = LoggerFactory.getLogger(SPARQLService.class);
-	private BigdataService context;
+	
+	@EJB(mappedName="java:app/datastore/BigdataQueryService")
+	private BigdataQueryService context;
 
 	public static final transient String
 		MIME_TEXT_PLAIN 			= "text/plain",
@@ -27,10 +32,6 @@ public class SPARQLService {
 		MIME_APPLICATION_RDF_JSON 	= "application/rdf+json",
 		MIME_SPARQL_RESULTS_XML 	= "application/sparql-results+xml",
 		MIME_SPARQL_RESULTS_JSON 	= "application/sparql-results+json";
-	
-	public SPARQLService() {
-		 context = new BigdataService();
-	}
 
 	public void query(HttpServletRequest request, HttpServletResponse response, String format) 
 			throws IOException {
@@ -38,7 +39,7 @@ public class SPARQLService {
 		final String query = request.getParameter("query");
         final String baseURI = request.getRequestURL().toString();
         final String accept = (format != null ? format : request.getHeader("Accept"));
-//      final boolean explain = request.getParameter(BigdataService.EXPLAIN) != null;
+//      final boolean explain = request.getParameter(BigdataQueryService.EXPLAIN) != null;
 //      final String timestamp = request.getParameter("timestamp");
         
         try {
@@ -76,22 +77,18 @@ public class SPARQLService {
             	throw new OperationNotSupportedException("Explain queries are not yet supported.");
             } else {
                 response.setContentType(queryTask.getMimeType());
-
                 if (queryTask.getCharset() != null) {
                     response.setCharacterEncoding(queryTask.getCharset().name());
                 }
-
                 if (isAttachment(queryTask.getMimeType())) {
                     response.setHeader("Content-disposition",
                             "attachment; filename=query" + queryTask.getQueryId()
                                     + "." + queryTask.getFileExt());
                 }
-
                 if (TimestampUtility.isCommitTime(queryTask.getTimestamp())) {
                     response.addHeader("Cache-Control", "public");
                     // response.addHeader("Cache-Control", "no-cache");
                 }
-
                 context.executeQueryTask(ft);
                 ft.get();
             }
@@ -118,20 +115,17 @@ public class SPARQLService {
         return true;
     }
     
-	/*
-	public void proxyQuery(HttpServletRequest request,
-			HttpServletResponse response, String query) {
-		try {
-			URL url = new URL(SPARQL_ENDPOINT.expand(query).encode().toUriString());
-//			logger.info(url.toExternalForm());
-			response.setContentType("application/xml");
-			URLConnection conn = url.openConnection();
-			IOUtils.copy(conn.getInputStream(), response.getOutputStream());
-		} catch (MalformedURLException e) {
-			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-		} catch (IOException e) {
-			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-		}
-	}
-	*/
+//	public void proxyQuery(HttpServletRequest request,
+//			HttpServletResponse response, String query) {
+//		try {
+//			URL url = new URL(SPARQL_ENDPOINT.expand(query).encode().toUriString());
+//			response.setContentType("application/xml");
+//			URLConnection conn = url.openConnection();
+//			IOUtils.copy(conn.getInputStream(), response.getOutputStream());
+//		} catch (MalformedURLException e) {
+//			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//		} catch (IOException e) {
+//			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+//		}
+//	}
 }

@@ -16,7 +16,7 @@
   <!-- <mvc:annotation-driven/> -->
   
   <bean id="accessConfirmationController" 
-      class="org.waag.ah.api.controller.OAuthAccessConfirmationController"/>
+      class="org.waag.ah.spring.controller.OAuthAccessConfirmationController"/>
   
   <mvc:resources mapping="/vocabulary/**" location="/vocabulary/"/>  
   <mvc:resources mapping="/static/**" location="/static/"/>

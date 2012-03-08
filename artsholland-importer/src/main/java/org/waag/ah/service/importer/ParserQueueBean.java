@@ -21,7 +21,7 @@ import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.ToXMLContentHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.ah.persistence.StoringRDFParser;
+import org.waag.ah.sesame.StoringRDFParser;
 import org.xml.sax.ContentHandler;
 
 import com.gc.iotools.stream.is.InputStreamFromOutputStream;

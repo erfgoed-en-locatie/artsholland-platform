@@ -1,4 +1,4 @@
-package org.waag.ah.api.controller;
+package org.waag.ah.spring.controller;
 
 import java.util.TreeMap;
 
