@@ -44,8 +44,8 @@ public abstract class VenueImpl extends RDFObject implements Venue {
 
 	@Override
 	public String getDescription() {
-		for (LangString title: titles) {
-			return title.toString();
+		for (LangString description: descriptions) {
+			return description.toString();
 		}
 		return "";
 	}

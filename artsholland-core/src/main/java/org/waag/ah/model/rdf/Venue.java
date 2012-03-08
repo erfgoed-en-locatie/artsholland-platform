@@ -29,27 +29,21 @@ public interface Venue extends org.openrdf.repository.object.RDFObject {
 //	vcard:postal-code [http]	"8633 WS"
 	
 	@JsonProperty
-	@JsonSerialize(include=Inclusion.NON_EMPTY)
 	public String getCidn();
 	
 	@JsonProperty
-	@JsonSerialize(include=Inclusion.NON_EMPTY)
 	public String getTitle();
 	
 	@JsonProperty
-	@JsonSerialize(include=Inclusion.NON_EMPTY)
 	public String getDescription();
 
 	@JsonProperty
-	@JsonSerialize(include=Inclusion.NON_EMPTY)
 	public Set<Room> getRooms();
 	
 	@JsonProperty
-	@JsonSerialize(include=Inclusion.NON_EMPTY)
 	public BigDecimal getLatitude();
 	
 	@JsonProperty
-	@JsonSerialize(include=Inclusion.NON_EMPTY)
 	public BigDecimal getLongitude();
 	
 }

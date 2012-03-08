@@ -33,10 +33,10 @@ public interface Event extends org.openrdf.repository.object.RDFObject {
 	public String getCidn();
 	
 	@JsonProperty
-	public Production getProduction();
+	public Set<Production> getProductions();
 	
 	@JsonProperty
-	public Venue getVenue();
+	public Set<Venue> getVenues();
 	
 	@JsonProperty
 	public String getHasBeginning();
