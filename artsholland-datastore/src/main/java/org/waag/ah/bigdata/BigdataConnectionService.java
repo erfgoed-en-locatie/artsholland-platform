@@ -25,14 +25,16 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 	
 	private BigdataSailRepository repo;
 	
+	/**
+	 * Initialize BigData repository.
+	 * 
+	 * @author	Raoul Wissink <raoul@raoul.net>
+	 * @since	Mar 8, 2012
+	 */
 	@PostConstruct
 	public void create() {
 		try {
-			PropertiesConfiguration config = PlatformConfig.getConfig(); 
-			PropertiesConfiguration properties = 
-					new PropertiesConfiguration("bigdata.properties");
-			properties.setProperty(Options.FILE, config.getProperty("bigdata.journal"));
-			repo = createRepository(properties);
+			repo = createRepository(loadProperties());
 			repo.initialize();
 		} catch (RepositoryException e) {
 			e.printStackTrace();
@@ -41,17 +43,55 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 		}
 	}
 	
+	/**
+	 * Get BigData journal file location from platform config and merge it with
+	 * the repository connection properties.
+	 *
+	 * @author Raoul Wissink <raoul@raoul.net>
+	 * @throws ConfigurationException 
+	 * @since Mar 8, 2012
+	 */
+	private Configuration loadProperties() throws ConfigurationException {
+		PropertiesConfiguration config = PlatformConfig.getConfig(); 
+		PropertiesConfiguration properties = 
+				new PropertiesConfiguration("bigdata.properties");
+		properties.setProperty(Options.FILE, config.getProperty("bigdata.journal"));
+		return properties;
+	}
+
+	/**
+	 * Return read/write connection to the BigData repository.
+	 *
+	 * @author Raoul Wissink <raoul@raoul.net>
+	 * @throws ConfigurationException 
+	 * @since Mar 8, 2012
+	 */
 	public RepositoryConnection getConnection() throws RepositoryException { 
 		BigdataSailRepositoryConnection conn = repo.getReadWriteConnection();
 		conn.setAutoCommit(false);
 		return conn;
     }
 	
+	/**
+	 * Return read-only connection to the BigData repository.
+	 *
+	 * @author Raoul Wissink <raoul@raoul.net>
+	 * @throws ConfigurationException 
+	 * @since Mar 8, 2012
+	 */
 	public RepositoryConnection getReadOnlyConnection() throws RepositoryException { 
 		BigdataSailRepositoryConnection conn = repo.getReadOnlyConnection();
 		return conn;
 	}	
 	
+	/**
+	 * Return BigData repository instance.
+	 * 
+	 * @param properties
+	 *
+	 * @author	Raoul Wissink <raoul@raoul.net>
+	 * @since	Mar 8, 2012
+	 */
 	protected BigdataSailRepository createRepository(Configuration properties) {
 		BigdataSail sail = new BigdataSail(ConfigurationConverter.getProperties(properties));
 		return new BigdataSailRepository(sail);		
