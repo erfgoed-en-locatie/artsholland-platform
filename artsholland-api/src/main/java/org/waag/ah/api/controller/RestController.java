@@ -1,12 +1,16 @@
 package org.waag.ah.api.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
 import org.springframework.stereotype.Controller;
@@ -20,6 +24,7 @@ import org.waag.ah.api.service.RestService;
 import org.waag.ah.model.rdf.Event;
 import org.waag.ah.model.rdf.Production;
 import org.waag.ah.model.rdf.Room;
+import org.waag.ah.model.rdf.Venue;
 
 @Controller
 public class RestController {
@@ -47,6 +52,73 @@ public class RestController {
 		
 		Set<?> result = restService.getList(classname, count, page);
 		
+		
+		ArrayList<String> kop = new ArrayList<String>();
+		Iterator<?> it = result.iterator();
+		while (it.hasNext()) {
+			Object n = it.next();
+			if (n instanceof Event) {
+				Event e = (Event) n;
+				Set<Production> p = e.getProductions();
+				Iterator<Production> pi = p.iterator();
+				while (pi.hasNext()) {
+					Object sks = pi.next();
+					
+					
+					//String oij = sks.getTitle();
+					//String io = sks.getCidn();
+				}
+				int s = p.size();
+			}
+			
+		
+			String visje;
+			if (n instanceof Venue) {
+				Venue e = (Venue) n;
+				Set<Room> p = e.getRooms();
+				int S = p.size();
+				if (S > 1) {
+					String ko = "dasd";
+				}
+				Iterator<Room> pi = p.iterator();
+				while (pi.hasNext()) {
+					Object sks = pi.next();
+					if (sks instanceof Room) {
+						visje  = ((Room) sks).getLabel();
+						int ds = 2;
+						org.openrdf.model.Resource r = ((Room) sks).getResource();
+						kop.add(r.toString());
+						kop.add(visje);
+					}
+					
+					//String oij = sks.getTitle();
+					//String io = sks.getCidn();
+				}
+				int s = p.size();
+			}
+			
+			
+		}
+		String json;
+		ObjectMapper mapper = new ObjectMapper();		
+		ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();	    
+		try {
+			json = writer.writeValueAsString(result);
+		} catch (JsonGenerationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+		//result.clear();
 	  ModelAndView mav = new ModelAndView();
 	  mav.setViewName("rest/json");
 	  mav.addObject("result", result);

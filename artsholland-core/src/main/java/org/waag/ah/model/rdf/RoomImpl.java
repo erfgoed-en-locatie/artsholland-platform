@@ -1,9 +1,12 @@
 
 package org.waag.ah.model.rdf;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.openrdf.annotations.Iri;
 
 @Iri(RDFObject.ah + "Room")
+@JsonAutoDetect(fieldVisibility=Visibility.NONE, getterVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE, creatorVisibility=Visibility.NONE, setterVisibility=Visibility.NONE)
 public abstract class RoomImpl extends RDFObject implements Room {
 		
 	@Iri(rdfs + "label")
@@ -22,12 +25,6 @@ public abstract class RoomImpl extends RDFObject implements Room {
 	public String getLabel() {
 		return label;
 	}
-	
-	/*@Override
-	public void setLabel(String label) {
-		this.label = label;
-	}*/
-
 	
 	
 }

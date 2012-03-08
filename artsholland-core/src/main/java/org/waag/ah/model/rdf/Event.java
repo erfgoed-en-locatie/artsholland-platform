@@ -1,5 +1,7 @@
 package org.waag.ah.model.rdf;
 
+import java.util.Set;
+
 import org.codehaus.jackson.annotate.JsonAutoDetect;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -24,17 +26,17 @@ public interface Event extends org.openrdf.repository.object.RDFObject {
 	time:hasEnd [http]	"2012-04-02T10:00:00Z"
 	*/
 	
+	@JsonProperty
+	public String getCidn();
 	
 	@JsonProperty
-	public Production getProduction();
-
+	public Set<Production> getProductions();
 	
-	/*@JsonProperty
-	public Venue getVenue();*/
+	@JsonProperty
+	public Set<Venue> getVenues();
 	
 	@JsonProperty
 	public String getHasBeginning();
 	
-
 
 }

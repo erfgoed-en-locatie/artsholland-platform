@@ -9,5 +9,8 @@ public interface Production extends org.openrdf.repository.object.RDFObject {
 	
 	@JsonProperty
 	public String getTitle();
+	
+	@JsonProperty
+	public String getCidn();
 		
 }
