@@ -16,6 +16,7 @@ import org.waag.ah.ObjectConnectionFactory;
 import org.waag.ah.model.rdf.EventImpl;
 import org.waag.ah.model.rdf.ProductionImpl;
 import org.waag.ah.model.rdf.RoomImpl;
+import org.waag.ah.model.rdf.VenueImpl;
 
 @Singleton
 public class ObjectConnectionFactoryImpl extends SAILConnectionFactory implements ObjectConnectionFactory {
@@ -39,7 +40,7 @@ public class ObjectConnectionFactoryImpl extends SAILConnectionFactory implement
 			config.addConcept(ProductionImpl.class);			
 			config.addConcept(RoomImpl.class);
 			config.addConcept(EventImpl.class);
-			
+			config.addConcept(VenueImpl.class);			
 			
 			//config.addBehaviour(RoomImpl.class);
 
