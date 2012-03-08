@@ -34,7 +34,7 @@ return
 			
 			$puri ah:cidn {$cidn}^^xsd:string.
 			
-			$puri dc:title {if ($title eq "") then () else $title}.
+			#$puri dc:title {if ($title eq "") then () else $title}.
 			#$puri dc:title {if ($title eq "") then () else $title}^^xsd:string.
 				
 			$puri ah:productionType $typeClass.
