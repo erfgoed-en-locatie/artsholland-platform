@@ -11,20 +11,20 @@ import org.openrdf.annotations.Iri;
 public abstract class EventImpl extends RDFObject implements Event {
 	
 	@Iri(ah + "venue")
-	private Set<Venue> venues;
+	private VenueImpl venue;
 	
 	@Iri(ah + "cidn")
 	private String cidn;
 	
 	@Iri(ah + "production")
-	private Set<Production> productions;
+	private ProductionImpl production;
 		
 	@Iri(time + "hasBeginning")
 	private String hasBeginning;
 	
 	@Override
-	public Set<Production> getProductions() {
-		return productions;
+	public ProductionImpl getProduction() {
+		return production;
 	}
 	
 	@Override
@@ -33,8 +33,8 @@ public abstract class EventImpl extends RDFObject implements Event {
 	}
 	
 	@Override
-	public Set<Venue> getVenues() {
-		return venues;
+	public VenueImpl getVenue() {
+		return venue;
 	}
 	
 	@Override
