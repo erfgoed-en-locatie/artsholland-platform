@@ -10,22 +10,17 @@ import org.openrdf.annotations.Iri;
 @JsonAutoDetect(fieldVisibility=Visibility.NONE, getterVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE, creatorVisibility=Visibility.NONE, setterVisibility=Visibility.NONE)
 public abstract class EventImpl extends RDFObject implements Event {
 	
-	@Iri(ah + "venue")
-	private Set<Venue> venues;
-	
 	@Iri(ah + "cidn")
 	private String cidn;
 	
 	@Iri(ah + "production")
 	private Set<Production> productions;
+	
+	@Iri(ah + "venue")
+	private Set<Venue> venues;
 		
 	@Iri(time + "hasBeginning")
 	private String hasBeginning;
-	
-	@Override
-	public Set<Production> getProductions() {
-		return productions;
-	}
 	
 	@Override
 	public String getCidn() {
@@ -36,6 +31,27 @@ public abstract class EventImpl extends RDFObject implements Event {
 	public Set<Venue> getVenues() {
 		return venues;
 	}
+	
+	@Override
+	public Set<Production> getProductions() {
+		return productions;
+	}
+	
+//	@Override
+//	public Venue getVenue() {
+//		if (venues.size() > 0) {
+//			return venues.iterator().next();
+//		}
+//		return null;
+//	}
+//	
+//	@Override
+//	public Production getProduction() {
+//		if (productions.size() > 0) {
+//			return productions.iterator().next();
+//		}
+//		return null;
+//	}
 	
 	@Override
 	public String getHasBeginning() {
