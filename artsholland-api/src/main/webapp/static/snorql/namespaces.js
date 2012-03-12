@@ -14,6 +14,6 @@ var D2R_namespacePrefixes = {
     geo: "http://www.w3.org/2003/01/geo/wgs84_pos#",
     vcard: "http://www.w3.org/2006/vcard/ns#",
     nub: "http://resources.uitburo.nl/",
-    ah: "http://purl.org/artsholland/1.0/",    
+    ah: "http://data.artsholland.com/",    
 };
 

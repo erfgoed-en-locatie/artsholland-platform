@@ -20,7 +20,7 @@
         <version>2.7</version>
         <configuration>
           <defaultLibBundleDir>lib/</defaultLibBundleDir>
-          <fileNameMapping>no-version</fileNameMapping>
+          <!-- <fileNameMapping>no-version</fileNameMapping> -->
           <modules>
             <webModule>
               <groupId>${project.groupId}</groupId>
