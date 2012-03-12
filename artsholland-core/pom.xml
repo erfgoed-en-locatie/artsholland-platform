@@ -125,15 +125,14 @@
       <version>2.7.2</version>
     </dependency>
     <dependency>
-<<<<<<< .merge_file_RuWpmd
       <groupId>quartz</groupId>
       <artifactId>quartz</artifactId>
       <version>1.5.2</version>
-=======
+    </dependency>
+    <dependency>
       <groupId>commons-configuration</groupId>
       <artifactId>commons-configuration</artifactId>
       <version>1.8</version>
->>>>>>> .merge_file_xqGSn4
     </dependency>
   </dependencies>
 
