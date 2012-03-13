@@ -1,9 +1,9 @@
-package org.waag.ah.persistence;
+package org.waag.ah.sesame;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.xml.datatype.XMLGregorianCalendar;
 
@@ -15,17 +15,20 @@ import org.openrdf.repository.object.config.ObjectRepositoryConfig;
 import org.openrdf.repository.object.config.ObjectRepositoryFactory;
 import org.openrdf.repository.object.exceptions.ObjectStoreConfigException;
 import org.waag.ah.ObjectConnectionFactory;
+import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.model.rdf.EventImpl;
 import org.waag.ah.model.rdf.ProductionImpl;
 import org.waag.ah.model.rdf.RoomImpl;
 import org.waag.ah.model.rdf.VenueImpl;
 
 @Singleton
-public class ObjectConnectionFactoryImpl extends SAILConnectionFactory implements ObjectConnectionFactory {
-	
+public class ObjectConnectionFactoryImpl implements ObjectConnectionFactory {
 	private ObjectRepositoryConfig config;
 	private ObjectRepository repository;
 	private ObjectRepositoryFactory repositoryFactory;
+	
+	@EJB(mappedName="java:module/BigdataConnectionService")
+	private RepositoryConnectionFactory bigdataConnection;
 	
 	@PostConstruct
 	public void create() {
@@ -34,11 +37,6 @@ public class ObjectConnectionFactoryImpl extends SAILConnectionFactory implement
 		config = repositoryFactory.getConfig();
 		
 		try {		
-			
-			if (getRepository() == null) {
-				super.create();
-			}		
-			
 			config.addConcept(ProductionImpl.class);			
 			config.addConcept(RoomImpl.class);
 			config.addConcept(EventImpl.class);
@@ -49,7 +47,8 @@ public class ObjectConnectionFactoryImpl extends SAILConnectionFactory implement
 			config.addDatatype(Integer.class, "xsd:integer");
 			config.addDatatype(XMLGregorianCalendar.class, "xsd:dateTime");
 
-			repository = repositoryFactory.createRepository(config, getRepository());
+			repository = repositoryFactory.createRepository(config, 
+					bigdataConnection.getRepository());
 			
 		} catch (ObjectStoreConfigException e) {
 			// TODO Auto-generated catch block
@@ -58,9 +57,6 @@ public class ObjectConnectionFactoryImpl extends SAILConnectionFactory implement
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
