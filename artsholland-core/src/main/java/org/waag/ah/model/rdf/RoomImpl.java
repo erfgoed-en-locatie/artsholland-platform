@@ -1,13 +1,9 @@
-
 package org.waag.ah.model.rdf;
 
-import org.codehaus.jackson.annotate.JsonAutoDetect;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.openrdf.annotations.Iri;
 
-@Iri(RDFObject.ah + "Room")
-@JsonAutoDetect(fieldVisibility=Visibility.NONE, getterVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE, creatorVisibility=Visibility.NONE, setterVisibility=Visibility.NONE)
-public abstract class RoomImpl extends RDFObject implements Room {
+@Iri(AHRDFObjectImpl.ah + "Room")
+public class RoomImpl extends AHRDFObjectImpl implements Room {
 		
 	@Iri(rdfs + "label")
 	private String label;

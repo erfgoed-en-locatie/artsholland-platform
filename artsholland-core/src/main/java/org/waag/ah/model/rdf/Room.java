@@ -8,7 +8,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 @JsonAutoDetect(fieldVisibility=Visibility.NONE, getterVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE, creatorVisibility=Visibility.NONE, setterVisibility=Visibility.NONE)
 @JsonSerialize(include=Inclusion.NON_EMPTY)
-public interface Room extends org.openrdf.repository.object.RDFObject{
+public interface Room extends AHRDFObject {
 
 	/*@Sparql("PREFIX rdf:<http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"+
 		  "SELECT DISTINCT ?room WHERE { \n" +

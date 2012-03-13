@@ -9,11 +9,15 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.ObjectWriter;
+import org.openrdf.repository.object.RDFObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,6 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.waag.ah.api.service.RestService;
 import org.waag.ah.model.rdf.Event;
 import org.waag.ah.model.rdf.Production;
+import org.waag.ah.model.rdf.ProductionImpl;
 import org.waag.ah.model.rdf.Room;
 import org.waag.ah.model.rdf.Venue;
 
@@ -36,24 +41,74 @@ public class RestController {
 	private RestService restService;
 	
 	@RequestMapping(value = MAPPING + "{class}/{cidn}", method = RequestMethod.GET)	
-	public @ResponseBody String getInstance(
+	public ModelAndView getInstance(
 			final HttpServletRequest request,	final HttpServletResponse response, 
-			@PathVariable("class") String classname, @PathVariable("cidn") String cidn,
-			@RequestParam(value="count", defaultValue="10", required=false) int count, 
-			@RequestParam(value="page", defaultValue="0", required=false) int page) throws IOException  {		
-		return "Not yet implemented";		
+			@PathVariable("class") String classname, 
+			@PathVariable("cidn") String cidn) throws IOException  {		
+		
+		Object result = restService.getInstance(classname, cidn);
+	  return modelAndView(result);
+		
+	}
+	
+	
+	@RequestMapping(value = MAPPING + "test", method = RequestMethod.GET)	
+	public ModelAndView testDate(
+			final HttpServletRequest request,	final HttpServletResponse response,			
+			@RequestParam(value="before", defaultValue="0", required=false) String before,
+			@RequestParam(value="after", defaultValue="0", required=false) String after) throws DatatypeConfigurationException {	
+		
+		
+		XMLGregorianCalendar dateTimeBefore = DatatypeFactory.newInstance().newXMLGregorianCalendar(before);
+		XMLGregorianCalendar dateTimeAfter = DatatypeFactory.newInstance().newXMLGregorianCalendar(after);
+		
+		Set<?> result = restService.getEvents(dateTimeBefore, dateTimeAfter);
+		return modelAndView(result);
+		
 	}
 	
 	@RequestMapping(value = MAPPING + "{class}", method = RequestMethod.GET)	
-	public ModelAndView getInstance(
+	public ModelAndView getList(
 			final HttpServletRequest request,	final HttpServletResponse response, 
 			@PathVariable("class") String classname,
 			@RequestParam(value="count", defaultValue="10", required=false) int count, 
 			@RequestParam(value="page", defaultValue="0", required=false) int page) {	
 		
-		Set<?> result = restService.getList(classname, count, page);
+		Set<?> result = restService.getInstanceList(classname, count, page);
+		return modelAndView(result);
 		
+	}
+	
+	@RequestMapping(value = MAPPING + "venues/{cidn}/rooms", method = RequestMethod.GET)	
+	public ModelAndView getRooms(
+			final HttpServletRequest request,	final HttpServletResponse response, 
+			@PathVariable("cidn") String cidn) {
 		
+		Set<?> result = restService.getRooms(cidn);
+	  return modelAndView(result);	  
+	  
+	}
+	
+
+	private ModelAndView modelAndView(Object result) {
+	  ModelAndView mav = new ModelAndView();
+	  mav.setViewName("rest/json");
+	  mav.addObject("result", result);
+	  
+	  return mav;	 
+	}
+	
+	
+	@RequestMapping(value = MAPPING + "geo", method = RequestMethod.GET)	
+	public  @ResponseBody String getGeo(final HttpServletRequest request,
+			final HttpServletResponse response) throws IOException  {		
+		return "geo";
+	}
+	
+	
+	
+	@SuppressWarnings("unused")
+	private void test(Set<?> result) {
 		ArrayList<String> kop = new ArrayList<String>();
 		ArrayList<BigDecimal> lats = new ArrayList<BigDecimal>();
 		Iterator<?> it = result.iterator();
@@ -61,16 +116,28 @@ public class RestController {
 			Object n = it.next();
 			if (n instanceof Event) {
 				Event e = (Event) n;
-				Set<Production> p = e.getProductions();
-				Iterator<Production> pi = p.iterator();
+				Set<Venue> p = e.getVenues();
+				Iterator<Venue> pi = p.iterator();
 				while (pi.hasNext()) {
 					Object sks = pi.next();
-					if (sks instanceof Production) {
-						String visje  = ((Room) sks).getLabel();
-						org.openrdf.model.Resource r = ((Room) sks).getResource();
-						kop.add(r.toString());
-						kop.add(visje);
+					String joi = sks.getClass().getName();
+					if (sks instanceof Venue) {
+						String ij = ((Venue) sks).getDescription();
+						org.openrdf.model.Resource r = ((Venue) sks).getResource();
+						kop.add(ij);
 					}
+					
+					if (sks instanceof RDFObject) {
+						String ko = sks.toString();
+						int dsa = 12;
+					}
+					
+					if (sks instanceof Venue) {
+						String ko = sks.toString();
+						int dsa = 12;
+						
+					}
+					
 				}
 				int s = p.size();
 			}
@@ -119,21 +186,6 @@ public class RestController {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
-		
-		//result.clear();
-	  ModelAndView mav = new ModelAndView();
-	  mav.setViewName("rest/json");
-	  mav.addObject("result", result);
-	  return mav;
-	  
 	}
 	
-	@RequestMapping(value = MAPPING + "geo", method = RequestMethod.GET)	
-	public  @ResponseBody String getGeo(final HttpServletRequest request,
-			final HttpServletResponse response) throws IOException  {		
-		return "geo";
-	}
 }

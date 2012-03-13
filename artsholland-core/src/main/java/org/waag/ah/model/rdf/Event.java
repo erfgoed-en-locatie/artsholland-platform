@@ -10,11 +10,9 @@ import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
 @JsonAutoDetect(fieldVisibility=Visibility.NONE, getterVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE, creatorVisibility=Visibility.NONE, setterVisibility=Visibility.NONE)
 @JsonSerialize(include=Inclusion.NON_EMPTY)
-public interface Event extends org.openrdf.repository.object.RDFObject {
-	
-	
+public interface Event extends AHRDFObject {
+		
 	/*
-	ah:cidn [http]	"00bd62aa-c90d-4b72-ad74-08f87a4248c9"^^<xsd:string>	-
 	ah:eventStatus [http]	ah:EventStatusNormal [http]	-
 	ah:eventType [http]	ah:EventType [http]	-
 	ah:production [http]	ah:productions/4fc3decf7aca3c54b08e1f5f3ba63e04 [http]	-
@@ -32,14 +30,28 @@ public interface Event extends org.openrdf.repository.object.RDFObject {
 	@JsonProperty
 	public String getCidn();
 	
-	@JsonProperty
+	//@JsonProperty()
 	public Set<Production> getProductions();
 	
-	@JsonProperty
+	//@JsonProperty("production")
+	public String getProductionJson();
+	
+	//@JsonProperty()
 	public Set<Venue> getVenues();
+	
+	//@JsonProperty("venue")
+	public String getVenueJson();
+	
+	@JsonProperty
+	public Set<Offering> getTickets();
 	
 	@JsonProperty
 	public String getHasBeginning();
 	
+	@JsonProperty
+	public String getHasEnd();
+	
+	@JsonProperty
+	public Set<Room> getRooms();	
 
 }

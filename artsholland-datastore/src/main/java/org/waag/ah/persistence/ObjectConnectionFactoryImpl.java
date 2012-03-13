@@ -16,8 +16,10 @@ import org.openrdf.repository.object.config.ObjectRepositoryFactory;
 import org.openrdf.repository.object.exceptions.ObjectStoreConfigException;
 import org.waag.ah.ObjectConnectionFactory;
 import org.waag.ah.model.rdf.EventImpl;
+import org.waag.ah.model.rdf.OfferingImpl;
 import org.waag.ah.model.rdf.ProductionImpl;
 import org.waag.ah.model.rdf.RoomImpl;
+import org.waag.ah.model.rdf.UnitPriceSpecificationImpl;
 import org.waag.ah.model.rdf.VenueImpl;
 
 @Singleton
@@ -39,10 +41,12 @@ public class ObjectConnectionFactoryImpl extends SAILConnectionFactory implement
 				super.create();
 			}		
 			
-			config.addConcept(ProductionImpl.class);			
-			config.addConcept(RoomImpl.class);
 			config.addConcept(EventImpl.class);
-			config.addConcept(VenueImpl.class);			
+			config.addConcept(RoomImpl.class);			
+			config.addConcept(VenueImpl.class);
+			config.addConcept(OfferingImpl.class);
+			config.addConcept(UnitPriceSpecificationImpl.class);
+			config.addConcept(ProductionImpl.class);
 			
 			config.addDatatype(BigDecimal.class, "xsd:decimal");
 			config.addDatatype(String.class, "xsd:string");

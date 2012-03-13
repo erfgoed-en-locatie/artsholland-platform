@@ -9,7 +9,7 @@
 	//ArrayList<String> rooms = (ArrayList<String>) request.getAttribute("rooms");
 	
 	ObjectMapper mapper = new ObjectMapper();		
-	ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();	    
+	ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();
 	String json = writer.writeValueAsString(object);
 %>
 <%= json %>

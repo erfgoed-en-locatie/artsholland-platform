@@ -51,7 +51,7 @@ return
 			{ for $url in $location/urls//url
 				construct {					
 					
-					$vuri foaf:homepage {if ($url eq "") then () else waag:replace-characters($url)}^^xsd:string.
+					$vuri foaf:homepage {if ($url eq "") then () else waag:replace-characters(waag:correct-url($url))}^^xsd:string.
 					
 				}
 			}.

@@ -2,19 +2,13 @@
 package org.waag.ah.model.rdf;
 
 import java.math.BigDecimal;
-import java.util.Iterator;
 import java.util.Set;
 
-import org.codehaus.jackson.annotate.JsonAutoDetect;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.openrdf.annotations.Iri;
 import org.openrdf.repository.object.LangString;
-import org.openrdf.repository.object.util.GenericType;
 
-@Iri(RDFObject.ah + "Venue")
-@JsonAutoDetect(fieldVisibility=Visibility.NONE, getterVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE, creatorVisibility=Visibility.NONE, setterVisibility=Visibility.NONE)
-public abstract class VenueImpl extends RDFObject implements Venue {
+@Iri(AHRDFObjectImpl.ah + "Venue")
+public class VenueImpl extends AHRDFObjectImpl implements Venue {
 
 	@Iri(ah + "cidn")
 	private String cidn;
@@ -25,6 +19,9 @@ public abstract class VenueImpl extends RDFObject implements Venue {
 	@Iri(dc + "description")
 	private Set<LangString> descriptions;
 	
+	@Iri(ah + "shortDescription")
+	private Set<LangString> shortDescriptions;
+	
 	@Iri(ah + "room")
 	private Set<Room> rooms;
 	
@@ -33,6 +30,18 @@ public abstract class VenueImpl extends RDFObject implements Venue {
 	
 	@Iri(geo + "long")
 	private BigDecimal longitude;
+		
+	@Iri(vcard + "locality")
+	private String locality;
+	
+	@Iri(vcard + "postcal-code")
+	private String postalCode;
+	
+	@Iri(vcard + "street-address")
+	private String streetAddress;
+	
+	@Iri(foaf + "homepage")
+	private String homepage;
 	
 	@Override
 	public String getTitle() {
@@ -69,6 +78,33 @@ public abstract class VenueImpl extends RDFObject implements Venue {
 	public BigDecimal getLongitude() {
 		return longitude;
 	}
-
+	
+	@Override
+	public String getShortDescription() {
+		for (LangString shortDescription: shortDescriptions) {
+			return shortDescription.toString();
+		}
+		return "";
+	}
+	
+	@Override
+	public String getLocality() {
+		return locality;
+	}
+	
+	@Override
+	public String getPostalCode() {
+		return postalCode;
+	}
+	
+	@Override
+	public String getStreetAddress() {
+		return streetAddress;
+	}
+	
+	@Override
+	public String getHomepage() {
+		return homepage;
+	}
 	
 }

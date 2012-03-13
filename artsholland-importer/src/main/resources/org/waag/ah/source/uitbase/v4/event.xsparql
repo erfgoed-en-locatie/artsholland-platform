@@ -130,7 +130,7 @@ return
 			# TODO: andere naam?
 			# TODO: data type: ^^xsd:dateTime. ??
 			
-			$euri time:hasBeginning {$event/datetime-start}.
-			$euri time:hasEnd {$event/datetime-end}.
+			$euri time:hasBeginning {$event/datetime-start}^^xsd:dateTime.
+			$euri time:hasEnd {$event/datetime-end}^^xsd:dateTime.
 				 	
 		}
