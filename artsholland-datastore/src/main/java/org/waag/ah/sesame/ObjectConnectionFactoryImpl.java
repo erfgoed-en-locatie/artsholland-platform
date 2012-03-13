@@ -1,6 +1,5 @@
 package org.waag.ah.sesame;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 
 import javax.annotation.PostConstruct;
@@ -20,6 +19,7 @@ import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.model.rdf.EventImpl;
 import org.waag.ah.model.rdf.ProductionImpl;
 import org.waag.ah.model.rdf.RoomImpl;
+import org.waag.ah.model.rdf.VenueImpl;
 
 @Singleton
 public class ObjectConnectionFactoryImpl implements ObjectConnectionFactory {
@@ -57,9 +57,6 @@ public class ObjectConnectionFactoryImpl implements ObjectConnectionFactory {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
