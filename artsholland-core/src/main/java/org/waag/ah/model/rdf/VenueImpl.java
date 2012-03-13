@@ -2,15 +2,12 @@
 package org.waag.ah.model.rdf;
 
 import java.math.BigDecimal;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.openrdf.annotations.Iri;
 import org.openrdf.repository.object.LangString;
-import org.openrdf.repository.object.util.GenericType;
 
 @Iri(RDFObject.ah + "Venue")
 @JsonAutoDetect(fieldVisibility=Visibility.NONE, getterVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE, creatorVisibility=Visibility.NONE, setterVisibility=Visibility.NONE)

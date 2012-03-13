@@ -7,6 +7,7 @@ import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
 import javax.ejb.ActivationConfigProperty;
 import javax.ejb.MessageDriven;
+import javax.ejb.Schedule;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -17,6 +18,10 @@ import javax.jms.QueueSender;
 import javax.jms.QueueSession;
 import javax.jms.TextMessage;
 
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SchedulerFactory;
+import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,19 +30,29 @@ import org.slf4j.LoggerFactory;
 	activationConfig = {
 		@ActivationConfigProperty(propertyName="destinationType", propertyValue="javax.jms.Queue"),
 		@ActivationConfigProperty(propertyName="destination", propertyValue="queue/scheduler")})
-public class SchedulerServiceBean implements MessageListener {
-	final static Logger logger = LoggerFactory.getLogger(SchedulerServiceBean.class);
-
+public class SchedulerService implements MessageListener {
+	final static Logger logger = LoggerFactory.getLogger(SchedulerService.class);
+	private Scheduler sched;
+	private QueueConnection conn;
+	
 	@Resource(name="java:/queue/importer/parse")  
 	private Queue targetQueue;
 	
 	@Resource(name="java:/ConnectionFactory")        
 	protected QueueConnectionFactory factory; 
-	
-	private QueueConnection conn;
-		
+
 	@PostConstruct  
-	public void init() {         
+	public void init() { 
+		
+		// Load stored jobs.		
+        try {
+            SchedulerFactory sf = new StdSchedulerFactory("quertz.properties");
+			sched = sf.getScheduler();
+			sched.start();
+		} catch (SchedulerException e1) {
+			e1.printStackTrace();
+		}
+        
 		try {                   
 			conn = factory.createQueueConnection();              
 		} catch (JMSException e) {                     
@@ -56,7 +71,7 @@ public class SchedulerServiceBean implements MessageListener {
 	
 	public void onMessage(Message msg) {}
 	
-//    @Schedule(persistent=false, minute="*/10", hour="*")
+    @Schedule(persistent=false, minute="*/10", hour="*")
     public void automaticTimeout() {
 		QueueSession session = null;         
 		QueueSender sender = null;  

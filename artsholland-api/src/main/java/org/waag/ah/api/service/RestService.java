@@ -1,10 +1,8 @@
 package org.waag.ah.api.service;
 
-import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,16 +27,10 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.object.ObjectConnection;
 import org.openrdf.repository.object.ObjectQuery;
-import org.openrdf.result.MultipleResultException;
-import org.openrdf.result.NoResultException;
-import org.openrdf.result.Result;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 import org.waag.ah.ObjectConnectionFactory;
-import org.waag.ah.model.rdf.Event;
-import org.waag.ah.model.rdf.Production;
-import org.waag.ah.model.rdf.Room;
 
 @Service("restService")
 public class RestService implements InitializingBean, DisposableBean {
