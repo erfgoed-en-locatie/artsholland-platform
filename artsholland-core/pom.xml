@@ -34,11 +34,6 @@
       <version>${sesame.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.openrdf.sesame</groupId>
-      <artifactId>sesame-queryparser-sparql</artifactId>
-      <version>${sesame.version}</version>
-    </dependency>
-    <dependency>
 			<groupId>org.openrdf.alibaba</groupId>
 			<artifactId>alibaba-repository-object</artifactId>
 			<version>${alibaba.version}</version>

@@ -54,7 +54,6 @@
       <artifactId>sesame-rio-rdfxml</artifactId>
       <version>${sesame.version}</version>
     </dependency>
-    
 		
 	</dependencies>
 </project>
