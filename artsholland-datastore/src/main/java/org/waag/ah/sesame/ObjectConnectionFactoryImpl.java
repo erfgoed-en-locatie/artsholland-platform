@@ -1,10 +1,12 @@
 package org.waag.ah.sesame;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.config.RepositoryConfigException;
@@ -40,7 +42,10 @@ public class ObjectConnectionFactoryImpl implements ObjectConnectionFactory {
 			config.addConcept(EventImpl.class);
 			config.addConcept(VenueImpl.class);			
 			
-			//config.addBehaviour(RoomImpl.class);
+			config.addDatatype(BigDecimal.class, "xsd:decimal");
+			config.addDatatype(String.class, "xsd:string");
+			config.addDatatype(Integer.class, "xsd:integer");
+			config.addDatatype(XMLGregorianCalendar.class, "xsd:dateTime");
 
 			repository = repositoryFactory.createRepository(config, 
 					bigdataConnection.getRepository());

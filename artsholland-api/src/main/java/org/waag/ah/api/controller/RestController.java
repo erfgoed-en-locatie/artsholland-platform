@@ -1,6 +1,7 @@
 package org.waag.ah.api.controller;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Set;
@@ -54,6 +55,7 @@ public class RestController {
 		
 		
 		ArrayList<String> kop = new ArrayList<String>();
+		ArrayList<BigDecimal> lats = new ArrayList<BigDecimal>();
 		Iterator<?> it = result.iterator();
 		while (it.hasNext()) {
 			Object n = it.next();
@@ -63,10 +65,12 @@ public class RestController {
 				Iterator<Production> pi = p.iterator();
 				while (pi.hasNext()) {
 					Object sks = pi.next();
-					
-					
-					//String oij = sks.getTitle();
-					//String io = sks.getCidn();
+					if (sks instanceof Production) {
+						String visje  = ((Room) sks).getLabel();
+						org.openrdf.model.Resource r = ((Room) sks).getResource();
+						kop.add(r.toString());
+						kop.add(visje);
+					}
 				}
 				int s = p.size();
 			}
@@ -75,6 +79,7 @@ public class RestController {
 			String visje;
 			if (n instanceof Venue) {
 				Venue e = (Venue) n;
+				lats.add(e.getLatitude());
 				Set<Room> p = e.getRooms();
 				int S = p.size();
 				if (S > 1) {
