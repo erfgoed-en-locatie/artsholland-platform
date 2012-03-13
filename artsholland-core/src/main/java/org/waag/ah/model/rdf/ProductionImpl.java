@@ -10,9 +10,9 @@ import org.openrdf.repository.object.LangString;
 @Iri(RDFObject.ah + "Production")
 @JsonAutoDetect(fieldVisibility=Visibility.NONE, getterVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE, creatorVisibility=Visibility.NONE, setterVisibility=Visibility.NONE)
 public abstract class ProductionImpl extends RDFObject implements Production {
-		
+	
 	@Iri(dc + "title")
-  Set<LangString> titles;	
+  private Set<LangString> titles;	
 	
 	@Iri(ah + "cidn")
 	private String cidn;
@@ -21,7 +21,7 @@ public abstract class ProductionImpl extends RDFObject implements Production {
 		for (LangString title: titles) {
 			return title.toString();
 		}
-		return "";
+		return null;
 	}
 	
 	@Override
