@@ -2,12 +2,14 @@ package org.waag.ah.bigdata;
 
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
 import javax.ejb.Singleton;
 
+import org.apache.commons.configuration.ConfigurationConverter;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.resultio.BooleanQueryResultFormat;
 import org.openrdf.query.resultio.BooleanQueryResultWriter;
@@ -20,11 +22,13 @@ import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.RDFWriterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.waag.ah.PlatformConfig;
 import org.waag.ah.bigdata.BigdataRDFContext.AbstractQueryTask;
 
 import com.bigdata.journal.IIndexManager;
 import com.bigdata.journal.ITx;
 import com.bigdata.journal.Journal;
+import com.bigdata.journal.Options;
 import com.bigdata.rdf.sail.BigdataSailBooleanQuery;
 import com.bigdata.rdf.sail.BigdataSailGraphQuery;
 import com.bigdata.rdf.sail.BigdataSailRepositoryConnection;
@@ -40,14 +44,16 @@ public class BigdataQueryService {
 	private final BigdataRDFContextWrapper context;
 	public static final String EXPLAIN = BigdataRDFContextWrapper.EXPLAIN;
 	
-	public BigdataQueryService() {
+	public BigdataQueryService() throws ConfigurationException {
 		context = new BigdataRDFContextWrapper(getConfig(), getIndexManager());
 	}
 	
-	private IIndexManager getIndexManager() {
-        final Properties properties = new Properties();
-        properties.setProperty(Journal.Options.FILE, "/data/db/bigdata/bigdata.jnl");
-        return new Journal(properties);
+	private IIndexManager getIndexManager() throws ConfigurationException {
+		PropertiesConfiguration config = PlatformConfig.getConfig(); 
+		PropertiesConfiguration properties = 
+				new PropertiesConfiguration("bigdata.properties");
+		properties.setProperty(Options.FILE, config.getProperty("bigdata.journal"));
+        return new Journal(ConfigurationConverter.getProperties(properties));
 	}
     
     final private SparqlEndpointConfig getConfig() {

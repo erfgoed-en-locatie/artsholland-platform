@@ -21,7 +21,7 @@ import com.bigdata.rdf.sail.BigdataSailRepository;
 import com.bigdata.rdf.sail.BigdataSailRepositoryConnection;
 
 @Singleton
-public final class BigdataConnectionService implements RepositoryConnectionFactory {
+public class BigdataConnectionService implements RepositoryConnectionFactory {
 	final static Logger logger = LoggerFactory.getLogger(BigdataConnectionService.class);
 	private BigdataSailRepository repo;
 	
