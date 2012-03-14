@@ -17,9 +17,9 @@
 
   <schedule>
     <job>
-      <name>UitbaseImport</name>
-      <!-- <group>GroupOfTestJob2</group> -->
-      <description>This is the description of TestJob2</description>
+      <name>Uitbase</name>
+      <group>ImportData</group>
+      <description>Import data from NUB Uitbase</description>
       <job-class>org.waag.ah.source.uitbase.UitbaseImportJob</job-class>
       <durability>false</durability>
       <recover>false</recover>
@@ -33,9 +33,9 @@
     <trigger>
       <cron>
         <name>UitbaseIncrementalImportTrigger</name>
-        <!-- <group>GroupOfTestJob2Triggers</group> -->
-        <job-name>UitbaseImport</job-name>
-        <!-- <job-group>GroupOfTestJob2</job-group> -->
+        <group>IncrementalImport</group>
+        <job-name>Uitbase</job-name>
+        <job-group>ImportData</job-group>
         <job-data-map>
           <entry>
             <key>importType</key>

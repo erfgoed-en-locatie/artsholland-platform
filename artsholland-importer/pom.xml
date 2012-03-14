@@ -58,21 +58,11 @@
       <artifactId>easystream</artifactId>
       <version>1.2.12</version>
     </dependency>
-<!--     <dependency>
-      <groupId>net.sf.saxon</groupId>
-      <artifactId>saxon</artifactId>
-      <version>9.3</version>
-    </dependency> -->
     <dependency>
       <groupId>org.waag.saxon</groupId>
       <artifactId>saxon</artifactId>
       <version>9.3</version>
     </dependency>
-<!--     <dependency>
-      <groupId>org.deri.xsparql</groupId>
-      <artifactId>rewriter</artifactId>
-      <version>0.3</version>
-    </dependency> -->
     <dependency>
       <groupId>org.waag.xsparql</groupId>
       <artifactId>xsparql</artifactId>
@@ -87,6 +77,11 @@
       <groupId>org.openrdf.sesame</groupId>
       <artifactId>sesame-rio-turtle</artifactId>
       <version>${sesame.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.quartz-scheduler</groupId>
+      <artifactId>quartz</artifactId>
+      <version>${quartz.version}</version>
     </dependency>
   </dependencies>
 </project>
