@@ -31,7 +31,7 @@ public class StoringRDFParser extends RDFXMLParser {
 	private URI baseURI;
 	private URI source;
 
-	@EJB(lookup="java:module/BigdataConnectionService")
+	@EJB(mappedName="java:module/BigdataConnectionService")
 	private RepositoryConnectionFactory cf;
 	
 	@PostConstruct
