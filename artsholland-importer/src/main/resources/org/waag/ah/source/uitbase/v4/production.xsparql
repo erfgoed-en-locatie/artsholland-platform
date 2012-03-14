@@ -58,7 +58,7 @@ return
 			{ for $url in $production/urls//url			
 				construct {				
 					
-					$puri foaf:homepage {if ($url eq "") then () else waag:replace-characters($url)}^^xsd:string.
+					$puri foaf:homepage {if ($url eq "") then () else waag:replace-characters(waag:correct-url($url))}^^xsd:string.
 					
 				}
 			}.

@@ -1,11 +1,10 @@
 package org.waag.ah.model.rdf;
 
-import org.codehaus.jackson.annotate.JsonAutoDetect;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+import org.openrdf.model.Resource;
+import org.openrdf.repository.object.ObjectConnection;
+import org.openrdf.repository.object.RDFObject;
 
-@JsonAutoDetect(fieldVisibility=Visibility.NONE, getterVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE, creatorVisibility=Visibility.NONE, setterVisibility=Visibility.NONE)
-public abstract class RDFObject implements org.openrdf.repository.object.RDFObject {
+public class AHRDFObjectImpl implements RDFObject {
 	 
 	public static final String rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 	public static final String rdfs = "http://www.w3.org/2000/01/rdf-schema#";
@@ -21,8 +20,18 @@ public abstract class RDFObject implements org.openrdf.repository.object.RDFObje
 	public static final String nub = "http://resources.uitburo.nl/";
 	public static final String ah = "http://data.artsholland.com/";
 	
-	@JsonProperty("resource")
 	public String getResourceString() {
 		return getResource().toString();
 	}
+
+	@Override
+	public ObjectConnection getObjectConnection() {
+		return null;
+	}
+
+	@Override
+	public Resource getResource() {
+		return null;
+	}
+	
 }

@@ -4,29 +4,36 @@ import java.math.BigDecimal;
 import java.util.Set;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect;
+
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.annotate.JsonWriteNullProperties;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
-import org.openrdf.repository.object.LangString;
 
 @JsonAutoDetect(fieldVisibility=Visibility.NONE, getterVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE, creatorVisibility=Visibility.NONE, setterVisibility=Visibility.NONE)
 @JsonSerialize(include=Inclusion.NON_EMPTY)
-public interface Venue extends org.openrdf.repository.object.RDFObject {
+public interface Venue extends AHRDFObject {
 
-//	ah:cidn [http]	"0100d220-0077-400a-9bc4-6d222b97deba"^^<xsd:string>	-
-//	ah:shortDescription [http]	"De Wijn & Cultuurhoeve Thabor is een initiatief van Auke Age de Jong en Karin Idzenga."@nl	-
-//	ah:venueType [http]	ah:VenueTypeMuseum [http]	-
-//	dc:created [http]	"2012-03-03T17:28:32Z"^^<xsd:string>	-
-//	dc:description [http]	"De Wijn & Cultuurhoeve Thabor is een initiatief van Auke Age de Jong en Karin Idzenga. Auke is opgegroeid op boerderij Thabor en heeft van het agrarische bedrijf een wijnhoeve gemaakt. De passie voor goede wijnen heeft hij onder andere opgedaan in wijnland Argentini� waar hij gewoond en gestudeerd heeft. <BR><BR> Karin Idzenga heeft de theateropleiding in Arnhem gevolgd en schreef en regisseerde o.a. het openluchtspel in Dronrijp en andere voorstellingen. Daarnaast is zij docent in theaterlessen en haar andere grote liefde: het schilderen."@nl	-
-//	dc:title [http]	"Wijn en Cultuurhoeve Thabor"@nl	-
+//	ah:attachment [http]	ah:venues/0669e8c5-75b2-47ce-bef3-f1cfd2acc192/attachments/1 [http]	-
+//	ah:attachment [http]	ah:venues/0669e8c5-75b2-47ce-bef3-f1cfd2acc192/attachments/2 [http]	-
+//	ah:cidn [http]	"0669e8c5-75b2-47ce-bef3-f1cfd2acc192"^^<xsd:string>	-
+//	ah:disabilityInformation [http]	"Bereikbaarheid: er is een trein/metro/tram/bus in de buurt van de locatie (binnen 500 m), voorrijden bij entree is toegestaan.<BR> Toegankelijkheid:naast hoofdingang zijn er ook alternatieven ingangen, deurbreedte is minimaal 80 cm, lift aanwezig, zaal/zalen bereikbaar via lift.<BR> Speciale voorzieningen: rolstoelplaatsen aanwezig in zaal/zalen, locatie is geheel rookvrij."@nl	-
+//	ah:openingHours [http]	"Kassa open een uur voor aanvang"@nl	-
+//	ah:publicTransportInformation [http]	"(tram) 3; (bus) 35; (parkeren) parkeerterrein op de pieren vlakbij theater"@nl	-
+//	ah:room [http]	ah:venues/0669e8c5-75b2-47ce-bef3-f1cfd2acc192/rooms/veemcaf%C3%A9 [http]	-
+//	ah:shortDescription [http]	"Een productiehuis voor mime, beeldend theater en dans en presenteert daarnaast gastvoorstellingen uit binnen- en buitenland. Het is gevestigd op de 3e verdieping van een gerenoveerd 19e eeuws pakhuis met een schitterend uitzicht op het IJ."@nl	-
+//	ah:venueType [http]	ah:VenueTypeTheater [http]	-
+//	dc:created [http]	"2012-03-03T19:11:10Z"^^<xsd:string>	-
+//	dc:description [http]	"Een productiehuis voor mime, beeldend theater en dans en presenteert daarnaast gastvoorstellingen uit binnen- en buitenland. Het is gevestigd op de 3e verdieping van een gerenoveerd 19e eeuws pakhuis met een schitterend uitzicht op het IJ."@nl	-
+//	dc:title [http]	"veem theater"@nl	-
 //	rdf:type [http]	ah:Venue [http]	-
-//	owl:sameAs [http]	nub:locations/0100d220-0077-400a-9bc4-6d222b97deba [http]	-
-//	geo:lat [http]	"0.0"^^<xsd:decimal>	-
-//	geo:long [http]	"0.0"^^<xsd:decimal>	-
-//	vcard:locality [http]	"Ysbrechtum"	-
-//	vcard:postal-code [http]	"8633 WS"
+//	owl:sameAs [http]	nub:locations/0669e8c5-75b2-47ce-bef3-f1cfd2acc192 [http]	-
+//	geo:lat [http]	"52.3902473"^^<xsd:decimal>	-
+//	geo:long [http]	"4.8862872"^^<xsd:decimal>	-
+//	vcard:locality [http]	"Amsterdam"	-
+//	vcard:postal-code [http]	"1013 CR"	-
+//	vcard:street-address [http]	"Van Diemenstraat 410"	-
+//	foaf:homepage [http]
 	
 	@JsonProperty
 	public String getCidn();
@@ -36,6 +43,21 @@ public interface Venue extends org.openrdf.repository.object.RDFObject {
 	
 	@JsonProperty
 	public String getDescription();
+	
+	@JsonProperty
+	public String getShortDescription();
+	
+	@JsonProperty
+	public String getLocality();
+	
+	@JsonProperty
+	public String getPostalCode();
+	
+	@JsonProperty
+	public String getStreetAddress();
+	
+	@JsonProperty
+	public String getHomepage();
 
 	@JsonProperty
 	public Set<Room> getRooms();

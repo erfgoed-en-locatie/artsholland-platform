@@ -8,6 +8,7 @@ import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.openrdf.repository.Repository;
+
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ import com.bigdata.rdf.sail.BigdataSailRepositoryConnection;
 @Singleton
 public class BigdataConnectionService implements RepositoryConnectionFactory {
 	final static Logger logger = LoggerFactory.getLogger(BigdataConnectionService.class);
+
 	private BigdataSailRepository repo;
 	
 	/**
@@ -100,5 +102,6 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 	protected BigdataSailRepository createRepository(Configuration properties) {
 		BigdataSail sail = new BigdataSail(ConfigurationConverter.getProperties(properties));
 		return new BigdataSailRepository(sail);		
-	}
+	}	
+
 }

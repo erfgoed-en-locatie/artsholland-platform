@@ -10,6 +10,7 @@
 	
 	ObjectMapper mapper = new ObjectMapper();		
 	ObjectWriter writer = mapper.writerWithDefaultPrettyPrinter();	    
+
 	String json = writer.writeValueAsString(object);
 %>
 <%= json %>

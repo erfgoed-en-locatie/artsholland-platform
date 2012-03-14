@@ -1,16 +1,14 @@
-package org.waag.ah.api.service;
+package org.waag.ah.spring.service;
 
-import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.EJB;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
@@ -29,21 +27,15 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.object.ObjectConnection;
 import org.openrdf.repository.object.ObjectQuery;
-import org.openrdf.result.MultipleResultException;
-import org.openrdf.result.NoResultException;
-import org.openrdf.result.Result;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 import org.waag.ah.ObjectConnectionFactory;
-import org.waag.ah.model.rdf.Event;
-import org.waag.ah.model.rdf.Production;
-import org.waag.ah.model.rdf.Room;
 
 @Service("restService")
 public class RestService implements InitializingBean, DisposableBean {
 
-	@EJB(mappedName = "java:app/datastore/ObjectConnectionFactoryImpl")
+	@EJB(mappedName = "java:app/datastore/ObjectConnectionService")
 	private ObjectConnectionFactory connFactory;
 	private ObjectConnection conn;
 
@@ -110,7 +102,7 @@ public class RestService implements InitializingBean, DisposableBean {
 		"PREFIX nub: <http://resources.uitburo.nl/>\n" + 
 		"PREFIX ah: <http://data.artsholland.com/>\n";
 	
-	private static final String uriPrefix = "http://data.artsholland.com/";
+	private static final String NAMESPACE = "http://data.artsholland.com/";
 
 	private static final String classQueryString = "SELECT DISTINCT ?property ?hasValue ?isValueOf\n"
 			+ "WHERE {\n"
@@ -118,10 +110,27 @@ public class RestService implements InitializingBean, DisposableBean {
 			+ "  UNION\n"
 			+ "  { ?isValueOf ?property ?c }\n" + "}\n";
 	
-	private static final String QUERY_GET_CLASS = "SELECT DISTINCT ?instance \n"
+	private static final String QUERY_GET_INSTANCE_LIST = "SELECT DISTINCT ?instance \n"
 			+ "WHERE { ?instance a ?class . } ORDER BY ?instance";
 
+	private static final String QUERY_GET_ROOMS = "SELECT DISTINCT ?room \n"
+		+ "WHERE { ?venue <http://data.artsholland.com/room> ?room } \n"
+		+ "ORDER BY ?room";
+	
+	private static final String QUERY_GET_EVENTS = "SELECT DISTINCT ?room \n"
+			+ "WHERE { ah:Event ?property ?hasValue } \n"
+			+ "ORDER BY ?room";
+	
+	/*SELECT DISTINCT ?instance 
+			WHERE {
+			    ?instance a ah:Event;
+			        time:hasBeginning ?beginning.
 
+			  FILTER (
+			    ?beginning > "2012-02-24T20:30:00Z"^^xsd:dateTime &&
+			    ?beginning < "2012-04-24T20:30:00Z"^^xsd:dateTime
+			  )
+*/
 
 	public String alleStatements(int page, int count) throws RepositoryException {
 		URI uri = new URIImpl("http://data.artsholland.com/Production");
@@ -183,32 +192,85 @@ public class RestService implements InitializingBean, DisposableBean {
 		return null;
 	}
 
-	
-
-	public Set<?> getList(String classname, int count, int page) {
+	public Object getSingleInstance(String classname, String cidn) {
 		
-		classname = CLASS_MAP.get(classname);
-		String queryString = addPaging(QUERY_GET_CLASS, count, page).replace("?class", "<http://data.artsholland.com/" + classname + ">");		
+		URI uri = conn.getValueFactory().createURI(NAMESPACE + classname + "/" + cidn);
+		Object result = null;
 		
 		try {
-			
+			result = conn.getObject(uri);
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+		}
+		return result;
+		
+	}
+
+	public Set<?> getInstanceList(String classname, int count, int page) {
+		
+		classname = CLASS_MAP.get(classname);		
+		
+		try {
+			URI uri = conn.getValueFactory().createURI(NAMESPACE + classname);
 			ObjectQuery query = conn.prepareObjectQuery(QueryLanguage.SPARQL,
-					QUERY_PREFIX + queryString);
+					QUERY_PREFIX + addPaging(QUERY_GET_INSTANCE_LIST, count, page));
+			
+			query.setBinding("class", uri);
 			
 			return query.evaluate().asSet();	
-		} catch (MalformedQueryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (RepositoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (QueryEvaluationException e) {
-			// TODO Auto-generated catch block
+			
+		} catch (Exception e) {			
 			e.printStackTrace();
 		}
 		
-		return new HashSet<Object>();
+		return null;
 		
+	}
+	
+	public Set<?> getRooms(String cidn) {
+		
+		URI uri = conn.getValueFactory().createURI(NAMESPACE + "venues/" + cidn);
+		
+		ObjectQuery query;
+		try {
+			query = conn.prepareObjectQuery(QueryLanguage.SPARQL,
+					QUERY_PREFIX + QUERY_GET_ROOMS);
+			
+			query.setBinding("venue", uri);
+			
+			return query.evaluate().asSet();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	public Set<?> getEvents(XMLGregorianCalendar dateTimeBefore,
+			XMLGregorianCalendar dateTimeAfter) {
+			
+		try {
+			
+			//dateTimeBefore
+			//dateTimeAfter
+			
+			//URI uriBefore = conn.getValueFactory().createURI(NAMESPACE + classname);
+			//URI uriAfter = conn.getValueFactory().createURI(NAMESPACE + classname);
+			
+			ObjectQuery query = conn.prepareObjectQuery(QueryLanguage.SPARQL,
+					QUERY_PREFIX + QUERY_GET_EVENTS);
+			
+			//query.setBinding("before", uriBefore);
+			//query.setBinding("after", uriAfter);
+			
+			return query.evaluate().asSet();	
+			
+		} catch (Exception e) {			
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 
 	private String addPaging(String query, int count, int page) {
