@@ -24,6 +24,9 @@ public class VenueImpl extends AHRDFObjectImpl implements Venue {
 	@Iri(ah + "room")
 	private Set<Room> rooms;
 	
+	@Iri(ah + "attachment")
+	private Set<Attachment> attachments;
+	
 	@Iri(geo + "lat")
 	private BigDecimal latitude;
 	
@@ -44,24 +47,23 @@ public class VenueImpl extends AHRDFObjectImpl implements Venue {
 	
 	@Override
 	public String getTitle() {
-		for (LangString title: titles) {
-			return title.toString();
-		}
-		return null;
+		return getLangString(titles);
 	}
 
 	@Override
 	public String getDescription() {
-		for (LangString description: descriptions) {
-			return description.toString();
-		}
-		return "";
+		return getLangString(descriptions);
 	}
 
 	@Override
 	public Set<Room> getRooms() {
 		return rooms;
 	}
+	
+	@Override
+	public Set<Attachment> getAttachments() {
+		return attachments;
+	}	
 	
 	@Override
 	public String getCidn() {
@@ -80,10 +82,7 @@ public class VenueImpl extends AHRDFObjectImpl implements Venue {
 	
 	@Override
 	public String getShortDescription() {
-		for (LangString shortDescription: shortDescriptions) {
-			return shortDescription.toString();
-		}
-		return "";
+		return getLangString(shortDescriptions);
 	}
 	
 	@Override

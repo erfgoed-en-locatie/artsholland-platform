@@ -3,15 +3,8 @@ package org.waag.ah.model.rdf;
 import java.math.BigDecimal;
 import java.util.Set;
 
-import org.codehaus.jackson.annotate.JsonAutoDetect;
-
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
-@JsonAutoDetect(fieldVisibility=Visibility.NONE, getterVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE, creatorVisibility=Visibility.NONE, setterVisibility=Visibility.NONE)
-@JsonSerialize(include=Inclusion.NON_EMPTY)
 public interface Venue extends AHRDFObject {
 
 //	ah:attachment [http]	ah:venues/0669e8c5-75b2-47ce-bef3-f1cfd2acc192/attachments/1 [http]	-
@@ -61,6 +54,9 @@ public interface Venue extends AHRDFObject {
 
 	@JsonProperty
 	public Set<Room> getRooms();
+	
+	@JsonProperty
+	public Set<Attachment> getAttachments();	
 	
 	@JsonProperty
 	public BigDecimal getLatitude();

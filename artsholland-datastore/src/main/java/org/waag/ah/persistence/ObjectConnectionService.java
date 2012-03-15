@@ -14,12 +14,7 @@ import org.openrdf.repository.object.config.ObjectRepositoryConfig;
 import org.openrdf.repository.object.config.ObjectRepositoryFactory;
 import org.waag.ah.ObjectConnectionFactory;
 import org.waag.ah.bigdata.BigdataConnectionService;
-import org.waag.ah.model.rdf.EventImpl;
-import org.waag.ah.model.rdf.OfferingImpl;
-import org.waag.ah.model.rdf.ProductionImpl;
-import org.waag.ah.model.rdf.RoomImpl;
-import org.waag.ah.model.rdf.UnitPriceSpecificationImpl;
-import org.waag.ah.model.rdf.VenueImpl;
+import org.waag.ah.model.rdf.*;
 
 @Singleton
 public class ObjectConnectionService extends BigdataConnectionService implements ObjectConnectionFactory {
@@ -33,7 +28,7 @@ public class ObjectConnectionService extends BigdataConnectionService implements
 		
 		repositoryFactory = new ObjectRepositoryFactory();
 		config = repositoryFactory.getConfig();
-		
+
 		try {		
 			
 			if (getRepository() == null) {
@@ -46,6 +41,13 @@ public class ObjectConnectionService extends BigdataConnectionService implements
 			config.addConcept(OfferingImpl.class);
 			config.addConcept(UnitPriceSpecificationImpl.class);
 			config.addConcept(ProductionImpl.class);
+			config.addConcept(AttachmentImpl.class);			
+			config.addConcept(AttachmentTypeImpl.class);
+			config.addConcept(EventStatusImpl.class);
+			config.addConcept(EventTypeImpl.class);
+			config.addConcept(GenreImpl.class);
+			config.addConcept(ProductionTypeImpl.class);
+			config.addConcept(VenueTypeImpl.class);
 			
 			config.addDatatype(BigDecimal.class, "xsd:decimal");
 			config.addDatatype(String.class, "xsd:string");
@@ -67,6 +69,6 @@ public class ObjectConnectionService extends BigdataConnectionService implements
 		//conn.setNamespace(prefix, name)
 		return conn;
 		
-	}	
+	}
 	
 }

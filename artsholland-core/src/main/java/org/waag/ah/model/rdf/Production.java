@@ -1,13 +1,9 @@
 package org.waag.ah.model.rdf;
 
-import org.codehaus.jackson.annotate.JsonAutoDetect;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+import java.util.Set;
 
-@JsonAutoDetect(fieldVisibility=Visibility.NONE, getterVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE, creatorVisibility=Visibility.NONE, setterVisibility=Visibility.NONE)
-@JsonSerialize(include=Inclusion.NON_EMPTY)
+import org.codehaus.jackson.annotate.JsonProperty;
+
 public interface Production extends AHRDFObject {
 	
 //	ah:cidn [http]	"2011-P-001-0078420"^^<xsd:string>	-
@@ -22,12 +18,17 @@ public interface Production extends AHRDFObject {
 //	foaf:homepage [http]	"www.dekleinekomedie.nl"^^<xsd:string>
 	
 	@JsonProperty
-	public abstract String getTitle();
+	public String getTitle();
+	
+	@JsonProperty
+	public String getDescription();
 	
 	@JsonProperty
 	public String getCidn();
 	
 	@JsonProperty
 	public String getHomepage();
+
+	public Set<Event> getEvents();
 		
 }

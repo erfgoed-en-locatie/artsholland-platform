@@ -27,10 +27,12 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.object.ObjectConnection;
 import org.openrdf.repository.object.ObjectQuery;
+import org.openrdf.repository.object.ObjectRepository;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 import org.waag.ah.ObjectConnectionFactory;
+import org.waag.ah.model.rdf.AHRDFObject;
 
 @Service("restService")
 public class RestService implements InitializingBean, DisposableBean {
@@ -192,31 +194,57 @@ public class RestService implements InitializingBean, DisposableBean {
 		return null;
 	}
 
-	public Object getSingleInstance(String classname, String cidn) {
+	public AHRDFObject getSingleInstance(String classname, String cidn, String lang) {
 		
 		URI uri = conn.getValueFactory().createURI(NAMESPACE + classname + "/" + cidn);
-		Object result = null;
+		AHRDFObject result = null;
 		
 		try {
-			result = conn.getObject(uri);
+			conn.setLanguage(lang);
+			Object object = conn.getObject(uri);
+			if (object instanceof AHRDFObject) {
+				result = (AHRDFObject) object;
+			}
 		} catch (RepositoryException e) {
 			e.printStackTrace();
 		}
+		
 		return result;
 		
 	}
+	
+	public long getInstanceCount(String classname) {
+		classname = CLASS_MAP.get(classname);		
+		
+		try {			
+			URI uri = conn.getValueFactory().createURI(NAMESPACE + classname);
+			ObjectQuery query = conn.prepareObjectQuery(QueryLanguage.SPARQL,
+					QUERY_PREFIX + QUERY_GET_INSTANCE_LIST);
+			
+			query.setBinding("class", uri);
+			
+			
+			return query.evaluate().asList().size();	
+			
+		} catch (Exception e) {			
+			e.printStackTrace();
+		}
+		
+		return -1;
+		
+	}
 
-	public Set<?> getInstanceList(String classname, int count, int page) {
+	public Set<?> getInstanceList(String classname, int count, int page, String lang) {
 		
 		classname = CLASS_MAP.get(classname);		
 		
 		try {
+			conn.setLanguage(lang);
 			URI uri = conn.getValueFactory().createURI(NAMESPACE + classname);
 			ObjectQuery query = conn.prepareObjectQuery(QueryLanguage.SPARQL,
 					QUERY_PREFIX + addPaging(QUERY_GET_INSTANCE_LIST, count, page));
 			
-			query.setBinding("class", uri);
-			
+			query.setBinding("class", uri);			
 			return query.evaluate().asSet();	
 			
 		} catch (Exception e) {			

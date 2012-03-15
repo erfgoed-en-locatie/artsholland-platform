@@ -25,7 +25,7 @@ return
 		let $title := {waag:replace-characters($production/title)}
 		
 		let $typeKey := {$production/type/@key}
-		let $typeClass := {if ($typeKey eq "") then () else concat("ah:ProductionType", waag:capitalize-first-only(data($typeKey)))}
+		let $typeClass := {if (waag:empty($typeKey)) then () else concat("ah:productionType", waag:capitalize-first-only(data($typeKey)))}
 			
 		construct {
 		
@@ -44,7 +44,7 @@ return
 			{ for $genre in $production/genres//genre
 				
 				let $genreKey := {$genre/@key}
-				let $genreClass := {if ($genreKey eq "") then () else concat("ah:Genre", waag:capitalize-first-only(data($genreKey)))}
+				let $genreClass := {if (waag:empty($genreKey)) then () else concat("ah:genre", waag:capitalize-first-only(data($genreKey)))}
 				
 				construct {				
 					
@@ -94,15 +94,18 @@ return
 			
 				construct {
 										
-					$puri ah:tag $tag.
+					$puri ah:tag {if ($tag eq "") then () else waag:replace-characters($tag)}^^xsd:string.					
 					
 				}
-			}
+			}.
 
 			#	TODO:
 			#	notes
 			#	<country>NL</country>
 			#	<language>nl_NL</language>
 			#	<subtitles>en_UK</subtitles>
+			
+			$puri dc:language {waag:get-language-tag($production/language)}.			
+			$puri ah:subtitleLanguage {waag:get-language-tag($production/subtitles)}			
 							
 		}

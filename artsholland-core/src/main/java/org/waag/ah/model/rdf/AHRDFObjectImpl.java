@@ -1,6 +1,9 @@
 package org.waag.ah.model.rdf;
 
+import java.util.Set;
+
 import org.openrdf.model.Resource;
+import org.openrdf.repository.object.LangString;
 import org.openrdf.repository.object.ObjectConnection;
 import org.openrdf.repository.object.RDFObject;
 
@@ -20,7 +23,9 @@ public class AHRDFObjectImpl implements RDFObject {
 	public static final String nub = "http://resources.uitburo.nl/";
 	public static final String ah = "http://data.artsholland.com/";
 	
-	public String getResourceString() {
+	String lang = null;
+	
+	public String getURI() {
 		return getResource().toString();
 	}
 
@@ -32,6 +37,37 @@ public class AHRDFObjectImpl implements RDFObject {
 	@Override
 	public Resource getResource() {
 		return null;
+	}
+	
+	protected String getLangString(Set<LangString> langStrings) {
+		
+		if (lang == null) {
+			ObjectConnection conn = getObjectConnection();
+			if (conn != null) {
+				lang = conn.getLanguage();
+			}
+		}
+		
+		for (LangString langString: langStrings) {
+			if (lang.equals(langString.getLang())) {
+				return langString.toString();
+			}
+		}
+		return null;		
+	}
+	
+	protected String getLangString(LangString langString) {
+		if (langString != null) {
+			return langString.toString();
+		}
+		return null;		
+	}
+	
+	protected String getURI(AHRDFObject rdfObject) {
+		if (rdfObject != null) {
+			return rdfObject.getURI();
+		}
+		return null;		
 	}
 	
 }

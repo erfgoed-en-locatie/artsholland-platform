@@ -11,7 +11,7 @@ import org.openrdf.repository.object.RDFObject;
 @JsonSerialize(include=Inclusion.NON_EMPTY)
 public interface AHRDFObject extends RDFObject {
 	 	
-	@JsonProperty("resource")
-	public String getResourceString();
+	@JsonProperty("uri")
+	public String getURI();
 	
 }

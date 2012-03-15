@@ -16,10 +16,10 @@ public class EventImpl extends AHRDFObjectImpl implements Event {
 	private Set<Offering> tickets;
 	
 	@Iri(ah + "production")
-	private Set<Production> productions;
+	private Production production;
 	
 	@Iri(ah + "venue")
-	private Set<Venue> venues;
+	private Venue venue;
 	
 	@Iri(ah + "room")
 	private Set<Room> rooms;
@@ -36,12 +36,13 @@ public class EventImpl extends AHRDFObjectImpl implements Event {
 	}
 	
 	@Override
-	public Set<Venue> getVenues() {
-		return venues;
+	public Venue getVenue() {
+		return venue;
 	}
 	
-	public String getVenueJson() {
-		return "Not yet implemented";
+	@Override
+	public String getVenueURI() {
+		return getURI(getVenue());
 	}
 	
 	@Override
@@ -50,8 +51,13 @@ public class EventImpl extends AHRDFObjectImpl implements Event {
 	}
 	
 	@Override
-	public Set<Production> getProductions() {
-		return productions;
+	public Production getProduction() {
+		return production;
+	}
+	
+	@Override
+	public String getProductionURI() {
+		return getURI(getProduction());
 	}
 	
 	@Override
@@ -62,7 +68,7 @@ public class EventImpl extends AHRDFObjectImpl implements Event {
 	@Override
 	public String getHasBeginning() {
 		if (hasBeginning instanceof XMLGregorianCalendar) {
-			return hasBeginning.toString();
+			return hasBeginning.toString();			
 		}
 		return null;
 	}

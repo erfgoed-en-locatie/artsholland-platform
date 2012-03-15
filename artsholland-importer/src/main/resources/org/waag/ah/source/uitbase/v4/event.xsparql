@@ -26,12 +26,12 @@ return
 			
 		let $puri := {concat($baseuri, "productions/", $event/link[@type="production"]/@cidn)}
 		let $vuri := {concat($baseuri, "venues/", $event/link[@type="location"]/@cidn)}
-			
-		let $type := {$event/type/@key}
-		let $eventType := {if ($type eq "") then () else concat("ah:EventType", waag:capitalize-first-only(data($type)))}
+				
+		let $typeKey := {$event/type/@key}
+		let $typeClass := {if (waag:empty($typeKey)) then () else concat("ah:eventType", waag:capitalize-first-only(data($typeKey)))}
 		
-		let $status :={$event/status/@key}
-		let $eventStatus := {if ($status eq "") then () else concat("ah:EventStatus", waag:capitalize-first-only(data($status)))}				
+		let $statusKey := {$event/status/@key}
+		let $statusClass := {if (waag:empty($statusKey)) then () else concat("ah:eventStatus", waag:capitalize-first-only(data($statusKey)))}
 			
 		let $room := {$event/room}
 		let $ruri := {if ($room eq "") then () else concat($vuri, "/rooms/", waag:make-uri($room))}
@@ -46,7 +46,10 @@ return
 			
 			$euri ah:cidn {$cidn}^^xsd:string.
 			
+			$vuri a ah:Venue.			
 			$euri ah:venue $vuri.
+			
+			$puri a ah:Production.
 			$euri ah:production $puri.
 			
 			$euri dc:created {$event/@date-created}^^xsd:string.
@@ -54,16 +57,14 @@ return
 			
 			$euri dc:title {if ($title eq "") then () else $title}^^xsd:string.
 			$euri dc:description {if ($description eq "") then () else $description}^^xsd:string.
+						
+			$euri ah:eventType $typeClass.
+			$typeClass a ah:EventType.			
+			$typeClass rdfs:label {if (waag:empty($typeKey)) then () else $typeKey}^^xsd:string.
 			
-			$euri ah:eventType $eventType.
-			$eventType a ah:EventType.			
-			#TODO: check of leeg.
-			$eventType rdfs:label {$event/type}.
-			
-			$euri ah:eventStatus $eventStatus.
-			$eventStatus a ah:EventStatus.			
-			#TODO: check of leeg.
-			$eventStatus rdfs:label {$event/status}.
+			$euri ah:eventStatus $statusClass.
+			$statusClass a ah:EventStatus.			
+			$statusClass rdfs:label {if (waag:empty($event/status)) then () else $event/status}^^xsd:string.
 			
 			{ for $pricetag in $event/pricetags//pricetag
 	
@@ -102,7 +103,10 @@ return
 				
 				let $muri := {concat($euri, "/attachments/", $pos)}	
 				let $description := {waag:replace-characters($medium/description)}
-				let $title := {waag:replace-characters($medium/title)}			
+				let $title := {waag:replace-characters($medium/title)}
+							
+				let $typeKey := {waag:replace-characters($medium/type)}
+				let $typeClass := {if ($typeKey eq "") then () else concat("ah:attachmentType", waag:capitalize-first-only(data($typeKey)))}
 				
 				construct {
 				
@@ -110,11 +114,16 @@ return
 				 	$muri a ah:Attachment.
 					$muri dc:title {if ($title eq "") then () else $title}^^xsd:string.
 					$muri dc:description {if ($description eq "") then () else $description}^^xsd:string.
-					$muri foaf:depiction {$medium/ref}.
+					
+					# TODO: string?
+					$muri ah:url {$medium/ref}^^xsd:string.
 	
 					# TODO:
 					#	<alt>A family again</alt>
-					#	<type>afbeelding</type>
+					
+					$muri ah:attachmentType $typeClass.				
+					$typeClass a ah:AttachmentType.			
+					$typeClass rdfs:label {if ($typeKey eq "") then () else $typeKey}^^xsd:string.				
 					
 				}
 			}.
@@ -122,13 +131,7 @@ return
 			$ruri a ah:Room.
 			$ruri rdfs:label {if ($room eq "") then () else $room}.
 			$euri ah:room $ruri.
-			$vuri ah:room $ruri.		
-	
-			# TODO: converteren naar correct formaat??
-			# TODO: Timezone?
-			# TODO: zomertijd/wintertijd?
-			# TODO: andere naam?
-			# TODO: data type: ^^xsd:dateTime. ??
+			$vuri ah:room $ruri.
 			
 			$euri time:hasBeginning {$event/datetime-start}^^xsd:dateTime.
 			$euri time:hasEnd {$event/datetime-end}^^xsd:dateTime.

@@ -11,4 +11,5 @@ public interface ObjectConnectionFactory {
 	
 	public ObjectConnection getObjectConnection()
 			throws RepositoryException, RepositoryConfigException;
+	
 }

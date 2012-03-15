@@ -2,14 +2,8 @@ package org.waag.ah.model.rdf;
 
 import java.util.Set;
 
-import org.codehaus.jackson.annotate.JsonAutoDetect;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 
-@JsonAutoDetect(fieldVisibility=Visibility.NONE, getterVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE, creatorVisibility=Visibility.NONE, setterVisibility=Visibility.NONE)
-@JsonSerialize(include=Inclusion.NON_EMPTY)
 public interface Event extends AHRDFObject {
 	
 	
@@ -32,11 +26,15 @@ public interface Event extends AHRDFObject {
 	@JsonProperty
 	public String getCidn();
 	
-	//@JsonProperty()
-	public Set<Production> getProductions();
+	public Production getProduction();
 	
-	//@JsonProperty()
-	public Set<Venue> getVenues();
+	@JsonProperty("production")
+	public String getProductionURI();
+	
+	public Venue getVenue();
+	
+	@JsonProperty("venue")
+	public String getVenueURI();
 	
 	@JsonProperty
 	public Set<Offering> getTickets();

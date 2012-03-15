@@ -26,11 +26,12 @@ public class RestController {
 	
 	@RequestMapping(value = MAPPING + "{class}/{cidn}", method = RequestMethod.GET)
 	public ModelAndView getSingleInstance(
-			final HttpServletRequest request,	final HttpServletResponse response, 
+			final HttpServletRequest request,	final HttpServletResponse response,
+			@RequestParam(value="lang", defaultValue="nl", required=false) String lang,
 			@PathVariable("class") String classname, 
 			@PathVariable("cidn") String cidn) throws IOException  {		
 		
-		Object result = restService.getSingleInstance(classname, cidn);
+		Object result = restService.getSingleInstance(classname, cidn, lang);
 	  return modelAndView(result);
 	}	
 	
@@ -39,10 +40,11 @@ public class RestController {
 	public ModelAndView getInstanceList(
 			final HttpServletRequest request,	final HttpServletResponse response, 
 			@PathVariable("class") String classname,
+			@RequestParam(value="lang", defaultValue="nl", required=false) String lang,
 			@RequestParam(value="count", defaultValue="10", required=false) int count, 
 			@RequestParam(value="page", defaultValue="0", required=false) int page) {	
 
-		Set<?> result = restService.getInstanceList(classname, count, page);
+		Set<?> result = restService.getInstanceList(classname, count, page, lang);
 		return modelAndView(result);
 		
 	}
@@ -82,9 +84,16 @@ public class RestController {
 //}
 //
 	
+	@RequestMapping(value = MAPPING + "{class}/count", method = RequestMethod.GET)
+	public @ResponseBody long getInstanceCount(
+			final HttpServletRequest request,	final HttpServletResponse response,			
+			@PathVariable("class") String classname) throws IOException  {		
+		return restService.getInstanceCount(classname);
+	}
+	
 		
 	@RequestMapping(value = MAPPING + "geo", method = RequestMethod.GET)	
-	public  @ResponseBody String getGeo(final HttpServletRequest request,
+	public @ResponseBody String getGeo(final HttpServletRequest request,
 			final HttpServletResponse response) throws IOException  {		
 		return "Not yet implemented";
 	}
