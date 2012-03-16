@@ -23,12 +23,12 @@
       <job-class>org.waag.ah.source.uitbase.UitbaseImportJob</job-class>
       <durability>false</durability>
       <recover>false</recover>
-      <!-- <job-data-map>
+      <job-data-map>
         <entry>
-          <key>someKey</key>
-          <value>someValue</value>
+          <key>baseUrl</key>
+          <value>http://accept.ps4.uitburo.nl/api</value>
         </entry>
-      </job-data-map> -->
+      </job-data-map>
     </job>
     <trigger>
       <cron>
