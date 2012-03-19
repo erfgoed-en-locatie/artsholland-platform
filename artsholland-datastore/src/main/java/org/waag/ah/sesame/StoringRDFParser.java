@@ -10,8 +10,11 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 
+import org.openrdf.model.Literal;
+import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
+import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
@@ -32,7 +35,6 @@ public class StoringRDFParser extends RDFXMLParser {
 	private URI source;
 
 	@EJB(mappedName="java:module/BigdataConnectionService")
-	//@EJB(lookup="java:module/BigdataConnectionService")
 	private RepositoryConnectionFactory cf;
 	
 	@PostConstruct
@@ -42,6 +44,8 @@ public class StoringRDFParser extends RDFXMLParser {
 			setRDFHandler(new RDFHandler());
 			vf = conn.getValueFactory();
 			source = vf.createURI("http://purl.org/artsholland/1.0/metadata/source");
+			super.setDatatypeHandling(DatatypeHandling.NORMALIZE);
+			super.setValueFactory(vf);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -52,10 +56,13 @@ public class StoringRDFParser extends RDFXMLParser {
 			throws IOException, RDFParseException, RDFHandlerException {
 		this.baseURI = getBaseUri(baseURI);
 		try {
-			logger.info("USING BASE URI: "+this.baseURI);
+			logger.debug("USING BASE URI: "+this.baseURI);
 			long cursize = conn.size();
 			super.parse(in, this.baseURI.toString());
-			logger.info("ADDED "+(conn.size()-cursize)+" NEW STATEMENTS");
+			long added = conn.size()-cursize;
+			if (added > 0) {
+				logger.info("ADDED "+added+" NEW STATEMENTS");
+			}
 		} catch (RepositoryException e) {
 			logger.error(e.getMessage());
 		}
@@ -66,6 +73,19 @@ public class StoringRDFParser extends RDFXMLParser {
 			throws IOException, RDFParseException, RDFHandlerException {
 		this.baseURI = getBaseUri(baseURI);
 		super.parse(reader, this.baseURI.toString());
+	}
+	
+	@Override
+	protected Statement createStatement(Resource subject, URI predicate, Value object)
+			throws RDFParseException {
+		if (Literal.class.isAssignableFrom(object.getClass())) {
+			Literal value = (Literal) object;
+			if (value.getDatatype() != null 
+					&& value.getDatatype().toString().equals("xsd:dateTime")) {
+				object = vf.createLiteral(value.calendarValue());
+			}		
+		}
+		return vf.createStatement(subject, predicate, object);
 	}
 	
 	private URI getBaseUri(String url) throws MalformedURLException {
@@ -93,7 +113,7 @@ public class StoringRDFParser extends RDFXMLParser {
 				conn.add(statement.getContext(), source, baseURI);
 				counter++;
 				if (counter % 1024 == 0) {
-					logger.info("ADDING "+counter+" STATEMENTS (CTX: "+statement.getContext()+")");
+					logger.debug("ADDING "+counter+" STATEMENTS (CTX: "+statement.getContext()+")");
 				}
 			} catch (RepositoryException e) {
 				try {
@@ -112,7 +132,7 @@ public class StoringRDFParser extends RDFXMLParser {
 		@Override
 		public void endRDF() throws RDFHandlerException {
 			try {
-				logger.info("COMMITTING "+counter+" STATEMENTS");
+				logger.debug("COMMITTING "+counter+" STATEMENTS");
 				conn.commit();
 			} catch (RepositoryException e) {
 				try {
