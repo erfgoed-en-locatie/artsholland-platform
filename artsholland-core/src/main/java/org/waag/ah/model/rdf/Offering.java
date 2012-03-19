@@ -1,16 +1,17 @@
 package org.waag.ah.model.rdf;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import org.openrdf.annotations.Iri;
 
-public interface Offering extends AHRDFObject {
-
-	@JsonProperty
-	public String getName();
-	
-	@JsonProperty
-	public UnitPriceSpecification getUnitPriceSpecification();
-
-	@JsonProperty
-	public String getDescription();
+@Iri(AHRDFObject.gr + "Offering")
+public abstract class Offering extends AHRDFObject {
 		
+	@Iri(gr + "name")
+	public abstract String getName();
+	
+	@Iri(dc + "description")
+	public abstract String getDescription();
+	
+	@Iri(gr + "hasPriceSpecification")
+	public abstract UnitPriceSpecification getUnitPriceSpecification();
+	
 }

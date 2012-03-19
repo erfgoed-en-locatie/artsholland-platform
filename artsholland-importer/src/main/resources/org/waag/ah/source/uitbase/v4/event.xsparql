@@ -64,7 +64,7 @@ return
 			
 			$euri ah:eventStatus $statusClass.
 			$statusClass a ah:EventStatus.			
-			$statusClass rdfs:label {if (waag:empty($event/status)) then () else $event/status}^^xsd:string.
+			$statusClass rdfs:label {if (waag:empty($statusKey)) then () else $statusKey}^^xsd:string.
 			
 			{ for $pricetag in $event/pricetags//pricetag
 	

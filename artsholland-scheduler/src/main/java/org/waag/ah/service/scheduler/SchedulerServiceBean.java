@@ -57,7 +57,7 @@ public class SchedulerServiceBean implements MessageListener {
 	
 	public void onMessage(Message msg) {}
 	
-    @Schedule(persistent=false, minute="*/5", hour="*")
+    @Schedule(persistent=false, minute="*/15", hour="*")
     public void automaticTimeout() {
 		QueueSession session = null;         
 		QueueSender sender = null;  
@@ -72,7 +72,7 @@ public class SchedulerServiceBean implements MessageListener {
 //			TextMessage msg = session.createTextMessage("http://waxworks.nl/amsterdam.xml");                      
 //			TextMessage msg = session.createTextMessage("http://waxworks.nl/events.xml");                      
 			
-			String[] sourceURLs = {
+//			String[] sourceURLs = {
 //				"http://localhost/ah/nub/v4/event.xml",
 //				"http://localhost/ah/nub/v4/production.xml",
 //				"http://localhost/ah/nub/v4/location.xml",
@@ -86,8 +86,8 @@ public class SchedulerServiceBean implements MessageListener {
 //				"http://accept.ps4.uitburo.nl/api/productions?key=505642b12881b9a60688411a333bc78b&rows=500",
 //				"http://accept.ps4.uitburo.nl/api/locations?key=505642b12881b9a60688411a333bc78b&rows=500"
 //				
-					"http://accept.ps4.uitburo.nl/api/productions?key=505642b12881b9a60688411a333bc78b&rows=1&start=1483"
-			};
+//					"http://accept.ps4.uitburo.nl/api/productions?key=505642b12881b9a60688411a333bc78b&rows=1&start=1483"
+//			};
 			
 			ArrayList<String> sourceURLs2 = UitbaseURLGenerator.getURLs();
 

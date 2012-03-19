@@ -1,16 +1,25 @@
 package org.waag.ah.model.rdf;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import org.openrdf.annotations.Iri;
+import org.openrdf.model.URI;
 
-public interface Attachment extends AHRDFObject {
+@Iri(AHRDFObject.ah + "Attachment")
+public abstract class Attachment extends AHRDFObject {
+
+//$muri dc:title {if ($title eq "") then () else $title}^^xsd:string.
+//$muri dc:description {if ($description eq "") then () else $description}^^xsd:string.					
+//$muri foaf:depiction {$medium/ref}.
 	
-	@JsonProperty
-	public String getTitle();
+	@Iri(dc + "title")
+	public abstract String getTitle();
+
+	@Iri(dc + "description")
+	public abstract String getDescription();
+
+	@Iri(ah + "url")
+	public abstract URI getUrl();
 	
-	@JsonProperty
-	public String getDescription();
-	
-	//@JsonProperty
-	public String getDepiction();
-			
+	@Iri(ah + "attachmentType")
+	public abstract AttachmentType getAttachmentType();
+
 }

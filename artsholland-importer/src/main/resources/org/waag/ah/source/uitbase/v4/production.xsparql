@@ -39,7 +39,7 @@ return
 				
 			$puri ah:productionType $typeClass.
 			$typeClass a ah:ProductionType.			
-			$typeClass rdfs:label {if ($production/type eq "") then () else $production/type}^^xsd:string.
+			$typeClass rdfs:label {if ($typeKey eq "") then () else $typeKey}^^xsd:string.
 			
 			{ for $genre in $production/genres//genre
 				

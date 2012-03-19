@@ -4,15 +4,19 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.openrdf.model.Literal;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
+import org.openrdf.model.Value;
+import org.openrdf.model.datatypes.XMLDatatypeUtil;
 import org.openrdf.model.impl.URIImpl;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;
@@ -27,12 +31,13 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.object.ObjectConnection;
 import org.openrdf.repository.object.ObjectQuery;
-import org.openrdf.repository.object.ObjectRepository;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 import org.waag.ah.ObjectConnectionFactory;
+import org.waag.ah.model.json.AHRDFObjectJson;
 import org.waag.ah.model.rdf.AHRDFObject;
+import org.waag.ah.model.rdf.Room;
 
 @Service("restService")
 public class RestService implements InitializingBean, DisposableBean {
@@ -106,22 +111,27 @@ public class RestService implements InitializingBean, DisposableBean {
 	
 	private static final String NAMESPACE = "http://data.artsholland.com/";
 
-	private static final String classQueryString = "SELECT DISTINCT ?property ?hasValue ?isValueOf\n"
+	private static final String classQueryString = 
+			"SELECT DISTINCT ?property ?hasValue ?isValueOf\n"
 			+ "WHERE {\n"
 			+ "  { ?c ?property ?hasValue }\n"
 			+ "  UNION\n"
 			+ "  { ?isValueOf ?property ?c }\n" + "}\n";
 	
-	private static final String QUERY_GET_INSTANCE_LIST = "SELECT DISTINCT ?instance \n"
+	private static final String QUERY_GET_INSTANCE_LIST = 
+			"SELECT DISTINCT ?instance \n"
 			+ "WHERE { ?instance a ?class . } ORDER BY ?instance";
 
-	private static final String QUERY_GET_ROOMS = "SELECT DISTINCT ?room \n"
+	private static final String QUERY_GET_ROOMS = 
+			"SELECT DISTINCT ?room \n"
 		+ "WHERE { ?venue <http://data.artsholland.com/room> ?room } \n"
 		+ "ORDER BY ?room";
 	
-	private static final String QUERY_GET_EVENTS = "SELECT DISTINCT ?room \n"
-			+ "WHERE { ah:Event ?property ?hasValue } \n"
-			+ "ORDER BY ?room";
+	private static final String QUERY_COUNT_INSTANCE = 
+			"SELECT (COUNT(DISTINCT ?s) AS ?count) \n"
+			+ "WHERE { \n"
+			+ "?s a ?class .} \n";
+	
 	
 	/*SELECT DISTINCT ?instance 
 			WHERE {
@@ -193,7 +203,13 @@ public class RestService implements InitializingBean, DisposableBean {
 		
 		return null;
 	}
-
+	
+	/*
+	 * TODO: use RDF jargon?
+	 * 
+	 * object instead of instance
+	 * ?s ?p ?o
+	 */
 	public AHRDFObject getSingleInstance(String classname, String cidn, String lang) {
 		
 		URI uri = conn.getValueFactory().createURI(NAMESPACE + classname + "/" + cidn);
@@ -208,35 +224,41 @@ public class RestService implements InitializingBean, DisposableBean {
 		} catch (RepositoryException e) {
 			e.printStackTrace();
 		}
-		
 		return result;
 		
 	}
 	
+
 	public long getInstanceCount(String classname) {
 		classname = CLASS_MAP.get(classname);		
 		
 		try {			
 			URI uri = conn.getValueFactory().createURI(NAMESPACE + classname);
-			ObjectQuery query = conn.prepareObjectQuery(QueryLanguage.SPARQL,
-					QUERY_PREFIX + QUERY_GET_INSTANCE_LIST);
-			
-			query.setBinding("class", uri);
-			
-			
-			return query.evaluate().asList().size();	
-			
+			 TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SPARQL,
+					QUERY_PREFIX + QUERY_COUNT_INSTANCE);
+
+			query.setBinding("class", uri);			
+			TupleQueryResult result = query.evaluate();
+			if (result.hasNext()) {
+				BindingSet next = result.next();
+				if (next.hasBinding("count")) {
+					Value value = next.getValue("count");
+					if (value instanceof Literal) {
+						return ((Literal) value).longValue();
+					}
+				}
+			}			
 		} catch (Exception e) {			
 			e.printStackTrace();
 		}
 		
-		return -1;
+		return 0;
 		
 	}
 
-	public Set<?> getInstanceList(String classname, int count, int page, String lang) {
+	public Set<AHRDFObject> getInstanceList(String classname, int count, int page, String lang) {
 		
-		classname = CLASS_MAP.get(classname);		
+		classname = CLASS_MAP.get(classname);
 		
 		try {
 			conn.setLanguage(lang);
@@ -245,7 +267,7 @@ public class RestService implements InitializingBean, DisposableBean {
 					QUERY_PREFIX + addPaging(QUERY_GET_INSTANCE_LIST, count, page));
 			
 			query.setBinding("class", uri);			
-			return query.evaluate().asSet();	
+			return (Set<AHRDFObject>) query.evaluate().asSet();	
 			
 		} catch (Exception e) {			
 			e.printStackTrace();
@@ -255,7 +277,7 @@ public class RestService implements InitializingBean, DisposableBean {
 		
 	}
 	
-	public Set<?> getRooms(String cidn) {
+	public Set<Room> getRooms(String cidn) {
 		
 		URI uri = conn.getValueFactory().createURI(NAMESPACE + "venues/" + cidn);
 		
@@ -266,7 +288,7 @@ public class RestService implements InitializingBean, DisposableBean {
 			
 			query.setBinding("venue", uri);
 			
-			return query.evaluate().asSet();
+			return (Set<Room>) query.evaluate().asSet();
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -275,35 +297,47 @@ public class RestService implements InitializingBean, DisposableBean {
 		return null;
 	}
 	
-	public Set<?> getEvents(XMLGregorianCalendar dateTimeBefore,
-			XMLGregorianCalendar dateTimeAfter) {
-			
-		try {
-			
-			//dateTimeBefore
-			//dateTimeAfter
-			
-			//URI uriBefore = conn.getValueFactory().createURI(NAMESPACE + classname);
-			//URI uriAfter = conn.getValueFactory().createURI(NAMESPACE + classname);
-			
-			ObjectQuery query = conn.prepareObjectQuery(QueryLanguage.SPARQL,
-					QUERY_PREFIX + QUERY_GET_EVENTS);
-			
-			//query.setBinding("before", uriBefore);
-			//query.setBinding("after", uriAfter);
-			
-			return query.evaluate().asSet();	
-			
-		} catch (Exception e) {			
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
 
 	private String addPaging(String query, int count, int page) {
 		// TODO: check if count & page are valid
 		return query + " LIMIT "+ count + " OFFSET " + count * page;
+	}
+
+	public Set<?> getEvents(XMLGregorianCalendar dateTimeFrom,
+			XMLGregorianCalendar dateTimeTo) throws MalformedQueryException, RepositoryException, QueryEvaluationException {
+		
+		ObjectQuery query = conn.prepareObjectQuery(QueryLanguage.SPARQL, 
+				"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" + 
+				"PREFIX time: <http://www.w3.org/2006/time#>\n" + 
+				"SELECT DISTINCT ?instance WHERE { " +
+				"	?instance time:hasBeginning ?datePub" +
+				"	FILTER(?datePub >= ?dtFrom && ?datePub < ?dtTo)." +
+				"} ORDER BY DESC(?datePub) LIMIT 10"
+			);
+		
+//			query.setBinding("dtFrom", conn.getValueFactory().createLiteral(
+//					XMLDatatypeUtil.parseCalendar("2009-01-01T17:00:00Z")));
+//			query.setBinding("dtTo", conn.getValueFactory().createLiteral(
+//					XMLDatatypeUtil.parseCalendar("2014-02-01T17:00:00Z")));
+		
+		query.setBinding("dtFrom", conn.getValueFactory().createLiteral(dateTimeFrom));
+		query.setBinding("dtTo", conn.getValueFactory().createLiteral(dateTimeTo));
+		
+		return query.evaluate().asSet();		
+
+	}
+
+	public Set<AHRDFObject> getAssociatedInstanceList(String classname, String cidn,
+			String associatedClassname, String lang) {
+		
+		AHRDFObject instance = getSingleInstance(classname, cidn, lang);
+		
+		associatedClassname = CLASS_MAP.get(associatedClassname);
+		
+		URI uri = conn.getValueFactory().createURI(NAMESPACE + associatedClassname);
+	
+		return instance.getAssociatedSubjects(uri);
+		
 	}
 
 }

@@ -2,17 +2,19 @@ package org.waag.ah.model.rdf;
 
 import java.math.BigDecimal;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import org.openrdf.annotations.Iri;
 
-public interface UnitPriceSpecification extends AHRDFObject {
+@Iri(AHRDFObject.gr + "UnitPriceSpecification")
+public abstract class UnitPriceSpecification extends AHRDFObject {
 
-	@JsonProperty
-	public String getHasCurrency();
+	@Iri(gr + "hasCurrency")
+	public abstract String getHasCurrency();
 	
-	@JsonProperty
-	public BigDecimal getHasMinCurrencyValue();
+	@Iri(gr + "hasMinCurrencyValue")
+	public abstract BigDecimal getHasMinCurrencyValue();
 	
-	@JsonProperty
-	public BigDecimal getHasMaxCurrencyValue();
+	@Iri(gr + "hasMaxCurrencyValue")
+	public abstract BigDecimal getHasMaxCurrencyValue();
+	
 	
 }

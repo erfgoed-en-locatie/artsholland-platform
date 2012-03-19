@@ -14,6 +14,7 @@ import org.openrdf.repository.object.config.ObjectRepositoryConfig;
 import org.openrdf.repository.object.config.ObjectRepositoryFactory;
 import org.waag.ah.ObjectConnectionFactory;
 import org.waag.ah.bigdata.BigdataConnectionService;
+import org.waag.ah.model.decorator.*;
 import org.waag.ah.model.rdf.*;
 
 @Singleton
@@ -35,19 +36,21 @@ public class ObjectConnectionService extends BigdataConnectionService implements
 				super.create();
 			}		
 			
-			config.addConcept(EventImpl.class);
-			config.addConcept(RoomImpl.class);			
-			config.addConcept(VenueImpl.class);
-			config.addConcept(OfferingImpl.class);
-			config.addConcept(UnitPriceSpecificationImpl.class);
-			config.addConcept(ProductionImpl.class);
-			config.addConcept(AttachmentImpl.class);			
-			config.addConcept(AttachmentTypeImpl.class);
-			config.addConcept(EventStatusImpl.class);
-			config.addConcept(EventTypeImpl.class);
-			config.addConcept(GenreImpl.class);
-			config.addConcept(ProductionTypeImpl.class);
-			config.addConcept(VenueTypeImpl.class);
+			config.addConcept(EventJsonDecorator.class);
+			config.addConcept(ProductionJsonDecorator.class);
+						
+			config.addConcept(Venue.class);
+			config.addConcept(Offering.class);
+			config.addConcept(UnitPriceSpecification.class);			
+			config.addConcept(Attachment.class);
+			
+			config.addConcept(Room.class);			
+			config.addConcept(AttachmentType.class);
+			config.addConcept(EventStatus.class);
+			config.addConcept(EventType.class);
+			config.addConcept(Genre.class);
+			config.addConcept(ProductionType.class);
+			config.addConcept(VenueType.class);
 			
 			config.addDatatype(BigDecimal.class, "xsd:decimal");
 			config.addDatatype(String.class, "xsd:string");

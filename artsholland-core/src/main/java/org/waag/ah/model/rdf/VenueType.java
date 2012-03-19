@@ -1,10 +1,11 @@
 package org.waag.ah.model.rdf;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import org.openrdf.annotations.Iri;
 
-public interface VenueType extends AHRDFObject {
+@Iri(AHRDFObject.ah + "VenueType")
+public abstract class VenueType extends AHRDFObject {
 	
-	@JsonProperty
-	public String getLabel();
-			
+	@Iri(rdfs + "label")
+	public abstract String getLabel();
+	
 }
