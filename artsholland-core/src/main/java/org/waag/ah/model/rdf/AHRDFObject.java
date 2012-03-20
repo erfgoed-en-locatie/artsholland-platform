@@ -38,24 +38,12 @@ public abstract class AHRDFObject implements RDFObject {
 	@Iri(rdfs + "label")
 	public abstract String getLabel();
 	
-	
 	/*
-	@Sparql(PREFIX + "DELETE { ?p foaf:depiction $this }\n"
-			+ "INSERT { $person foaf:depiction $this } WHERE {} ")
-	void setDepicts(@Bind("person") Person person);
-	
-	
-	SELECT DISTINCT ?instance WHERE { 
-		?instance ?r <http://data.artsholland.com/productions/1999-P-001-0000356>.
-		?instance a ah:Event.  
-
-		}*/	
-	
-	/*
-	 * TODO: rename clazz??.
+	 * TODO: Paging not possible using this function (or is it?)... 
 	 */
-  @Sparql("SELECT DISTINCT ?instance WHERE { ?instance ?p $this. ?instance a ?class }")
-  public abstract Set<AHRDFObject> getAssociatedSubjects(@Bind("class") URI uri);  
+  @Sparql("SELECT DISTINCT ?instance WHERE { { ?instance ?p $this. } UNION { $this ?p ?instance. } ?instance a ?class. }")
+  //@Sparql("SELECT DISTINCT ?instance WHERE { ?instance ?p $this. ?instance a ?class. }")
+  public abstract Set<AHRDFObject> getLinkedObjects(@Bind("class") URI classURI);  
   
 	protected String getLangString(Set<LangString> langStrings) {
 		

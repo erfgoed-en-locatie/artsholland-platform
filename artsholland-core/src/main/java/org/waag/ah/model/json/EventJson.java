@@ -37,7 +37,7 @@ public abstract class EventJson extends AHRDFObjectJson  {
 		
 	@JsonProperty("production")
 	public abstract String getProductionURI();
-	
+		
 	@JsonProperty("venue")
 	public abstract String getVenueURI();
 	

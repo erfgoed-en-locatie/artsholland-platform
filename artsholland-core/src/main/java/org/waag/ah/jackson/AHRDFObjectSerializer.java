@@ -18,8 +18,8 @@ public class AHRDFObjectSerializer extends JsonSerializer<AHRDFObject> {
 		
 	}
 	
-	public Class<AHRDFObject> handledType() {
+	/*public Class<AHRDFObject> handledType() {
 		return AHRDFObject.class; 
-	}
+	}*/
 
 }

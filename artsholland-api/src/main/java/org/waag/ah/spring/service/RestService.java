@@ -1,43 +1,28 @@
 package org.waag.ah.spring.service;
 
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.EJB;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.openrdf.model.Literal;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
-import org.openrdf.model.datatypes.XMLDatatypeUtil;
-import org.openrdf.model.impl.URIImpl;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
-import org.openrdf.query.TupleQueryResultHandlerException;
-import org.openrdf.query.resultio.TupleQueryResultWriter;
-import org.openrdf.query.resultio.sparqljson.SPARQLResultsJSONWriter;
 import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.RepositoryResult;
 import org.openrdf.repository.object.ObjectConnection;
 import org.openrdf.repository.object.ObjectQuery;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 import org.waag.ah.ObjectConnectionFactory;
-import org.waag.ah.model.json.AHRDFObjectJson;
+import org.waag.ah.jackson.JSONPagedResultSet;
 import org.waag.ah.model.rdf.AHRDFObject;
-import org.waag.ah.model.rdf.Room;
 
 @Service("restService")
 public class RestService implements InitializingBean, DisposableBean {
@@ -49,51 +34,12 @@ public class RestService implements InitializingBean, DisposableBean {
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		conn = connFactory.getObjectConnection();
-		conn.setIncludeInferred(true);
-		
-		/*
-		ObjectFactory of = conn.getObjectFactory();
-		conn.setIncludeInferred(includeInferred)
-		conn.isIncludeInferred()
-		Room entity = conn.addDesignation(of.createObject(), Room.class);*/
-	
-		
 	}
 
 	@Override
 	public void destroy() throws Exception {
 		conn.close();
-	}
-	
-	/*
-	 * TODO: move to controller
-	 */
-	private static final Map<String, String> CLASS_MAP = createMap();
-	private static Map<String, String> createMap() {
-      Map<String, String> result = new HashMap<String, String>();
-      
-      result.put("events", "Event");
-      result.put("venues", "Venue");
-      result.put("rooms", "Room");
-      result.put("productions", "Production");      
-      
-      /*
-      Attachment 
-      Event 
-      EventStatus 
-      EventType 
-      Genre 
-      Production 
-      ProductionType 
-      Room 
-      Venue 
-      VenueType 
-      Offering 
-      UnitPriceSpecification 
-      */      
-      
-      return Collections.unmodifiableMap(result);
-  }
+	}	
 
 	private static final String QUERY_PREFIX = 
 		"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" + 
@@ -111,98 +57,38 @@ public class RestService implements InitializingBean, DisposableBean {
 	
 	private static final String NAMESPACE = "http://data.artsholland.com/";
 
-	private static final String classQueryString = 
-			"SELECT DISTINCT ?property ?hasValue ?isValueOf\n"
-			+ "WHERE {\n"
-			+ "  { ?c ?property ?hasValue }\n"
-			+ "  UNION\n"
-			+ "  { ?isValueOf ?property ?c }\n" + "}\n";
 	
-	private static final String QUERY_GET_INSTANCE_LIST = 
-			"SELECT DISTINCT ?instance \n"
-			+ "WHERE { ?instance a ?class . } ORDER BY ?instance";
-
-	private static final String QUERY_GET_ROOMS = 
-			"SELECT DISTINCT ?room \n"
-		+ "WHERE { ?venue <http://data.artsholland.com/room> ?room } \n"
-		+ "ORDER BY ?room";
+	private static final String QUERY_OBJECTS_BY_CLASS = 
+			  "SELECT DISTINCT ?s "
+			+ "WHERE { ?s a ?class . } ORDER BY ?s";
 	
-	private static final String QUERY_COUNT_INSTANCE = 
-			"SELECT (COUNT(DISTINCT ?s) AS ?count) \n"
-			+ "WHERE { \n"
-			+ "?s a ?class .} \n";
-	
-	
-	/*SELECT DISTINCT ?instance 
-			WHERE {
-			    ?instance a ah:Event;
-			        time:hasBeginning ?beginning.
-
-			  FILTER (
-			    ?beginning > "2012-02-24T20:30:00Z"^^xsd:dateTime &&
-			    ?beginning < "2012-04-24T20:30:00Z"^^xsd:dateTime
-			  )
-*/
-
-	public String alleStatements(int page, int count) throws RepositoryException {
-		URI uri = new URIImpl("http://data.artsholland.com/Production");
-		RepositoryResult<Statement> statements = conn.getStatements(null, null,
-				uri, false);
-
-		Statement statement = null;
-		ArrayList<String> lines = new ArrayList<String>();
-		int i = 0;
-		while (statements.hasNext() && i < (page + 1) * count) {
-			statement = statements.next();
-			if (i >= page * count) {
-
-				Resource resource = statement.getSubject();
-				lines.add(resource.toString() + "\n");
-			}
-			i += 1;
-		}
-		return lines.toString();
-	}
+	private static final String QUERY_COUNT_OBJECTS_BY_CLASS =
+			  "SELECT (COUNT(DISTINCT ?s) AS ?count) "
+			+ "WHERE { "
+			+ "?s a ?class .}";
 	
 
-	public String query() throws TupleQueryResultHandlerException, QueryEvaluationException, MalformedQueryException, RepositoryException {
-		
-		TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SPARQL,
-				QUERY_PREFIX + classQueryString);
+	/*
+	 * TODO: seperate queries per class (predicate checking might me necessary.
+	 * Also speed issues: this queries checks links in both ways, but it is easy to check
+	 * beforehand in which direction the query need be evaluated.
+	 */
+	private static final String QUERY_LINKED_OBJECTS_BY_CLASS = 
+			"SELECT DISTINCT ?s WHERE " +
+			"{ { ?object ?p ?s. } UNION " +
+			"{ ?s ?p ?object. } UNION " +
+			"{ ?i ?p1 ?object. ?i ?p2 ?s. } " +   
+			"?s a ?class. } ORDER BY ?s";
 
-		// <http://data.artsholland.com/[[class]]s/[[id]]>
-		URI uri = conn
-				.getValueFactory()
-				.createURI(
-						"http://data.artsholland.com/productions/f297a29eb7da60d929a7ab30143083d7");
-		// Literal limit = conn.getValueFactory().createLiteral(count);
-		// Literal offset = conn.getValueFactory().createLiteral(page * count);
-
-		query.setBinding("c", uri);
-		// query.setBinding("l", limit);
-		// query.setBinding("o", offset);		
-		
-
-		TupleQueryResult queryResult = query.evaluate();
-		OutputStream outputStream = null;
-		TupleQueryResultWriter resultsWriter = new SPARQLResultsJSONWriter(
-				outputStream);
-
-		if (resultsWriter != null) {
-			resultsWriter.startQueryResult(queryResult.getBindingNames());
-			try {
-				while (queryResult.hasNext()) {
-					BindingSet bindingSet = queryResult.next();
-					resultsWriter.handleSolution(bindingSet);
-				}
-			} finally {
-				queryResult.close();
-			}
-			resultsWriter.endQueryResult();
-		}
-		
-		return null;
-	}
+	private static final String QUERY_COUNT_LINKED_OBJECTS_BY_CLASS = 			
+			"SELECT (COUNT(DISTINCT ?s) AS ?count) "
+			+ "WHERE { { ?object ?p ?s. } UNION { ?s ?p ?object. } ?s a ?class. }";
+	
+	/*
+	 * Check with http://localhost:8080/rest/venues/bf23f0c6-5c54-4d18-a0e5-35d1dc140508
+	 * (Paradiso Amsterdam)
+	 */
+	
 	
 	/*
 	 * TODO: use RDF jargon?
@@ -210,13 +96,11 @@ public class RestService implements InitializingBean, DisposableBean {
 	 * object instead of instance
 	 * ?s ?p ?o
 	 */
-	public AHRDFObject getSingleInstance(String classname, String cidn, String lang) {
-		
-		URI uri = conn.getValueFactory().createURI(NAMESPACE + classname + "/" + cidn);
+	public JSONPagedResultSet getObject(URI uri, String lang) {		
 		AHRDFObject result = null;
-		
 		try {
 			conn.setLanguage(lang);
+			
 			Object object = conn.getObject(uri);
 			if (object instanceof AHRDFObject) {
 				result = (AHRDFObject) object;
@@ -224,20 +108,16 @@ public class RestService implements InitializingBean, DisposableBean {
 		} catch (RepositoryException e) {
 			e.printStackTrace();
 		}
-		return result;
+		return new JSONPagedResultSet(result);
 		
 	}
 	
+	public URI createURI(String uriStringWithoutNamespace) {
+		return conn.getValueFactory().createURI(NAMESPACE + uriStringWithoutNamespace);
+	}	
 
-	public long getInstanceCount(String classname) {
-		classname = CLASS_MAP.get(classname);		
-		
-		try {			
-			URI uri = conn.getValueFactory().createURI(NAMESPACE + classname);
-			 TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SPARQL,
-					QUERY_PREFIX + QUERY_COUNT_INSTANCE);
-
-			query.setBinding("class", uri);			
+	private long getCount(TupleQuery query) {
+		try {
 			TupleQueryResult result = query.evaluate();
 			if (result.hasNext()) {
 				BindingSet next = result.next();
@@ -247,27 +127,67 @@ public class RestService implements InitializingBean, DisposableBean {
 						return ((Literal) value).longValue();
 					}
 				}
-			}			
-		} catch (Exception e) {			
-			e.printStackTrace();
+			}
+		} catch (Exception e)  {
+			/*
+			 * TODO	
+			 */
 		}
-		
+		 
 		return 0;
+	}
+	
+	public long getObjectCount(URI classURI) {
+		
+			try {
+				TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SPARQL,
+						QUERY_PREFIX + QUERY_COUNT_OBJECTS_BY_CLASS);
+				
+				query.setBinding("class", classURI);	
+				
+				return getCount(query);
+				
+			} catch (Exception e) {				
+				e.printStackTrace();
+			}
+
+			return 0;
 		
 	}
-
-	public Set<AHRDFObject> getInstanceList(String classname, int count, int page, String lang) {
-		
-		classname = CLASS_MAP.get(classname);
+	
+	public long getLinkedObjectCount(URI objectURI, URI classURI) {
 		
 		try {
-			conn.setLanguage(lang);
-			URI uri = conn.getValueFactory().createURI(NAMESPACE + classname);
-			ObjectQuery query = conn.prepareObjectQuery(QueryLanguage.SPARQL,
-					QUERY_PREFIX + addPaging(QUERY_GET_INSTANCE_LIST, count, page));
+			TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SPARQL,
+					QUERY_PREFIX + QUERY_COUNT_LINKED_OBJECTS_BY_CLASS);
 			
-			query.setBinding("class", uri);			
-			return (Set<AHRDFObject>) query.evaluate().asSet();	
+			query.setBinding("object", objectURI);
+			query.setBinding("class", classURI);
+			
+			return getCount(query);
+			
+		} catch (Exception e) {				
+			e.printStackTrace();
+		}
+
+		return 0;
+	
+}
+
+	public JSONPagedResultSet getObjects(URI classURI, long count, long page, String lang) {
+		
+		conn.setLanguage(lang);
+		long total = getObjectCount(classURI);
+		
+		try {			
+			ObjectQuery query = conn.prepareObjectQuery(QueryLanguage.SPARQL,
+					QUERY_PREFIX + addPaging(QUERY_OBJECTS_BY_CLASS, count, page));
+			
+			query.setBinding("class", classURI);			
+			
+			@SuppressWarnings("unchecked")
+			Set<AHRDFObject> results = (Set<AHRDFObject>) query.evaluate().asSet();
+			return new JSONPagedResultSet(results, page * count, total);
 			
 		} catch (Exception e) {			
 			e.printStackTrace();
@@ -276,29 +196,8 @@ public class RestService implements InitializingBean, DisposableBean {
 		return null;
 		
 	}
-	
-	public Set<Room> getRooms(String cidn) {
-		
-		URI uri = conn.getValueFactory().createURI(NAMESPACE + "venues/" + cidn);
-		
-		ObjectQuery query;
-		try {
-			query = conn.prepareObjectQuery(QueryLanguage.SPARQL,
-					QUERY_PREFIX + QUERY_GET_ROOMS);
-			
-			query.setBinding("venue", uri);
-			
-			return (Set<Room>) query.evaluate().asSet();
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
-	
 
-	private String addPaging(String query, int count, int page) {
+	private String addPaging(String query, long count, long page) {
 		// TODO: check if count & page are valid
 		return query + " LIMIT "+ count + " OFFSET " + count * page;
 	}
@@ -327,17 +226,28 @@ public class RestService implements InitializingBean, DisposableBean {
 
 	}
 
-	public Set<AHRDFObject> getAssociatedInstanceList(String classname, String cidn,
-			String associatedClassname, String lang) {
+	public JSONPagedResultSet getLinkedObjects(URI objectURI, URI classURI, long count, long page, String lang) {
 		
-		AHRDFObject instance = getSingleInstance(classname, cidn, lang);
+		conn.setLanguage(lang);
+		long total = getLinkedObjectCount(objectURI, classURI);
 		
-		associatedClassname = CLASS_MAP.get(associatedClassname);
+		try {			
+			ObjectQuery query = conn.prepareObjectQuery(QueryLanguage.SPARQL,
+					QUERY_PREFIX + addPaging(QUERY_LINKED_OBJECTS_BY_CLASS, count, page));
+			
+			query.setBinding("object", objectURI);
+			query.setBinding("class", classURI);
+			
+			@SuppressWarnings("unchecked")
+			Set<AHRDFObject> results = (Set<AHRDFObject>) query.evaluate().asSet();
+			return new JSONPagedResultSet(results, page * count, total);
+			
+		} catch (Exception e) {			
+			e.printStackTrace();
+		}
 		
-		URI uri = conn.getValueFactory().createURI(NAMESPACE + associatedClassname);
-	
-		return instance.getAssociatedSubjects(uri);
-		
+		return null;
+			
 	}
 
 }
