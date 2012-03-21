@@ -4,9 +4,8 @@ declare namespace rdfs="http://www.w3.org/2000/01/rdf-schema#";
 declare namespace xsd="http://www.w3.org/2001/XMLSchema#";
 declare namespace foaf="http://xmlns.com/foaf/0.1/";
 declare namespace owl="http://www.w3.org/2002/07/owl#";
-
 declare namespace nub="http://resources.uitburo.nl/";
-declare namespace ah = "http://data.artsholland.com/";
+declare namespace ah="http://purl.org/artsholland/1.0/";
 
 import module namespace waag = "http://waag.org" at "http://localhost:8080/static/xquery/waag.xquery.jsp";
 

@@ -53,9 +53,9 @@ public class RestService implements InitializingBean, DisposableBean {
 		"PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>\n" + 
 		"PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>\n" + 
 		"PREFIX nub: <http://resources.uitburo.nl/>\n" + 
-		"PREFIX ah: <http://data.artsholland.com/>\n";
+		"PREFIX ah: <http://purl.org/artsholland/1.0/>\n";
 	
-	private static final String NAMESPACE = "http://data.artsholland.com/";
+	private static final String NAMESPACE = "http://purl.org/artsholland/1.0/";
 
 	
 	private static final String QUERY_OBJECTS_BY_CLASS = 
