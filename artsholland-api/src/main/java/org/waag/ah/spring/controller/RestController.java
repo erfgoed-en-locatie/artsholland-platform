@@ -138,5 +138,13 @@ public class RestController {
 			final HttpServletResponse response) throws IOException  {		
 		return "Not yet implemented";
 	}
+	
+	@RequestMapping(value = MAPPING + "test", method = RequestMethod.GET)	
+	public ModelAndView getTest(final HttpServletRequest request,
+			final HttpServletResponse response) throws IOException, MalformedQueryException, RepositoryException, QueryEvaluationException  {		
+
+		return modelAndView(restService.testTuple());
+		//return restService.testObject();
+	}
 
 }

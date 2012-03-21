@@ -1,5 +1,7 @@
 package org.waag.ah.spring.service;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.ejb.EJB;
@@ -248,6 +250,45 @@ public class RestService implements InitializingBean, DisposableBean {
 		
 		return null;
 			
+	}
+
+	public String testObject() throws MalformedQueryException, RepositoryException, QueryEvaluationException {
+
+		ArrayList<String> strings = new ArrayList<String>();
+
+		ObjectQuery query = conn.prepareObjectQuery(QueryLanguage.SPARQL,
+				QUERY_PREFIX + addPaging(QUERY_OBJECTS_BY_CLASS, 100, 0));
+		
+		query.setBinding("class", createURI("Event"));			
+		
+		@SuppressWarnings("unchecked")
+		Set<AHRDFObject> results = (Set<AHRDFObject>) query.evaluate().asSet();
+		for (AHRDFObject result: results) {
+			strings.add(result.getURI());
+		}
+		
+
+		
+		return strings.toString();
+	}
+	
+	public Object testTuple() throws MalformedQueryException, RepositoryException, QueryEvaluationException {
+		
+		String vis = "SELECT DISTINCT ?s ?p ?o WHERE { ?s ?p ?o. ?s a ah:Event.} LIMIT 1000";
+		Set<String> strings = new LinkedHashSet<String>();
+		
+		TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SPARQL, QUERY_PREFIX + vis);
+		
+		TupleQueryResult result = query.evaluate();
+		
+		while (result.hasNext()) {
+			BindingSet paard = result.next();
+			
+			strings.add(paard.getBinding("s") + " met de " + paard.getBinding("p") + " is een " + paard.getBinding("o"));
+		}
+		
+		return strings;
+		
 	}
 
 }
