@@ -37,9 +37,6 @@ public class SPARQLController {
 	public void postQuery(final HttpServletRequest request,
 			final HttpServletResponse response)
 			throws InterruptedException, ExecutionException, IOException {
-		String adasfff = request.getContentType();
-		String dsrwerf = request.getHeader("Accept");
-		Enumeration<String> fsdfsdf = request.getHeaderNames();
 		sparqlService.query(request, response, SPARQLService.MIME_SPARQL_RESULTS_JSON);	
 	}
 	
