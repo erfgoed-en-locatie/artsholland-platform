@@ -2,11 +2,11 @@ var snorql = new Snorql();
 
 String.prototype.trim = function () {
     return this.replace(/^\s*/, "").replace(/\s*$/, "");
-}
+};
 
 String.prototype.startsWith = function(str) {
 	return (this.match("^"+str) == str);
-}
+};
 
 function Snorql() {
     // modify this._endpoint to point to your SPARQL endpoint
@@ -18,6 +18,7 @@ function Snorql() {
     this._enableNamedGraphs = false;
 
     this._browserBase = null;
+    this._apiKey = null;
     this._namespaces = {};
     this._graph = null;
     this._xsltDOM = null;
@@ -31,7 +32,14 @@ function Snorql() {
         this.updateOutputMode();
         var match = document.location.href.match(/\?(.*)/);
         var queryString = match ? match[1] : '';
-        if (!queryString) {
+        
+        var apiKeyRegEx = queryString.match(/apiKey=([^&]*)/);
+        var apiKeyUrl = apiKeyRegEx ? apiKeyRegEx[0] : null;
+        var apiKey = apiKeyRegEx ? apiKeyRegEx[1] : null;
+        this.setApiKey(apiKey);
+        //this.setBrowserBase(document.location.href.replace(/\?.*/, '') );
+        
+        if (!queryString || queryString == apiKeyUrl) {
             document.getElementById('querytext').value = 'SELECT DISTINCT * WHERE {\n  ?s ?p ?o\n}\nLIMIT 10';
             this._updateGraph(null, false);
             return;
@@ -98,7 +106,10 @@ function Snorql() {
         }
         document.getElementById('querytext').value = querytext;
         this.displayBusyMessage();
-        var service = new SPARQL.Service(this._endpoint);
+        var service = new SPARQL.Service(this._endpoint + '?apiKey=1e4263ef2d20da8eff6996381bb0d78b');
+        
+        
+        
         if (this._graph) {
             service.addDefaultGraph(this._graph);
         }
@@ -139,35 +150,39 @@ function Snorql() {
                 }
             }
         });
-    }
+    };
 
     this.setBrowserBase = function(url) {
         this._browserBase = url;
-    }
+    };
+    
+    this.setApiKey = function(apiKey) {
+        this._apiKey = apiKey;
+    };
 
     this._displayEndpointURL = function() {
         var newTitle = 'Snorql: Exploring ' + this._endpoint;
         this._display(document.createTextNode(newTitle), 'title');
         document.title = newTitle;
-    }
+    };
 
     this._displayPoweredBy = function() {
         $('poweredby').href = this._poweredByLink;
         $('poweredby').update(this._poweredByLabel);
-    }
+    };
 
     this.setNamespaces = function(namespaces) {
         this._namespaces = namespaces;
         this._display(document.createTextNode(this._getPrefixes()), 'prefixestext');
-    }
+    };
 
     this.switchToGraph = function(uri) {
         this._updateGraph(uri, true);
-    }
+    };
 
     this.switchToDefaultGraph = function() {
         this._updateGraph(null, true);
-    }
+    };
 
     this._updateGraph = function(uri, effect) {
         if (!this._enableNamedGraphs) {
@@ -206,7 +221,7 @@ function Snorql() {
         }
         $('graph-uri').disabled = (this._graph == null);
         $('graph-uri').value = this._graph;
-    }
+    };
 
     this.updateOutputMode = function() {
         if (this._xsltDOM == null) {
@@ -219,16 +234,16 @@ function Snorql() {
         if (this._selectedOutputMode() == 'xslt') {
             el.appendChild(this._xsltDOM);
         }
-    }
+    };
 
     this.resetQuery = function() {
         document.location = this._browserBase;
-    }
+    };
 
     this.submitQuery = function() {
         var mode = this._selectedOutputMode();
         if (mode == 'browse') {
-            document.getElementById('queryform').action = this._browserBase;
+            document.getElementById('queryform').action = this._browserBase;            
             document.getElementById('query').value = document.getElementById('querytext').value;
         } else {
             document.getElementById('query').value = this._getPrefixes() + document.getElementById('querytext').value;
@@ -240,20 +255,20 @@ function Snorql() {
             document.getElementById('stylesheet').value = document.getElementById('xsltstylesheet').value;
         }
         document.getElementById('queryform').submit();
-    }
+    };
 
     this.displayBusyMessage = function() {
         var busy = document.createElement('div');
         busy.className = 'busy';
         busy.appendChild(document.createTextNode('Executing query ...'));
         this._display(busy, 'result');
-    }
+    };
 
     this.displayErrorMessage = function(message) {
         var pre = document.createElement('pre');
         pre.innerHTML = message;
         this._display(pre, 'result');
-    }
+    };
 
     this.displayBooleanResult = function(value, resultTitle) {
         var div = document.createElement('div');
@@ -266,7 +281,7 @@ function Snorql() {
         	div.appendChild(document.createTextNode("FALSE"));
         this._display(div, 'result');
         this._updateGraph(this._graph); // refresh links in new result
-    }
+    };
     
     this.displayRDFResult = function(model, resultTitle) {
         var div = document.createElement('div');
@@ -276,7 +291,7 @@ function Snorql() {
         div.appendChild(new RDFXMLFormatter(model));
         this._display(div, 'result');
         this._updateGraph(this._graph); // refresh links in new result - necessary for boolean?
-    }
+    };
     
     this.displayJSONResult = function(json, resultTitle) {
         var div = document.createElement('div');
@@ -289,11 +304,11 @@ function Snorql() {
             p.appendChild(document.createTextNode('[no results]'));
             div.appendChild(p);
         } else {
-            div.appendChild(new SPARQLResultFormatter(json, this._namespaces).toDOM());
+            div.appendChild(new SPARQLResultFormatter(json, this._namespaces, this._apiKey).toDOM());
         }
         this._display(div, 'result');
         this._updateGraph(this._graph); // refresh links in new result
-    }
+    };
 
     this._display = function(node, whereID) {
         var where = document.getElementById(whereID);
@@ -306,11 +321,11 @@ function Snorql() {
         }
         if (node == null) return;
         where.appendChild(node);
-    }
+    };
 
     this._selectedOutputMode = function() {
         return document.getElementById('selectoutput').value;
-    }
+    };
 
     this._getPrefixes = function() {
         prefixes = '';
@@ -319,11 +334,11 @@ function Snorql() {
             prefixes = prefixes + 'PREFIX ' + prefix + ': <' + uri + '>\n';
         }
         return prefixes;
-    }
+    };
 
     this._betterUnescape = function(s) {
         return unescape(s.replace(/\+/g, ' '));
-    }
+    };
 }
 
 
@@ -346,8 +361,9 @@ var namespaces = { 'xsd': '', 'foaf': 'http://xmlns.com/foaf/0.1' };
 var formatter = new SPARQLResultFormatter(json, namespaces);
 var tableObject = formatter.toDOM();
 */
-function SPARQLResultFormatter(json, namespaces) {
+function SPARQLResultFormatter(json, namespaces, apiKey) {
     this._json = json;
+    this._apiKey = apiKey;
     this._variables = this._json.head.vars;
     this._results = this._json.results.bindings;
     this._namespaces = namespaces;
@@ -360,7 +376,7 @@ function SPARQLResultFormatter(json, namespaces) {
             table.appendChild(this._createTableRow(this._results[i], i));
         }
         return table;
-    }
+    };
 
     // TODO: Refactor; non-standard link makers should be passed into the class by the caller
     this._getLinkMaker = function(varName) {
@@ -371,7 +387,7 @@ function SPARQLResultFormatter(json, namespaces) {
         } else {
             return function(uri) { return '?describe=' + encodeURIComponent(uri); };
         }
-    }
+    };
 
     this._createTableHeader = function() {
         var tr = document.createElement('tr');
@@ -390,7 +406,7 @@ function SPARQLResultFormatter(json, namespaces) {
             tr.insertBefore(th, tr.firstChild);
         }
         return tr;
-    }
+    };
 
     this._createTableRow = function(binding, rowNumber) {
         var tr = document.createElement('tr');
@@ -418,7 +434,7 @@ function SPARQLResultFormatter(json, namespaces) {
             tr.insertBefore(td, tr.firstChild);
         }
         return tr;
-    }
+    };
 
     this._formatNode = function(node, varName) {
         if (!node) {
@@ -437,13 +453,13 @@ function SPARQLResultFormatter(json, namespaces) {
             return this._formatTypedLiteral(node, varName);
         }
         return document.createTextNode('???');
-    }
+    };
 
     this._formatURI = function(node, varName) {
         var span = document.createElement('span');
         span.className = 'uri';
         var a = document.createElement('a');
-        a.href = this._getLinkMaker(varName)(node.value);
+        a.href = (this._getLinkMaker(varName)(node.value)) + (this._apiKey ? ('&apiKey=' + this._apiKey) : '');
         a.title = '<' + node.value + '>';
         a.className = 'graph-link';
         var qname = this._toQName(node.value);
@@ -469,7 +485,7 @@ function SPARQLResultFormatter(json, namespaces) {
             span.appendChild(externalLink);
         }
         return span;
-    }
+    };
 
     this._formatPlainLiteral = function(node, varName) {
         var text = '"' + node.value + '"';
@@ -477,7 +493,7 @@ function SPARQLResultFormatter(json, namespaces) {
             text += '@' + node['xml:lang'];
         }
         return document.createTextNode(text);
-    }
+    };
 
     this._formatTypedLiteral = function(node, varName) {
         var text = '"' + node.value + '"';
@@ -491,19 +507,19 @@ function SPARQLResultFormatter(json, namespaces) {
             return span;
         }
         return document.createTextNode(text);
-    }
+    };
 
     this._formatBlankNode = function(node, varName) {
         return document.createTextNode('_:' + node.value);
-    }
+    };
 
     this._formatUnbound = function(node, varName) {
         var span = document.createElement('span');
         span.className = 'unbound';
-        span.title = 'Unbound'
+        span.title = 'Unbound';
         span.appendChild(document.createTextNode('-'));
         return span;
-    }
+    };
 
     this._toQName = function(uri) {
         for (prefix in this._namespaces) {
@@ -513,21 +529,21 @@ function SPARQLResultFormatter(json, namespaces) {
             }
         }
         return null;
-    }
+    };
 
     this._toQNameOrURI = function(uri) {
         var qName = this._toQName(uri);
         return (qName == null) ? '<' + uri + '>' : qName;
-    }
+    };
 
     this._isNumericXSDType = function(datatypeURI) {
-        for (i = 0; i < this._numericXSDTypes.length; i++) {
+        for (var i = 0; i < this._numericXSDTypes.length; i++) {
             if (datatypeURI == this._xsdNamespace + this._numericXSDTypes[i]) {
                 return true;
             }
         }
         return false;
-    }
+    };
     this._xsdNamespace = 'http://www.w3.org/2001/XMLSchema#';
     this._numericXSDTypes = ['long', 'decimal', 'float', 'double', 'int',
         'short', 'byte', 'integer', 'nonPositiveInteger', 'negativeInteger',
