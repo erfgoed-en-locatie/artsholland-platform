@@ -54,6 +54,11 @@
       <artifactId>sesame-rio-rdfxml</artifactId>
       <version>${sesame.version}</version>
     </dependency>	
+    <dependency>
+      <groupId>net.fortytwo.sesametools</groupId>
+      <artifactId>rdfjson</artifactId>
+      <version>1.6</version>
+    </dependency>    
 	</dependencies>
 	
 </project>

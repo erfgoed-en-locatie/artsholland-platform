@@ -1,13 +1,20 @@
 package org.waag.ah.spring.service;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Set;
+import java.util.concurrent.FutureTask;
 
 import javax.ejb.EJB;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.openrdf.model.Literal;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
+import org.openrdf.model.ValueFactory;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
@@ -17,23 +24,39 @@ import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.object.ObjectConnection;
 import org.openrdf.repository.object.ObjectQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 import org.waag.ah.ObjectConnectionFactory;
+import org.waag.ah.PlatformConfig;
+import org.waag.ah.bigdata.BigdataQueryService;
+import org.waag.ah.bigdata.BigdataQueryService.QueryTask;
 import org.waag.ah.jackson.JSONPagedResultSet;
 import org.waag.ah.model.rdf.AHRDFObject;
+import org.waag.ah.rest.RDFJSONFormat;
+import org.waag.ah.rest.RESTParameters;
 
 @Service("restService")
 public class RestService implements InitializingBean, DisposableBean {
-
+	private static final Logger logger = LoggerFactory.getLogger(RestService.class);
+	
+	@EJB(mappedName="java:app/datastore/BigdataQueryService")
+	private BigdataQueryService context;
+	
 	@EJB(mappedName = "java:app/datastore/ObjectConnectionService")
 	private ObjectConnectionFactory connFactory;
-	private ObjectConnection conn;
 
+	private PropertiesConfiguration config;
+	private ObjectConnection conn;
+	private ValueFactory vf;
+	
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		config = PlatformConfig.getConfig(); 
 		conn = connFactory.getObjectConnection();
+		vf = conn.getValueFactory();
 	}
 
 	@Override
@@ -113,7 +136,7 @@ public class RestService implements InitializingBean, DisposableBean {
 	}
 	
 	public URI createURI(String uriStringWithoutNamespace) {
-		return conn.getValueFactory().createURI(NAMESPACE + uriStringWithoutNamespace);
+		return vf.createURI(NAMESPACE + uriStringWithoutNamespace);
 	}	
 
 	private long getCount(TupleQuery query) {
@@ -175,7 +198,6 @@ public class RestService implements InitializingBean, DisposableBean {
 }
 
 	public JSONPagedResultSet getObjects(URI classURI, long count, long page, String lang) {
-		
 		conn.setLanguage(lang);
 		long total = getObjectCount(classURI);
 		
@@ -194,7 +216,47 @@ public class RestService implements InitializingBean, DisposableBean {
 		}
 		
 		return null;
+	}
 		
+	public void getObjects(HttpServletRequest request,
+			HttpServletResponse response, RESTParameters params)
+			throws IOException {
+
+		if (params.getObjectURI().isEmpty()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+                    "Need an object class");
+		}
+		
+		String query = QUERY_PREFIX + 
+				"CONSTRUCT { ?url ?relationTwo ?second . } "
+				+ "WHERE { "
+				+ "   OPTIONAL { ?url ?relationTwo ?second . } "
+				+ "   { SELECT ?url WHERE { ?url a ?class . } LIMIT 10 } "
+				+ "}"; //, params.getPage()
+
+		logger.info(query);
+		
+		try {
+			final OutputStream out = response.getOutputStream();
+			final QueryTask queryTask = context.getQueryTask(query,
+					config.getString("platform.baseUri"), RDFJSONFormat.MIMETYPE, out);
+			final FutureTask<Void> ft = new FutureTask<Void>(queryTask);
+
+			queryTask.setBinding("class", createURI(params.getObjectURI()));
+			
+			response.setStatus(HttpServletResponse.SC_OK);
+			context.executeQueryTask(ft);
+			ft.get();
+			
+		} catch (MalformedQueryException e) {
+			e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+					e.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+					e.getMessage());
+		}
 	}
 
 	private String addPaging(String query, long count, long page) {

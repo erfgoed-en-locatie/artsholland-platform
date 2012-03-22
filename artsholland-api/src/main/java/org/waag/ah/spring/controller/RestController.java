@@ -15,6 +15,7 @@ import org.openrdf.model.datatypes.XMLDatatypeUtil;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.repository.RepositoryException;
+import org.openrdf.rio.RDFFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.waag.ah.jackson.JSONPagedResultSet;
+import org.waag.ah.rest.RDFJSONFormat;
+import org.waag.ah.rest.RESTParameters;
+import org.waag.ah.rest.RESTParametersImpl;
 import org.waag.ah.spring.service.RestService;
 
 @Controller
@@ -32,29 +36,29 @@ public class RestController {
 	
 	private static final Map<String, String> CLASS_MAP = createMap();
 	private static Map<String, String> createMap() {
-      Map<String, String> result = new HashMap<String, String>();
-      
-      result.put("events", "Event");
-      result.put("venues", "Venue");
-      result.put("rooms", "Room");
-      result.put("productions", "Production"); 
-      
-      return Collections.unmodifiableMap(result);
-  }
+			Map<String, String> result = new HashMap<String, String>();
+	
+			result.put("events", "Event");
+			result.put("venues", "Venue");
+			result.put("rooms", "Room");
+			result.put("productions", "Production");
+	
+			return Collections.unmodifiableMap(result);
+	}
 	
 	@Resource(name = "restService")
 	private RestService restService;
 	
-	/*
-	 * 
-	 */
+	public RestController() {
+    	RDFFormat.register(RDFJSONFormat.RESTAPIJSON);
+	}
+
 	private String getAHRDFClass(String pathVariable) {
 		if (CLASS_MAP.containsKey(pathVariable)) {
 			return CLASS_MAP.get(pathVariable);
 		}
 		return null;
 	}
-	
 	
 	@RequestMapping(value = MAPPING + "datumtest", method = RequestMethod.GET)	
 	public ModelAndView testDate(
@@ -69,49 +73,65 @@ public class RestController {
 	
 	@RequestMapping(value = MAPPING + "{class}/{cidn}", method = RequestMethod.GET)
 	public ModelAndView getObject(
-			final HttpServletRequest request,	final HttpServletResponse response,
-			@RequestParam(value="lang", defaultValue="nl", required=false) String lang,
-			@PathVariable("class") String classname, 
-			@PathVariable("cidn") String cidn) throws IOException  {		
-				
-		URI objectURI = restService.createURI(classname + "/" + cidn);		
-		
-		JSONPagedResultSet result = restService.getObject(objectURI, lang);	
-	  return modelAndView(result);
-	  
+			final HttpServletRequest request,
+			final HttpServletResponse response,
+			@RequestParam(value = "lang", defaultValue = "nl", required = false) String lang,
+			@PathVariable("class") String classname,
+			@PathVariable("cidn") String cidn) throws IOException {
+
+		URI objectURI = restService.createURI(classname + "/" + cidn);
+
+		JSONPagedResultSet result = restService.getObject(objectURI, lang);
+		return modelAndView(result);
 	}
 	
 	@RequestMapping(value = MAPPING + "{class}/{cidn}/{linkedClass}", method = RequestMethod.GET)
 	public ModelAndView getLinkedObjects(
-			final HttpServletRequest request,	final HttpServletResponse response,
-			@RequestParam(value="lang", defaultValue="nl", required=false) String lang,
-			@RequestParam(value="count", defaultValue="10", required=false) long count, 
-			@RequestParam(value="page", defaultValue="0", required=false) long page,
-			@PathVariable("class") String classname, 
+			final HttpServletRequest request,
+			final HttpServletResponse response,
+			@RequestParam(value = "lang", defaultValue = "nl", required = false) String lang,
+			@RequestParam(value = "count", defaultValue = "10", required = false) long count,
+			@RequestParam(value = "page", defaultValue = "0", required = false) long page,
+			@PathVariable("class") String classname,
 			@PathVariable("cidn") String cidn,
-			@PathVariable("linkedClass") String linkedClassname) throws IOException  {		
-		
+			@PathVariable("linkedClass") String linkedClassname)
+			throws IOException {
+
 		URI objectURI = restService.createURI(classname + "/" + cidn);
 		URI classURI = restService.createURI(getAHRDFClass(linkedClassname));
-		
-		JSONPagedResultSet result = restService.getLinkedObjects(objectURI, classURI, count, page, lang);	
-	  return modelAndView(result);
-	  
+
+		JSONPagedResultSet result = restService.getLinkedObjects(objectURI,
+				classURI, count, page, lang);
+		return modelAndView(result);
 	}
 	
+//	@RequestMapping(value = MAPPING + "{class}", method = RequestMethod.GET)	
+//	public ModelAndView getObjects(
+//			final HttpServletRequest request,	final HttpServletResponse response, 
+//			@PathVariable("class") String classname,
+//			@RequestParam(value="lang", defaultValue="nl", required=false) String lang,
+//			@RequestParam(value="count", defaultValue="10", required=false) long count, 
+//			@RequestParam(value="page", defaultValue="0", required=false) long page) {	
+//
+//		URI classURI = restService.createURI(getAHRDFClass(classname));
+//		
+//		JSONPagedResultSet result = restService.getObjects(classURI, count, page, lang);		
+//		return modelAndView(result);
+//	}
+	
 	@RequestMapping(value = MAPPING + "{class}", method = RequestMethod.GET)	
-	public ModelAndView getObjects(
-			final HttpServletRequest request,	final HttpServletResponse response, 
+	public void getObjects(final HttpServletRequest request, final HttpServletResponse response, 
 			@PathVariable("class") String classname,
 			@RequestParam(value="lang", defaultValue="nl", required=false) String lang,
-			@RequestParam(value="count", defaultValue="10", required=false) long count, 
-			@RequestParam(value="page", defaultValue="0", required=false) long page) {	
-
-		URI classURI = restService.createURI(getAHRDFClass(classname));
+			@RequestParam(value="limit", defaultValue="10", required=false) long count, 
+			@RequestParam(value="page", defaultValue="0", required=false) long page) throws IOException {	
+		RESTParametersImpl params = new RESTParametersImpl();
 		
-		JSONPagedResultSet result = restService.getObjects(classURI, count, page, lang);		
-		return modelAndView(result);
+		params.setObjectURI(getAHRDFClass(classname));
+		params.setResultLimit(count);
+		params.setPage(page);
 		
+		restService.getObjects(request, response, params);
 	}
 	
 	private ModelAndView modelAndView(Object result) {

@@ -92,10 +92,10 @@ public class SchedulerServiceBean implements MessageListener {
 			ArrayList<String> sourceURLs2 = UitbaseURLGenerator.getURLs();
 
 			for (String sourceURL: sourceURLs2) {
-				logger.info("Scheduling URL for import: "+sourceURL);
+//				logger.info("Scheduling URL for import: "+sourceURL);
 				TextMessage msg = session.createTextMessage(sourceURL);
-				sender.send(msg);
-				logger.info("Message sent successfully to import queue");
+//				sender.send(msg);
+//				logger.info("Message sent successfully to import queue");
 			}
 			
 		} catch (JMSException e) {                      

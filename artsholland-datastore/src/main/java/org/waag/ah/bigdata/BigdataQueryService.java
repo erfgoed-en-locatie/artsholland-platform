@@ -2,13 +2,18 @@ package org.waag.ah.bigdata;
 
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
 import javax.ejb.Singleton;
 
+import org.openrdf.model.Value;
 import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.impl.AbstractQuery;
 import org.openrdf.query.resultio.BooleanQueryResultFormat;
 import org.openrdf.query.resultio.BooleanQueryResultWriter;
 import org.openrdf.query.resultio.BooleanQueryResultWriterRegistry;
@@ -20,7 +25,7 @@ import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.RDFWriterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.ah.bigdata.BigdataRDFContext.AbstractQueryTask;
+import org.waag.ah.bigdata.BigdataQueryService.BigdataRDFContextWrapper.AbstractQueryTaskWrapper;
 
 import com.bigdata.journal.IIndexManager;
 import com.bigdata.journal.ITx;
@@ -58,7 +63,7 @@ public class BigdataQueryService {
             final String query, final String baseURI, final String accept, 
             final OutputStream os) throws MalformedQueryException {
         
-		AbstractQueryTask queryTask = context.getQueryTask(
+    	AbstractQueryTaskWrapper queryTask = context.getQueryTask(
 				getConfig().namespace, getConfig().timestamp, 
 				query, baseURI, accept, os);
 		
@@ -70,12 +75,16 @@ public class BigdataQueryService {
 	}
 	
 	public static class QueryTask implements Callable<Void> {
-		private AbstractQueryTask queryTask;
-
-		public QueryTask(AbstractQueryTask queryTask) {
+		private AbstractQueryTaskWrapper queryTask;
+		
+		public QueryTask(AbstractQueryTaskWrapper queryTask) {
 			this.queryTask = queryTask;
 		}
-
+		
+		public void setBinding(String key, Value value) {
+			queryTask.setBinding(key, value);
+		}	
+		
 		@Override
 		public Void call() throws Exception {
 			return queryTask.call();
@@ -106,15 +115,16 @@ public class BigdataQueryService {
 		}
 	}
 	
-	private static class BigdataRDFContextWrapper extends BigdataRDFContext {
-
+	public static class BigdataRDFContextWrapper extends BigdataRDFContext {
+		
 		public BigdataRDFContextWrapper(SparqlEndpointConfig config,
 				IIndexManager indexManager) {
 			super(config, indexManager);
 		}
 		
-		private abstract class AbstractQueryTaskWrapper extends AbstractQueryTask {
-
+		public abstract class AbstractQueryTaskWrapper extends AbstractQueryTask {
+			private Map<String, Value> bindings = new HashMap<String, Value>();
+			
 			public AbstractQueryTaskWrapper(String namespace, long timestamp,
 					String baseURI, ASTContainer astContainer,
 					QueryType queryType, String defaultMIMEType,
@@ -123,9 +133,28 @@ public class BigdataQueryService {
 				super(namespace, timestamp, baseURI, astContainer, queryType, defaultMIMEType,
 						charset, defaultFileExtension, new MockHttpServletRequest(), os);
 			}
+			
+			public void setBinding(String key, Value value) {
+				bindings.put(key, value);
+			}	
+			
+			protected AbstractQuery buildQuery(final BigdataSailRepositoryConnection cxn) {
+				AbstractQuery query = super.setupQuery(cxn);
+				applyBindings(query);
+				return query;
+			}
+			
+			private void applyBindings(AbstractQuery query) {
+				if (bindings.size() == 0) {
+					return;
+				}
+				for (Entry<String, Value> binding : bindings.entrySet()) {
+					query.setBinding(binding.getKey(), binding.getValue());
+				}
+			}
 		}
 
-		public AbstractQueryTask getQueryTask(String namespace, long timestamp,
+		public AbstractQueryTaskWrapper getQueryTask(String namespace, long timestamp,
 				String queryStr, String baseURI, String acceptStr, OutputStream os) 
 				throws MalformedQueryException {
 
@@ -139,7 +168,7 @@ public class BigdataQueryService {
 
 	        final QueryType queryType = astContainer.getOriginalAST()
 	                .getQueryType();
-
+	        
 	        switch (queryType) {
 		        case ASK: {
 		            final BooleanQueryResultFormat format = BooleanQueryResultFormat
@@ -150,7 +179,7 @@ public class BigdataQueryService {
 	        	case DESCRIBE:	
 		        case CONSTRUCT: {
 		            final RDFFormat format = RDFFormat.forMIMEType(acceptStr,
-		                    RDFFormat.RDFXML);
+		            		RDFFormat.RDFXML);
 		            return new GraphQueryTask(namespace, timestamp, baseURI,
 		                    astContainer, queryType, format, os);
 		        }
@@ -178,7 +207,7 @@ public class BigdataQueryService {
 
 	        protected void doQuery(final BigdataSailRepositoryConnection cxn,
 	                final OutputStream os) throws Exception {
-	            final BigdataSailBooleanQuery query = (BigdataSailBooleanQuery) setupQuery(cxn);
+	            final BigdataSailBooleanQuery query = (BigdataSailBooleanQuery) buildQuery(cxn);
 	            final BooleanQueryResultFormat format = BooleanQueryResultWriterRegistry
 	                    .getInstance().getFileFormatForMIMEType(mimeType);
 	            final BooleanQueryResultWriter w = BooleanQueryResultWriterRegistry
@@ -203,7 +232,7 @@ public class BigdataQueryService {
 			@Override
 			protected void doQuery(final BigdataSailRepositoryConnection cxn,
 					final OutputStream os) throws Exception {
-	            final BigdataSailGraphQuery query = (BigdataSailGraphQuery) setupQuery(cxn);
+	            final BigdataSailGraphQuery query = (BigdataSailGraphQuery) buildQuery(cxn);
 	            final RDFFormat format = RDFWriterRegistry.getInstance()
 	                    .getFileFormatForMIMEType(mimeType);
 	            final RDFWriter w = RDFWriterRegistry.getInstance().get(format)
@@ -227,7 +256,7 @@ public class BigdataQueryService {
 
 			protected void doQuery(final BigdataSailRepositoryConnection cxn,
 					final OutputStream os) throws Exception {
-	            final BigdataSailTupleQuery query = (BigdataSailTupleQuery) setupQuery(cxn);
+	            final BigdataSailTupleQuery query = (BigdataSailTupleQuery) buildQuery(cxn);
 	            final TupleQueryResultFormat format = TupleQueryResultWriterRegistry
 	                    .getInstance().getFileFormatForMIMEType(mimeType);
 	            final TupleQueryResultWriter w = TupleQueryResultWriterRegistry

@@ -34,22 +34,14 @@ public class SPARQLController {
 	@RequestMapping(value = MAPPING, method = RequestMethod.POST)	
 	public void postQuery(final HttpServletRequest request,
 			final HttpServletResponse response)
-			throws InterruptedException, ExecutionException, IOException {      	
-		sparqlService.query(request, response, SPARQLService.MIME_SPARQL_RESULTS_JSON);	
+			throws InterruptedException, ExecutionException, IOException {
+		sparqlService.query(request, response);	
 	}
 	
 	@RequestMapping(value = MAPPING, method = RequestMethod.GET) //, headers = "Accept=application/*"
 	public void getQuery(final HttpServletRequest request,
 			final HttpServletResponse response)
 			throws InterruptedException, ExecutionException, IOException  {      	
-		sparqlService.query(request, response, SPARQLService.MIME_SPARQL_RESULTS_JSON);	
+		sparqlService.query(request, response);	
 	}
-	
-//	@RequestMapping(value = MAPPING, method = RequestMethod.GET, params = "output")
-//	public void getQueryOutput(final HttpServletRequest request,
-//			final HttpServletResponse response,
-//			@RequestParam("query") String query, @RequestParam("output") String output) throws InterruptedException, ExecutionException, IOException  {
-//		// TODO: output=json, also support output=xml
-//		sparqlService.tupleQuery(request, response, query, SPARQLService.MIME_SPARQL_RESULTS_JSON);	
-//	}
 }

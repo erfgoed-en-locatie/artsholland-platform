@@ -34,6 +34,11 @@
       <version>${sesame.version}</version>
     </dependency>
     <dependency>
+      <groupId>net.fortytwo.sesametools</groupId>
+      <artifactId>rdfjson</artifactId>
+      <version>1.6</version>
+    </dependency>     
+    <dependency>
 			<groupId>org.openrdf.alibaba</groupId>
 			<artifactId>alibaba-repository-object</artifactId>
 			<version>${alibaba.version}</version>
