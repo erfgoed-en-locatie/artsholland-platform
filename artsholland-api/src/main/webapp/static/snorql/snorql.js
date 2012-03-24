@@ -224,20 +224,20 @@ function Snorql() {
     };
 
     this.updateOutputMode = function() {
-        if (this._xsltDOM == null) {
-            this._xsltDOM = document.getElementById('xsltinput');
-        }
-        var el = document.getElementById('xsltcontainer');
-        while (el.childNodes.length > 0) {
-            el.removeChild(el.firstChild);
-        }
-        if (this._selectedOutputMode() == 'xslt') {
-            el.appendChild(this._xsltDOM);
-        }
+//        if (this._xsltDOM == null) {
+//            this._xsltDOM = document.getElementById('xsltinput');
+//        }
+//        var el = document.getElementById('xsltcontainer');
+//        while (el.childNodes.length > 0) {
+//            el.removeChild(el.firstChild);
+//        }
+//        if (this._selectedOutputMode() == 'xslt') {
+//            el.appendChild(this._xsltDOM);
+//        }
     };
 
     this.resetQuery = function() {
-        document.location = this._browserBase;
+        document.location = this._browserBase + "?apiKey=" + this._apiKey;
     };
 
     this.submitQuery = function() {

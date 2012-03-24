@@ -61,10 +61,11 @@
         <input type="hidden" name="output" value="json" id="jsonoutput" disabled="disabled" />
         <input type="hidden" name="stylesheet" value="" id="stylesheet" disabled="disabled" />
         <input type="hidden" name="graph" value="" id="graph-uri" disabled="disabled" />
+        <input type="hidden" name="selectoutput" id="selectoutput" value="browse" />
       </div></form>
       <div>
         <textarea name="query" rows="9" cols="80" id="querytext"></textarea>
-        Results:
+        <!-- Results:
         <select id="selectoutput" onchange="snorql.updateOutputMode()">
           <option selected="selected" value="browse">Browse</option>
           <option value="json">as JSON</option>
@@ -74,7 +75,7 @@
         <span id="xsltcontainer"><span id="xsltinput">
           XSLT stylesheet URL:
           <input id="xsltstylesheet" type="text" value="snorql/xml-to-html.xsl" size="30" />
-        </span></span>
+        </span></span> -->
         <input type="button" value="Go!" onclick="snorql.submitQuery()" />
         <input type="button" value="Reset" onclick="snorql.resetQuery()" />
       </div>
