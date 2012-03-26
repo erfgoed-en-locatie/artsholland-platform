@@ -16,29 +16,29 @@
   </processing-directives>
 
   <schedule>
-    <job>
+    
+		<job>
       <name>Uitbase</name>
-      <group>ImportData</group>
+      <group>WebResourceImport</group>
       <description>Import data from NUB Uitbase</description>
       <job-class>org.waag.ah.source.uitbase.UitbaseImportJob</job-class>
       <durability>false</durability>
       <recover>false</recover>
-      <job-data-map>
-        <entry>
-          <key>baseUrl</key>
-          <value>http://accept.ps4.uitburo.nl/api</value>
-        </entry>
-      </job-data-map>
     </job>
+		
     <trigger>
       <cron>
         <name>UitbaseIncrementalImportTrigger</name>
         <group>IncrementalImport</group>
         <job-name>Uitbase</job-name>
-        <job-group>ImportData</job-group>
+        <job-group>WebResourceImport</job-group>
         <job-data-map>
           <entry>
-            <key>importType</key>
+            <key>resource</key>
+            <value>http://accept.ps4.uitburo.nl/api/productions</value>
+          </entry>
+          <entry>
+            <key>strategy</key>
             <value>incremental</value>
           </entry>
         </job-data-map>
@@ -47,5 +47,6 @@
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
+		
   </schedule>
 </job-scheduling-data>

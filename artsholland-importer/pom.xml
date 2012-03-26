@@ -83,5 +83,10 @@
       <artifactId>quartz</artifactId>
       <version>${quartz.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.ostermiller</groupId>
+      <artifactId>utils</artifactId>
+      <version>1.07.00</version>
+    </dependency>
   </dependencies>
 </project>

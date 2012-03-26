@@ -1,10 +1,12 @@
-package org.waag.ah.service.scheduler;
+package org.waag.ah.source.uitbase;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 public class UitbaseURLGenerator {
 
@@ -28,9 +30,9 @@ public class UitbaseURLGenerator {
 		"groups" 
 	};
 		
-	public static ArrayList<String> getURLs() {
+	public static List<URL> getURLs() throws MalformedURLException {
 		
-		ArrayList<String> urls = new ArrayList<String>();
+		List<URL> urls = new ArrayList<URL>();
 		
 		for (String resource : RESOURCES) {
 			int count = 0;
@@ -47,7 +49,7 @@ public class UitbaseURLGenerator {
 				
 				// TODO: use something like URLBuilder 
 				String url = addAPIKey(BASE_URL + resource) + "&rows=" + ROWS + "&start=" + i;
-				urls.add(url);
+				urls.add(new URL(url));
 				i += ROWS;
 				
 			}
