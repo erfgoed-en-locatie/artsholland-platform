@@ -23,6 +23,7 @@ import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
+import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.object.ObjectConnection;
 import org.openrdf.repository.object.ObjectQuery;
@@ -33,6 +34,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
 import org.waag.ah.ObjectConnectionFactory;
 import org.waag.ah.PlatformConfig;
+import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.bigdata.BigdataQueryService;
 import org.waag.ah.bigdata.BigdataQueryService.QueryTask;
 import org.waag.ah.jackson.JSONPagedResultSet;
@@ -46,24 +48,27 @@ public class RestService implements InitializingBean, DisposableBean {
 	
 	@EJB(mappedName="java:app/datastore/BigdataQueryService")
 	private BigdataQueryService context;
+
+	@EJB(mappedName="java:app/datastore/BigdataConnectionService")
+	private RepositoryConnectionFactory connFactory;
 	
-	@EJB(mappedName = "java:app/datastore/ObjectConnectionService")
-	private ObjectConnectionFactory connFactory;
+//	@EJB(mappedName = "java:app/datastore/ObjectConnectionService")
+//	private ObjectConnectionFactory connFactory;
 
 	private PropertiesConfiguration config;
-	private ObjectConnection conn;
+	private RepositoryConnection conn;
 	private ValueFactory vf;
 	
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		config = PlatformConfig.getConfig(); 
-		conn = connFactory.getObjectConnection();
+		conn = connFactory.getConnection();
 		vf = conn.getValueFactory();
 	}
 
 	@Override
 	public void destroy() throws Exception {
-		conn.close();
+//		conn.close();
 	}	
 
 	private static final String QUERY_PREFIX = 
@@ -80,7 +85,8 @@ public class RestService implements InitializingBean, DisposableBean {
 		"PREFIX nub: <http://resources.uitburo.nl/>\n" + 
 		"PREFIX ah: <http://purl.org/artsholland/1.0/>\n";
 	
-	private static final String NAMESPACE = "http://purl.org/artsholland/1.0/";
+	//private static final String NAMESPACE = "http://purl.org/artsholland/1.0/";
+	private static final String NAMESPACE = "http://data.artsholland.com/";
 
 	
 	private static final String QUERY_OBJECTS_BY_CLASS = 
@@ -121,21 +127,21 @@ public class RestService implements InitializingBean, DisposableBean {
 	 * object instead of instance
 	 * ?s ?p ?o
 	 */
-	public JSONPagedResultSet getObject(URI uri, String lang) {		
-		AHRDFObject result = null;
-		try {
-			conn.setLanguage(lang);
-			
-			Object object = conn.getObject(uri);
-			if (object instanceof AHRDFObject) {
-				result = (AHRDFObject) object;
-			}
-		} catch (RepositoryException e) {
-			e.printStackTrace();
-		}
-		return new JSONPagedResultSet(result);
-		
-	}
+//	public JSONPagedResultSet getObject(URI uri, String lang) {		
+//		AHRDFObject result = null;
+//		try {
+//			conn.setLanguage(lang);
+//			
+//			Object object = conn.getObject(uri);
+//			if (object instanceof AHRDFObject) {
+//				result = (AHRDFObject) object;
+//			}
+//		} catch (RepositoryException e) {
+//			e.printStackTrace();
+//		}
+//		return new JSONPagedResultSet(result);
+//		
+//	}
 	
 	public URI createURI(String uriStringWithoutNamespace) {
 		return vf.createURI(NAMESPACE + uriStringWithoutNamespace);
@@ -162,63 +168,63 @@ public class RestService implements InitializingBean, DisposableBean {
 		return 0;
 	}
 	
-	public long getObjectCount(URI classURI) {
-		
-			try {
-				TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SPARQL,
-						QUERY_PREFIX + QUERY_COUNT_OBJECTS_BY_CLASS);
-				
-				query.setBinding("class", classURI);	
-				
-				return getCount(query);
-				
-			} catch (Exception e) {				
-				e.printStackTrace();
-			}
-
-			return 0;
-		
-	}
+//	public long getObjectCount(URI classURI) {
+//		
+//			try {
+//				TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SPARQL,
+//						QUERY_PREFIX + QUERY_COUNT_OBJECTS_BY_CLASS);
+//				
+//				query.setBinding("class", classURI);	
+//				
+//				return getCount(query);
+//				
+//			} catch (Exception e) {				
+//				e.printStackTrace();
+//			}
+//
+//			return 0;
+//		
+//	}
 	
-	public long getLinkedObjectCount(URI objectURI, URI classURI) {
-		
-		try {
-			TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SPARQL,
-					QUERY_PREFIX + QUERY_COUNT_LINKED_OBJECTS_BY_CLASS);
-			
-			query.setBinding("object", objectURI);
-			query.setBinding("class", classURI);
-			
-			return getCount(query);
-			
-		} catch (Exception e) {				
-			e.printStackTrace();
-		}
+//	public long getLinkedObjectCount(URI objectURI, URI classURI) {
+//		
+//		try {
+//			TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SPARQL,
+//					QUERY_PREFIX + QUERY_COUNT_LINKED_OBJECTS_BY_CLASS);
+//			
+//			query.setBinding("object", objectURI);
+//			query.setBinding("class", classURI);
+//			
+//			return getCount(query);
+//			
+//		} catch (Exception e) {				
+//			e.printStackTrace();
+//		}
+//
+//		return 0;
+//	
+//}
 
-		return 0;
-	
-}
-
-	public JSONPagedResultSet getObjects(URI classURI, long count, long page, String lang) {
-		conn.setLanguage(lang);
-		long total = getObjectCount(classURI);
-		
-		try {			
-			ObjectQuery query = conn.prepareObjectQuery(QueryLanguage.SPARQL,
-					QUERY_PREFIX + addPaging(QUERY_OBJECTS_BY_CLASS, count, page));
-			
-			query.setBinding("class", classURI);			
-			
-			@SuppressWarnings("unchecked")
-			Set<AHRDFObject> results = (Set<AHRDFObject>) query.evaluate().asSet();
-			return new JSONPagedResultSet(results, page * count, total);
-			
-		} catch (Exception e) {			
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
+//	public JSONPagedResultSet getObjects(URI classURI, long count, long page, String lang) {
+//		conn.setLanguage(lang);
+//		long total = getObjectCount(classURI);
+//		
+//		try {			
+//			ObjectQuery query = conn.prepareObjectQuery(QueryLanguage.SPARQL,
+//					QUERY_PREFIX + addPaging(QUERY_OBJECTS_BY_CLASS, count, page));
+//			
+//			query.setBinding("class", classURI);			
+//			
+//			@SuppressWarnings("unchecked")
+//			Set<AHRDFObject> results = (Set<AHRDFObject>) query.evaluate().asSet();
+//			return new JSONPagedResultSet(results, page * count, total);
+//			
+//		} catch (Exception e) {			
+//			e.printStackTrace();
+//		}
+//		
+//		return null;
+//	}
 		
 	public void getObjects(HttpServletRequest request,
 			HttpServletResponse response, RESTParameters params)
@@ -266,91 +272,91 @@ public class RestService implements InitializingBean, DisposableBean {
 		return query + " LIMIT "+ count + " OFFSET " + count * page;
 	}
 
-	public Set<?> getEvents(XMLGregorianCalendar dateTimeFrom,
-			XMLGregorianCalendar dateTimeTo) throws MalformedQueryException, RepositoryException, QueryEvaluationException {
-		
-		ObjectQuery query = conn.prepareObjectQuery(QueryLanguage.SPARQL, 
-				"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" + 
-				"PREFIX time: <http://www.w3.org/2006/time#>\n" + 
-				"SELECT DISTINCT ?instance WHERE { " +
-				"	?instance time:hasBeginning ?datePub" +
-				"	FILTER(?datePub >= ?dtFrom && ?datePub < ?dtTo)." +
-				"} ORDER BY DESC(?datePub) LIMIT 10"
-			);
-		
-//			query.setBinding("dtFrom", conn.getValueFactory().createLiteral(
-//					XMLDatatypeUtil.parseCalendar("2009-01-01T17:00:00Z")));
-//			query.setBinding("dtTo", conn.getValueFactory().createLiteral(
-//					XMLDatatypeUtil.parseCalendar("2014-02-01T17:00:00Z")));
-		
-		query.setBinding("dtFrom", conn.getValueFactory().createLiteral(dateTimeFrom));
-		query.setBinding("dtTo", conn.getValueFactory().createLiteral(dateTimeTo));
-		
-		return query.evaluate().asSet();		
+//	public Set<?> getEvents(XMLGregorianCalendar dateTimeFrom,
+//			XMLGregorianCalendar dateTimeTo) throws MalformedQueryException, RepositoryException, QueryEvaluationException {
+//		
+//		ObjectQuery query = conn.prepareObjectQuery(QueryLanguage.SPARQL, 
+//				"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" + 
+//				"PREFIX time: <http://www.w3.org/2006/time#>\n" + 
+//				"SELECT DISTINCT ?instance WHERE { " +
+//				"	?instance time:hasBeginning ?datePub" +
+//				"	FILTER(?datePub >= ?dtFrom && ?datePub < ?dtTo)." +
+//				"} ORDER BY DESC(?datePub) LIMIT 10"
+//			);
+//		
+////			query.setBinding("dtFrom", conn.getValueFactory().createLiteral(
+////					XMLDatatypeUtil.parseCalendar("2009-01-01T17:00:00Z")));
+////			query.setBinding("dtTo", conn.getValueFactory().createLiteral(
+////					XMLDatatypeUtil.parseCalendar("2014-02-01T17:00:00Z")));
+//		
+//		query.setBinding("dtFrom", conn.getValueFactory().createLiteral(dateTimeFrom));
+//		query.setBinding("dtTo", conn.getValueFactory().createLiteral(dateTimeTo));
+//		
+//		return query.evaluate().asSet();		
+//
+//	}
 
-	}
-
-	public JSONPagedResultSet getLinkedObjects(URI objectURI, URI classURI, long count, long page, String lang) {
-		
-		conn.setLanguage(lang);
-		long total = getLinkedObjectCount(objectURI, classURI);
-		
-		try {			
-			ObjectQuery query = conn.prepareObjectQuery(QueryLanguage.SPARQL,
-					QUERY_PREFIX + addPaging(QUERY_LINKED_OBJECTS_BY_CLASS, count, page));
-			
-			query.setBinding("object", objectURI);
-			query.setBinding("class", classURI);
-			
-			@SuppressWarnings("unchecked")
-			Set<AHRDFObject> results = (Set<AHRDFObject>) query.evaluate().asSet();
-			return new JSONPagedResultSet(results, page * count, total);
-			
-		} catch (Exception e) {			
-			e.printStackTrace();
-		}
-		
-		return null;
-			
-	}
-
-	public String testObject() throws MalformedQueryException, RepositoryException, QueryEvaluationException {
-
-		ArrayList<String> strings = new ArrayList<String>();
-
-		ObjectQuery query = conn.prepareObjectQuery(QueryLanguage.SPARQL,
-				QUERY_PREFIX + addPaging(QUERY_OBJECTS_BY_CLASS, 100, 0));
-		
-		query.setBinding("class", createURI("Event"));			
-		
-		@SuppressWarnings("unchecked")
-		Set<AHRDFObject> results = (Set<AHRDFObject>) query.evaluate().asSet();
-		for (AHRDFObject result: results) {
-			strings.add(result.getURI());
-		}
-		
-
-		
-		return strings.toString();
-	}
-	
-	public Object testTuple() throws MalformedQueryException, RepositoryException, QueryEvaluationException {
-		
-		String vis = "SELECT DISTINCT ?s ?p ?o WHERE { ?s ?p ?o. ?s a ah:Event.} LIMIT 1000";
-		Set<String> strings = new LinkedHashSet<String>();
-		
-		TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SPARQL, QUERY_PREFIX + vis);
-		
-		TupleQueryResult result = query.evaluate();
-		
-		while (result.hasNext()) {
-			BindingSet paard = result.next();
-			
-			strings.add(paard.getBinding("s") + " met de " + paard.getBinding("p") + " is een " + paard.getBinding("o"));
-		}
-		
-		return strings;
-		
-	}
+//	public JSONPagedResultSet getLinkedObjects(URI objectURI, URI classURI, long count, long page, String lang) {
+//		
+//		conn.setLanguage(lang);
+//		long total = getLinkedObjectCount(objectURI, classURI);
+//		
+//		try {			
+//			ObjectQuery query = conn.prepareObjectQuery(QueryLanguage.SPARQL,
+//					QUERY_PREFIX + addPaging(QUERY_LINKED_OBJECTS_BY_CLASS, count, page));
+//			
+//			query.setBinding("object", objectURI);
+//			query.setBinding("class", classURI);
+//			
+//			@SuppressWarnings("unchecked")
+//			Set<AHRDFObject> results = (Set<AHRDFObject>) query.evaluate().asSet();
+//			return new JSONPagedResultSet(results, page * count, total);
+//			
+//		} catch (Exception e) {			
+//			e.printStackTrace();
+//		}
+//		
+//		return null;
+//			
+//	}
+//
+//	public String testObject() throws MalformedQueryException, RepositoryException, QueryEvaluationException {
+//
+//		ArrayList<String> strings = new ArrayList<String>();
+//
+//		ObjectQuery query = conn.prepareObjectQuery(QueryLanguage.SPARQL,
+//				QUERY_PREFIX + addPaging(QUERY_OBJECTS_BY_CLASS, 100, 0));
+//		
+//		query.setBinding("class", createURI("Event"));			
+//		
+//		@SuppressWarnings("unchecked")
+//		Set<AHRDFObject> results = (Set<AHRDFObject>) query.evaluate().asSet();
+//		for (AHRDFObject result: results) {
+//			strings.add(result.getURI());
+//		}
+//		
+//
+//		
+//		return strings.toString();
+//	}
+//	
+//	public Object testTuple() throws MalformedQueryException, RepositoryException, QueryEvaluationException {
+//		
+//		String vis = "SELECT DISTINCT ?s ?p ?o WHERE { ?s ?p ?o. ?s a ah:Event.} LIMIT 1000";
+//		Set<String> strings = new LinkedHashSet<String>();
+//		
+//		TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SPARQL, QUERY_PREFIX + vis);
+//		
+//		TupleQueryResult result = query.evaluate();
+//		
+//		while (result.hasNext()) {
+//			BindingSet paard = result.next();
+//			
+//			strings.add(paard.getBinding("s") + " met de " + paard.getBinding("p") + " is een " + paard.getBinding("o"));
+//		}
+//		
+//		return strings;
+//		
+//	}
 
 }

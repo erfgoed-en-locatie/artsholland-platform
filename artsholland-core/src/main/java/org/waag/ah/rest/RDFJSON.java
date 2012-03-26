@@ -16,6 +16,8 @@ import org.openrdf.model.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.gson.stream.JsonWriter;
+
 /**
  * A utility class to help converting Sesame Graphs from and to RDF/JSON.
  *
@@ -189,6 +191,7 @@ public class RDFJSON {
     		}
     		
             result.write(writer);
+            
             
             return writer;
 	    } 

@@ -59,50 +59,50 @@ public class RestController {
 		return null;
 	}
 	
-	@RequestMapping(value = MAPPING + "datumtest", method = RequestMethod.GET)	
-	public ModelAndView testDate(
-			final HttpServletRequest request,	final HttpServletResponse response,			
-			@RequestParam(value="from", defaultValue="1970-01-01T00:00:00Z", required=false) String dtFrom,
-			@RequestParam(value="to", defaultValue="2050-01-01T17:00:00Z", required=false) String dtTo) throws MalformedQueryException, RepositoryException, QueryEvaluationException {	
-		
-		Set<?> result = restService.getEvents(XMLDatatypeUtil.parseCalendar(dtFrom), XMLDatatypeUtil.parseCalendar(dtTo));
-		return modelAndView(result);
-		
-	}
+//	@RequestMapping(value = MAPPING + "datumtest", method = RequestMethod.GET)	
+//	public ModelAndView testDate(
+//			final HttpServletRequest request,	final HttpServletResponse response,			
+//			@RequestParam(value="from", defaultValue="1970-01-01T00:00:00Z", required=false) String dtFrom,
+//			@RequestParam(value="to", defaultValue="2050-01-01T17:00:00Z", required=false) String dtTo) throws MalformedQueryException, RepositoryException, QueryEvaluationException {	
+//		
+//		Set<?> result = restService.getEvents(XMLDatatypeUtil.parseCalendar(dtFrom), XMLDatatypeUtil.parseCalendar(dtTo));
+//		return modelAndView(result);
+//		
+//	}
 	
-	@RequestMapping(value = MAPPING + "{class}/{cidn}", method = RequestMethod.GET)
-	public ModelAndView getObject(
-			final HttpServletRequest request,
-			final HttpServletResponse response,
-			@RequestParam(value = "lang", defaultValue = "nl", required = false) String lang,
-			@PathVariable("class") String classname,
-			@PathVariable("cidn") String cidn) throws IOException {
-
-		URI objectURI = restService.createURI(classname + "/" + cidn);
-
-		JSONPagedResultSet result = restService.getObject(objectURI, lang);
-		return modelAndView(result);
-	}
+//	@RequestMapping(value = MAPPING + "{class}/{cidn}", method = RequestMethod.GET)
+//	public ModelAndView getObject(
+//			final HttpServletRequest request,
+//			final HttpServletResponse response,
+//			@RequestParam(value = "lang", defaultValue = "nl", required = false) String lang,
+//			@PathVariable("class") String classname,
+//			@PathVariable("cidn") String cidn) throws IOException {
+//
+//		URI objectURI = restService.createURI(classname + "/" + cidn);
+//
+//		JSONPagedResultSet result = restService.getObject(objectURI, lang);
+//		return modelAndView(result);
+//	}
 	
-	@RequestMapping(value = MAPPING + "{class}/{cidn}/{linkedClass}", method = RequestMethod.GET)
-	public ModelAndView getLinkedObjects(
-			final HttpServletRequest request,
-			final HttpServletResponse response,
-			@RequestParam(value = "lang", defaultValue = "nl", required = false) String lang,
-			@RequestParam(value = "count", defaultValue = "10", required = false) long count,
-			@RequestParam(value = "page", defaultValue = "0", required = false) long page,
-			@PathVariable("class") String classname,
-			@PathVariable("cidn") String cidn,
-			@PathVariable("linkedClass") String linkedClassname)
-			throws IOException {
-
-		URI objectURI = restService.createURI(classname + "/" + cidn);
-		URI classURI = restService.createURI(getAHRDFClass(linkedClassname));
-
-		JSONPagedResultSet result = restService.getLinkedObjects(objectURI,
-				classURI, count, page, lang);
-		return modelAndView(result);
-	}
+//	@RequestMapping(value = MAPPING + "{class}/{cidn}/{linkedClass}", method = RequestMethod.GET)
+//	public ModelAndView getLinkedObjects(
+//			final HttpServletRequest request,
+//			final HttpServletResponse response,
+//			@RequestParam(value = "lang", defaultValue = "nl", required = false) String lang,
+//			@RequestParam(value = "count", defaultValue = "10", required = false) long count,
+//			@RequestParam(value = "page", defaultValue = "0", required = false) long page,
+//			@PathVariable("class") String classname,
+//			@PathVariable("cidn") String cidn,
+//			@PathVariable("linkedClass") String linkedClassname)
+//			throws IOException {
+//
+//		URI objectURI = restService.createURI(classname + "/" + cidn);
+//		URI classURI = restService.createURI(getAHRDFClass(linkedClassname));
+//
+//		JSONPagedResultSet result = restService.getLinkedObjects(objectURI,
+//				classURI, count, page, lang);
+//		return modelAndView(result);
+//	}
 	
 //	@RequestMapping(value = MAPPING + "{class}", method = RequestMethod.GET)	
 //	public ModelAndView getObjects(
@@ -142,28 +142,28 @@ public class RestController {
 	  return mav;	 
 	}
 		
-	@RequestMapping(value = MAPPING + "{class}/count", method = RequestMethod.GET)
-	public @ResponseBody long getObjectCount(
-			final HttpServletRequest request,	final HttpServletResponse response,			
-			@PathVariable("class") String classname) throws IOException  {		
-
-		URI objectURI = restService.createURI(getAHRDFClass(classname));
-		
-		return restService.getObjectCount(objectURI);
-	}
-			
-	@RequestMapping(value = MAPPING + "geo", method = RequestMethod.GET)	
-	public @ResponseBody String getGeo(final HttpServletRequest request,
-			final HttpServletResponse response) throws IOException  {		
-		return "Not yet implemented";
-	}
-	
-	@RequestMapping(value = MAPPING + "test", method = RequestMethod.GET)	
-	public ModelAndView getTest(final HttpServletRequest request,
-			final HttpServletResponse response) throws IOException, MalformedQueryException, RepositoryException, QueryEvaluationException  {		
-
-		return modelAndView(restService.testTuple());
-		//return restService.testObject();
-	}
+//	@RequestMapping(value = MAPPING + "{class}/count", method = RequestMethod.GET)
+//	public @ResponseBody long getObjectCount(
+//			final HttpServletRequest request,	final HttpServletResponse response,			
+//			@PathVariable("class") String classname) throws IOException  {		
+//
+//		URI objectURI = restService.createURI(getAHRDFClass(classname));
+//		
+//		return restService.getObjectCount(objectURI);
+//	}
+//			
+//	@RequestMapping(value = MAPPING + "geo", method = RequestMethod.GET)	
+//	public @ResponseBody String getGeo(final HttpServletRequest request,
+//			final HttpServletResponse response) throws IOException  {		
+//		return "Not yet implemented";
+//	}
+//	
+//	@RequestMapping(value = MAPPING + "test", method = RequestMethod.GET)	
+//	public ModelAndView getTest(final HttpServletRequest request,
+//			final HttpServletResponse response) throws IOException, MalformedQueryException, RepositoryException, QueryEvaluationException  {		
+//
+//		return modelAndView(restService.testTuple());
+//		//return restService.testObject();
+//	}
 
 }
