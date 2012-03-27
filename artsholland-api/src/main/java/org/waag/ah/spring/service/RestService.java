@@ -235,12 +235,12 @@ public class RestService implements InitializingBean, DisposableBean {
                     "Need an object class");
 		}
 		
-		String query = QUERY_PREFIX + 
+		String query = addPaging(QUERY_PREFIX + 
 				"CONSTRUCT { ?url ?relationTwo ?second . } "
 				+ "WHERE { "
 				+ "   OPTIONAL { ?url ?relationTwo ?second . } "
-				+ "   { SELECT ?url WHERE { ?url a ?class . } LIMIT 10 } "
-				+ "}"; //, params.getPage()
+				+ "   { SELECT ?url WHERE { ?url a ?class . } ORDER BY ?url [[paging]] } "
+				+ "} ORDER BY ?url ?relationTwo", params.getResultLimit(), params.getPage());
 
 		logger.info(query);
 		
@@ -267,9 +267,9 @@ public class RestService implements InitializingBean, DisposableBean {
 		}
 	}
 
-	private String addPaging(String query, long count, long page) {
+	private String addPaging(String query, long limit, long page) {
 		// TODO: check if count & page are valid
-		return query + " LIMIT "+ count + " OFFSET " + count * page;
+		return query.replace("[[paging]]", "LIMIT "+ limit + " OFFSET " + limit * page);
 	}
 
 //	public Set<?> getEvents(XMLGregorianCalendar dateTimeFrom,

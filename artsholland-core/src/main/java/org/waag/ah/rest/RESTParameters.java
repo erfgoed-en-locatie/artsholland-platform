@@ -4,4 +4,5 @@ public interface RESTParameters {
 	public String getObjectURI();
 	public long getResultLimit();
 	public long getPage();
+	public String getLanguage();
 }

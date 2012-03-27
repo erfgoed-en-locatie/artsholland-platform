@@ -1,6 +1,9 @@
 package org.waag.ah.rest;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Stack;
 
 import org.openrdf.model.BNode;
@@ -9,6 +12,7 @@ import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
+
 import com.google.gson.stream.JsonWriter;
 
 /**
@@ -21,6 +25,31 @@ import com.google.gson.stream.JsonWriter;
  * @author Bert Spaan
  */
 public class RDFGSON {
+	
+	private static final Map<String, String> NAMESPACES = createMap();
+	private static Map<String, String> createMap() {
+		      Map<String, String> result = new LinkedHashMap<String, String>();
+		     		    	
+		      result.put("ah", "http://purl.org/artsholland/1.0/");
+		      result.put("nub", "http://resources.uitburo.nl/");
+		      result.put("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#");
+		 			result.put("rdfs", "http://www.w3.org/2000/01/rdf-schema#");
+		 			result.put("owl", "http://www.w3.org/2002/07/owl#");
+		 			result.put("dc", "http://purl.org/dc/elements/1.1/");
+		 			result.put("foaf", "http://xmlns.com/foaf/0.1/");
+		 			result.put("xsd", "http://www.w3.org/2001/XMLSchema#");
+		 			result.put("time", "http://www.w3.org/2006/time#");
+		 			result.put("gr", "http://purl.org/goodrelations/v1#");
+		 			result.put("geo", "http://www.w3.org/2003/01/geo/wgs84_pos#");
+		 			result.put("vcard", "http://www.w3.org/2006/vcard/ns#");
+		 			
+		 			
+		 			
+		 			result.put("ah2", "http://data.artsholland.com/");
+		      
+		      return Collections.unmodifiableMap(result);
+		  }
+	
 
 //	private static final String STRING_GRAPHS = "graphs";
 	private static final String STRING_URI = "uri";
@@ -31,13 +60,18 @@ public class RDFGSON {
 //	private static final String STRING_TYPE = "type";
 //	private static final String STRING_VALUE = "value";
 
-	private Resource lastSubject = null;
-	private URI lastPredicate = null;
-	private Value lastObject = null;
+	// Instance: e.g. ah:Venue, RDF subject. 
+	private Resource lastInstance = null;
+
+	// Name: e.g. ah:cidn, RDF predicate.
+	private URI lastName = null;
+	
+	// Value: e.g. literal, RDF object.
+	private Value lastValue = null;
 	
 	enum StackItem {
-    ARRAY,
-    OBJECT
+    VALUE_ARRAY,
+    CLASS
   };
 	
 	private final Stack<StackItem> stack = new Stack<StackItem>();
@@ -65,108 +99,102 @@ public class RDFGSON {
 		}
 	}
 	
-	private void writeNameValue(URI predicate, Value object) throws IOException {			
-		writeName(predicate);
-		writeValue(object);
-	}
-	
-	private void writeValue(Value object) throws IOException {
-		if (object instanceof Literal) {			
-			jsonWriter.value(object.stringValue());
-		} else if (object instanceof BNode) {			
-			jsonWriter.value(resourceToString((BNode) object));			
-		} else if (object instanceof URI) {			
-			jsonWriter.value(resourceToString((URI) object));
+	private void writeValue(Value value) throws IOException {
+		if (value instanceof Literal) {			
+			jsonWriter.value(value.stringValue());
+		} else if (value instanceof BNode) {			
+			jsonWriter.value(resourceToString((BNode) value));			
+		} else if (value instanceof URI) {			
+			jsonWriter.value(resourceToString((URI) value));
 		}		
 	}
 	
-	private void writeName(URI predicate) throws IOException {
-		jsonWriter.name(resourceToString(predicate));		
+	private void writeName(URI name) throws IOException {
+		String uri = resourceToString(name);
+		for (Map.Entry<String, String> namespace : NAMESPACES.entrySet()) {			
+			if (uri.startsWith(namespace.getValue())) {
+				uri = namespace.getKey() + ":" + uri.substring(namespace.getValue().length());
+				break;
+			}
+		}
+		jsonWriter.name(uri);		
 	}
-
+	
+	private void beginClass(Resource instance) throws IOException {
+		stack.push(StackItem.CLASS);
+		jsonWriter.beginObject();
+		jsonWriter.name(STRING_URI);
+		jsonWriter.value(resourceToString(instance));
+	}
 	
 	public void end() throws IOException  {
-		if (stack.isEmpty()) {
+		if (lastInstance != null && stack.isEmpty()) {
 			/// Stack is empty, but last triple is not written.
 			// Write new subject.			
 			
-			jsonWriter.beginObject();			
-			jsonWriter.name(STRING_URI);
-			jsonWriter.value(resourceToString(lastSubject));
-			writeNameValue(lastPredicate, lastObject);
-			
-		} else if (stack.peek().equals(StackItem.ARRAY)) {
-			
-			writeValue(lastObject);			
-			
-		} else if (stack.peek().equals(StackItem.OBJECT)) {
-			
-			writeNameValue(lastPredicate, lastObject);
-			
+			beginClass(lastInstance);			
+			writeName(lastName);			
 		}
 		
-		clearStack();
+		if (lastValue != null) {
+			writeValue(lastValue);	
+		}
 		
+		clearStack();		
 	}
 	
-	//jsonWriter.name(STRING_URI);
-	//jsonWriter.value(resourceToString(lastSubject));
-
-	//jsonWriter.name(STRING_URI);
-	//jsonWriter.value(resourceToString(lastSubject));
 	
 	public void writeStatement(Statement statement) throws IOException {
 
-		if (lastSubject != null && !statement.getSubject().equals(lastSubject)) {			
+		if (lastInstance != null && !statement.getSubject().equals(lastInstance)) {			
 			// Subject differs. Close last JSON object.
-			
+			writeValue(lastValue);
 			clearStack();
 
-			lastSubject = statement.getSubject();
-			lastPredicate = statement.getPredicate();
-			lastObject = statement.getObject();
+			lastInstance = statement.getSubject();
+			lastName = statement.getPredicate();
+			lastValue = statement.getObject();
 			
-			jsonWriter.beginObject();
-			stack.push(StackItem.OBJECT);			
+			beginClass(lastInstance);			
+			writeName(lastName);
 
 		} else {
-			lastSubject = statement.getSubject();
+			lastInstance = statement.getSubject();
 
-			if (lastPredicate != null	&& !statement.getPredicate().equals(lastPredicate)) {
+			if (lastName != null	&& !statement.getPredicate().equals(lastName)) {
 				// Predicate and object differ
-				writeName(lastPredicate);
-				if (stack.peek().equals(StackItem.ARRAY)) {
+				
+				writeValue(lastValue);
+				if (stack.peek().equals(StackItem.VALUE_ARRAY)) {					
 					jsonWriter.endArray();
-					stack.pop();
+					stack.pop();					
 				}
-				writeValue(lastObject);
 				
+				lastName = statement.getPredicate();
+				lastValue = statement.getObject();
 				
-				lastPredicate = statement.getPredicate();
-				lastObject = statement.getObject();
-				//writeNameValue(lastPredicate, lastObject);
+				writeName(lastName);
 				
 			} else {
-				lastPredicate = statement.getPredicate();
+				lastName = statement.getPredicate();
 
-				if (lastObject != null && !statement.getObject().equals(lastObject)) {
+				if (lastValue != null && !statement.getObject().equals(lastValue)) {
 					// Only object differs, but predicate is the same
-					if (!stack.peek().equals(StackItem.ARRAY)) {
-						stack.push(StackItem.ARRAY);
+					if (!stack.peek().equals(StackItem.VALUE_ARRAY)) {
+						stack.push(StackItem.VALUE_ARRAY);
 						jsonWriter.beginArray();
 					}
-					writeValue(lastObject);
+					writeValue(lastValue);
 					
 	
-					lastObject = statement.getObject();			
+					lastValue = statement.getObject();			
 					//writeNameValue(lastPredicate, lastObject);
 				} else {
 					// First call only.
-					lastObject = statement.getObject();
+					lastValue = statement.getObject();
 					
-					stack.push(StackItem.OBJECT);
-					jsonWriter.beginObject();
-					
+					beginClass(lastInstance);					
+					writeName(lastName);					
 				}
 			}
 		}
@@ -175,9 +203,9 @@ public class RDFGSON {
 	private void clearStack() throws IOException {
 		while (!stack.isEmpty()) {
 			StackItem stackItem = stack.pop();
-			if (stackItem.equals(StackItem.ARRAY)) {
+			if (stackItem.equals(StackItem.VALUE_ARRAY)) {
 				jsonWriter.endArray();
-			} else if (stackItem.equals(StackItem.OBJECT)) {
+			} else if (stackItem.equals(StackItem.CLASS)) {
 				jsonWriter.endObject();
 			}			
 		}		

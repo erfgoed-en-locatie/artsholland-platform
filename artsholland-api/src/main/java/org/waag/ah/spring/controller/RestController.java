@@ -122,13 +122,14 @@ public class RestController {
 	public void getObjects(final HttpServletRequest request, final HttpServletResponse response, 
 			@PathVariable("class") String classname,
 			@RequestParam(value="lang", defaultValue="nl", required=false) String lang,
-			@RequestParam(value="limit", defaultValue="10", required=false) long count, 
+			@RequestParam(value="limit", defaultValue="10", required=false) long limit, 
 			@RequestParam(value="page", defaultValue="0", required=false) long page) throws IOException {	
 		RESTParametersImpl params = new RESTParametersImpl();
 		
 		params.setObjectURI(getAHRDFClass(classname));
-		params.setResultLimit(count);
+		params.setResultLimit(limit);
 		params.setPage(page);
+		params.setLanguage(lang);
 		
 		restService.getObjects(request, response, params);
 	}

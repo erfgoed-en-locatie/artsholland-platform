@@ -3,16 +3,10 @@ package org.waag.ah.rest;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
-import java.util.Set;
-import java.util.TreeSet;
-
-import net.fortytwo.sesametools.StatementComparator;
 import net.fortytwo.sesametools.rdfjson.RDFJSONWriter;
 
-import org.json.JSONException;
 import org.openrdf.model.Statement;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
@@ -21,9 +15,9 @@ import com.google.gson.stream.JsonWriter;
 
 public class RESTAPIJSONWriter extends RDFJSONWriter {
     private final Writer writer;
-    private Set<Statement> graph;
+    //private Set<Statement> graph;
     
-    private StringWriter stringWriter;
+    //private StringWriter stringWriter;
     private JsonWriter jsonWriter;
     private RDFGSON rdfGSON;
     
@@ -36,7 +30,7 @@ public class RESTAPIJSONWriter extends RDFJSONWriter {
     	this.writer = writer;
         
       // TODO: flush bij einde?
-    	stringWriter = new StringWriter();
+    	//stringWriter = new StringWriter();
       jsonWriter = new JsonWriter(writer);
       rdfGSON = new RDFGSON(jsonWriter);
     }
@@ -54,7 +48,7 @@ public class RESTAPIJSONWriter extends RDFJSONWriter {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-        graph = new TreeSet<Statement>(new StatementComparator());
+        //graph = new TreeSet<Statement>(new StatementComparator());
     }
 
     @Override
@@ -81,7 +75,7 @@ public class RESTAPIJSONWriter extends RDFJSONWriter {
     @Override
     public void handleStatement(final Statement statement) throws RDFHandlerException {
     	
-        graph.add(statement);
+        //graph.add(statement);
         
 				try {
 					rdfGSON.writeStatement(statement);
