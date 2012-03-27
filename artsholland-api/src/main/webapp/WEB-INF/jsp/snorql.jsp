@@ -64,7 +64,7 @@
         <input type="hidden" name="selectoutput" id="selectoutput" value="browse" />
       </div></form>
       <div>
-        <textarea name="query" rows="9" cols="80" id="querytext"></textarea>
+        <textarea name="query" rows="12" cols="80" id="querytext"></textarea>
         <!-- Results:
         <select id="selectoutput" onchange="snorql.updateOutputMode()">
           <option selected="selected" value="browse">Browse</option>

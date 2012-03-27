@@ -26,7 +26,8 @@ import com.google.gson.stream.JsonWriter;
  */
 public class RDFGSON {
 	
-	private static final Map<String, String> NAMESPACES = createMap();
+	// TODO: read namespaces from properties file.
+	private static final Map<String, String> NAMESPACES = createMap();	
 	private static Map<String, String> createMap() {
 		      Map<String, String> result = new LinkedHashMap<String, String>();
 		     		    	
@@ -41,9 +42,7 @@ public class RDFGSON {
 		 			result.put("time", "http://www.w3.org/2006/time#");
 		 			result.put("gr", "http://purl.org/goodrelations/v1#");
 		 			result.put("geo", "http://www.w3.org/2003/01/geo/wgs84_pos#");
-		 			result.put("vcard", "http://www.w3.org/2006/vcard/ns#");
-		 			
-		 			
+		 			result.put("vcard", "http://www.w3.org/2006/vcard/ns#");		 			
 		 			
 		 			result.put("ah2", "http://data.artsholland.com/");
 		      
@@ -71,7 +70,7 @@ public class RDFGSON {
 	
 	enum StackItem {
     VALUE_ARRAY,
-    CLASS
+    INSTANCE
   };
 	
 	private final Stack<StackItem> stack = new Stack<StackItem>();
@@ -80,7 +79,8 @@ public class RDFGSON {
 
 	public RDFGSON(JsonWriter jsonWriter) {
 		this.jsonWriter = jsonWriter;
-		this.jsonWriter.setIndent("  ");
+		//TODO: read from parameter
+		this.jsonWriter.setIndent("\t");
 	}
 	
 	/**
@@ -113,15 +113,15 @@ public class RDFGSON {
 		String uri = resourceToString(name);
 		for (Map.Entry<String, String> namespace : NAMESPACES.entrySet()) {			
 			if (uri.startsWith(namespace.getValue())) {
-				uri = namespace.getKey() + ":" + uri.substring(namespace.getValue().length());
+				uri = /*namespace.getKey() + ":" + */uri.substring(namespace.getValue().length());
 				break;
 			}
 		}
 		jsonWriter.name(uri);		
 	}
 	
-	private void beginClass(Resource instance) throws IOException {
-		stack.push(StackItem.CLASS);
+	private void beginInstance(Resource instance) throws IOException {
+		stack.push(StackItem.INSTANCE);
 		jsonWriter.beginObject();
 		jsonWriter.name(STRING_URI);
 		jsonWriter.value(resourceToString(instance));
@@ -129,10 +129,10 @@ public class RDFGSON {
 	
 	public void end() throws IOException  {
 		if (lastInstance != null && stack.isEmpty()) {
-			/// Stack is empty, but last triple is not written.
+			// Stack is empty, but last triple is not written.
 			// Write new subject.			
 			
-			beginClass(lastInstance);			
+			beginInstance(lastInstance);			
 			writeName(lastName);			
 		}
 		
@@ -141,8 +141,7 @@ public class RDFGSON {
 		}
 		
 		clearStack();		
-	}
-	
+	}	
 	
 	public void writeStatement(Statement statement) throws IOException {
 
@@ -155,7 +154,7 @@ public class RDFGSON {
 			lastName = statement.getPredicate();
 			lastValue = statement.getObject();
 			
-			beginClass(lastInstance);			
+			beginInstance(lastInstance);			
 			writeName(lastName);
 
 		} else {
@@ -184,17 +183,15 @@ public class RDFGSON {
 						stack.push(StackItem.VALUE_ARRAY);
 						jsonWriter.beginArray();
 					}
-					writeValue(lastValue);
-					
+					writeValue(lastValue);					
 	
-					lastValue = statement.getObject();			
-					//writeNameValue(lastPredicate, lastObject);
+					lastValue = statement.getObject();	
 				} else {
 					// First call only.
 					lastValue = statement.getObject();
 					
-					beginClass(lastInstance);					
-					writeName(lastName);					
+					beginInstance(lastInstance);			
+					writeName(lastName);				
 				}
 			}
 		}
@@ -205,7 +202,7 @@ public class RDFGSON {
 			StackItem stackItem = stack.pop();
 			if (stackItem.equals(StackItem.VALUE_ARRAY)) {
 				jsonWriter.endArray();
-			} else if (stackItem.equals(StackItem.CLASS)) {
+			} else if (stackItem.equals(StackItem.INSTANCE)) {
 				jsonWriter.endObject();
 			}			
 		}		

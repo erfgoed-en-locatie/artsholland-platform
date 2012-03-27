@@ -1,16 +1,15 @@
 package org.waag.ah.spring.service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Set;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.concurrent.FutureTask;
 
 import javax.ejb.EJB;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.openrdf.model.Literal;
@@ -19,26 +18,18 @@ import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;
-import org.openrdf.query.QueryEvaluationException;
-import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.object.ObjectConnection;
-import org.openrdf.repository.object.ObjectQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.stereotype.Service;
-import org.waag.ah.ObjectConnectionFactory;
 import org.waag.ah.PlatformConfig;
 import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.bigdata.BigdataQueryService;
 import org.waag.ah.bigdata.BigdataQueryService.QueryTask;
-import org.waag.ah.jackson.JSONPagedResultSet;
-import org.waag.ah.model.rdf.AHRDFObject;
 import org.waag.ah.rest.RDFJSONFormat;
 import org.waag.ah.rest.RESTParameters;
 
@@ -68,7 +59,7 @@ public class RestService implements InitializingBean, DisposableBean {
 
 	@Override
 	public void destroy() throws Exception {
-//		conn.close();
+		conn.close();
 	}	
 
 	private static final String QUERY_PREFIX = 
@@ -88,10 +79,23 @@ public class RestService implements InitializingBean, DisposableBean {
 	//private static final String NAMESPACE = "http://purl.org/artsholland/1.0/";
 	private static final String NAMESPACE = "http://data.artsholland.com/";
 
+	private static final String QUERY_OBJECT = 
+			"CONSTRUCT { ?object ?property ?hasValue. }"
+		+ "WHERE {"
+		+ "  { ?object ?property ?hasValue."
+		+ "    ?object a ?class. }"
+		+ "} ORDER BY ?property";
 	
-	private static final String QUERY_OBJECTS_BY_CLASS = 
-			  "SELECT DISTINCT ?s "
-			+ "WHERE { ?s a ?class . } ORDER BY ?s";
+	// FILTER(langMatches(lang(?name), "EN"))
+	
+	private static final String QUERY_OBJECTS_BY_CLASS =	
+			"CONSTRUCT { ?url ?relationTwo ?second . } "
+		+ "WHERE { "
+		+ "   OPTIONAL { ?url ?relationTwo ?second . } "
+		+ "   { SELECT ?url WHERE { ?url a ?class . } ORDER BY ?url [[paging]] } "
+		+ "} ORDER BY ?url ?relationTwo";
+	
+	
 	
 	private static final String QUERY_COUNT_OBJECTS_BY_CLASS =
 			  "SELECT (COUNT(DISTINCT ?s) AS ?count) "
@@ -105,11 +109,27 @@ public class RestService implements InitializingBean, DisposableBean {
 	 * beforehand in which direction the query need be evaluated.
 	 */
 	private static final String QUERY_LINKED_OBJECTS_BY_CLASS = 
-			"SELECT DISTINCT ?s WHERE " +
-			"{ { ?object ?p ?s. } UNION " +
-			"{ ?s ?p ?object. } UNION " +
-			"{ ?i ?p1 ?object. ?i ?p2 ?s. } " +   
-			"?s a ?class. } ORDER BY ?s";
+			"CONSTRUCT { ?url ?relationTwo ?second . }"
+		+ "WHERE" 
+		+ "{"
+		+ "  OPTIONAL { ?url ?relationTwo ?second . }"
+		+ "  {"
+		+ "    SELECT DISTINCT ?url WHERE"
+		+ "    {"
+		+ "      { ?object ?p ?url. } UNION"		
+		+ "      { ?url ?p ?object. } UNION"
+		+ "      { ?i ?p1 ?object. ?i ?p2 ?url. }"
+		+ "	     ?object a ?class."
+		+ "	     ?url a ?linkedClass."
+		+ "    } ORDER BY ?url [[paging]]"
+		+ "  }"
+		+ "} ORDER BY ?url ?relationTwo";
+
+	
+	
+	
+	
+	
 
 	private static final String QUERY_COUNT_LINKED_OBJECTS_BY_CLASS = 			
 			"SELECT (COUNT(DISTINCT ?s) AS ?count) "
@@ -225,52 +245,90 @@ public class RestService implements InitializingBean, DisposableBean {
 //		
 //		return null;
 //	}
-		
-	public void getObjects(HttpServletRequest request,
-			HttpServletResponse response, RESTParameters params)
-			throws IOException {
-
-		if (params.getObjectURI().isEmpty()) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                    "Need an object class");
-		}
-		
-		String query = addPaging(QUERY_PREFIX + 
-				"CONSTRUCT { ?url ?relationTwo ?second . } "
-				+ "WHERE { "
-				+ "   OPTIONAL { ?url ?relationTwo ?second . } "
-				+ "   { SELECT ?url WHERE { ?url a ?class . } ORDER BY ?url [[paging]] } "
-				+ "} ORDER BY ?url ?relationTwo", params.getResultLimit(), params.getPage());
-
-		logger.info(query);
-		
+	
+	private void executeParameterizedQuery(HttpServletResponse response,
+			RESTParameters params, String query) throws IOException {
 		try {
+			
+			/*
+			PrintWriter vis = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), "UTF8"), true);
+			vis.write("DE VIS  DE VIS DE VIS!!!!");
+			vis.flush();
+			*/
+			
+			
+			final String pagedQuery = QUERY_PREFIX + addPaging(query, params.getResultLimit(), params.getPage());
 			final OutputStream out = response.getOutputStream();
-			final QueryTask queryTask = context.getQueryTask(query,
+			final QueryTask queryTask = context.getQueryTask(pagedQuery,
 					config.getString("platform.baseUri"), RDFJSONFormat.MIMETYPE, out);
 			final FutureTask<Void> ft = new FutureTask<Void>(queryTask);
-
-			queryTask.setBinding("class", createURI(params.getObjectURI()));
+		
+			// Set binding:
+			
+			if (params.getObjectURI() != null && !params.getObjectURI().isEmpty()) {
+				queryTask.setBinding("object", createURI(params.getObjectURI()));
+			}
+			
+			if (params.getObjectClass() != null && !params.getObjectClass().isEmpty()) {
+				queryTask.setBinding("class", createURI(params.getObjectClass()));	
+			}
+			
+			if (params.getObjectClass() != null && !params.getObjectClass().isEmpty()) {
+				queryTask.setBinding("linkedClass", createURI(params.getLinkedClass()));	
+			}
 			
 			response.setStatus(HttpServletResponse.SC_OK);
 			context.executeQueryTask(ft);
 			ft.get();
-			
+		
 		} catch (MalformedQueryException e) {
 			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-					e.getMessage());
+				e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-					e.getMessage());
+				e.getMessage());
 		}
 	}
+			
+	public void getObjects(HttpServletRequest request,
+			HttpServletResponse response, RESTParameters params)
+			throws IOException {
+
+		if (params.getObjectClass().isEmpty()) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+                    "Need an object class");
+		}		
+		executeParameterizedQuery(response, params, QUERY_OBJECTS_BY_CLASS);
+	}
+	
+	public void getObject(HttpServletRequest request,
+			HttpServletResponse response, RESTParameters params) throws IOException {
+		
+		if (params.getObjectURI().isEmpty() || params.getObjectClass().isEmpty()) {
+		    response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+		    		"Need an object class and CIDN");
+		}		
+		executeParameterizedQuery(response, params, QUERY_OBJECT);
+	}	
+	
+	public void getLinkedObjects(HttpServletRequest request,
+			HttpServletResponse response, RESTParameters params) throws IOException {
+		
+
+		if (params.getObjectClass().isEmpty() || params.getLinkedClass().isEmpty() || params.getObjectURI().isEmpty()) {
+      response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+              "Need an object class, CIDN and object subclass.");
+		}
+		executeParameterizedQuery(response, params, QUERY_LINKED_OBJECTS_BY_CLASS);
+	}	
 
 	private String addPaging(String query, long limit, long page) {
 		// TODO: check if count & page are valid
 		return query.replace("[[paging]]", "LIMIT "+ limit + " OFFSET " + limit * page);
 	}
+
 
 //	public Set<?> getEvents(XMLGregorianCalendar dateTimeFrom,
 //			XMLGregorianCalendar dateTimeTo) throws MalformedQueryException, RepositoryException, QueryEvaluationException {
