@@ -7,5 +7,5 @@ public interface ImportJob {
 //	public void doImport() throws Exception;
 	
 	public String getJobId();
-	public long getImportDate();
+	public long getTimestamp();
 }
