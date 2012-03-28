@@ -41,63 +41,65 @@ import com.bigdata.rdf.sparql.ast.QueryType;
 
 @Singleton
 public class BigdataQueryService {
-	private static final Logger logger = LoggerFactory.getLogger(BigdataQueryService.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(BigdataQueryService.class);
 	private final BigdataRDFContextWrapper context;
 	public static final String EXPLAIN = BigdataRDFContextWrapper.EXPLAIN;
-	
+
 	public BigdataQueryService() {
 		context = new BigdataRDFContextWrapper(getConfig(), getIndexManager());
 	}
-	
+
 	private IIndexManager getIndexManager() {
-        final Properties properties = new Properties();
-        properties.setProperty(Journal.Options.FILE, "/data/db/bigdata/bigdata.jnl");
-        return new Journal(properties);
+		final Properties properties = new Properties();
+		properties
+				.setProperty(Journal.Options.FILE, "/data/db/bigdata/bigdata.jnl");
+		return new Journal(properties);
 	}
-    
-    final private SparqlEndpointConfig getConfig() {
-        return new SparqlEndpointConfig("kb", ITx.READ_COMMITTED, 16);
-    } 
-    
-    public QueryTask getQueryTask(
-            final String query, final String baseURI, final String accept, 
-            final OutputStream os) throws MalformedQueryException {
-        
-    	AbstractQueryTaskWrapper queryTask = context.getQueryTask(
-				getConfig().namespace, getConfig().timestamp, 
-				query, baseURI, accept, os);
-		
+
+	final private SparqlEndpointConfig getConfig() {
+		return new SparqlEndpointConfig("kb", ITx.READ_COMMITTED, 16);
+	}
+
+	public QueryTask getQueryTask(final String query, final String baseURI,
+			final String accept, final OutputStream os)
+			throws MalformedQueryException {
+
+		AbstractQueryTaskWrapper queryTask = context.getQueryTask(
+				getConfig().namespace, getConfig().timestamp, query, baseURI, accept,
+				os);
+
 		return new QueryTask(queryTask);
-    }
+	}
 
 	public void executeQueryTask(FutureTask<Void> task) {
 		context.queryService.execute(task);
 	}
-	
+
 	public static class QueryTask implements Callable<Void> {
 		private AbstractQueryTaskWrapper queryTask;
-		
+
 		public QueryTask(AbstractQueryTaskWrapper queryTask) {
 			this.queryTask = queryTask;
 		}
-		
+
 		public void setBinding(String key, Value value) {
 			queryTask.setBinding(key, value);
-		}	
-		
+		}
+
 		@Override
 		public Void call() throws Exception {
 			return queryTask.call();
 		}
-		
+
 		public boolean getExplain() {
 			return queryTask.explain;
 		}
 
 		public Charset getCharset() {
 			return queryTask.charset;
-		}  
-		
+		}
+
 		public String getMimeType() {
 			return queryTask.mimeType;
 		}
@@ -113,37 +115,39 @@ public class BigdataQueryService {
 		public String getFileExt() {
 			return queryTask.fileExt;
 		}
+
 	}
-	
+
 	public static class BigdataRDFContextWrapper extends BigdataRDFContext {
-		
+
 		public BigdataRDFContextWrapper(SparqlEndpointConfig config,
 				IIndexManager indexManager) {
 			super(config, indexManager);
 		}
-		
+
 		public abstract class AbstractQueryTaskWrapper extends AbstractQueryTask {
 			private Map<String, Value> bindings = new HashMap<String, Value>();
-			
+
 			public AbstractQueryTaskWrapper(String namespace, long timestamp,
-					String baseURI, ASTContainer astContainer,
-					QueryType queryType, String defaultMIMEType,
-					Charset charset, String defaultFileExtension,
+					String baseURI, ASTContainer astContainer, QueryType queryType,
+					String defaultMIMEType, Charset charset, String defaultFileExtension,
 					OutputStream os) {
-				super(namespace, timestamp, baseURI, astContainer, queryType, defaultMIMEType,
-						charset, defaultFileExtension, new MockHttpServletRequest(), os);
+				super(namespace, timestamp, baseURI, astContainer, queryType,
+						defaultMIMEType, charset, defaultFileExtension,
+						new MockHttpServletRequest(), os);
 			}
-			
+
 			public void setBinding(String key, Value value) {
 				bindings.put(key, value);
-			}	
-			
-			protected AbstractQuery buildQuery(final BigdataSailRepositoryConnection cxn) {
+			}
+
+			protected AbstractQuery buildQuery(
+					final BigdataSailRepositoryConnection cxn) {
 				AbstractQuery query = super.setupQuery(cxn);
 				applyBindings(query);
 				return query;
 			}
-			
+
 			private void applyBindings(AbstractQuery query) {
 				if (bindings.size() == 0) {
 					return;
@@ -154,113 +158,108 @@ public class BigdataQueryService {
 			}
 		}
 
-		public AbstractQueryTaskWrapper getQueryTask(String namespace, long timestamp,
-				String queryStr, String baseURI, String acceptStr, OutputStream os) 
-				throws MalformedQueryException {
+		public AbstractQueryTaskWrapper getQueryTask(String namespace,
+				long timestamp, String queryStr, String baseURI, String acceptStr,
+				OutputStream os) throws MalformedQueryException {
 
-	        final ASTContainer astContainer = new Bigdata2ASTSPARQLParser(
-	                getTripleStore(namespace, timestamp)).parseQuery2(queryStr,
-	                baseURI);
+			final ASTContainer astContainer = new Bigdata2ASTSPARQLParser(
+					getTripleStore(namespace, timestamp)).parseQuery2(queryStr, baseURI);			
+			if (logger.isDebugEnabled()) {
+				logger.debug(astContainer.toString());
+			}
 
-	        if (logger.isDebugEnabled()) {
-	            logger.debug(astContainer.toString());
-	        }
+			final QueryType queryType = astContainer.getOriginalAST().getQueryType();
 
-	        final QueryType queryType = astContainer.getOriginalAST()
-	                .getQueryType();
-	        
-	        switch (queryType) {
-		        case ASK: {
-		            final BooleanQueryResultFormat format = BooleanQueryResultFormat
-		                    .forMIMEType(acceptStr, BooleanQueryResultFormat.SPARQL);
-		            return new AskQueryTask(namespace, timestamp, baseURI,
-		                    astContainer, queryType, format, os);
-		        }
-	        	case DESCRIBE:	
-		        case CONSTRUCT: {
-		            final RDFFormat format = RDFFormat.forMIMEType(acceptStr,
-		            		RDFFormat.RDFXML);
-		            return new GraphQueryTask(namespace, timestamp, baseURI,
-		                    astContainer, queryType, format, os);
-		        }
-		        case SELECT: {
-		            final TupleQueryResultFormat format = TupleQueryResultFormat
-		                    .forMIMEType(acceptStr, TupleQueryResultFormat.SPARQL);
-		            return new TupleQueryTask(namespace, timestamp, baseURI,
-		                    astContainer, queryType, format, os);
-		        }
-	        }
+			switch (queryType) {
+				case ASK: {
+					final BooleanQueryResultFormat format = BooleanQueryResultFormat
+							.forMIMEType(acceptStr, BooleanQueryResultFormat.SPARQL);
+					return new AskQueryTask(namespace, timestamp, baseURI, astContainer,
+							queryType, format, os);
+				}
+				case DESCRIBE:
+				case CONSTRUCT: {
+					final RDFFormat format = RDFFormat.forMIMEType(acceptStr,
+							RDFFormat.RDFXML);
+					return new GraphQueryTask(namespace, timestamp, baseURI,
+							astContainer, queryType, format, os);
+				}
+				case SELECT: {
+					final TupleQueryResultFormat format = TupleQueryResultFormat
+							.forMIMEType(acceptStr, TupleQueryResultFormat.SPARQL);
+					return new TupleQueryTask(namespace, timestamp, baseURI,
+							astContainer, queryType, format, os);
+				}
+			}
 
-	        throw new RuntimeException("Unknown query type: " + queryType);
+			throw new RuntimeException("Unknown query type: " + queryType);
 		}
-		
-	    private class AskQueryTask extends AbstractQueryTaskWrapper {
 
-	        public AskQueryTask(final String namespace, final long timestamp,
-	                final String baseURI,
-	                final ASTContainer astContainer, final QueryType queryType,
-	                final BooleanQueryResultFormat format, final OutputStream os) {
-	            super(namespace, timestamp, baseURI, astContainer,
-	                    queryType, format.getDefaultMIMEType(),
-	                    format.getCharset(), format.getDefaultFileExtension(), os);
-	        }
+		private class AskQueryTask extends AbstractQueryTaskWrapper {
 
-	        protected void doQuery(final BigdataSailRepositoryConnection cxn,
-	                final OutputStream os) throws Exception {
-	            final BigdataSailBooleanQuery query = (BigdataSailBooleanQuery) buildQuery(cxn);
-	            final BooleanQueryResultFormat format = BooleanQueryResultWriterRegistry
-	                    .getInstance().getFileFormatForMIMEType(mimeType);
-	            final BooleanQueryResultWriter w = BooleanQueryResultWriterRegistry
-	                    .getInstance().get(format).getWriter(os);
-	            final boolean result = query.evaluate();
-	            w.write(result);
-	        }
-	    }
-	    
-	    private class GraphQueryTask extends AbstractQueryTaskWrapper {
-
-	        public GraphQueryTask(final String namespace, final long timestamp,
-	                final String baseURI,
-	                final ASTContainer astContainer, final QueryType queryType,
-	                final RDFFormat format, final OutputStream os) {
-	            super(namespace, timestamp, baseURI, astContainer,
-	                    queryType, format.getDefaultMIMEType(),
-	                    format.getCharset(), format.getDefaultFileExtension(),
-	                    os);
-	        }
-
-			@Override
-			protected void doQuery(final BigdataSailRepositoryConnection cxn,
-					final OutputStream os) throws Exception {
-	            final BigdataSailGraphQuery query = (BigdataSailGraphQuery) buildQuery(cxn);
-	            final RDFFormat format = RDFWriterRegistry.getInstance()
-	                    .getFileFormatForMIMEType(mimeType);
-	            final RDFWriter w = RDFWriterRegistry.getInstance().get(format)
-	                    .getWriter(os);
-				query.evaluate(w);
-	        }
-		}
-	    
-		private class TupleQueryTask extends AbstractQueryTaskWrapper {
-
-	        public TupleQueryTask(final String namespace, final long timestamp,
-	                final String baseURI,
-	                final ASTContainer astContainer, final QueryType queryType,
-	                final TupleQueryResultFormat format,
-	                final OutputStream os) {
-
-	            super(namespace, timestamp, baseURI, astContainer,
-	                    queryType, format.getDefaultMIMEType(),
-	                    format.getCharset(), format.getDefaultFileExtension(), os);
+			public AskQueryTask(final String namespace, final long timestamp,
+					final String baseURI, final ASTContainer astContainer,
+					final QueryType queryType, final BooleanQueryResultFormat format,
+					final OutputStream os) {
+				super(namespace, timestamp, baseURI, astContainer, queryType, format
+						.getDefaultMIMEType(), format.getCharset(), format
+						.getDefaultFileExtension(), os);
 			}
 
 			protected void doQuery(final BigdataSailRepositoryConnection cxn,
 					final OutputStream os) throws Exception {
-	            final BigdataSailTupleQuery query = (BigdataSailTupleQuery) buildQuery(cxn);
-	            final TupleQueryResultFormat format = TupleQueryResultWriterRegistry
-	                    .getInstance().getFileFormatForMIMEType(mimeType);
-	            final TupleQueryResultWriter w = TupleQueryResultWriterRegistry
-	                    .getInstance().get(format).getWriter(os);
+				final BigdataSailBooleanQuery query = (BigdataSailBooleanQuery) buildQuery(cxn);
+				final BooleanQueryResultFormat format = BooleanQueryResultWriterRegistry
+						.getInstance().getFileFormatForMIMEType(mimeType);
+				final BooleanQueryResultWriter w = BooleanQueryResultWriterRegistry
+						.getInstance().get(format).getWriter(os);
+				final boolean result = query.evaluate();
+				w.write(result);
+			}
+		}
+
+		private class GraphQueryTask extends AbstractQueryTaskWrapper {
+
+			public GraphQueryTask(final String namespace, final long timestamp,
+					final String baseURI, final ASTContainer astContainer,
+					final QueryType queryType, final RDFFormat format,
+					final OutputStream os) {
+				super(namespace, timestamp, baseURI, astContainer, queryType, format
+						.getDefaultMIMEType(), format.getCharset(), format
+						.getDefaultFileExtension(), os);
+			}
+
+			@Override
+			protected void doQuery(final BigdataSailRepositoryConnection cxn,
+					final OutputStream os) throws Exception {
+				final BigdataSailGraphQuery query = (BigdataSailGraphQuery) buildQuery(cxn);
+				final RDFFormat format = RDFWriterRegistry.getInstance()
+						.getFileFormatForMIMEType(mimeType);
+				final RDFWriter w = RDFWriterRegistry.getInstance().get(format)
+						.getWriter(os);				
+				query.evaluate(w);
+			}
+		}
+
+		private class TupleQueryTask extends AbstractQueryTaskWrapper {
+
+			public TupleQueryTask(final String namespace, final long timestamp,
+					final String baseURI, final ASTContainer astContainer,
+					final QueryType queryType, final TupleQueryResultFormat format,
+					final OutputStream os) {
+
+				super(namespace, timestamp, baseURI, astContainer, queryType, format
+						.getDefaultMIMEType(), format.getCharset(), format
+						.getDefaultFileExtension(), os);
+			}
+
+			protected void doQuery(final BigdataSailRepositoryConnection cxn,
+					final OutputStream os) throws Exception {
+				final BigdataSailTupleQuery query = (BigdataSailTupleQuery) buildQuery(cxn);
+				final TupleQueryResultFormat format = TupleQueryResultWriterRegistry
+						.getInstance().getFileFormatForMIMEType(mimeType);
+				final TupleQueryResultWriter w = TupleQueryResultWriterRegistry
+						.getInstance().get(format).getWriter(os);
 				query.evaluate(w);
 			}
 		}

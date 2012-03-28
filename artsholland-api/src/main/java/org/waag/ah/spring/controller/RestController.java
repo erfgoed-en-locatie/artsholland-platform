@@ -1,4 +1,4 @@
-package org.waag.ah.spring.controller;
+	package org.waag.ah.spring.controller;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -31,7 +31,7 @@ public class RestController {
 			result.put("events", "Event");
 			result.put("venues", "Venue");
 			result.put("rooms", "Room");
-			result.put("productions", "Production");
+			result.put("productions", "Production");			
 	
 			return Collections.unmodifiableMap(result);
 	}
@@ -84,7 +84,7 @@ public class RestController {
 		final HttpServletResponse response,
 		@RequestParam(value = "lang", defaultValue = "nl", required = false) String lang,
 		@RequestParam(value = "limit", defaultValue = "10", required = false) long limit,
-		@RequestParam(value = "page", defaultValue = "0", required = false) long page,
+		@RequestParam(value = "page", defaultValue = "1", required = false) long page,
 		@PathVariable("class") String classname,
 		@PathVariable("cidn") String cidn,
 		@PathVariable("linkedClass") String linkedClassname)
@@ -106,7 +106,7 @@ public class RestController {
 			@PathVariable("class") String classname,
 			@RequestParam(value="lang", defaultValue="nl", required=false) String lang,
 			@RequestParam(value="limit", defaultValue="10", required=false) long limit, 
-			@RequestParam(value="page", defaultValue="0", required=false) long page) throws IOException {	
+			@RequestParam(value="page", defaultValue="1", required=false) long page) throws IOException {	
 		RESTParametersImpl params = new RESTParametersImpl();
 		
 		params.setObjectClass(getAHRDFClass(classname));

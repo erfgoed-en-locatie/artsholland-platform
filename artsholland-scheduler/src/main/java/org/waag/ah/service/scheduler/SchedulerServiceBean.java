@@ -48,7 +48,7 @@ public class SchedulerServiceBean implements MessageListener {
 	
 	@PreDestroy     
 	public void cleanUp() {                
-		try {                   
+		try {  
 			conn.close();          
 		} catch (JMSException e) {                      
 			logger.error(e.getMessage());

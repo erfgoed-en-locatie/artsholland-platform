@@ -18,6 +18,7 @@ public class RESTAPIJSONWriter extends RDFJSONWriter {
 
 	private JsonWriter jsonWriter;
 	private RDFGSON rdfGSON;
+	private RESTParameters params;
 
 	public RESTAPIJSONWriter(final OutputStream out) {
 		this(new OutputStreamWriter(out, Charset.forName("UTF-8")));
@@ -35,7 +36,7 @@ public class RESTAPIJSONWriter extends RDFJSONWriter {
 	public RDFFormat getRDFFormat() {
 		return RDFJSONFormat.RESTAPIJSON;
 	}
-
+	
 	@Override
 	public void startRDF() throws RDFHandlerException {
 		try {
@@ -53,7 +54,9 @@ public class RESTAPIJSONWriter extends RDFJSONWriter {
 		try {
 			rdfGSON.end();
 			jsonWriter.endArray();
-
+			
+			// FIXME: we should find better solution.
+			writer.write("}");
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -69,7 +72,7 @@ public class RESTAPIJSONWriter extends RDFJSONWriter {
 	@Override
 	public void handleStatement(final Statement statement)
 			throws RDFHandlerException {
-
+		
 		try {
 			rdfGSON.writeStatement(statement);
 		} catch (IOException e) {
