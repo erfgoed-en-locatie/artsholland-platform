@@ -26,6 +26,8 @@ import org.openrdf.rio.RDFWriterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.bigdata.BigdataQueryService.BigdataRDFContextWrapper.AbstractQueryTaskWrapper;
+import org.waag.ah.rdf.ConfigurableRDFWriter;
+import org.waag.ah.rdf.RDFWriterConfig;
 
 import com.bigdata.journal.IIndexManager;
 import com.bigdata.journal.ITx;
@@ -64,11 +66,17 @@ public class BigdataQueryService {
 	public QueryTask getQueryTask(final String query, final String baseURI,
 			final String accept, final OutputStream os)
 			throws MalformedQueryException {
-
+		return getQueryTask(accept, accept, accept, os, null);
+	}
+	
+	public QueryTask getQueryTask(final String query, final String baseURI,
+			final String accept, final OutputStream os, final RDFWriterConfig config)
+					throws MalformedQueryException {
+		
 		AbstractQueryTaskWrapper queryTask = context.getQueryTask(
 				getConfig().namespace, getConfig().timestamp, query, baseURI, accept,
-				os);
-
+				os, config);
+		
 		return new QueryTask(queryTask);
 	}
 
@@ -127,14 +135,16 @@ public class BigdataQueryService {
 
 		public abstract class AbstractQueryTaskWrapper extends AbstractQueryTask {
 			private Map<String, Value> bindings = new HashMap<String, Value>();
+			private RDFWriterConfig config;
 
 			public AbstractQueryTaskWrapper(String namespace, long timestamp,
 					String baseURI, ASTContainer astContainer, QueryType queryType,
 					String defaultMIMEType, Charset charset, String defaultFileExtension,
-					OutputStream os) {
+					OutputStream os, RDFWriterConfig config) {
 				super(namespace, timestamp, baseURI, astContainer, queryType,
 						defaultMIMEType, charset, defaultFileExtension,
 						new MockHttpServletRequest(), os);
+				this.config = config;
 			}
 
 			public void setBinding(String key, Value value) {
@@ -156,11 +166,17 @@ public class BigdataQueryService {
 					query.setBinding(binding.getKey(), binding.getValue());
 				}
 			}
+			
+			protected void applyConfig(RDFWriter writer) {
+				if (ConfigurableRDFWriter.class.isAssignableFrom(writer.getClass())) {
+					((ConfigurableRDFWriter) writer).setConfig(config);
+				}
+			}
 		}
-
+			
 		public AbstractQueryTaskWrapper getQueryTask(String namespace,
 				long timestamp, String queryStr, String baseURI, String acceptStr,
-				OutputStream os) throws MalformedQueryException {
+				OutputStream os, RDFWriterConfig config) throws MalformedQueryException {
 
 			final ASTContainer astContainer = new Bigdata2ASTSPARQLParser(
 					getTripleStore(namespace, timestamp)).parseQuery2(queryStr, baseURI);			
@@ -175,20 +191,20 @@ public class BigdataQueryService {
 					final BooleanQueryResultFormat format = BooleanQueryResultFormat
 							.forMIMEType(acceptStr, BooleanQueryResultFormat.SPARQL);
 					return new AskQueryTask(namespace, timestamp, baseURI, astContainer,
-							queryType, format, os);
+							queryType, format, os, config);
 				}
 				case DESCRIBE:
 				case CONSTRUCT: {
 					final RDFFormat format = RDFFormat.forMIMEType(acceptStr,
 							RDFFormat.RDFXML);
 					return new GraphQueryTask(namespace, timestamp, baseURI,
-							astContainer, queryType, format, os);
+							astContainer, queryType, format, os, config);
 				}
 				case SELECT: {
 					final TupleQueryResultFormat format = TupleQueryResultFormat
 							.forMIMEType(acceptStr, TupleQueryResultFormat.SPARQL);
 					return new TupleQueryTask(namespace, timestamp, baseURI,
-							astContainer, queryType, format, os);
+							astContainer, queryType, format, os, config);
 				}
 			}
 
@@ -200,10 +216,10 @@ public class BigdataQueryService {
 			public AskQueryTask(final String namespace, final long timestamp,
 					final String baseURI, final ASTContainer astContainer,
 					final QueryType queryType, final BooleanQueryResultFormat format,
-					final OutputStream os) {
+					final OutputStream os, final RDFWriterConfig config) {
 				super(namespace, timestamp, baseURI, astContainer, queryType, format
 						.getDefaultMIMEType(), format.getCharset(), format
-						.getDefaultFileExtension(), os);
+						.getDefaultFileExtension(), os, config);
 			}
 
 			protected void doQuery(final BigdataSailRepositoryConnection cxn,
@@ -223,10 +239,10 @@ public class BigdataQueryService {
 			public GraphQueryTask(final String namespace, final long timestamp,
 					final String baseURI, final ASTContainer astContainer,
 					final QueryType queryType, final RDFFormat format,
-					final OutputStream os) {
+					final OutputStream os, final RDFWriterConfig config) {
 				super(namespace, timestamp, baseURI, astContainer, queryType, format
 						.getDefaultMIMEType(), format.getCharset(), format
-						.getDefaultFileExtension(), os);
+						.getDefaultFileExtension(), os, config);
 			}
 
 			@Override
@@ -236,7 +252,8 @@ public class BigdataQueryService {
 				final RDFFormat format = RDFWriterRegistry.getInstance()
 						.getFileFormatForMIMEType(mimeType);
 				final RDFWriter w = RDFWriterRegistry.getInstance().get(format)
-						.getWriter(os);				
+						.getWriter(os);	
+				applyConfig(w);
 				query.evaluate(w);
 			}
 		}
@@ -246,11 +263,11 @@ public class BigdataQueryService {
 			public TupleQueryTask(final String namespace, final long timestamp,
 					final String baseURI, final ASTContainer astContainer,
 					final QueryType queryType, final TupleQueryResultFormat format,
-					final OutputStream os) {
+					final OutputStream os, final RDFWriterConfig config) {
 
 				super(namespace, timestamp, baseURI, astContainer, queryType, format
 						.getDefaultMIMEType(), format.getCharset(), format
-						.getDefaultFileExtension(), os);
+						.getDefaultFileExtension(), os, config);
 			}
 
 			protected void doQuery(final BigdataSailRepositoryConnection cxn,
