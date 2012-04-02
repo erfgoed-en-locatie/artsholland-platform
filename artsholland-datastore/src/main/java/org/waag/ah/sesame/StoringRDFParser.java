@@ -47,8 +47,6 @@ public class StoringRDFParser {
 			source = vf.createURI("http://purl.org/artsholland/1.0/metadata/source");
 			parser = new CustomRDFXMLParser();
 			parser.setRDFHandler(new CustomRDFHandler());
-			super.setDatatypeHandling(DatatypeHandling.NORMALIZE);
-			super.setValueFactory(vf);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -76,25 +74,12 @@ public class StoringRDFParser {
 		} catch (RepositoryException e) {
 			logger.error(e.getMessage(), e);
 		}
-        }
-
-	@Override
-	protected Statement createStatement(Resource subject, URI predicate, Value object)
-			throws RDFParseException {
-		if (Literal.class.isAssignableFrom(object.getClass())) {
-			Literal value = (Literal) object;
-			if (value.getDatatype() != null 
-					&& value.getDatatype().toString().equals("xsd:dateTime")) {
-				object = vf.createLiteral(value.calendarValue());
-			}		
-		}
-		return vf.createStatement(subject, predicate, object);
-	}
+    }
 	
-	private URI getBaseUri(String url) throws MalformedURLException {
-		URL parsedUrl = new URL(url);
-		return vf.createURI(parsedUrl.getProtocol()+"://"+parsedUrl.getHost());
-	}
+//	private URI getBaseUri(String url) throws MalformedURLException {
+//		URL parsedUrl = new URL(url);
+//		return vf.createURI(parsedUrl.getProtocol()+"://"+parsedUrl.getHost());
+//	}
 
 	public void commit() throws RepositoryException {
 		conn.commit();
@@ -122,10 +107,28 @@ public class StoringRDFParser {
 				logger.error(e.getMessage());
 			}
 		}
+		
+		@Override
+		protected Statement createStatement(Resource subject, URI predicate, Value object)
+				throws RDFParseException {
+			if (Literal.class.isAssignableFrom(object.getClass())) {
+				Literal value = (Literal) object;
+				if (value.getDatatype() != null 
+						&& value.getDatatype().toString().equals("xsd:dateTime")) {
+					object = vf.createLiteral(value.calendarValue());
+				}		
+			}
+			return vf.createStatement(subject, predicate, object);
+		}
 	}
 	
 	private class CustomRDFHandler extends RDFHandlerBase {
 		private int counter = 0;
+		
+		@Override
+		public void startRDF() throws RDFHandlerException {
+			counter = 0;
+		}
 		
 		@Override
 		public void handleStatement(Statement st) throws RDFHandlerException {
@@ -145,12 +148,7 @@ public class StoringRDFParser {
 				}
 			}
 		}
-	
-		@Override
-		public void startRDF() throws RDFHandlerException {
-			counter = 0;
-		}
-	
+		
 //		@Override
 //		public void endRDF() throws RDFHandlerException {
 //			try {
