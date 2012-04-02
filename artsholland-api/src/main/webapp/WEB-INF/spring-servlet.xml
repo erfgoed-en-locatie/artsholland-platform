@@ -35,7 +35,9 @@
     </property>
     <property name="defaultViews">
       <list>
-        <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView" />
+        <bean class="org.springframework.web.servlet.view.json.MappingJacksonJsonView">
+        	<property name="objectMapper" ref="ahObjectMapper" />
+        </bean>        
         <bean class="org.springframework.web.servlet.view.xml.MarshallingView">
           <constructor-arg>
             <bean class="org.springframework.oxm.xstream.XStreamMarshaller" />
@@ -44,7 +46,9 @@
       </list>
     </property>
     <!-- property name="ignoreAcceptHeader" value="true" / -->
-  </bean>
+  </bean>  
+  
+  <bean id="ahObjectMapper" class="org.waag.ah.jackson.AHObjectMapper"/>
   
   <bean id="viewResolver" 
       class="org.springframework.web.servlet.view.InternalResourceViewResolver">

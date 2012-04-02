@@ -34,6 +34,11 @@
       <version>${sesame.version}</version>
     </dependency>
     <dependency>
+      <groupId>net.fortytwo.sesametools</groupId>
+      <artifactId>rdfjson</artifactId>
+      <version>1.6</version>
+    </dependency>     
+    <dependency>
 			<groupId>org.openrdf.alibaba</groupId>
 			<artifactId>alibaba-repository-object</artifactId>
 			<version>${alibaba.version}</version>
@@ -88,12 +93,7 @@
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-web</artifactId>
       <version>${spring.version}</version>
-    </dependency>    
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>log4j-over-slf4j</artifactId>
-      <version>1.6.4</version>
-    </dependency>        
+    </dependency>            
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-io</artifactId>
@@ -120,6 +120,11 @@
       <version>2.7.2</version>
     </dependency>
     <dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.4</version>
+		</dependency>
+		<dependency>
       <groupId>commons-configuration</groupId>
       <artifactId>commons-configuration</artifactId>
       <version>1.8</version>

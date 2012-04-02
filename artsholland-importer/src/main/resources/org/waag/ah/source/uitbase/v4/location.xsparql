@@ -6,9 +6,8 @@ declare namespace geo = "http://www.w3.org/2003/01/geo/wgs84_pos#";
 declare namespace foaf = "http://xmlns.com/foaf/0.1/";
 declare namespace vcard = "http://www.w3.org/2006/vcard/ns#";
 declare namespace owl = "http://www.w3.org/2002/07/owl#";
-
 declare namespace nub="http://resources.uitburo.nl/";
-declare namespace ah = "http://data.artsholland.com/";
+declare namespace ah = "http://purl.org/artsholland/1.0/";
 
 import module namespace waag = "http://waag.org" at "http://localhost:8080/static/xquery/waag.xquery.jsp";
 
@@ -23,7 +22,7 @@ return
 		let $cidn := {$location/cidn}
 		let $vuri := {concat($baseuri, "venues/", $cidn)}
 		let $vuriUitburo := {concat($baseuriUitburo, "locations/", $cidn)}
-		let $venueType := {concat("ah:VenueType", waag:capitalize-first-only($location/type/@key))}
+		let $venueType := {concat("ah:venueType", waag:capitalize-first-only($location/type/@key))}
 			
 		construct {
 			$vuri a ah:Venue.			
@@ -51,7 +50,7 @@ return
 			{ for $url in $location/urls//url
 				construct {					
 					
-					$vuri foaf:homepage {if ($url eq "") then () else waag:replace-characters($url)}^^xsd:string.
+					$vuri foaf:homepage {if ($url eq "") then () else waag:replace-characters(waag:correct-url($url))}^^xsd:string.
 					
 				}
 			}.
@@ -67,17 +66,25 @@ return
 				let $description := {waag:replace-characters($medium/description)}
 				let $title := {waag:replace-characters($medium/title)}
 				
+				let $typeKey := {waag:replace-characters($medium/type)}
+				let $typeClass := {if ($typeKey eq "") then () else concat("ah:attachmentType", waag:capitalize-first-only(data($typeKey)))}
+				
 				construct {
 				
 					$vuri ah:attachment $muri.
 					$muri a ah:Attachment.					
 					$muri dc:title {if ($title eq "") then () else $title}^^xsd:string.
 					$muri dc:description {if ($description eq "") then () else $description}^^xsd:string.					
-					$muri foaf:depiction {$medium/ref}.
+					
+					# TODO: string?
+					$muri ah:url {$medium/ref}^^xsd:string.
 										
 					# TODO:
 					#	<alt>A family again</alt>	
-					#	<type>afbeelding</type>
+					
+					$muri ah:attachmentType $typeClass.
+					$typeClass a ah:AttachmentType.			
+					$typeClass rdfs:label {if ($typeKey eq "") then () else $typeKey}^^xsd:string.	
 									
 				}
 			}.

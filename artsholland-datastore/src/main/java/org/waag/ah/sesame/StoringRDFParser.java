@@ -9,8 +9,10 @@ import javax.ejb.EJB;
 import javax.ejb.Stateful;
 
 import org.openrdf.model.Literal;
+import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
+import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
@@ -33,7 +35,7 @@ public class StoringRDFParser {
 	private URI source;
 	private CustomRDFXMLParser parser;
 
-	@EJB(lookup="java:module/BigdataConnectionService")
+	@EJB(mappedName="java:module/BigdataConnectionService")
 	private RepositoryConnectionFactory cf;
 	
 	@PostConstruct
@@ -45,6 +47,8 @@ public class StoringRDFParser {
 			source = vf.createURI("http://purl.org/artsholland/1.0/metadata/source");
 			parser = new CustomRDFXMLParser();
 			parser.setRDFHandler(new CustomRDFHandler());
+			super.setDatatypeHandling(DatatypeHandling.NORMALIZE);
+			super.setValueFactory(vf);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -72,6 +76,24 @@ public class StoringRDFParser {
 		} catch (RepositoryException e) {
 			logger.error(e.getMessage(), e);
 		}
+        }
+
+	@Override
+	protected Statement createStatement(Resource subject, URI predicate, Value object)
+			throws RDFParseException {
+		if (Literal.class.isAssignableFrom(object.getClass())) {
+			Literal value = (Literal) object;
+			if (value.getDatatype() != null 
+					&& value.getDatatype().toString().equals("xsd:dateTime")) {
+				object = vf.createLiteral(value.calendarValue());
+			}		
+		}
+		return vf.createStatement(subject, predicate, object);
+	}
+	
+	private URI getBaseUri(String url) throws MalformedURLException {
+		URL parsedUrl = new URL(url);
+		return vf.createURI(parsedUrl.getProtocol()+"://"+parsedUrl.getHost());
 	}
 
 	public void commit() throws RepositoryException {
@@ -113,7 +135,7 @@ public class StoringRDFParser {
 				conn.add(statement.getContext(), source, jobId);
 				counter++;
 				if (counter % 1024 == 0) {
-					logger.info("ADDING "+counter+" STATEMENTS (CTX: "+statement.getContext()+")");
+					logger.debug("ADDING "+counter+" STATEMENTS (CTX: "+statement.getContext()+")");
 				}
 			} catch (RepositoryException e) {
 				try {

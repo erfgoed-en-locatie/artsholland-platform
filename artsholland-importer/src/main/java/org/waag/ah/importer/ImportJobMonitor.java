@@ -21,31 +21,55 @@ import org.waag.ah.SchedulerService;
 public class ImportJobMonitor extends JobListenerSupport {
 	final static Logger logger = LoggerFactory
 			.getLogger(ImportJobMonitor.class);
+	public static String NAME = ImportJobMonitor.class.getName();
 
 	@Resource(name = "java:app/scheduler/QuartzSchedulerService")
 	private SchedulerService schedulerService;
+	
+//	@Resource(name = "java:app/datastore/MongoConnectionService")
+//	private MongoConnectionService mongo;
 
 	private Scheduler scheduler;
-	public static String NAME = ImportJobMonitor.class.getName();
+//	private DBCollection coll;
 
 	@PostConstruct
 	public void registerListener() {
 		try {
-			logger.debug("Registering import job listener");
 			scheduler = schedulerService.getScheduler();
 			scheduler.getListenerManager().addJobListener(this,
 					GroupMatcher.jobGroupEquals("WebResourceImport"));
+//			coll = mongo.getCollection(ImportJobMonitor.class.getName());
 		} catch (SchedulerException e) {
 			logger.error("Error registering import job monitor", e);
 		}
 	}
-	
+    
+	@Override
+	public void jobToBeExecuted(JobExecutionContext context) {
+//		BasicDBObject query = new BasicDBObject();
+//        query.put("jobKey", UitbaseImportJob.class.getName());
+//        DBCursor cur = coll.find(query).sort(new BasicDBObject("timestamp", -1));
+    }
+    
 	@Override
 	public void jobWasExecuted(JobExecutionContext context,
 			JobExecutionException jobException) {
-		logger.info("JOB EXECUTED: "+context.getFireInstanceId());
+		if (jobException == null) {
+			logger.info("JOB EXECUTED: "+context.getFireInstanceId());
+			logSuccess(context);
+		} else {
+			logger.info("JOB FAILURE: "+context.getFireInstanceId());
+		}
 	}
 	
+	private void logSuccess(JobExecutionContext context) {
+//		ImportJob e1 = new ImportJob();
+//		e1.put("jobKey", context.getJobDetail().getKey());
+//		e1.put("jobId", context.getFireInstanceId());
+//		e1.put("parameters", context.getMergedJobDataMap());
+//		coll.insert(e1);
+	}
+
 	@PreDestroy
 	public void unregisterListener() {
 		try {

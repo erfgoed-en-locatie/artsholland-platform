@@ -85,14 +85,14 @@ public class UitbaseParser extends XMLParser {
 			// for XQuery processing, we handle each node separately
 			// (event/production/location/group).
 			if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV3_MIME_TYPE)) {
-				logger.info("Parsing V3 document");
+				logger.debug("Parsing V3 document");
 				InputStream xquery = getFileContents(getClass(), "v3/event.xsparql");    			
 				return new MatchingContentHandler(
 					new XSPARQLQueryHandler(handler, metadata, context, xquery, ""), 
 					getXPathMatcher("/nubxml/events/descendant::node()"));
 				
 			} else {
-				logger.info("Parsing V4 document");
+				logger.debug("Parsing V4 document");
 				InputStream xquery = null;
 				String node = null;
 				if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_EVENT_MIME_TYPE)) {

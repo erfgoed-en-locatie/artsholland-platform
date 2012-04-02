@@ -2,6 +2,10 @@ package org.waag.ah.spring.service;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.FutureTask;
 
 import javax.ejb.EJB;
@@ -15,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.waag.ah.bigdata.BigdataQueryService;
 import org.waag.ah.bigdata.BigdataQueryService.QueryTask;
+import org.waag.ah.rest.util.MIMEParse;
 
 import com.bigdata.journal.TimestampUtility;
 
@@ -29,23 +34,49 @@ public class SPARQLService {
 		MIME_TEXT_PLAIN 			= "text/plain",
 		MIME_APPLICATION_XML 		= "application/xml",
 		MIME_APPLICATION_RDF_XML 	= "application/rdf+xml",
+		MIME_APPLICATION_JSON 		= "application/json",
 		MIME_APPLICATION_RDF_JSON 	= "application/rdf+json",
 		MIME_SPARQL_RESULTS_XML 	= "application/sparql-results+xml",
 		MIME_SPARQL_RESULTS_JSON 	= "application/sparql-results+json";
+	
+	private static List<String> allowedFormats = Arrays.asList(
+			MIME_APPLICATION_XML,
+			MIME_APPLICATION_RDF_XML,
+			MIME_APPLICATION_JSON,
+			MIME_APPLICATION_RDF_JSON,
+			MIME_SPARQL_RESULTS_JSON,
+			MIME_SPARQL_RESULTS_XML);
+	
+	private static Map<String, String> mappedFormats = new HashMap<String, String>();
+	static {
+		mappedFormats.put(MIME_APPLICATION_JSON, MIME_SPARQL_RESULTS_JSON);
+		mappedFormats.put(MIME_APPLICATION_RDF_JSON, MIME_SPARQL_RESULTS_JSON);
+		mappedFormats.put(MIME_APPLICATION_XML, MIME_SPARQL_RESULTS_XML);
+		mappedFormats.put(MIME_APPLICATION_RDF_XML, MIME_SPARQL_RESULTS_XML);
+	}
 
-	public void query(HttpServletRequest request, HttpServletResponse response, String format) 
-			throws IOException {
-		final OutputStream out = response.getOutputStream();
-		final String query = request.getParameter("query");
-        final String baseURI = request.getRequestURL().toString();
-        final String accept = (format != null ? format : request.getHeader("Accept"));
-//      final boolean explain = request.getParameter(BigdataQueryService.EXPLAIN) != null;
-//      final String timestamp = request.getParameter("timestamp");
+	public void query(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String mimeType = MIMEParse.bestMatch(allowedFormats, request.getHeader("Accept"));
+        
+        if (mappedFormats.containsKey(mimeType)) {
+        	mimeType = mappedFormats.get(mimeType);
+        }
+        
+        if (mimeType.isEmpty()) {
+        	response.setStatus(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+        	return;
+        }
         
         try {
+    		final OutputStream out = response.getOutputStream();
+    		final String query = request.getParameter("query");
+            final String baseURI = request.getRequestURL().toString();
+//          final boolean explain = request.getParameter(BigdataQueryService.EXPLAIN) != null;
+//          final String timestamp = request.getParameter("timestamp");
+
             final QueryTask queryTask;
             try {
-                queryTask = context.getQueryTask(query, baseURI, accept, out);
+                queryTask = context.getQueryTask(query, baseURI, mimeType, out);
             } catch (MalformedQueryException ex) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST,
                         ex.getLocalizedMessage());
@@ -92,13 +123,9 @@ public class SPARQLService {
                 context.executeQueryTask(ft);
                 ft.get();
             }
-		} catch (Throwable e) {
-			try {
-//				throw BigdataRDFServlet.launderThrowable(e, response, query);
-				e.printStackTrace();
-			} catch (Exception e1) {
-				throw new RuntimeException(e);
-			}
+		} catch (Exception e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
+					e.getLocalizedMessage());
 		}		
 	}
 	

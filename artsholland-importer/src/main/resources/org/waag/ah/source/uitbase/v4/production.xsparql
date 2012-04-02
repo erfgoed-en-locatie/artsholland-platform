@@ -4,9 +4,8 @@ declare namespace rdfs="http://www.w3.org/2000/01/rdf-schema#";
 declare namespace xsd="http://www.w3.org/2001/XMLSchema#";
 declare namespace foaf="http://xmlns.com/foaf/0.1/";
 declare namespace owl="http://www.w3.org/2002/07/owl#";
-
 declare namespace nub="http://resources.uitburo.nl/";
-declare namespace ah = "http://data.artsholland.com/";
+declare namespace ah="http://purl.org/artsholland/1.0/";
 
 import module namespace waag = "http://waag.org" at "http://localhost:8080/static/xquery/waag.xquery.jsp";
 
@@ -25,7 +24,7 @@ return
 		let $title := {waag:replace-characters($production/title)}
 		
 		let $typeKey := {$production/type/@key}
-		let $typeClass := {if ($typeKey eq "") then () else concat("ah:ProductionType", waag:capitalize-first-only(data($typeKey)))}
+		let $typeClass := {if (waag:empty($typeKey)) then () else concat("ah:productionType", waag:capitalize-first-only(data($typeKey)))}
 			
 		construct {
 		
@@ -39,12 +38,12 @@ return
 				
 			$puri ah:productionType $typeClass.
 			$typeClass a ah:ProductionType.			
-			$typeClass rdfs:label {if ($production/type eq "") then () else $production/type}^^xsd:string.
+			$typeClass rdfs:label {if ($typeKey eq "") then () else $typeKey}^^xsd:string.
 			
 			{ for $genre in $production/genres//genre
 				
 				let $genreKey := {$genre/@key}
-				let $genreClass := {if ($genreKey eq "") then () else concat("ah:Genre", waag:capitalize-first-only(data($genreKey)))}
+				let $genreClass := {if (waag:empty($genreKey)) then () else concat("ah:genre", waag:capitalize-first-only(data($genreKey)))}
 				
 				construct {				
 					
@@ -58,7 +57,7 @@ return
 			{ for $url in $production/urls//url			
 				construct {				
 					
-					$puri foaf:homepage {if ($url eq "") then () else waag:replace-characters($url)}^^xsd:string.
+					$puri foaf:homepage {if ($url eq "") then () else waag:replace-characters(waag:correct-url($url))}^^xsd:string.
 					
 				}
 			}.
@@ -94,15 +93,18 @@ return
 			
 				construct {
 										
-					$puri ah:tag $tag.
+					$puri ah:tag {if ($tag eq "") then () else waag:replace-characters($tag)}^^xsd:string.					
 					
 				}
-			}
+			}.
 
 			#	TODO:
 			#	notes
 			#	<country>NL</country>
 			#	<language>nl_NL</language>
 			#	<subtitles>en_UK</subtitles>
+			
+			$puri dc:language {waag:get-language-tag($production/language)}.			
+			$puri ah:subtitleLanguage {waag:get-language-tag($production/subtitles)}			
 							
 		}

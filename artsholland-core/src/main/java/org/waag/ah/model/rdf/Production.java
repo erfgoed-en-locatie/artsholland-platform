@@ -1,19 +1,41 @@
 package org.waag.ah.model.rdf;
 
-import org.codehaus.jackson.annotate.JsonAutoDetect;
-import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+import java.util.Set;
 
-@JsonAutoDetect(fieldVisibility=Visibility.NONE, getterVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE, creatorVisibility=Visibility.NONE, setterVisibility=Visibility.NONE)
-@JsonSerialize(include=Inclusion.NON_EMPTY)
-public interface Production extends org.openrdf.repository.object.RDFObject {
+import org.openrdf.annotations.Iri;
+import org.openrdf.repository.object.LangString;
+
+@Iri(AHRDFObject.ah + "Production")
+public abstract class Production extends AHRDFObject {
 	
-	@JsonProperty
-	public String getTitle();
+	@Iri(dc + "title")
+	public abstract Set<LangString> getTitles();
 	
-	@JsonProperty
-	public String getCidn();
-		
+	@Iri(dc + "description")
+	public abstract Set<LangString> getDescriptions();
+	
+	@Iri(ah + "shortDescription")
+	public abstract Set<LangString> getShortDescriptions();
+	
+	@Iri(ah + "party")
+	public abstract Set<LangString> getParties();
+	
+	@Iri(ah + "people")
+	public abstract Set<LangString> getPeoples();
+	
+	@Iri(ah + "cidn")
+	public abstract String getCidn();
+	
+	@Iri(foaf + "homepage")
+	public abstract String getHomepage();	
+	
+	@Iri(ah + "genre")
+	public abstract Genre getGenre();	
+	
+	@Iri(ah + "productionType")
+	public abstract ProductionType getProductionType();	
+	
+	@Iri(ah + "tag")
+	public abstract Set<String> getTags();
+			
 }

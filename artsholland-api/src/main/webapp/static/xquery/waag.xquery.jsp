@@ -21,5 +21,15 @@ declare function waag:make-uri($arg as xs:string?) as xs:string {
 };
 
 declare function waag:get-language-tag($arg as xs:string?) as xs:string {
-	substring($arg, 1, 2)
+	substring($arg, 1, 2)	
+};
+
+declare function waag:empty($arg as xs:string?) as xs:boolean {
+	($arg eq "") or (not(exists($arg)))
+};
+
+declare function waag:correct-url($arg as xs:string?) as xs:string {
+	if (compare(substring($arg, 1, 4), 'http') != 0) 
+	then concat('http://', $arg)
+	else $arg
 };

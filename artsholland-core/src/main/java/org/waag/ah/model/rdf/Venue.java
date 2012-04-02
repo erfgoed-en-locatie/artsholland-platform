@@ -8,40 +8,52 @@ import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
+import org.openrdf.annotations.Iri;
+import org.openrdf.repository.object.LangString;
 
-@JsonAutoDetect(fieldVisibility=Visibility.NONE, getterVisibility=Visibility.NONE, isGetterVisibility=Visibility.NONE, creatorVisibility=Visibility.NONE, setterVisibility=Visibility.NONE)
-@JsonSerialize(include=Inclusion.NON_EMPTY)
-public interface Venue extends org.openrdf.repository.object.RDFObject {
+@Iri(AHRDFObject.ah + "Venue")
+public abstract class Venue extends AHRDFObject {
 
-//	ah:cidn [http]	"0100d220-0077-400a-9bc4-6d222b97deba"^^<xsd:string>	-
-//	ah:shortDescription [http]	"De Wijn & Cultuurhoeve Thabor is een initiatief van Auke Age de Jong en Karin Idzenga."@nl	-
-//	ah:venueType [http]	ah:VenueTypeMuseum [http]	-
-//	dc:created [http]	"2012-03-03T17:28:32Z"^^<xsd:string>	-
-//	dc:description [http]	"De Wijn & Cultuurhoeve Thabor is een initiatief van Auke Age de Jong en Karin Idzenga. Auke is opgegroeid op boerderij Thabor en heeft van het agrarische bedrijf een wijnhoeve gemaakt. De passie voor goede wijnen heeft hij onder andere opgedaan in wijnland Argentini� waar hij gewoond en gestudeerd heeft. <BR><BR> Karin Idzenga heeft de theateropleiding in Arnhem gevolgd en schreef en regisseerde o.a. het openluchtspel in Dronrijp en andere voorstellingen. Daarnaast is zij docent in theaterlessen en haar andere grote liefde: het schilderen."@nl	-
-//	dc:title [http]	"Wijn en Cultuurhoeve Thabor"@nl	-
-//	rdf:type [http]	ah:Venue [http]	-
-//	owl:sameAs [http]	nub:locations/0100d220-0077-400a-9bc4-6d222b97deba [http]	-
-//	geo:lat [http]	"0.0"^^<xsd:decimal>	-
-//	geo:long [http]	"0.0"^^<xsd:decimal>	-
-//	vcard:locality [http]	"Ysbrechtum"	-
-//	vcard:postal-code [http]	"8633 WS"
+	@Iri(ah + "cidn")
+	public abstract String getCidn();
 	
-	@JsonProperty
-	public String getCidn();
+	@Iri(dc + "title")
+	public abstract Set<LangString> getTitles();
 	
-	@JsonProperty
-	public String getTitle();
+	@Iri(dc + "description")
+	public abstract Set<LangString> getDescriptions();
 	
-	@JsonProperty
-	public String getDescription();
-
-	@JsonProperty
-	public Set<Room> getRooms();
+	@Iri(ah + "shortDescription")
+	public abstract  Set<LangString> getShortDescriptions();
 	
-	@JsonProperty
-	public BigDecimal getLatitude();
+	@Iri(ah + "room")
+	public abstract Set<Room> getRooms();
 	
-	@JsonProperty
-	public BigDecimal getLongitude();
+	@Iri(ah + "attachment")
+	public abstract Set<Attachment> getAttachments();
+	
+	@Iri(geo + "lat")
+	public abstract BigDecimal getLatitude();
+	
+	@Iri(geo + "long")
+	public abstract BigDecimal getLongitude();
+		
+	@Iri(vcard + "locality")
+	public abstract String getLocality();
+	
+	@Iri(vcard + "postcal-code")
+	public abstract String getPostalCode();
+	
+	@Iri(vcard + "street-address")
+	public abstract String getStreetAddress();
+	
+	@Iri(foaf + "homepage")
+	public abstract String getHomepage();
+	
+	@Iri(ah + "tag")
+	public abstract Set<String> getTags();
+	
+	@Iri(ah + "venueType")
+	public abstract VenueType getVenueType();	
 	
 }

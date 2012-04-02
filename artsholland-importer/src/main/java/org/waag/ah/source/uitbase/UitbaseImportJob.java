@@ -2,7 +2,9 @@ package org.waag.ah.source.uitbase;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.quartz.DisallowConcurrentExecution;
@@ -15,9 +17,7 @@ import org.waag.ah.ImportMetadata;
 import org.waag.ah.importer.AbstractImportJob;
 import org.waag.ah.importer.ImportJob;
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
 
 @DisallowConcurrentExecution
 public class UitbaseImportJob extends AbstractImportJob {
@@ -56,8 +56,8 @@ public class UitbaseImportJob extends AbstractImportJob {
 		metadata.setJobIdentifier(context.getFireInstanceId());
 
 		DBCollection coll = mongo.getCollection(ImportJob.class.getName());
+		
 //		coll.drop();
-        
 //		ImportJob e1 = new ImportJob();
 //		e1.put("source", UitbaseImportJob.class.getName());
 //		e1.put("jobId", context.getFireInstanceId());
@@ -76,16 +76,12 @@ public class UitbaseImportJob extends AbstractImportJob {
 //		e3.put("timestamp", ts);
 //		e3.put("strategy", this.strategy);
 //		coll.insert(e3);
-		
-		BasicDBObject query = new BasicDBObject();
-        query.put("source", UitbaseImportJob.class.getName());
-        DBCursor cur = coll.find(query).sort(new BasicDBObject("timestamp", -1));
         
-        if(cur.hasNext()) {
-            logger.info(cur.next().toString());
-        } else {
-        	logger.info("NO RECORDS");
-        }
+//        if(cur.hasNext()) {
+//            logger.info(cur.next().toString());
+//        } else {
+//        	logger.info("NO RECORDS");
+//        }
 		
 		try {
 			List<URL> urls = UitbaseURLGenerator.getURLs(dt);
@@ -93,6 +89,9 @@ public class UitbaseImportJob extends AbstractImportJob {
 			doImport(urls, metadata);
 		} catch (Exception e) {
 			throw new JobExecutionException(e);
+		} finally {
+			Map<String, Object> result = new HashMap<String, Object>();
+			result.put("lastImported", dt);
 		}
 	}
 	
@@ -103,15 +102,15 @@ public class UitbaseImportJob extends AbstractImportJob {
     public void setStrategy(String strategy) {
     	this.strategy = strategy;
     }
-
-//	@Override
-//	protected URL buildResourceURL() throws MalformedURLException {
-//		if (strategy.equals(ImportJob.STRATEGY_FULL)) {
-//			logger.info("FULL IMPORT");
-//		} else if (strategy.equals(ImportJob.STRATEGY_INCREMENTAL)) {
-//			logger.info("FULL IMPORT");
+//    private static class UitbaseImportJobStatus implements Serializable {
+//    	private long lastImported;
+//
+//		public void setLastImported(long lastImported) {
+//    		this.lastImported = lastImported;
+//    	}
+//		
+//		public DateTime getLastImported() {
+//			DateTime dt = new DateTime();
 //		}
-//		ArrayList<String> urls = UitbaseURLGenerator.getURLs();
-//		return new URL(urls.get(0));
-//	}
+//    }
 }

@@ -52,11 +52,12 @@ public class UitbaseService extends ProxyService {
 		while (paramNames.hasMoreElements()) { 
 			String paramName = paramNames.nextElement();
 			
-			if ("key".equalsIgnoreCase(paramName)) {
-				/*
-				 * TODO: check if key is valid ArtsHolland API key, etc, etc, etc.
-				 */
-			} else {
+			/*
+			 * TODO: get 'apiKey' from properties file.
+			 * 
+			 * Copy all except apiKey parameter to proxy request:
+			 */
+			if (!"apiKey".equalsIgnoreCase(paramName)) {				
 				params.add(new NameValuePair(paramName, request.getParameter(paramName)));				
 			}	
 		}
