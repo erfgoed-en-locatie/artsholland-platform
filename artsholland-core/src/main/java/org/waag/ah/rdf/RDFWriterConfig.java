@@ -5,7 +5,7 @@ import java.util.Map;
 public class RDFWriterConfig {
 	private boolean prettyPrint;
 	private String languageTag;
-	private Map<String, String> metaData;
+	private Map<String, Number> metaData;
 	
 	public void setPrettyPrint(boolean prettyPrint) {
 		this.prettyPrint = prettyPrint;
@@ -23,11 +23,11 @@ public class RDFWriterConfig {
 		return languageTag;
 	}
 	
-	public void setMetaData(Map<String, String> metaData) {
+	public void setMetaData(Map<String, Number> metaData) {
 		this.metaData = metaData;
 	}
 
-	public Map<String, String> getMetaData() {
+	public Map<String, Number> getMetaData() {
 		return metaData;
 	}
 }

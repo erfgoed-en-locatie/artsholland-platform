@@ -72,6 +72,8 @@ public class RDFGSON {
     VALUE_ARRAY,
     INSTANCE
   };
+  
+  private String languageTag;
 	
 	private final Stack<StackItem> stack = new Stack<StackItem>();
 
@@ -79,8 +81,6 @@ public class RDFGSON {
 
 	public RDFGSON(JsonWriter jsonWriter) {
 		this.jsonWriter = jsonWriter;
-		//TODO: read from parameter
-		this.jsonWriter.setIndent("\t");
 	}
 	
 	/**
@@ -100,8 +100,17 @@ public class RDFGSON {
 	}
 	
 	private void writeValue(Value value) throws IOException {
-		if (value instanceof Literal) {			
-			jsonWriter.value(value.stringValue());
+		if (value instanceof Literal) {	
+				
+	    //Literal l = (Literal) value;	    
+	    //if (l.getLanguage() != null) 
+	    //{
+	    //		if (l.getLanguage().equals(languageTag)) {
+	    //			jsonWriter.value(value.stringValue());
+	    //		}
+	    //} else {
+	    	jsonWriter.value(value.stringValue());
+	    //}
 		} else if (value instanceof BNode) {			
 			jsonWriter.value(resourceToString((BNode) value));			
 		} else if (value instanceof URI) {			
@@ -207,4 +216,13 @@ public class RDFGSON {
 			}			
 		}		
 	}
+
+	public String getLanguageTag() {
+		return languageTag;
+	}
+
+	public void setLanguage(String languageTag) {
+		this.languageTag = languageTag;
+	}
+
 }

@@ -1,10 +1,12 @@
 package org.waag.ah.rest;
 
+import java.util.LinkedList;
+
 public interface RESTParameters {
-	public String getObjectURI();
-	public String getObjectClass();
-	public String getLinkedClass();
 	public long getResultLimit();
 	public long getPage();
-	public String getLanguage();	
+	public String getLanguage();
+	
+	// TODO: find better name
+	public LinkedList<String> getSplitPath();	
 }

@@ -66,7 +66,7 @@ public class BigdataQueryService {
 	public QueryTask getQueryTask(final String query, final String baseURI,
 			final String accept, final OutputStream os)
 			throws MalformedQueryException {
-		return getQueryTask(accept, accept, accept, os, null);
+		return getQueryTask(query, baseURI, accept, os, null);
 	}
 	
 	public QueryTask getQueryTask(final String query, final String baseURI,

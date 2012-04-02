@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.util.Map;
 
 import net.fortytwo.sesametools.rdfjson.RDFJSONWriter;
 
@@ -22,7 +23,6 @@ public class RESTAPIJSONWriter extends RDFJSONWriter implements
 
 	private JsonWriter jsonWriter;
 	private RDFGSON rdfGSON;
-	private RESTParameters params;
 	private RDFWriterConfig config;
 
 	public RESTAPIJSONWriter(final OutputStream out) {
@@ -34,12 +34,20 @@ public class RESTAPIJSONWriter extends RDFJSONWriter implements
 		this.writer = writer;
 
 		jsonWriter = new JsonWriter(writer);
-		rdfGSON = new RDFGSON(jsonWriter);
+		rdfGSON = new RDFGSON(jsonWriter);		
 	}
 
 	@Override
 	public void setConfig(RDFWriterConfig config) {
 		this.config = config;
+		
+		if (config.getPrettyPrint()) {
+			jsonWriter.setIndent("\t");
+		} else {
+			jsonWriter.setIndent("");
+		}
+		
+		rdfGSON.setLanguage(config.getLanguageTag());
 	}
 
 	@Override
@@ -50,8 +58,23 @@ public class RESTAPIJSONWriter extends RDFJSONWriter implements
 	@Override
 	public void startRDF() throws RDFHandlerException {
 		try {
+
+			jsonWriter.beginObject();
+			
+			if (config.getMetaData().size() > 0) {
+				jsonWriter.name("metadata");
+				jsonWriter.beginObject();
+				for (Map.Entry<String, Number> entry : config.getMetaData().entrySet()) {
+					jsonWriter.name(entry.getKey());
+					jsonWriter.value(entry.getValue());
+				}
+				jsonWriter.endObject();
+			}
+			
+			jsonWriter.name("results");
+			
 			// TODO: move to RDFGSON
-			jsonWriter.beginArray();
+			jsonWriter.beginArray();			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -64,9 +87,9 @@ public class RESTAPIJSONWriter extends RDFJSONWriter implements
 		try {
 			rdfGSON.end();
 			jsonWriter.endArray();
+			jsonWriter.endObject();
 
-			// FIXME: we should find better solution.
-			writer.write("}");
+			
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
