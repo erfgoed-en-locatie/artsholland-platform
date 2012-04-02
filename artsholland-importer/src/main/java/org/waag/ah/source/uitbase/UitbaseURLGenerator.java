@@ -8,6 +8,11 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+
 public class UitbaseURLGenerator {
 
 	//	http://accept.ps4.uitburo.nl/api/productions?key=505642b12881b9a60688411a333bc78b&rows=1&start=10
@@ -23,21 +28,22 @@ public class UitbaseURLGenerator {
 	
 	private static final int ROWS = 500;
 	
-	private static final String[] RESOURCES = { 
+	public static final String[] RESOURCES = { 
 		"events", 
 		"locations", 
 		"productions",
 		"groups" 
 	};
-		
-	public static List<URL> getURLs() throws MalformedURLException {
-		
+
+	public static List<URL> getURLs(DateTime dt) throws MalformedURLException {
 		List<URL> urls = new ArrayList<URL>();
+		
+		DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
+		String dtParam = dt != null ? "&createdfrom="+fmt.withZone(DateTimeZone.UTC).print(dt) : "";
 		
 		for (String resource : RESOURCES) {
 			int count = 0;
 			try {
-				
 				String content = readURL(getCountURL(resource));
 				count = getCount(content);	
 				
@@ -48,14 +54,16 @@ public class UitbaseURLGenerator {
 			while (i < count) {
 				
 				// TODO: use something like URLBuilder 
-				String url = addAPIKey(BASE_URL + resource) + "&rows=" + ROWS + "&start=" + i;
+				String url = addAPIKey(BASE_URL + resource) + "&rows=" + ROWS + "&start=" + i + dtParam;
 				urls.add(new URL(url));
 				i += ROWS;
-				
 			}
 		}		
-		
 		return urls;
+	}
+		
+	public static List<URL> getURLs() throws MalformedURLException {
+		return getURLs(null);
 	}
 	
 	private static int getCount(String content) {
@@ -101,5 +109,4 @@ public class UitbaseURLGenerator {
   	
   	return sb.toString();  	
 	}
-	
 }

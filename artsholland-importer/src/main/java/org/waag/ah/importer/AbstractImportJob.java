@@ -9,30 +9,27 @@ import javax.naming.NamingException;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.quartz.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.ImportMetadata;
 import org.waag.ah.PlatformConfig;
+import org.waag.ah.mongo.MongoConnectionService;
 
-public abstract class AbstractURLImportJob /* implements ImportJob */{
-	private Logger logger = LoggerFactory.getLogger(AbstractURLImportJob.class);
-	// private ConnectionFactory factory;
+public abstract class AbstractImportJob implements Job {
+	private Logger logger = LoggerFactory.getLogger(AbstractImportJob.class);
 	private ImportService importService;
 	private PropertiesConfiguration config;
-
-	// protected QueueConnectionFactory factory;
-	// private Queue queue;
-
-	public AbstractURLImportJob() {
+	protected MongoConnectionService mongo;
+	
+	public AbstractImportJob() {
 		try {
 			config = PlatformConfig.getConfig(); 
 			Context ctx = new InitialContext();
 			importService = (ImportService) ctx
 					.lookup("java:global/artsholland-platform/importer/ImportService");
-			// factory = (QueueConnectionFactory) jndiContext
-			// .lookup("java:/ConnectionFactory");
-			// queue = (Queue) jndiContext
-			// .lookup("java:/queue/importService/parse");
+			mongo = (MongoConnectionService) ctx
+					.lookup("java:global/artsholland-platform/datastore/MongoConnectionService");
 		} catch (NamingException e) {
 			logger.error(e.getMessage(), e);
 		} catch (ConfigurationException e) {
@@ -47,7 +44,7 @@ public abstract class AbstractURLImportJob /* implements ImportJob */{
 		metadata.setBaseURI(config.getString("platform.baseUri"));
 		importService.importURL(urls, metadata);
 	}
-
+	
 	// @Override
 	// public final void doImport() throws JMSException, NamingException,
 	// MalformedURLException {

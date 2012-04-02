@@ -2,17 +2,25 @@ package org.waag.ah.source.uitbase;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
-import org.quartz.Job;
+import org.joda.time.DateTime;
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.ImportMetadata;
-import org.waag.ah.importer.AbstractURLImportJob;
+import org.waag.ah.importer.AbstractImportJob;
+import org.waag.ah.importer.ImportJob;
 
-public class UitbaseImportJob extends AbstractURLImportJob implements Job {
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+
+@DisallowConcurrentExecution
+public class UitbaseImportJob extends AbstractImportJob {
 	private Logger logger = LoggerFactory.getLogger(UitbaseImportJob.class);
 	private URL resource;
 	private String strategy;
@@ -20,6 +28,20 @@ public class UitbaseImportJob extends AbstractURLImportJob implements Job {
 	@Override
 	public void execute(JobExecutionContext context)
 			throws JobExecutionException {
+//		List<JobExecutionContext> jobs = context.getScheduler()
+//				.getCurrentlyExecutingJobs();
+//		for (JobExecutionContext job : jobs) {
+//			if (job.getTrigger().equals(context.getTrigger())
+//					&& !job.getJobInstance().equals(this)) {
+//				logger.info("There's another instance running, so leaving"
+//						+ this);
+//				return;
+//			}
+//		}		
+		
+		DateTime dt = new DateTime();//DateTimeZone.forID("Europe/Amsterdam")
+		long ts = dt.getMillis();
+		
 		JobKey key = context.getJobDetail().getKey();
 //		JobDataMap dataMap = context.getMergedJobDataMap();
 		
@@ -27,12 +49,48 @@ public class UitbaseImportJob extends AbstractURLImportJob implements Job {
 		logger.info("\tKey: "+key.toString());
 		logger.info("\tURL: "+this.resource.toExternalForm());
 		logger.info("\tStrategy: "+this.strategy);
+		logger.info("\tDatetime: "+dt);
+		logger.info("\tTimestamp: "+ts);
 		
 		ImportMetadata metadata = new ImportMetadata();
 		metadata.setJobIdentifier(context.getFireInstanceId());
+
+		DBCollection coll = mongo.getCollection(ImportJob.class.getName());
+//		coll.drop();
+        
+//		ImportJob e1 = new ImportJob();
+//		e1.put("source", UitbaseImportJob.class.getName());
+//		e1.put("jobId", context.getFireInstanceId());
+//		e1.put("timestamp", ts);
+//		e1.put("strategy", this.strategy);
+//		coll.insert(e1);
+//		ImportJob e2 = new ImportJob();
+//		e2.put("source", UitbaseImportJob.class.getName());
+//		e2.put("jobId", context.getFireInstanceId());
+//		e2.put("timestamp", ts);
+//		e2.put("strategy", this.strategy);
+//		coll.insert(e2);
+//		ImportJob e3 = new ImportJob();
+//		e3.put("source", UitbaseImportJob.class.getName());
+//		e3.put("jobId", context.getFireInstanceId());
+//		e3.put("timestamp", ts);
+//		e3.put("strategy", this.strategy);
+//		coll.insert(e3);
+		
+		BasicDBObject query = new BasicDBObject();
+        query.put("source", UitbaseImportJob.class.getName());
+        DBCursor cur = coll.find(query).sort(new BasicDBObject("timestamp", -1));
+        
+        if(cur.hasNext()) {
+            logger.info(cur.next().toString());
+        } else {
+        	logger.info("NO RECORDS");
+        }
 		
 		try {
-			doImport(UitbaseURLGenerator.getURLs(), metadata);
+			List<URL> urls = UitbaseURLGenerator.getURLs(dt);
+			logger.info(urls.toString());
+			doImport(urls, metadata);
 		} catch (Exception e) {
 			throw new JobExecutionException(e);
 		}
