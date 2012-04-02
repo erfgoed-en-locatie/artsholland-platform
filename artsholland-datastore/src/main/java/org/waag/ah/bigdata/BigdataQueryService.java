@@ -123,7 +123,6 @@ public class BigdataQueryService {
 		public String getFileExt() {
 			return queryTask.fileExt;
 		}
-
 	}
 
 	public static class BigdataRDFContextWrapper extends BigdataRDFContext {
