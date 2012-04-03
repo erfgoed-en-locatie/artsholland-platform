@@ -1,41 +1,14 @@
 package org.waag.ah.rest;
 
+import java.util.LinkedList;
+
 
 public class RESTParametersImpl implements RESTParameters {
-	private String objectURI;
-	private String objectClass;
-	private String linkedClass;
 	private long resultLimit = 10;
 	private long page = 1;
 	private String language = "nl";	
+	LinkedList<String> splitPath = new LinkedList<String>();
 	
-	public void setObjectURI(String objectName) {
-		this.objectURI = objectName;
-	}
-
-	@Override
-	public String getObjectURI() {
-		return objectURI;
-	}
-	
-	public void setObjectClass(String objectClass) {
-		this.objectClass = objectClass;
-	}
-
-	@Override
-	public String getObjectClass() {
-		return objectClass;
-	}
-	
-	public void setLinkedClass(String linkedClass) {
-		this.linkedClass = linkedClass;		
-	}
-	
-	@Override
-	public String getLinkedClass() {
-		return linkedClass;
-	}
-
 	public void setResultLimit(long resultLimit) {
 		this.resultLimit = resultLimit;
 	}
@@ -61,6 +34,15 @@ public class RESTParametersImpl implements RESTParameters {
 	
 	public void setLanguage(String language) {
 		this.language = language;		
+	}
+
+	@Override
+	public LinkedList<String> getSplitPath() {
+		return splitPath;
+	}
+	
+	public void setSplitPath(LinkedList<String> splitPath) {
+		this.splitPath = splitPath;
 	}
 
 }

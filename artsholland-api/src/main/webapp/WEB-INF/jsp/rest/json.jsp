@@ -1,3 +1,4 @@
+<%--
 <%@ page import="java.util.*" %>
 <%@ page import="org.codehaus.jackson.map.ObjectMapper" %>
 <%@ page import="org.waag.ah.jackson.AHObjectMapper" %>
@@ -14,3 +15,4 @@
 %>
 <%= json %>
 
+--%>
