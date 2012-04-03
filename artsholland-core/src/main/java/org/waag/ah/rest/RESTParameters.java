@@ -1,12 +1,12 @@
 package org.waag.ah.rest;
 
 import java.util.LinkedList;
+import java.util.Map;
 
 public interface RESTParameters {
 	public long getResultLimit();
 	public long getPage();
-	public String getLanguage();
-	
-	// TODO: find better name
-	public LinkedList<String> getSplitPath();	
+	public String getLanguageTag();	
+	public LinkedList<String> getURIPathParts();
+	Map<String, String[]> getURIParameterMap();	
 }

@@ -255,8 +255,8 @@ public class RestRelationQueryTaskGenerator {
 	
 	public QueryTask generate(ServletOutputStream out, RESTParameters params) throws MalformedQueryException {
 		
-		LinkedList<String> splitPath = params.getSplitPath();
-		RestRelation relation = rootRelation.findRelation(splitPath);
+		LinkedList<String> uriPathParts = params.getURIPathParts();
+		RestRelation relation = rootRelation.findRelation(uriPathParts);
 		
 		if (relation == null) {
 			return null;
@@ -277,7 +277,7 @@ public class RestRelationQueryTaskGenerator {
 			if (quantity == RelationQuantity.SINGLE) {
 				
 				query = QUERY_SINGLE_SELF;
-				bindings.put("object", relation.getObjectURI(splitPath, splitPath.size() - 1));
+				bindings.put("object", relation.getObjectURI(uriPathParts, uriPathParts.size() - 1));
 				bindings.put("class", relation.getClassURI());
 				
 			} else if (relation.getQuantity() == RelationQuantity.MULTIPLE) {
@@ -294,7 +294,7 @@ public class RestRelationQueryTaskGenerator {
 			
 			if (relation.getParent() != null) {
 			
-				String objectURI = relation.getParent().getObjectURI(splitPath, splitPath.size() - 2);
+				String objectURI = relation.getParent().getObjectURI(uriPathParts, uriPathParts.size() - 2);
 				String classURI = relation.getParent().getClassURI();
 				String linkedClassURI = relation.getClassURI();
 				
@@ -362,12 +362,12 @@ public class RestRelationQueryTaskGenerator {
 	}
 
 	private ArrayList<String> generateFilters(RestRelation relation,
-			RESTParameters params) {
+			RESTParameters params) { 
 		
 		ArrayList<String> filters = new ArrayList<String>();
 				
 		String languageFilter = "!isLiteral(?o) || datatype(?o) != \"xsd:string\" || langMatches(lang(?o), ?lang	) || langMatches(lang(?o), \"\")";
-		languageFilter = languageFilter.replace("?lang", "\"" + params.getLanguage() + "\"");
+		languageFilter = languageFilter.replace("?lang", "\"" + params.getLanguageTag() + "\"");
 		
 		filters.add(languageFilter);
 		

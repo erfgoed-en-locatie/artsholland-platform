@@ -79,11 +79,6 @@ public class RestRelation {
 	
 	public String getObjectURI(LinkedList<String> parameters, int i) {
 		if (parent != null) {
-//			if (quantity == RelationQuantity.SINGLE) {
-//				return parent.getObjectURI(parameters, i - 1) + "/" + parameters.get(i);	
-//			} else if (quantity == RelationQuantity.MULTIPLE) {
-//				return parent.getObjectURI(parameters, i - 1) + "/" + parameter;
-//			}
 			if (parameterized) {
 				return parent.getObjectURI(parameters, i - 1) + "/" + parameters.get(i);	
 			} else {

@@ -54,8 +54,9 @@ public class RestController {
 			
 			params.setResultLimit(limit);
 			params.setPage(page);
-			params.setLanguage(lang);		
-			params.setSplitPath(new LinkedList<String>(Arrays.asList(request.getRequestURI().substring(6).split("/"))));
+			params.setLanguageTag(lang);		
+			params.setURIPathParts(new LinkedList<String>(Arrays.asList(request.getRequestURI().substring(6).split("/"))));
+			params.setURIParameterMap(request.getParameterMap());
 			
 			restService.restRequest(request, response, params);
 		} else {

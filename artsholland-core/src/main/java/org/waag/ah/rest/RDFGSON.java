@@ -73,8 +73,6 @@ public class RDFGSON {
     INSTANCE
   };
   
-  private String languageTag;
-	
 	private final Stack<StackItem> stack = new Stack<StackItem>();
 
 	private JsonWriter jsonWriter;
@@ -215,14 +213,6 @@ public class RDFGSON {
 				jsonWriter.endObject();
 			}			
 		}		
-	}
-
-	public String getLanguageTag() {
-		return languageTag;
-	}
-
-	public void setLanguage(String languageTag) {
-		this.languageTag = languageTag;
 	}
 
 }
