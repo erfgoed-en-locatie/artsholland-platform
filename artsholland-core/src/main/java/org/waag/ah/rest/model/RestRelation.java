@@ -7,8 +7,9 @@ import java.util.List;
 
 public class RestRelation {
 
+	// TODO: get from properties
 	public static String OBJECT_NAMESPACE ="http://data.artsholland.com/";
-	public static String CLASS_NAMESPACE = "http://data.artsholland.com/";
+	public static String CLASS_NAMESPACE = "http://purl.org/artsholland/1.0/";
 	
 	public static enum RelationQuantity {
     SINGLE,
@@ -78,9 +79,9 @@ public class RestRelation {
 	
 	public String getObjectURI(LinkedList<String> parameters, int i) {
 		if (parent != null) {
-			if (quantity == RelationQuantity.SINGLE) {
+			if (parameterized) {
 				return parent.getObjectURI(parameters, i - 1) + "/" + parameters.get(i);	
-			} else if (quantity == RelationQuantity.MULTIPLE) {
+			} else {
 				return parent.getObjectURI(parameters, i - 1) + "/" + parameter;
 			}
 		}
@@ -176,6 +177,8 @@ public class RestRelation {
 			
 			if (found && relation != null) {
 				return relation.findRelation(relation.parent, relation.getRelations(), parameters, i + 1);
+			} else {
+				return null;
 			}
 		}
 		return this;

@@ -47,7 +47,6 @@ public class RESTAPIJSONWriter extends RDFJSONWriter implements
 			jsonWriter.setIndent("");
 		}
 		
-		rdfGSON.setLanguage(config.getLanguageTag());
 	}
 
 	@Override

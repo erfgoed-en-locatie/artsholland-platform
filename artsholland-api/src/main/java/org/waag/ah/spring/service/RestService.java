@@ -81,14 +81,17 @@ public class RestService implements InitializingBean, DisposableBean {
 	public void restRequest(HttpServletRequest request,
 			HttpServletResponse response, RESTParameters params) throws IOException {
 	
-		try {
+		try {			
 			QueryTask queryTask = queryTaskGenerator.generate(response.getOutputStream(), params);			
-			final FutureTask<Void> ft = new FutureTask<Void>(queryTask);
-			
-			response.setStatus(HttpServletResponse.SC_OK);
-			context.executeQueryTask(ft);
-			ft.get();	
-			
+			if (queryTask != null) {
+				final FutureTask<Void> ft = new FutureTask<Void>(queryTask);
+				
+				response.setStatus(HttpServletResponse.SC_OK);
+				context.executeQueryTask(ft);
+				ft.get();	
+			} else {
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			}			
 		} catch (MalformedQueryException e) {
 			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST,

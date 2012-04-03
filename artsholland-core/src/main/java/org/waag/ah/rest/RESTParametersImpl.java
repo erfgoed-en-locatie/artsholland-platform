@@ -1,13 +1,15 @@
 package org.waag.ah.rest;
 
 import java.util.LinkedList;
+import java.util.Map;
 
 
 public class RESTParametersImpl implements RESTParameters {
 	private long resultLimit = 10;
 	private long page = 1;
-	private String language = "nl";	
-	LinkedList<String> splitPath = new LinkedList<String>();
+	private String languageTag = "nl";	
+	LinkedList<String> uriPathParts = new LinkedList<String>();
+	private Map<String, String[]> parameterMap;
 	
 	public void setResultLimit(long resultLimit) {
 		this.resultLimit = resultLimit;
@@ -28,21 +30,30 @@ public class RESTParametersImpl implements RESTParameters {
 	}
 
 	@Override
-	public String getLanguage() {
-		return language ;		
+	public String getLanguageTag() {
+		return languageTag ;		
 	}
 	
-	public void setLanguage(String language) {
-		this.language = language;		
+	public void setLanguageTag(String languageTag) {
+		this.languageTag = languageTag;		
 	}
 
 	@Override
-	public LinkedList<String> getSplitPath() {
-		return splitPath;
+	public LinkedList<String> getURIPathParts() {
+		return uriPathParts;
 	}
 	
-	public void setSplitPath(LinkedList<String> splitPath) {
-		this.splitPath = splitPath;
+	public void setURIPathParts(LinkedList<String> uriPathParts) {
+		this.uriPathParts = uriPathParts;
+	}
+
+	@Override
+	public Map<String, String[]> getURIParameterMap() {
+		return parameterMap;		
+	}
+	
+	public void setURIParameterMap(Map<String, String[]> parameterMap) {
+		this.parameterMap = parameterMap;		
 	}
 
 }

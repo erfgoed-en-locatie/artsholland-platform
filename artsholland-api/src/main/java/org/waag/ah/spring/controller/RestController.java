@@ -47,15 +47,21 @@ public class RestController {
 		@RequestParam(value = "limit", defaultValue = "10", required = false) long limit,
 		@RequestParam(value = "page", defaultValue = "1", required = false) long page,
 		@RequestParam(value = "lang", defaultValue = "nl", required = false) String lang) throws IOException {
-
-		RESTParametersImpl params = new RESTParametersImpl();
+		// Check whether request URI is longer than '/rest/'
+		if ( request.getRequestURI().length() > MAPPING.length() + 1) {
 		
-		params.setResultLimit(limit);
-		params.setPage(page);
-		params.setLanguage(lang);
-		params.setSplitPath(new LinkedList<String>(Arrays.asList(request.getRequestURI().substring(6).split("/"))));
-		
-		restService.restRequest(request, response, params);
+			RESTParametersImpl params = new RESTParametersImpl();
+			
+			params.setResultLimit(limit);
+			params.setPage(page);
+			params.setLanguageTag(lang);		
+			params.setURIPathParts(new LinkedList<String>(Arrays.asList(request.getRequestURI().substring(6).split("/"))));
+			params.setURIParameterMap(request.getParameterMap());
+			
+			restService.restRequest(request, response, params);
+		} else {
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+		}
 	}	
 
 //	@RequestMapping(value = MAPPING + "geo", method = RequestMethod.GET)	
