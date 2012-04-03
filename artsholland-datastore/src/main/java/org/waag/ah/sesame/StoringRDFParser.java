@@ -5,7 +5,6 @@ import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.ejb.EJB;
 import javax.ejb.Stateful;
 
 import org.openrdf.model.Literal;
@@ -14,6 +13,7 @@ import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
+import org.openrdf.model.impl.URIImpl;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.RDFHandlerException;
@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.waag.ah.ImportMetadata;
-import org.waag.ah.RepositoryConnectionFactory;
 
 @Stateful
 public class StoringRDFParser {
@@ -34,17 +33,13 @@ public class StoringRDFParser {
 	private Literal jobId;
 	private URI source;
 	private CustomRDFXMLParser parser;
-
-	@EJB(mappedName="java:module/BigdataConnectionService")
-	private RepositoryConnectionFactory cf;
 	
 	@PostConstruct
 	public void connect() {
 		Assert.isNull(conn, "Already connected");
 		try {
-			conn = cf.getConnection();
-			vf = conn.getValueFactory();
-			source = vf.createURI("http://purl.org/artsholland/1.0/metadata/source");
+//			conn = cf.getConnection();
+			source = new URIImpl("http://purl.org/artsholland/1.0/metadata/source"); //vf.createURI("http://purl.org/artsholland/1.0/metadata/source");
 			parser = new CustomRDFXMLParser();
 			parser.setRDFHandler(new CustomRDFHandler());
 		} catch (Exception e) {
@@ -62,13 +57,15 @@ public class StoringRDFParser {
 		}
 	}
 	
-	public void parse(InputStream in, ImportMetadata metadata)
+	public void parse(RepositoryConnection conn, InputStream in, ImportMetadata metadata)
 			throws RDFParseException, RDFHandlerException, IOException {
 		try {
 			Assert.notNull(conn, "Connection to triple stote not initialized");
 			Assert.isTrue(conn.isOpen(), "Not connected to triple store");
 			Assert.notNull(metadata.getBaseURI(), "RDF parser needs a base URI");
 			Assert.notNull(metadata.getJobIdentifier(), "RDF parser needs a base URI");
+			this.conn = conn;
+			vf = conn.getValueFactory();
 			jobId = vf.createLiteral(metadata.getJobIdentifier());
 			parser.parse(in, metadata.getBaseURI());
 		} catch (RepositoryException e) {
@@ -98,14 +95,8 @@ public class StoringRDFParser {
 		@Override
 		public synchronized void parse(InputStream in, String baseURI)
 				throws IOException, RDFParseException, RDFHandlerException {
-			try {
-				logger.info("USING BASE URI: "+baseURI);
-				long cursize = conn.size();
-				super.parse(in, baseURI);
-				logger.info("ADDED "+(conn.size()-cursize)+" NEW STATEMENTS");
-			} catch (RepositoryException e) {
-				logger.error(e.getMessage());
-			}
+			logger.debug("USING BASE URI: "+baseURI);
+			super.parse(in, baseURI);
 		}
 		
 		@Override

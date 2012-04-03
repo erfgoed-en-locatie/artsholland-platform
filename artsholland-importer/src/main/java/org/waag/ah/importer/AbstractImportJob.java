@@ -1,6 +1,7 @@
 package org.waag.ah.importer;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.naming.Context;
@@ -13,12 +14,14 @@ import org.quartz.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.ImportMetadata;
+import org.waag.ah.ImportResource;
+import org.waag.ah.ImportService;
 import org.waag.ah.PlatformConfig;
 import org.waag.ah.mongo.MongoConnectionService;
 
 public abstract class AbstractImportJob implements Job {
 	private Logger logger = LoggerFactory.getLogger(AbstractImportJob.class);
-	private ImportService importService;
+	private ImportService importServiceBean;
 	private PropertiesConfiguration config;
 	protected MongoConnectionService mongo;
 	
@@ -26,8 +29,8 @@ public abstract class AbstractImportJob implements Job {
 		try {
 			config = PlatformConfig.getConfig(); 
 			Context ctx = new InitialContext();
-			importService = (ImportService) ctx
-					.lookup("java:global/artsholland-platform/importer/ImportService");
+			importServiceBean = (ImportService) ctx
+					.lookup("java:global/artsholland-platform/importer/ImportServiceBean");
 			mongo = (MongoConnectionService) ctx
 					.lookup("java:global/artsholland-platform/datastore/MongoConnectionService");
 		} catch (NamingException e) {
@@ -42,23 +45,10 @@ public abstract class AbstractImportJob implements Job {
 	protected void doImport(List<URL> urls, ImportMetadata metadata)
 			throws Exception {
 		metadata.setBaseURI(config.getString("platform.baseUri"));
-		importService.importURL(urls, metadata);
+		List<ImportResource> resources = new ArrayList<ImportResource>();
+		for (URL url : urls) {
+			resources.add(ImportResourceFactory.getimportResource(url));
+		}
+		importServiceBean.importResource(resources, metadata);
 	}
-	
-	// @Override
-	// public final void doImport() throws JMSException, NamingException,
-	// MalformedURLException {
-	// QueueConnection connection = factory.createQueueConnection();
-	// try {
-	// QueueSession session = connection.createQueueSession(false,
-	// QueueSession.AUTO_ACKNOWLEDGE);
-	// QueueSender sender = session.createSender(queue);
-	// String url = buildResourceURL().toExternalForm();
-	// TextMessage msg = session.createTextMessage(url);
-	// logger.debug("SCHEDULING URL IMPORT: " + url);
-	// sender.send(msg);
-	// } finally {
-	// connection.close();
-	// }
-	// }
 }

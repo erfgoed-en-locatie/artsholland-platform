@@ -89,24 +89,23 @@ public class UitbaseURLGenerator {
 		return url + "?key=" + API_KEY;
 	}
 
-	private static String readURL(String url) throws IOException {		
-    /*
-		HttpClient client = new HttpClient();
-		method = new GetMethod(baseUrl);
-		method.getResponseBodyAsString()
-		*/
-		
-		BufferedReader reader = new BufferedReader(
-    		new InputStreamReader(new URL(url).openStream()));  
-    
-    StringBuilder sb = new StringBuilder();
-    
-  	String line;
-  	while ((line = reader.readLine()) != null) {
-  		sb.append(line);
-  	} 
-  	reader.close();
-  	
-  	return sb.toString();  	
+	private static String readURL(String url) throws IOException {
+		/*
+		 * HttpClient client = new HttpClient(); method = new
+		 * GetMethod(baseUrl); method.getResponseBodyAsString()
+		 */
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+				new URL(url).openStream()));
+
+		StringBuilder sb = new StringBuilder();
+
+		String line;
+		while ((line = reader.readLine()) != null) {
+			sb.append(line);
+		}
+		reader.close();
+
+		return sb.toString();
 	}
 }

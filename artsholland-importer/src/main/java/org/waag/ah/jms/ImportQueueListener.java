@@ -11,7 +11,7 @@ import javax.jms.TextMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.ah.importer.ImportService;
+import org.waag.ah.importer.ImportServiceBean;
 
 @MessageDriven(
 	activationConfig={
@@ -21,14 +21,14 @@ import org.waag.ah.importer.ImportService;
 public class ImportQueueListener implements MessageListener {
 	private static final Logger logger = LoggerFactory.getLogger(ImportQueueListener.class);
 	
-	@Resource(name = "java:module/ImportService")
-	private ImportService importService;
+	@Resource(name = "java:module/ImportServiceBean")
+	private ImportServiceBean importServiceBean;
 	
 	public void onMessage(Message msgIn) {
 		try {
 			URL url = new URL(((TextMessage)msgIn).getText());
 			logger.debug("Received URL import message: "+url.toExternalForm());
-//			importService.importURL(url);
+//			importServiceBean.importURL(url);
 		} catch (Exception e) {
 			logger.error("Error importing URL", e);
 		}
