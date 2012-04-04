@@ -57,7 +57,7 @@ public class SchedulerServiceBean implements MessageListener {
 	
 	public void onMessage(Message msg) {}
 	
-    //@Schedule(persistent=false, minute="*/5", hour="*")
+    @Schedule(persistent=false, minute="*/5", hour="*")
     public void automaticTimeout() {
 		QueueSession session = null;         
 		QueueSender sender = null;  
@@ -94,7 +94,7 @@ public class SchedulerServiceBean implements MessageListener {
 			for (String sourceURL: sourceURLs2) {
 //				logger.info("Scheduling URL for import: "+sourceURL);
 				TextMessage msg = session.createTextMessage(sourceURL);
-//				sender.send(msg);
+				sender.send(msg);
 //				logger.info("Message sent successfully to import queue");
 			}
 			
