@@ -19,6 +19,7 @@ import org.waag.ah.bigdata.BigdataQueryService;
 import org.waag.ah.bigdata.BigdataQueryService.QueryTask;
 import org.waag.ah.rest.RESTParameters;
 import org.waag.ah.rest.model.RestRelation;
+import org.waag.ah.rest.model.SPARQLFilter;
 import org.waag.ah.rest.model.RestRelation.RelationQuantity;
 import org.waag.ah.rest.model.RestRelation.RelationType;
 
@@ -52,12 +53,24 @@ public class RestService implements InitializingBean, DisposableBean {
   	RestRelation venuesRelation = rootRelation.addRelation("venues", "Venue", RelationQuantity.MULTIPLE, RelationType.SELF, false);
   	RestRelation productionsRelation = rootRelation.addRelation("productions", "Production", RelationQuantity.MULTIPLE, RelationType.SELF, false);
   	
+  	// TODO: ?this instead of ?object  ???
+  	SPARQLFilter venuesLocalityFilter = new SPARQLFilter("locality", "?object vcard:locality ?locality.", "?locality = \"?parameter\"");
+  	venuesRelation.addFilter(venuesLocalityFilter);
+
+  	SPARQLFilter eventsLocalityFilter = new SPARQLFilter("locality", "?object <http://purl.org/artsholland/1.0/venue> ?venue . ?venue vcard:locality ?locality .", "?locality = \"?parameter\"");
+  	SPARQLFilter eventsBeforeFilter = new SPARQLFilter("before", "?object time:hasBeginning ?hasBeginning.", "?hasBeginning < \"?parameter\"^^xsd:dateTime");
+  	SPARQLFilter eventsAfterFilter = new SPARQLFilter("after", "?object time:hasBeginning ?hasBeginning.", "?hasBeginning > \"?parameter\"^^xsd:dateTime");
+  	eventsRelation.addFilter(eventsLocalityFilter);
+  	eventsRelation.addFilter(eventsBeforeFilter);
+  	eventsRelation.addFilter(eventsAfterFilter);
+  	//?time < "2012-06-02T17:00:00Z"^^xsd:dateTime
+  	
   	RestRelation eventRelation = eventsRelation.addRelation("cidn", "Event", RelationQuantity.SINGLE, RelationType.SELF, true);
   	RestRelation venueRelation = venuesRelation.addRelation("cidn", "Venue", RelationQuantity.SINGLE, RelationType.SELF, true);
   	RestRelation productionRelation = productionsRelation.addRelation("cidn", "Production", RelationQuantity.SINGLE, RelationType.SELF, true);
   	
-  	eventRelation.addRelation("production", "Production", RelationQuantity.SINGLE, RelationType.FORWARD, false);
-  	eventRelation.addRelation("venue", "Venue", RelationQuantity.SINGLE, RelationType.FORWARD, false);
+  	eventRelation.addRelation("productions", "Production", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+  	eventRelation.addRelation("venues", "Venue", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
   	eventRelation.addRelation("rooms", "Room", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
   	
   	venueRelation.addRelation("events", "Event", RelationQuantity.MULTIPLE, RelationType.BACKWARD, false);
@@ -70,6 +83,10 @@ public class RestService implements InitializingBean, DisposableBean {
   	RestRelation venueAttachmentRelation = venueRelation.addRelation("attachments", "Attachment", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
   	venueAttachmentRelation.addRelation("id", "Attachment", RelationQuantity.SINGLE, RelationType.SELF, true); 	
 		
+  	RestRelation eventAttachmentRelation = eventRelation.addRelation("attachments", "Attachment", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+  	eventAttachmentRelation.addRelation("id", "Attachment", RelationQuantity.SINGLE, RelationType.SELF, true); 	
+		
+  	
   	queryTaskGenerator = new RestRelationQueryTaskGenerator(context, conn, config.getString("platform.baseUri"), rootRelation);
 	}
 
