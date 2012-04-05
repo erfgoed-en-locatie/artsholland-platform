@@ -11,6 +11,7 @@ import org.waag.ah.rdf.RDFWriterConfig;
 import org.waag.ah.rdf.RdfQueryDefinition;
 import org.waag.ah.rest.RestParameters;
 import org.waag.ah.rest.model.RestRelation;
+import org.waag.ah.rest.model.SPARQLFilter;
 import org.waag.ah.rest.model.RestRelation.RelationQuantity;
 import org.waag.ah.rest.model.RestRelation.RelationType;
 import org.waag.ah.rest.util.RestRelationQueryTaskGenerator;
@@ -32,12 +33,12 @@ public class RestService implements InitializingBean {
 
 		rootRelation = new RestRelation();
 
-		RestRelation eventsRelation = rootRelation.addRelation("events",
+		RestRelation eventsRelation = rootRelation.addRelation("event",
 				"Event", RelationQuantity.MULTIPLE, RelationType.SELF, false);
-		RestRelation venuesRelation = rootRelation.addRelation("venues",
+		RestRelation venuesRelation = rootRelation.addRelation("venue",
 				"Venue", RelationQuantity.MULTIPLE, RelationType.SELF, false);
-		RestRelation productionsRelation = rootRelation.addRelation(
-				"productions", "Production", RelationQuantity.MULTIPLE,
+		RestRelation productionsRelation = rootRelation.addRelation("production", 
+				"Production", RelationQuantity.MULTIPLE,
 				RelationType.SELF, false);
 
 		RestRelation eventRelation = eventsRelation.addRelation("cidn",
@@ -52,26 +53,39 @@ public class RestService implements InitializingBean {
 				RelationQuantity.SINGLE, RelationType.FORWARD, false);
 		eventRelation.addRelation("venue", "Venue", RelationQuantity.SINGLE,
 				RelationType.FORWARD, false);
-		eventRelation.addRelation("rooms", "Room", RelationQuantity.MULTIPLE,
+		eventRelation.addRelation("room", "Room", RelationQuantity.MULTIPLE,
 				RelationType.FORWARD, false);
 
-		venueRelation.addRelation("events", "Event", RelationQuantity.MULTIPLE,
+		venueRelation.addRelation("event", "Event", RelationQuantity.MULTIPLE,
 				RelationType.BACKWARD, false);
-		venueRelation.addRelation("productions", "Production",
+		venueRelation.addRelation("production", "Production",
 				RelationQuantity.MULTIPLE, RelationType.BACKWARDFORWARD, false);
-		venueRelation.addRelation("rooms", "Room", RelationQuantity.MULTIPLE,
+		venueRelation.addRelation("room", "Room", RelationQuantity.MULTIPLE,
 				RelationType.FORWARD, false);
 
-		productionRelation.addRelation("events", "Event",
+		productionRelation.addRelation("event", "Event",
 				RelationQuantity.MULTIPLE, RelationType.BACKWARD, false);
-		productionRelation.addRelation("venues", "Venue",
+		productionRelation.addRelation("venue", "Venue",
 				RelationQuantity.MULTIPLE, RelationType.BACKWARDFORWARD, false);
 
 		RestRelation venueAttachmentRelation = venueRelation.addRelation(
-				"attachments", "Attachment", RelationQuantity.MULTIPLE,
+				"attachment", "Attachment", RelationQuantity.MULTIPLE,
 				RelationType.FORWARD, false);
 		venueAttachmentRelation.addRelation("id", "Attachment",
 				RelationQuantity.SINGLE, RelationType.SELF, true);
+		
+		
+  	// TODO: ?this instead of ?object  ???
+  	SPARQLFilter venuesLocalityFilter = new SPARQLFilter("locality", "?object vcard:locality ?locality.", "?locality = \"?parameter\"");
+  	venuesRelation.addFilter(venuesLocalityFilter);
+
+  	SPARQLFilter eventsLocalityFilter = new SPARQLFilter("locality", "?object <http://purl.org/artsholland/1.0/venue> ?venue . ?venue vcard:locality ?locality .", "?locality = \"?parameter\"");
+  	SPARQLFilter eventsBeforeFilter = new SPARQLFilter("before", "?object time:hasBeginning ?hasBeginning.", "?hasBeginning < \"?parameter\"^^xsd:dateTime");
+  	SPARQLFilter eventsAfterFilter = new SPARQLFilter("after", "?object time:hasBeginning ?hasBeginning.", "?hasBeginning > \"?parameter\"^^xsd:dateTime");
+  	eventsRelation.addFilter(eventsLocalityFilter);
+  	eventsRelation.addFilter(eventsBeforeFilter);
+  	eventsRelation.addFilter(eventsAfterFilter);
+  	//?time < "2012-06-02T17:00:00Z"^^xsd:dateTime
 
 		queryTaskGenerator = new RestRelationQueryTaskGenerator(rootRelation);
 	}
