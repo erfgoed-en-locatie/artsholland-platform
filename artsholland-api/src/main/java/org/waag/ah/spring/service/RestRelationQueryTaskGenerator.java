@@ -15,6 +15,8 @@ import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.waag.ah.bigdata.BigdataQueryService;
 import org.waag.ah.bigdata.BigdataQueryService.QueryTask;
 import org.waag.ah.rdf.RDFWriterConfig;
@@ -25,6 +27,8 @@ import org.waag.ah.rest.model.RestRelation.RelationQuantity;
 import org.waag.ah.rest.model.RestRelation.RelationType;
 
 public class RestRelationQueryTaskGenerator {
+	private static final Logger logger = LoggerFactory
+			.getLogger(RestRelationQueryTaskGenerator.class);
 	
 	// "!isLiteral(?hasValue) || datatype(?hasValue) != \"xsd:string\" || langMatches(lang(?hasValue), ?lang	) || langMatches(lang(?hasValue), \"\")"
 	// query = query.replace("?lang", "\"" + params.getLanguage() + "\"");
@@ -340,16 +344,20 @@ public class RestRelationQueryTaskGenerator {
 			
 			RDFWriterConfig config = new RDFWriterConfig();
 			config.setPrettyPrint(true);
-			Map<String, Number> metaData = new HashMap<String, Number>();
-			if (count > 0) {
-				metaData.put("count", count);
+			
+			if (quantity != RelationQuantity.SINGLE) {
+				Map<String, Number> metaData = new HashMap<String, Number>();
+				if (count > 0) {
+					metaData.put("count", count);
+				}
+				metaData.put("page", page);
+				metaData.put("limit", params.getResultLimit());
+				config.setMetaData(metaData);
 			}
-			metaData.put("page", page);
-			metaData.put("limit", params.getResultLimit());
-			config.setMetaData(metaData);
 			
 			query = addPaging(query, params.getResultLimit(), params.getPage());
 			query = addFilters(query, generateFilters(relation, params));
+			
 			queryTask = context.getQueryTask(QUERY_PREFIX + query, baseUri, RDFJSONFormat.MIMETYPE, out, config);
 			
 	//		ValueFactory vf = conn.getValueFactory();

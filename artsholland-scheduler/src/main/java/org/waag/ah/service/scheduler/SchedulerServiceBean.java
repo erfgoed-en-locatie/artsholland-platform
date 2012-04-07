@@ -94,7 +94,7 @@ public class SchedulerServiceBean implements MessageListener {
 			for (String sourceURL: sourceURLs2) {
 //				logger.info("Scheduling URL for import: "+sourceURL);
 				TextMessage msg = session.createTextMessage(sourceURL);
-				sender.send(msg);
+//				sender.send(msg);
 //				logger.info("Message sent successfully to import queue");
 			}
 			

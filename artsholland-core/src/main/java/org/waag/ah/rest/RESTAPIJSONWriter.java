@@ -60,7 +60,7 @@ public class RESTAPIJSONWriter extends RDFJSONWriter implements
 
 			jsonWriter.beginObject();
 			
-			if (config.getMetaData().size() > 0) {
+			if (config.getMetaData() != null && config.getMetaData().size() > 0) {
 				jsonWriter.name("metadata");
 				jsonWriter.beginObject();
 				for (Map.Entry<String, Number> entry : config.getMetaData().entrySet()) {

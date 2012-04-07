@@ -12,16 +12,12 @@ public class RestRelation {
 	public static String CLASS_NAMESPACE = "http://purl.org/artsholland/1.0/";
 	
 	public static enum RelationQuantity {
-    SINGLE,
-    MULTIPLE
-  };
+		SINGLE, MULTIPLE
+	};
   
 	public static enum RelationType {
-		SELF,
-    FORWARD,
-    BACKWARD,
-    BACKWARDFORWARD
-  };
+		SELF, FORWARD, BACKWARD, BACKWARDFORWARD
+	};
 	
 	private String parameter;	
 	private String classURI;
@@ -132,10 +128,12 @@ public class RestRelation {
 		relations.add(relation);
 	}
 	
-	public RestRelation addRelation(String parameter, String classURI, RelationQuantity quantity, RelationType type, boolean parameterized) {
-  	RestRelation relation = new RestRelation(parameter, classURI, quantity, type, parameterized, this);
-  	relations.add(relation);
-  	return relation;
+	public RestRelation addRelation(String parameter, String classURI,
+			RelationQuantity quantity, RelationType type, boolean parameterized) {
+		RestRelation relation = new RestRelation(parameter, classURI, quantity,
+				type, parameterized, this);
+		relations.add(relation);
+		return relation;
 	}
 	
 	public List<RestRelation> getRelations() {
@@ -146,7 +144,8 @@ public class RestRelation {
 		return findRelation(parent, relations, parameters, 0);
 	}
 
-	private RestRelation findRelation(RestRelation parent, List<RestRelation> relations, LinkedList<String> parameters, int i) {	
+	private RestRelation findRelation(RestRelation parent,
+			List<RestRelation> relations, LinkedList<String> parameters, int i) {
 		String parameter = null;
 		
 		if (i >= 0 && i < parameters.size()) {

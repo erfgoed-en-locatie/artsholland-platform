@@ -5,10 +5,12 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.DependsOn;
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
 
 import org.openrdf.model.Value;
@@ -25,13 +27,13 @@ import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.RDFWriterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.bigdata.BigdataQueryService.BigdataRDFContextWrapper.AbstractQueryTaskWrapper;
 import org.waag.ah.rdf.ConfigurableRDFWriter;
 import org.waag.ah.rdf.RDFWriterConfig;
 
 import com.bigdata.journal.IIndexManager;
 import com.bigdata.journal.ITx;
-import com.bigdata.journal.Journal;
 import com.bigdata.rdf.sail.BigdataSailBooleanQuery;
 import com.bigdata.rdf.sail.BigdataSailGraphQuery;
 import com.bigdata.rdf.sail.BigdataSailRepositoryConnection;
@@ -42,21 +44,24 @@ import com.bigdata.rdf.sparql.ast.ASTContainer;
 import com.bigdata.rdf.sparql.ast.QueryType;
 
 @Singleton
+@DependsOn("BigdataConnectionService")
 public class BigdataQueryService {
 	private static final Logger logger = LoggerFactory
 			.getLogger(BigdataQueryService.class);
-	private final BigdataRDFContextWrapper context;
+	private BigdataRDFContextWrapper context;
 	public static final String EXPLAIN = BigdataRDFContextWrapper.EXPLAIN;
 
-	public BigdataQueryService() {
+	@EJB(mappedName="java:module/BigdataConnectionService")
+	private RepositoryConnectionFactory cf;
+	
+	@PostConstruct
+	public void init() {
 		context = new BigdataRDFContextWrapper(getConfig(), getIndexManager());
 	}
 
 	private IIndexManager getIndexManager() {
-		final Properties properties = new Properties();
-		properties
-				.setProperty(Journal.Options.FILE, "/data/db/bigdata/bigdata.jnl");
-		return new Journal(properties);
+		logger.info("GETTING JOURNAL");
+		return cf.getJournal();
 	}
 
 	final private SparqlEndpointConfig getConfig() {
