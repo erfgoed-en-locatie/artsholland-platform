@@ -8,10 +8,13 @@ import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 
+import com.bigdata.journal.Journal;
+
 @Local
 public interface RepositoryConnectionFactory {
 	
 	public Repository getRepository();
+	public Journal getJournal();
 	
 	public RepositoryConnection getConnection() 
 			throws IOException, RepositoryException;

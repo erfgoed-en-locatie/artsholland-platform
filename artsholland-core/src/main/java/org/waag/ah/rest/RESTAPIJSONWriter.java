@@ -62,6 +62,8 @@ public class RESTAPIJSONWriter extends RDFJSONWriter implements
 			
 			if (config.getPagination().size() > 0) {
 				jsonWriter.name("pagination");
+//			if (config.getMetaData() != null && config.getMetaData().size() > 0) {
+//				jsonWriter.name("metadata");
 				jsonWriter.beginObject();
 				for (Map.Entry<String, Number> entry : config.getPagination().entrySet()) {
 					jsonWriter.name(entry.getKey());

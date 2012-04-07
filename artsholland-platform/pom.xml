@@ -122,11 +122,17 @@
       <artifactId>artsholland-scheduler</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <type>ejb</type>
-    </dependency>  
+    </dependency>
+    <!-- WAR specific dependencies -->
+    <dependency>
+      <groupId>org.tuckey</groupId>
+      <artifactId>urlrewritefilter</artifactId>
+      <version>3.2.0</version>
+    </dependency>    
   </dependencies>
   
   <properties>
-    <jboss.version>7.1.0.Final</jboss.version>
+    <jboss.version>7.1.1.Final</jboss.version>
     <jboss.hostname>api.artsholland.com</jboss.hostname>
   </properties>
 </project>

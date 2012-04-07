@@ -7,9 +7,7 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.openrdf.model.URI;
 import org.openrdf.repository.Repository;
-
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.slf4j.Logger;
@@ -17,17 +15,19 @@ import org.slf4j.LoggerFactory;
 import org.waag.ah.PlatformConfig;
 import org.waag.ah.RepositoryConnectionFactory;
 
+import com.bigdata.journal.Journal;
 import com.bigdata.journal.Options;
 import com.bigdata.rdf.sail.BigdataSail;
 import com.bigdata.rdf.sail.BigdataSailRepository;
 import com.bigdata.rdf.sail.BigdataSailRepositoryConnection;
-import com.bigdata.rdf.store.AbstractTripleStore;
 
 @Singleton
 public class BigdataConnectionService implements RepositoryConnectionFactory {
 	final static Logger logger = LoggerFactory.getLogger(BigdataConnectionService.class);
 
 	private BigdataSailRepository repo;
+
+	private PropertiesConfiguration properties;
 	
 	/**
 	 * Initialize BigData repository.
@@ -38,6 +38,7 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 	@PostConstruct
 	public void create() {
 		try {
+			logger.info("CREATE REPOSITORY");
 			repo = createRepository(loadProperties());
 			repo.initialize();
 		} catch (RepositoryException e) {
@@ -57,8 +58,7 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 	 */
 	private Configuration loadProperties() throws ConfigurationException {
 		PropertiesConfiguration config = PlatformConfig.getConfig(); 
-		PropertiesConfiguration properties = 
-				new PropertiesConfiguration("bigdata.properties");
+		properties = new PropertiesConfiguration("bigdata.properties");
 		properties.setProperty(Options.FILE, config.getProperty("bigdata.journal"));
 		return properties;
 	}
@@ -66,6 +66,10 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 	@Override
 	public Repository getRepository() {
 		return repo;
+	}
+	
+	public Journal getJournal() {
+		return new Journal(ConfigurationConverter.getProperties(properties));
 	}
 	
 	/**
@@ -76,6 +80,7 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 	 * @since Mar 8, 2012
 	 */
 	public RepositoryConnection getConnection() throws RepositoryException { 
+		logger.info("GET READWRITE CONNECTION");
 		BigdataSailRepositoryConnection conn = repo.getReadWriteConnection();
 		conn.setAutoCommit(false);
 		return conn;
@@ -89,6 +94,7 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 	 * @since Mar 8, 2012
 	 */
 	public RepositoryConnection getReadOnlyConnection() throws RepositoryException { 
+		logger.info("GET READONLY CONNECTION");
 		BigdataSailRepositoryConnection conn = repo.getReadOnlyConnection();
 		return conn;
 	}	
@@ -105,5 +111,4 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 		BigdataSail sail = new BigdataSail(ConfigurationConverter.getProperties(properties));
 		return new BigdataSailRepository(sail);		
 	}	
-
 }

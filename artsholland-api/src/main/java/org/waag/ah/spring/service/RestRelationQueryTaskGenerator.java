@@ -15,6 +15,8 @@ import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.waag.ah.bigdata.BigdataQueryService;
 import org.waag.ah.bigdata.BigdataQueryService.QueryTask;
 import org.waag.ah.rdf.RDFWriterConfig;
@@ -25,6 +27,8 @@ import org.waag.ah.rest.model.RestRelation.RelationQuantity;
 import org.waag.ah.rest.model.RestRelation.RelationType;
 
 public class RestRelationQueryTaskGenerator {
+	private static final Logger logger = LoggerFactory
+			.getLogger(RestRelationQueryTaskGenerator.class);
 	
 	// "!isLiteral(?hasValue) || datatype(?hasValue) != \"xsd:string\" || langMatches(lang(?hasValue), ?lang	) || langMatches(lang(?hasValue), \"\")"
 	// query = query.replace("?lang", "\"" + params.getLanguage() + "\"");
