@@ -5,20 +5,31 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.core.MethodParameter;
-import org.springframework.web.bind.support.WebArgumentResolver;
+import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.method.support.ModelAndViewContainer;
+import org.waag.ah.rest.RESTParameters;
 import org.waag.ah.rest.RESTParametersImpl;
 import org.waag.ah.spring.annotation.RestRequestParameters;
 
-public class RestParametersArgumentResolver implements WebArgumentResolver {
+public class RestParametersArgumentResolver implements
+		HandlerMethodArgumentResolver {
 
-	public Object resolveArgument(MethodParameter methodParameter,
-			NativeWebRequest nativeWebRequest) throws Exception {
-		RestRequestParameters restParams = methodParameter
+	@Override
+	public boolean supportsParameter(MethodParameter parameter) {
+		return RESTParameters.class.isAssignableFrom(parameter.getParameterType());
+	}
+	
+	@Override
+	public Object resolveArgument(MethodParameter parameter,
+			ModelAndViewContainer mavContainer, NativeWebRequest webRequest,
+			WebDataBinderFactory binderFactory) throws Exception {
+		RestRequestParameters restParams = parameter
 				.getParameterAnnotation(RestRequestParameters.class);
 
 		if (restParams != null) {
-			HttpServletRequest request = (HttpServletRequest) nativeWebRequest
+			HttpServletRequest request = (HttpServletRequest) webRequest
 					.getNativeRequest();
 			
 			Map<String, String[]> paramMap = request.getParameterMap();
@@ -43,7 +54,7 @@ public class RestParametersArgumentResolver implements WebArgumentResolver {
 			
 			return params;
 		}
-		return UNRESOLVED;
+		return null;
 	}
 	
 	private String normalizeRequestUri(HttpServletRequest request,
