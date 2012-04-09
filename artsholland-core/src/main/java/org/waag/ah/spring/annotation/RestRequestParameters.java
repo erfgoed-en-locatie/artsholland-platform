@@ -9,5 +9,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.PARAMETER)
 public @interface RestRequestParameters {
 	boolean paging() default false;
-	int urlStartIndex() default 0;
+	int prefixLength() default 0;
 }

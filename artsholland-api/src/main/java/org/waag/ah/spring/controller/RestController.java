@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.waag.ah.rest.RDFJSONFormat;
@@ -34,13 +33,11 @@ public class RestController {
 		RDFFormat.register(RDFJSONFormat.RESTAPIJSON);
 	}
 
-	@RequestMapping(value="/data/{objectClass}/{objectId}", method=RequestMethod.GET)
-	public void restRequest(
+	@RequestMapping(value="/data/*/*", method=RequestMethod.GET)
+	public void getObjectByUri(
 			final HttpServletRequest request,
 			final HttpServletResponse response,
-			@RestRequestParameters(urlStartIndex=1) RESTParametersImpl params,
-			@PathVariable String objectClass, 
-			@PathVariable String objectId)
+			@RestRequestParameters(prefixLength=1) RESTParametersImpl params)
 			throws IOException {
 		restService.restRequest(params, response);
 	}
@@ -49,7 +46,7 @@ public class RestController {
 	public void restRequest(
 			final HttpServletRequest request,
 			final HttpServletResponse response,
-			@RestRequestParameters(urlStartIndex=1, paging=true) RESTParametersImpl params)
+			@RestRequestParameters(prefixLength=1, paging=true) RESTParametersImpl params)
 			throws IOException {
 		restService.restRequest(params, response);
 	}

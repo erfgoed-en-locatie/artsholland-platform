@@ -25,7 +25,7 @@
 
   <mvc:annotation-driven>
     <mvc:argument-resolvers>
-      <bean class="org.waag.ah.spring.annotation.RestParametersArgumentResolver"/>
+      <bean class="org.waag.ah.spring.RestParametersArgumentResolver"/>
     </mvc:argument-resolvers>
   </mvc:annotation-driven>
   

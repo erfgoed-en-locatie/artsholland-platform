@@ -1,4 +1,4 @@
-package org.waag.ah.spring.annotation;
+package org.waag.ah.spring;
 
 import java.util.Map;
 
@@ -8,6 +8,7 @@ import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebArgumentResolver;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.waag.ah.rest.RESTParametersImpl;
+import org.waag.ah.spring.annotation.RestRequestParameters;
 
 public class RestParametersArgumentResolver implements WebArgumentResolver {
 
@@ -30,12 +31,7 @@ public class RestParametersArgumentResolver implements WebArgumentResolver {
 			}
 
 			params.setURIParameterMap(request.getParameterMap());
-
-			int startIndex = 0;
-			if (restParams.urlStartIndex() > 0) {
-				startIndex = request.getRequestURI().indexOf("/", 1)+1;
-			}
-			params.setURIPathParts(request.getRequestURI().substring(startIndex));
+			params.setURIPathParts(normalizeRequestUri(request, restParams));
 			
 			if (restParams.paging() == true) {
 				params.setResultLimit(getLongValue(paramMap, "limit"));
@@ -48,6 +44,18 @@ public class RestParametersArgumentResolver implements WebArgumentResolver {
 			return params;
 		}
 		return UNRESOLVED;
+	}
+	
+	private String normalizeRequestUri(HttpServletRequest request,
+			RestRequestParameters params) {
+		String url =  request.getRequestURI();
+		int startIndex = 0;
+		if (params.prefixLength() > 0) {
+			startIndex = url.indexOf("/", 1)+1;
+		}
+		url = request.getRequestURI().substring(startIndex);
+		url = url.replaceFirst("\\.[a-zA-Z]+$", "");
+		return url;
 	}
 	
 	/**
