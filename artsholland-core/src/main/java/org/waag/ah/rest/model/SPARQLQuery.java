@@ -1,8 +1,10 @@
 package org.waag.ah.rest.model;
 
+
 import java.util.ArrayList;
 
 import org.waag.ah.rest.RestParameters;
+
 
 public class SPARQLQuery {
 	
@@ -146,7 +148,6 @@ String BOdyu_MULTIPLE =
 		
 		return query.replace(placemark, filter);
 	}
-	
 	
 	
 	
