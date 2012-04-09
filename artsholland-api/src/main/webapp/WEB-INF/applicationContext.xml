@@ -20,15 +20,17 @@
   </mvc:interceptors> -->
   
   <context:component-scan base-package="org.waag.ah.spring" />
-  <context:annotation-config />
+  <!-- <context:annotation-config /> -->
   <sws:annotation-driven />
-
+  
+<!-- 
   <mvc:annotation-driven>
     <mvc:argument-resolvers>
       <bean class="org.waag.ah.spring.RestParametersArgumentResolver"/>
     </mvc:argument-resolvers>
   </mvc:annotation-driven>
-  
+ -->  
+ 
   <sws:dynamic-wsdl id="admin" portTypeName="AdminInterface"
     locationUri="http://api.ah.local/admin/">
     <sws:xsd location="/WEB-INF/xsd/AdminInterface.xsd" />

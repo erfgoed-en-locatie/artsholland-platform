@@ -6,16 +6,19 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 public class DataUrlInterceptor extends HandlerInterceptorAdapter {
 	final static Logger logger = LoggerFactory.getLogger(DataUrlInterceptor.class);
+	
+	@Autowired
 	private PropertiesConfiguration config;
 
-	public DataUrlInterceptor(PropertiesConfiguration config) {
-		this.config = config;
-	}
+//	public DataUrlInterceptor(PropertiesConfiguration config) {
+//		this.config = config;
+//	}
 
 	@Override
 	public boolean preHandle(HttpServletRequest request,

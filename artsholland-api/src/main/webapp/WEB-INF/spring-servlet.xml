@@ -9,16 +9,15 @@
         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
         http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
   
-  <!-- This is needed for "mvc:resources" to work. -->
-  <!-- <mvc:annotation-driven/> -->
-  
   <bean id="accessConfirmationController" 
-      class="org.waag.ah.spring.controller.OAuthAccessConfirmationController"/>
+      class="org.waag.ah.spring.controller.OAuthController"/>
   
+<!--   
   <mvc:resources mapping="/vocabulary/**" location="/vocabulary/"/>  
   <mvc:resources mapping="/static/**" location="/static/"/>
   <mvc:resources mapping="/favicon.ico" location="/static/favicon.ico"/>
-    
+-->    
+
   <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
     <property name="order" value="1"/>
     <property name="defaultContentType" value="application/json"/>
