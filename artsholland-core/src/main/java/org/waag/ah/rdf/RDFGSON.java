@@ -1,4 +1,4 @@
-package org.waag.ah.rest;
+package org.waag.ah.rdf;
 
 import java.io.IOException;
 import java.util.Collections;

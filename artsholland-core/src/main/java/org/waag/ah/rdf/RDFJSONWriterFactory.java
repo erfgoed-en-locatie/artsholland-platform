@@ -1,4 +1,4 @@
-package org.waag.ah.rest;
+package org.waag.ah.rdf;
 
 import java.io.OutputStream;
 import java.io.Writer;
@@ -6,6 +6,7 @@ import java.io.Writer;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.RDFWriterFactory;
+import org.waag.ah.rest.RestJSONWriter;
 
 public class RDFJSONWriterFactory implements RDFWriterFactory {
 
@@ -16,11 +17,11 @@ public class RDFJSONWriterFactory implements RDFWriterFactory {
 
 	@Override
 	public RDFWriter getWriter(OutputStream out) {
-		return new RESTAPIJSONWriter(out);
+		return new RestJSONWriter(out);
 	}
 
 	@Override
 	public RDFWriter getWriter(Writer writer) {
-		return new RESTAPIJSONWriter(writer);
+		return new RestJSONWriter(writer);
 	}
 }

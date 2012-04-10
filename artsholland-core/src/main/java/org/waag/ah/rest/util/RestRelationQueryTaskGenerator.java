@@ -1,34 +1,21 @@
-package org.waag.ah.spring.service;
+package org.waag.ah.rest.util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import javax.servlet.ServletOutputStream;
-
-import org.openrdf.model.Literal;
-import org.openrdf.model.Value;
-import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.TupleQuery;
-import org.openrdf.query.TupleQueryResult;
-import org.openrdf.repository.RepositoryConnection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.waag.ah.bigdata.BigdataQueryService;
-import org.waag.ah.bigdata.BigdataQueryService.QueryTask;
-import org.waag.ah.rdf.RDFWriterConfig;
-import org.waag.ah.rest.RDFJSONFormat;
-import org.waag.ah.rest.RESTParameters;
+import org.waag.ah.rdf.RdfQueryDefinition;
+import org.waag.ah.rest.RestParameters;
 import org.waag.ah.rest.model.RestRelation;
 import org.waag.ah.rest.model.RestRelation.RelationQuantity;
 import org.waag.ah.rest.model.RestRelation.RelationType;
 
 public class RestRelationQueryTaskGenerator {
-	private static final Logger logger = LoggerFactory
-			.getLogger(RestRelationQueryTaskGenerator.class);
+//	private static final Logger logger = LoggerFactory
+//			.getLogger(RestRelationQueryTaskGenerator.class);
 	
 	// "!isLiteral(?hasValue) || datatype(?hasValue) != \"xsd:string\" || langMatches(lang(?hasValue), ?lang	) || langMatches(lang(?hasValue), \"\")"
 	// query = query.replace("?lang", "\"" + params.getLanguage() + "\"");
@@ -38,9 +25,9 @@ public class RestRelationQueryTaskGenerator {
 	 * (Paradiso Amsterdam)
 	 */
 	
-	private BigdataQueryService context;
-	private RepositoryConnection conn; 
-	private String baseUri;
+//	private BigdataQueryService context;
+//	private RepositoryConnection conn; 
+//	private String baseUri;
 	private RestRelation rootRelation;
 	
 	private static final String PAGING_PLACEMARK = "[[paging]]";
@@ -196,42 +183,19 @@ public class RestRelationQueryTaskGenerator {
 
 	 */
 	
-	public RestRelationQueryTaskGenerator(BigdataQueryService context,
-			RepositoryConnection conn, String baseUri, RestRelation rootRelation) {
-		this.context = context;
-		this.conn = conn;
-		this.baseUri = baseUri;
+	public RestRelationQueryTaskGenerator(RestRelation rootRelation) {
+//		this.conn = conn;
+//		this.baseUri = baseUri;
 		this.rootRelation = rootRelation;
 	}
 	
-	public long getCount(String query, String objectURI, String classURI, String linkedClassURI) {
-		
-			try {
-				
-				query = query.replace("?object", "<" + objectURI + ">");
-				query = query.replace("?class", "<" + classURI + ">");
-				query = query.replace("?linkedClass", "<" + linkedClassURI + ">");
-				
-				TupleQuery tupleQuery = conn.prepareTupleQuery(QueryLanguage.SPARQL, QUERY_PREFIX + query);				
-		
-				TupleQueryResult result = tupleQuery.evaluate();
-				if (result.hasNext()) {
-					BindingSet next = result.next();
-					if (next.hasBinding("count")) {
-						Value value = next.getValue("count");
-						if (value instanceof Literal) {
-							return ((Literal) value).longValue();
-						}
-					}
-				}				
-				 
-				return 0;							
-				
-			} catch (Exception e) {				
-				e.printStackTrace();
-			}
+	public String getCountQuery(String query, String objectURI, String classURI, String linkedClassURI) {
 
-			return 0;
+		query = query.replace("?object", "<" + objectURI + ">");
+		query = query.replace("?class", "<" + classURI + ">");
+		query = query.replace("?linkedClass", "<" + linkedClassURI + ">");
+		
+		return QUERY_PREFIX + query;
 	}
 		
 	private String addPaging(String query, long limit, long page) {
@@ -257,8 +221,9 @@ public class RestRelationQueryTaskGenerator {
 	}
 	
 	
-	public QueryTask generate(ServletOutputStream out, RESTParameters params) throws MalformedQueryException {
-		
+	public RdfQueryDefinition generate(RestParameters params)
+			throws MalformedQueryException {
+
 		LinkedList<String> uriPathParts = params.getURIPathParts();
 		RestRelation relation = rootRelation.findRelation(uriPathParts);
 		
@@ -266,12 +231,12 @@ public class RestRelationQueryTaskGenerator {
 			return null;
 		}
 			
-		long count = 0;	
 		long page = params.getPage();
 		boolean calculateCount = (page == 1);
 		
-		QueryTask queryTask = null;
 		String query = null;
+		String countQuery = null;	
+		
 		Map<String, String> bindings = new HashMap<String, String>();
 		
 		RelationType type = relation.getType();
@@ -279,20 +244,15 @@ public class RestRelationQueryTaskGenerator {
 		
 		if (type == RelationType.SELF) {
 			if (quantity == RelationQuantity.SINGLE) {
-				
 				query = QUERY_SINGLE_SELF;
 				bindings.put("object", relation.getObjectURI(uriPathParts, uriPathParts.size() - 1));
 				bindings.put("class", relation.getClassURI());
-				
 			} else if (relation.getQuantity() == RelationQuantity.MULTIPLE) {
-				
 				query = QUERY_MULTIPLE_SELF;
 				bindings.put("class", relation.getClassURI());
-				
 				if (calculateCount) {
-					count = getCount(COUNT_SELF, null, relation.getClassURI(), null);
+					countQuery = getCountQuery(COUNT_SELF, null, relation.getClassURI(), null);
 				}
-				
 			}
 		} else { 
 			
@@ -303,74 +263,66 @@ public class RestRelationQueryTaskGenerator {
 				String linkedClassURI = relation.getClassURI();
 				
 				if (type == RelationType.FORWARD) {
-				
 					if (quantity == RelationQuantity.SINGLE) {
 						query = QUERY_SINGLE_FORWARD;		
 					} else if (quantity == RelationQuantity.MULTIPLE) {
 						query = QUERY_MULTIPLE_FORWARD;
 						if (calculateCount) {
-							count = getCount(COUNT_FORWARD, objectURI, classURI, linkedClassURI);
+							countQuery = getCountQuery(COUNT_FORWARD, objectURI, classURI, linkedClassURI);
 						}
 					}
-		
 				} else if (type == RelationType.BACKWARD) {
-					
 					query = QUERY_MULTIPLE_BACKWARD;
 					if (calculateCount) {
-						count = getCount(COUNT_BACKWARD, objectURI, classURI, linkedClassURI);
+						countQuery = getCountQuery(COUNT_BACKWARD, objectURI, classURI, linkedClassURI);
 					}
-					
 				} else if (type == RelationType.BACKWARDFORWARD) {
-					
 					query = QUERY_MULTIPLE_BACKWARDFORWARD;	
 					if (calculateCount) {
-						count = getCount(COUNT_BACKWARDFORWARD, objectURI, classURI, linkedClassURI);
+						countQuery = getCountQuery(COUNT_BACKWARDFORWARD, objectURI, classURI, linkedClassURI);
 					}
-	
 				}
 				
 				bindings.put("object", objectURI);
 				bindings.put("class", classURI);
 				bindings.put("linkedClass", linkedClassURI);
 			}
-			
 		}
 		
-		if (query != null) {
-			// TODO: why does setBinding not always work?
-			for (Map.Entry<String, String> entry : bindings.entrySet()) {
-				query = query.replace("?" + entry.getKey(), "<" + entry.getValue() + ">");
-			}
-			
-			RDFWriterConfig config = new RDFWriterConfig();
-			config.setPrettyPrint(true);
-			
-			if (quantity != RelationQuantity.SINGLE) {
-				Map<String, Number> metaData = new HashMap<String, Number>();
-				if (count > 0) {
-					metaData.put("count", count);
-				}
-				metaData.put("page", page);
-				metaData.put("limit", params.getResultLimit());
-				config.setMetaData(metaData);
-			}
-			
-			query = addPaging(query, params.getResultLimit(), params.getPage());
-			query = addFilters(query, generateFilters(relation, params));
-			
-			queryTask = context.getQueryTask(QUERY_PREFIX + query, baseUri, RDFJSONFormat.MIMETYPE, out, config);
-			
-	//		ValueFactory vf = conn.getValueFactory();
-	//		for (Map.Entry<String, URI> entry : bindings.entrySet()) {
-	//			queryTask.setBinding(entry.getKey(), vf.createURI(entry.getValue()));
-	//		}
+		if (query == null) {
+			throw new MalformedQueryException();
 		}
+		
+		// TODO: why does setBinding not always work?
+		for (Map.Entry<String, String> entry : bindings.entrySet()) {
+			query = query.replace("?" + entry.getKey(), "<" + entry.getValue() + ">");
+		}
+		
+//		RDFWriterConfig config = new RDFWriterConfig();
+//		config.setPrettyPrint(true);
+//		if (quantity != RelationQuantity.SINGLE) {
+//			Map<String, Number> metaData = new HashMap<String, Number>();
+//			if (countQuery != 0) {
+//				metaData.put("count", countQuery);
+//			}
+//			metaData.put("page", page);
+//			metaData.put("limit", params.getResultLimit());
+//			config.setMetaData(metaData);
+//		}
+		
+		query = addPaging(query, params.getResultLimit(), params.getPage());
+		query = addFilters(query, generateFilters(relation, params));
+		
+		RdfQueryDefinition queryTask = new RdfQueryDefinition(
+				QueryLanguage.SPARQL,
+				QUERY_PREFIX + query, countQuery);
+		//			queryTask = context.getQueryTask(QUERY_PREFIX + query, baseUri, RDFJSONFormat.MIMETYPE, out, config);
 		
 		return queryTask;
 	}
 
 	private ArrayList<String> generateFilters(RestRelation relation,
-			RESTParameters params) { 
+			RestParameters params) { 
 		
 		ArrayList<String> filters = new ArrayList<String>();
 				

@@ -5,7 +5,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
-import java.util.Map;
+import java.util.Map.Entry;
 
 import net.fortytwo.sesametools.rdfjson.RDFJSONWriter;
 
@@ -13,11 +13,13 @@ import org.openrdf.model.Statement;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
 import org.waag.ah.rdf.ConfigurableRDFWriter;
+import org.waag.ah.rdf.RDFGSON;
+import org.waag.ah.rdf.RDFJSONFormat;
 import org.waag.ah.rdf.RDFWriterConfig;
 
 import com.google.gson.stream.JsonWriter;
 
-public class RESTAPIJSONWriter extends RDFJSONWriter implements
+public class RestJSONWriter extends RDFJSONWriter implements
 		ConfigurableRDFWriter {
 	private final Writer writer;
 
@@ -25,11 +27,11 @@ public class RESTAPIJSONWriter extends RDFJSONWriter implements
 	private RDFGSON rdfGSON;
 	private RDFWriterConfig config;
 
-	public RESTAPIJSONWriter(final OutputStream out) {
+	public RestJSONWriter(final OutputStream out) {
 		this(new OutputStreamWriter(out, Charset.forName("UTF-8")));
 	}
 
-	public RESTAPIJSONWriter(final Writer writer) {
+	public RestJSONWriter(final Writer writer) {
 		super(writer);
 		this.writer = writer;
 
@@ -63,7 +65,7 @@ public class RESTAPIJSONWriter extends RDFJSONWriter implements
 			if (config.getMetaData() != null && config.getMetaData().size() > 0) {
 				jsonWriter.name("metadata");
 				jsonWriter.beginObject();
-				for (Map.Entry<String, Number> entry : config.getMetaData().entrySet()) {
+				for (Entry<String, String> entry : config.getMetaData().entrySet()) {
 					jsonWriter.name(entry.getKey());
 					jsonWriter.value(entry.getValue());
 				}
