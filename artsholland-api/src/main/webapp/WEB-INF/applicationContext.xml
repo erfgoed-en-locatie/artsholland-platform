@@ -17,6 +17,12 @@
   <bean id="platformConfigFactory" class="org.waag.ah.PlatformConfig"
     factory-method="getConfig" />
   
+  <bean class="org.waag.ah.spring.view.QueryTaskView">
+    <constructor-arg ref="queryService"/>    
+  </bean>
+
+  <jee:jndi-lookup id="queryService" jndi-name="java:app/datastore/BigdataQueryService"/>
+  
   <context:component-scan base-package="org.waag.ah.spring" />
 
   <sws:annotation-driven />

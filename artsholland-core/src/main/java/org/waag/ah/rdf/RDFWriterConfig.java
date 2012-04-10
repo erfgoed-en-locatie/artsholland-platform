@@ -22,7 +22,7 @@ public class RDFWriterConfig {
 		this.prettyPrint = prettyPrint;
 	}
 	
-	public boolean getPrettyPrint() {
+	public boolean isPrettyPrint() {
 		return prettyPrint;
 	}
 	

@@ -43,7 +43,7 @@ public class RestJSONWriter extends RDFJSONWriter implements
 	public void setConfig(RDFWriterConfig config) {
 		this.config = config;
 		
-		if (config.getPrettyPrint()) {
+		if (config.isPrettyPrint()) {
 			jsonWriter.setIndent("\t");
 		} else {
 			jsonWriter.setIndent("");
@@ -59,9 +59,7 @@ public class RestJSONWriter extends RDFJSONWriter implements
 	@Override
 	public void startRDF() throws RDFHandlerException {
 		try {
-
 			jsonWriter.beginObject();
-			
 			if (config.getMetaData() != null && config.getMetaData().size() > 0) {
 				jsonWriter.name("metadata");
 				jsonWriter.beginObject();
@@ -71,10 +69,8 @@ public class RestJSONWriter extends RDFJSONWriter implements
 				}
 				jsonWriter.endObject();
 			}
-			
-			jsonWriter.name("results");
-			
 			// TODO: move to RDFGSON
+			jsonWriter.name("results");
 			jsonWriter.beginArray();			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -89,8 +85,6 @@ public class RestJSONWriter extends RDFJSONWriter implements
 			rdfGSON.end();
 			jsonWriter.endArray();
 			jsonWriter.endObject();
-
-			
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

@@ -1,5 +1,6 @@
 package org.waag.ah.spring.view;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.FutureTask;
 
@@ -10,29 +11,32 @@ import org.openrdf.query.MalformedQueryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.view.AbstractView;
+import org.springframework.web.util.UrlPathHelper;
+import org.springframework.web.util.WebUtils;
 import org.waag.ah.QueryService;
 import org.waag.ah.QueryTask;
+import org.waag.ah.rdf.RDFJSONFormat;
 import org.waag.ah.rdf.RDFWriterConfig;
 import org.waag.ah.rdf.RdfQueryDefinition;
 
 public class QueryTaskView extends AbstractView {
 	final static Logger logger = LoggerFactory.getLogger(QueryTaskView.class);
-	public static final String DEFAULT_CONTENT_TYPE = "application/json";
-	
-//	@Autowired
+	static final UrlPathHelper urlPathHelper = new UrlPathHelper();
+	public static String MODEL_QUERY = "queryDefinition";
+	public static final String DEFAULT_TYPE = "json";
+
 	private QueryService queryService;
-	
-//	@Autowired
-//	private PropertiesConfiguration platformConfig;
-	
-	public QueryTaskView() {
-		setContentType(DEFAULT_CONTENT_TYPE);
-		setExposePathVariables(false);
+
+	private static Map<String, String> supportedFormats = new HashMap<String, String>();
+	static {
+		supportedFormats.put("json", RDFJSONFormat.MIMETYPE);
+		supportedFormats.put("rdf", "application/rdf");
+		supportedFormats.put("turtle", "text/turtle");
 	}
 	
-	public void setQueryService(QueryService queryService) {
-		Assert.notNull(queryService, "'queryService' must not be null");
+	public QueryTaskView(QueryService queryService) {
 		this.queryService = queryService;
 	}
 	
@@ -40,11 +44,18 @@ public class QueryTaskView extends AbstractView {
 	protected void renderMergedOutputModel(Map<String, Object> model,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
-		Assert.isTrue(model.containsKey("rdfQueryDefinition"));
-		RdfQueryDefinition query = (RdfQueryDefinition) model.get("rdfQueryDefinition");
+		Assert.isTrue(model.containsKey(MODEL_QUERY));
+		RdfQueryDefinition query = (RdfQueryDefinition) model.get(MODEL_QUERY);
 		
-		RDFWriterConfig config = query.getWriterConfig();	
-		config.setFormat(getContentType());
+		String mimeType = getMediaType(request);
+		if (mimeType == null) {
+			response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE);
+			return;
+		}
+
+		RDFWriterConfig config = query.getWriterConfig();
+		config.setFormat(mimeType);
+		response.setContentType(mimeType);
 		
 		try {
 			QueryTask queryTask = queryService.getQueryTask(query,
@@ -64,5 +75,15 @@ public class QueryTaskView extends AbstractView {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					e.getMessage());
 		}	
+	}
+	
+	private String getMediaType(HttpServletRequest request) {
+		String requestUri = urlPathHelper.getLookupPathForRequest(request);
+		String filename = WebUtils.extractFullFilenameFromUrlPath(requestUri);
+		String extension = StringUtils.getFilenameExtension(filename);
+		if (extension == null) {
+			extension = DEFAULT_TYPE;
+		}
+		return supportedFormats.get(extension);
 	}
 }

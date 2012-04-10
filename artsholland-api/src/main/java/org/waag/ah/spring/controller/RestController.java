@@ -9,29 +9,43 @@ import javax.servlet.http.HttpServletResponse;
 import org.openrdf.query.MalformedQueryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.waag.ah.rdf.RdfQueryDefinition;
+import org.springframework.web.servlet.ModelAndView;
 import org.waag.ah.rest.RestParameters;
 import org.waag.ah.spring.annotation.RestRequestParameters;
 import org.waag.ah.spring.service.RestService;
+import org.waag.ah.spring.view.QueryTaskView;
 
 @Controller
-public class RestController {
+public class RestController { // implements InitializingBean
 	final static Logger logger = LoggerFactory.getLogger(RestController.class);
 
 	@Resource(name = "restService")
 	private RestService restService;
 
+	@Autowired
+	private QueryTaskView view;
+	
+//	@Autowired
+//	private QueryService queryService;
+
+//	@Override
+//	public void afterPropertiesSet() throws Exception {
+//		this.view = getApplicationContext().getBean("mybean");//new QueryTaskView(queryService);
+//	}
+	
 	@RequestMapping(value="/data/*/*", method=RequestMethod.GET)
-	public RdfQueryDefinition getObjectByUri(
+	public ModelAndView getObjectByUri(
 			final HttpServletRequest request,
 			final HttpServletResponse response,
 			@RestRequestParameters(prefixLength=1) RestParameters params)
 			throws IOException {
 		try {
-			return restService.getObjectQuery(params);
+			return new ModelAndView(view, QueryTaskView.MODEL_QUERY,
+					restService.getObjectQuery(params));
 		} catch (MalformedQueryException e) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
 		} catch (Exception e) {
@@ -41,13 +55,14 @@ public class RestController {
 	}
 
 	@RequestMapping(value="/rest/**", method=RequestMethod.GET)
-	public RdfQueryDefinition restRequest(
+	public ModelAndView restRequest(
 			final HttpServletRequest request,
 			final HttpServletResponse response,
 			@RestRequestParameters(prefixLength=1, paging=true) RestParameters params)
 			throws IOException {
 		try {
-			return restService.getPagedQuery(params);
+			return new ModelAndView(view, QueryTaskView.MODEL_QUERY,
+					restService.getPagedQuery(params));
 		} catch (MalformedQueryException e) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
 		} catch (Exception e) {

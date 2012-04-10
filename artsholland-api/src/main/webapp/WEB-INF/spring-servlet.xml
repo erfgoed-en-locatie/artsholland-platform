@@ -13,8 +13,8 @@
   
   <bean id="accessConfirmationController" 
       class="org.waag.ah.spring.controller.OAuthController"/>
-
-  <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
+  
+<!--   <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver">
     <property name="order" value="1"/>
     <property name="ignoreAcceptHeader" value="1"/>
     <property name="defaultContentType" value="application/json"/>
@@ -23,7 +23,7 @@
         <entry key="html" value="text/html"/>
         <entry key="json" value="application/json"/>
         <entry key="rdf" value="application/rdf+xml"/>
-        <!-- <entry key="xml" value="application/xml"/> -->
+        <entry key="xml" value="application/xml"/>
       </map>
     </property>
     <property name="defaultViews">
@@ -38,9 +38,8 @@
         </bean>
       </list>
     </property>
-  </bean>
+  </bean> -->
   
-  <jee:jndi-lookup id="queryService" jndi-name="java:app/datastore/BigdataQueryService"/>
   <!-- <bean id="ahObjectMapper" class="org.waag.ah.jackson.AHObjectMapper"/> -->
   
   <bean id="viewResolver" 

@@ -83,13 +83,9 @@ public class BigdataQueryService implements QueryService {
 			final RDFWriterConfig config, final OutputStream os)
 			throws MalformedQueryException {
 
-		String contentType = config.getFormat().equals("application/json") 
-				? RDFJSONFormat.MIMETYPE
-				: config.getFormat();
-
 		AbstractBigdataQueryTask queryTask = context.getQueryTask(
 				getConfig().namespace, getConfig().timestamp, query.getQuery(),
-				config.getBaseUri(), contentType, os, config);
+				config.getBaseUri(), config.getFormat(), os, config);
 		return new QueryTaskWrapper(queryTask, query.getCountQuery());
 	}
 	
@@ -192,12 +188,6 @@ public class BigdataQueryService implements QueryService {
 				IIndexManager indexManager) {
 			super(config, indexManager);
 		}
-
-//		public AbstractBigdataQueryTask getQueryTask(QueryTask query) {
-//			this(getConfig().namespace, getConfig().timestamp,
-//					query.getQuery(), config.getBaseUri(), config.getFormat(),
-//					os, config);			
-//		}
 	
 		public AbstractBigdataQueryTask getQueryTask(String namespace,
 				long timestamp, String queryStr, String baseURI, String acceptStr,
