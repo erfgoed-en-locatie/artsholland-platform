@@ -89,11 +89,11 @@ String BOdyu_MULTIPLE =
 	
 	
 	public String generateQuery(RestRelation relation, RestParameters params) {
-		return "";		
+		return BOdyu_MULTIPLE;	
 	}
 	
 	public String generateCountQuery(RestRelation relation, RestParameters params) {
-		return "";
+		return BOdyu_MULTIPLE;
 	}
 	
 	

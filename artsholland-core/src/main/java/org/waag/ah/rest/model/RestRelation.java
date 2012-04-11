@@ -136,6 +136,13 @@ public class RestRelation {
 		relations.add(relation);
 	}
 	
+	public void addRelations(RestRelation... relations) {
+		for (RestRelation relation : relations) {
+			relation.setParent(this);
+			this.relations.add(relation);
+		}
+	}
+	
 	public RestRelation addRelation(String parameter, String classURI,
 			RelationQuantity quantity, RelationType type, boolean parameterized) {
 		RestRelation relation = new RestRelation(parameter, classURI, quantity,
