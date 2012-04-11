@@ -6,7 +6,7 @@ import javax.ejb.Singleton;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.ah.PlatformConfig;
+import org.waag.ah.PlatformConfigHelper;
 
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -23,7 +23,7 @@ public class MongoConnectionService {
 	@PostConstruct
 	public void connect() {
 		try {
-			config = PlatformConfig.getConfig(); 
+			config = PlatformConfigHelper.getConfig(); 
 			mongo = new Mongo();
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

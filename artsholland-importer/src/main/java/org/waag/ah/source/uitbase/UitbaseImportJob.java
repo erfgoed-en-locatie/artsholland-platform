@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.joda.time.DateTime;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
@@ -14,10 +15,9 @@ import org.quartz.JobKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.ImportMetadata;
+import org.waag.ah.PlatformConfigHelper;
+import org.waag.ah.PlatformConfigHelper.PlatformConfig;
 import org.waag.ah.importer.AbstractImportJob;
-import org.waag.ah.importer.ImportJob;
-
-import com.mongodb.DBCollection;
 
 @DisallowConcurrentExecution
 public class UitbaseImportJob extends AbstractImportJob {
@@ -25,6 +25,20 @@ public class UitbaseImportJob extends AbstractImportJob {
 	private URL resource;
 	private String strategy;
 	
+	private PlatformConfig config;
+	private UitbaseURLGenerator urlGenerator = null;
+	
+	public UitbaseImportJob() {
+		try {
+			config = PlatformConfigHelper.getConfig();
+			urlGenerator = new UitbaseURLGenerator(
+					config.getString("importer.source.uitbase.v4.endpoint"),
+					config.getString("importer.source.uitbase.v4.apiKey"));
+		} catch (ConfigurationException e) {
+			logger.error("Error loading Uitbase configuration");
+		}
+	}
+
 	@Override
 	public void execute(JobExecutionContext context)
 			throws JobExecutionException {
@@ -38,6 +52,11 @@ public class UitbaseImportJob extends AbstractImportJob {
 //				return;
 //			}
 //		}		
+		
+		if (urlGenerator == null) {
+			throw new JobExecutionException(
+					"Cannot execute job: Uitbase config not loaded");
+		}
 		
 		DateTime dt = new DateTime();//DateTimeZone.forID("Europe/Amsterdam")
 		long ts = dt.getMillis();
@@ -55,7 +74,7 @@ public class UitbaseImportJob extends AbstractImportJob {
 		ImportMetadata metadata = new ImportMetadata();
 		metadata.setJobIdentifier(context.getFireInstanceId());
 
-		DBCollection coll = mongo.getCollection(ImportJob.class.getName());
+//		DBCollection coll = mongo.getCollection(ImportJob.class.getName());
 		
 //		coll.drop();
 //		ImportJob e1 = new ImportJob();
@@ -84,7 +103,7 @@ public class UitbaseImportJob extends AbstractImportJob {
 //        }
 		
 		try {
-			List<URL> urls = UitbaseURLGenerator.getURLs(dt);
+			List<URL> urls = urlGenerator.getURLs(dt);
 			logger.info(urls.toString());
 			doImport(urls, metadata);
 		} catch (Exception e) {

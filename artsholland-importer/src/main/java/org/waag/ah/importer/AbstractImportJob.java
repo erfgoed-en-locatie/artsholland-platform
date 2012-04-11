@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.waag.ah.ImportMetadata;
 import org.waag.ah.ImportResource;
 import org.waag.ah.ImportService;
-import org.waag.ah.PlatformConfig;
+import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.mongo.MongoConnectionService;
 
 public abstract class AbstractImportJob implements Job {
@@ -27,7 +27,7 @@ public abstract class AbstractImportJob implements Job {
 	
 	public AbstractImportJob() {
 		try {
-			config = PlatformConfig.getConfig(); 
+			config = PlatformConfigHelper.getConfig(); 
 			Context ctx = new InitialContext();
 			importServiceBean = (ImportService) ctx
 					.lookup("java:global/artsholland-platform/importer/ImportServiceBean");

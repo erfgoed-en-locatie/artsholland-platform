@@ -7,7 +7,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
-import javax.ejb.Stateless;
+import javax.ejb.Stateful;
 
 import org.openrdf.repository.RepositoryConnection;
 import org.slf4j.Logger;
@@ -19,7 +19,7 @@ import org.waag.ah.ImportService;
 import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.sesame.StoringRDFParser;
 
-@Stateless
+@Stateful
 public class ImportServiceBean implements ImportService {
 	private static final Logger logger = LoggerFactory.getLogger(ImportServiceBean.class);
 

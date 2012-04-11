@@ -12,19 +12,13 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UitbaseURLGenerator {
-
-	//	http://accept.ps4.uitburo.nl/api/productions?key=505642b12881b9a60688411a333bc78b&rows=1&start=10
-	//
-	//	<productions>
-	//		<hits>2896</hits>
-	//		<rows>0</rows>
-	//		<start>0</start>
-	//	</productions>
-	
-	private static final String BASE_URL = "http://accept.ps4.uitburo.nl/api/";
-	private static final String API_KEY =	"505642b12881b9a60688411a333bc78b";
+	final static Logger logger = LoggerFactory.getLogger(UitbaseURLGenerator.class);
+	private final String BASE_URL;
+	private final String API_KEY;
 	
 	private static final int ROWS = 500;
 	
@@ -34,8 +28,13 @@ public class UitbaseURLGenerator {
 		"productions",
 		"groups" 
 	};
+	
+	public UitbaseURLGenerator(String endpoint, String apiKey) {
+		BASE_URL = endpoint + "/search";
+		API_KEY = apiKey;
+	}	
 
-	public static List<URL> getURLs(DateTime dt) throws MalformedURLException {
+	public List<URL> getURLs(DateTime dt) throws MalformedURLException {
 		List<URL> urls = new ArrayList<URL>();
 		
 		DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
@@ -46,15 +45,19 @@ public class UitbaseURLGenerator {
 			try {
 				String content = readURL(getCountURL(resource));
 				count = getCount(content);	
-				
 			} catch (IOException e) {			
 				e.printStackTrace();
 			}
 			int i = 0;
 			while (i < count) {
-				
 				// TODO: use something like URLBuilder 
-				String url = addAPIKey(BASE_URL + resource) + "&rows=" + ROWS + "&start=" + i + dtParam;
+//				String url = addAPIKey(BASE_URL + resource) + "&rows=" + ROWS + "&start=" + i + dtParam;
+				String url = addAPIKey(BASE_URL) + 
+						"&resolve=true" +
+						"&resource=" + resource +
+						"&rows=" + ROWS + 
+						"&start=" + i + 
+						dtParam;
 				urls.add(new URL(url));
 				i += ROWS;
 			}
@@ -62,7 +65,7 @@ public class UitbaseURLGenerator {
 		return urls;
 	}
 		
-	public static List<URL> getURLs() throws MalformedURLException {
+	public List<URL> getURLs() throws MalformedURLException {
 		return getURLs(null);
 	}
 	
@@ -81,11 +84,11 @@ public class UitbaseURLGenerator {
 		return 0;
 	}
 
-	private static String getCountURL(String resource) {
-		return addAPIKey(BASE_URL + resource) + "&rows=0";
+	private String getCountURL(String resource) {
+		return addAPIKey(BASE_URL) + "&rows=0&resource="+resource;
 	}
 
-	private static String addAPIKey(String url) {
+	private String addAPIKey(String url) {
 		return url + "?key=" + API_KEY;
 	}
 

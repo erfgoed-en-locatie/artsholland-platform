@@ -38,8 +38,7 @@ public class StoringRDFParser {
 	public void connect() {
 		Assert.isNull(conn, "Already connected");
 		try {
-//			conn = cf.getConnection();
-			source = new URIImpl("http://purl.org/artsholland/1.0/metadata/source"); //vf.createURI("http://purl.org/artsholland/1.0/metadata/source");
+			source = new URIImpl("http://purl.org/artsholland/1.0/metadata/source");
 			parser = new CustomRDFXMLParser();
 			parser.setRDFHandler(new CustomRDFHandler());
 		} catch (Exception e) {
@@ -72,13 +71,9 @@ public class StoringRDFParser {
 			logger.error(e.getMessage(), e);
 		}
     }
-	
-//	private URI getBaseUri(String url) throws MalformedURLException {
-//		URL parsedUrl = new URL(url);
-//		return vf.createURI(parsedUrl.getProtocol()+"://"+parsedUrl.getHost());
-//	}
 
 	public void commit() throws RepositoryException {
+		Assert.notNull(conn, "Null connection");
 		conn.commit();
 	}
 	
@@ -139,20 +134,6 @@ public class StoringRDFParser {
 				}
 			}
 		}
-		
-//		@Override
-//		public void endRDF() throws RDFHandlerException {
-//			try {
-//				logger.info("COMMITTING "+counter+" STATEMENTS");
-//				conn.commit();
-//			} catch (RepositoryException e) {
-//				try {
-//					conn.rollback();
-//				} catch (RepositoryException e1) {
-//					throw new RDFHandlerException(e);
-//				}
-//			}
-//		}
 		
 		private Statement getContextStatement(Statement st) {
 			return vf.createStatement(st.getSubject(), st.getPredicate(), 
