@@ -12,7 +12,7 @@ import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.ah.PlatformConfig;
+import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.RepositoryConnectionFactory;
 
 import com.bigdata.journal.Journal;
@@ -57,7 +57,7 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 	 * @since Mar 8, 2012
 	 */
 	private Configuration loadProperties() throws ConfigurationException {
-		PropertiesConfiguration config = PlatformConfig.getConfig(); 
+		PropertiesConfiguration config = PlatformConfigHelper.getConfig(); 
 		properties = new PropertiesConfiguration("bigdata.properties");
 		properties.setProperty(Options.FILE, config.getProperty("bigdata.journal"));
 		return properties;

@@ -1,17 +1,18 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
+
   <artifactId>artsholland-scheduler</artifactId>
   <packaging>ejb</packaging>
   <name>Scheduler</name>
   <description>Arts Holland scheduler module</description>
-  
+
   <parent>
     <groupId>org.waag.artsholland</groupId>
     <artifactId>artsholland</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  
+
   <build>
     <plugins>
       <plugin>
@@ -21,21 +22,36 @@
         <configuration>
           <ejbVersion>${ejb.version}</ejbVersion>
         </configuration>
-      </plugin>         
+      </plugin>
     </plugins>
-  </build>    
-  
+  </build>
+
   <dependencies>
     <dependency>
       <groupId>org.waag.artsholland</groupId>
       <artifactId>artsholland-core</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <type>ejb</type>
-    </dependency>  
+    </dependency>   
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.6.4</version>
+    </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-io</artifactId>
       <version>1.3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.quartz-scheduler</groupId>
+      <artifactId>quartz</artifactId>
+      <version>${quartz.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>9.1-901.jdbc4</version>
     </dependency>
   </dependencies>
 </project>

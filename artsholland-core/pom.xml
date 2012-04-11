@@ -129,12 +129,10 @@
       <artifactId>commons-configuration</artifactId>
       <version>1.8</version>
     </dependency>
-    <!--  Gson: Java to Json conversion -->
     <dependency>
-      <groupId>com.google.code.gson</groupId>
-      <artifactId>gson</artifactId>
-      <version>2.1</version>
-      <scope>compile</scope>
+      <groupId>org.quartz-scheduler</groupId>
+      <artifactId>quartz</artifactId>
+      <version>${quartz.version}</version>
     </dependency>
     <dependency>
       <groupId>org.waag.bigdata</groupId>
@@ -146,6 +144,13 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.6.4</version>
+    </dependency>
+    <!--  Gson: Java to Json conversion -->
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.1</version>
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 

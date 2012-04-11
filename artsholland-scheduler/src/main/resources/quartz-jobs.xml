@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job-scheduling-data
+  xmlns="http://www.quartz-scheduler.org/xml/JobSchedulingData"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.quartz-scheduler.org/xml/JobSchedulingData http://www.quartz-scheduler.org/xml/job_scheduling_data_2_0.xsd"
+  version="2.0">
+
+  <pre-processing-commands>
+    <delete-jobs-in-group>*</delete-jobs-in-group>  <!-- clear all jobs in scheduler -->
+    <delete-triggers-in-group>*</delete-triggers-in-group> <!-- clear all triggers in scheduler -->
+  </pre-processing-commands>
+
+  <processing-directives>
+    <overwrite-existing-data>true</overwrite-existing-data>
+    <ignore-duplicates>false</ignore-duplicates>
+  </processing-directives>
+
+  <schedule>
+    
+		<job>
+      <name>Uitbase</name>
+      <group>WebResourceImport</group>
+      <description>Import data from NUB Uitbase</description>
+      <job-class>org.waag.ah.source.uitbase.UitbaseImportJob</job-class>
+      <durability>false</durability>
+      <recover>false</recover>
+    </job>
+		
+    <trigger>
+      <cron>
+        <name>UitbaseIncrementalImportTrigger</name>
+        <group>IncrementalImport</group>
+        <job-name>Uitbase</job-name>
+        <job-group>WebResourceImport</job-group>
+        <job-data-map>
+          <entry>
+            <key>resource</key>
+            <value>http://accept.ps4.uitburo.nl/api/productions</value>
+          </entry>
+          <entry>
+            <key>strategy</key>
+            <value>incremental</value>
+          </entry>
+        </job-data-map>
+        <misfire-instruction>MISFIRE_INSTRUCTION_DO_NOTHING</misfire-instruction>
+        <cron-expression>0 0/5 * * * ?</cron-expression>
+        <time-zone>Europe/Amsterdam</time-zone>
+      </cron>
+    </trigger>
+		
+  </schedule>
+</job-scheduling-data>
