@@ -3,11 +3,11 @@ package org.waag.ah.rest.model;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.waag.ah.rest.RestParameters;
-
-
-
 
 public class SPARQLQuery {
 	
@@ -16,88 +16,95 @@ public class SPARQLQuery {
 	private static final String FILTER_PLACEMARK = "[[filter]]";
 	private static final String LANGUAGE_PLACEMARK = "[[language]]";
 
-	private String query;
-	
-	//private String base = "   { SELECT ?object WHERE { ?object a ?class. [[statements]] [[filter]]} ORDER BY ?object [[paging]] } [[language]]"
-	
-
-
 	/*
-=======
+	 * SPARQL headers
+	 */
+	private static final String SPARQL_HEADER_COUNT = "SELECT (COUNT(DISTINCT ?object) AS ?count)";
+	private static final String SPARQL_HEADER_CONSTRUCT = "CONSTRUCT { ?object ?p ?o . }";
 	
->>>>>>> Started work on SPARQLQuery class.
-	private static final String QUERY_SINGLE_SELF = 
-			"CONSTRUCT { ?object ?p ?o. }"
-		+ "WHERE {"
+	/*
+	 * SPARQL body 
+	 */
+	private static final String SPARQL_BODY =	
+		  "WHERE {" 
 		+ "  OPTIONAL { ?object ?p ?o . }"
-		+ "  { ?object ?p ?o."
-		+ "    ?object a ?class. [[language]] }"
+		+ "  {"
+		+ "    SELECT DISTINCT ?object WHERE"
+		+ "    {"
+		+ "      [[statements]]"
+		+ "      [[filter]]"
+		+ "    } ORDER BY ?object [[paging]]"
+		+ "  } [[language]]"
 		+ "} ORDER BY ?object ?p";
 	
-<<<<<<< HEAD
-	*/
-	
 	/*
+	 * private fields
+	 */
+	private String[] statements;
+	private String body;
 	
-	SINGLE SELF
-	 "?object ?p ?o."
-	 "?object a ?class."
-	*/
-	
-	String[] bodyMULTIPLESELF = 
-		{"?object a ?class."};
-	
-	
-String[] BODYMULTIPLEFORWARD = {
-	 "?object2 ?p2 ?object.",
-	 "?object2 a ?class.",
-	 "?object a ?linkedClass."
-	};
-	
-
-/*
-HEADER SINGLE
-"CONSTRUCT { ?object ?p ?o. }"
-+ "WHERE {"
-+ "   ?object ?p ?o."
-+ "    ?object a ?class.[[statements]] [[filter]] [[language]] "
-+ "} ORDER BY ?p";
-
-	FOOTER SINGLE
-	+ "      [[statements]]"
-	+ "      [[filter]]"
-	+ "    } LIMIT 1"
-	+ "  } [[language]]"
-	+ "} ORDER BY ?p";	*/
-
-String HEADERCOUNT = "SELECT (COUNT(DISTINCT ?object) AS ?count)";
-String HEADERCONSTRUCT = "CONSTRUCT { ?object ?p ?o . }";
-
-String BOdyu_MULTIPLE =	
-  "WHERE {" 
-+ "  OPTIONAL { ?object ?p ?o . }"
-+ "  {"
-+ "    SELECT DISTINCT ?object WHERE"
-+ "    {"
-+ "      [[statements]]"
-+ "      [[filter]]"
-+ "    } ORDER BY ?object [[paging]]"
-+ "  } [[language]]"
-+ "} ORDER BY ?object ?p";
-	
-
-	
-	
-	public String generateQuery(RestRelation relation, RestParameters params) {
-		return BOdyu_MULTIPLE;	
+	public SPARQLQuery(String... statements) {
+		this.statements = statements;
+		this.body = SPARQL_BODY;
 	}
 	
-	public String generateCountQuery(RestRelation relation, RestParameters params) {
-		return BOdyu_MULTIPLE;
+	public Map<String, String> generateConstructAndCount(RestRelation relation, RestParameters params, Map<String, String> bindings) {				
+		String body = generateSPARQLBody(relation, params, bindings, SPARQL_BODY);
+		
+		HashMap<String, String> queries = new HashMap<String, String>();
+		
+		queries.put("construct", SPARQL_HEADER_CONSTRUCT + body);
+		queries.put("count", SPARQL_HEADER_COUNT + body);
+		
+		return queries;
 	}
 	
+	public String generateContruct(RestRelation relation, RestParameters params, Map<String, String> bindings) {
+		String query = SPARQL_HEADER_CONSTRUCT + SPARQL_BODY;		
+		return generateSPARQLBody(relation, params, bindings, query);
+	}
 	
+	public String generateCount(RestRelation relation, RestParameters params, Map<String, String> bindings) {
+		String query = SPARQL_HEADER_COUNT + SPARQL_BODY;		
+		return generateSPARQLBody(relation, params, bindings, query);
+	}
 	
+	private String generateSPARQLBody(RestRelation relation,
+			RestParameters params, Map<String, String> bindings, String query) {
+		
+		query = addPaging(query, params.getResultLimit(), params.getPage());
+		query = addLanguageFilter(query, params);
+		query = addFilters(query, generateFilters(relation, params));		
+		query = addStatements(query, (String[]) ArrayUtils.addAll(statements, relation.getStatements(params).toArray()));
+		
+		query = addBindings(bindings, query);		
+		
+		return query;
+	}
+
+	private String addBindings(Map<String, String> bindings, String query) {
+		for (Map.Entry<String, String> entry : bindings.entrySet()) {
+			query = query.replace("?" + entry.getKey(), "<" + entry.getValue() + ">");
+		}
+		return query;
+	}
+	
+	public String[] getStatements() {
+		return statements;
+	}
+
+	public void setStatements(String[] statements) {
+		this.statements = statements;
+	}
+
+	public String getBody() {
+		return body;
+	}
+
+	public void setBody(String body) {
+		this.body = body;
+	}
+
 	
 	
 	
@@ -105,18 +112,19 @@ String BOdyu_MULTIPLE =
 	
 	private ArrayList<String> generateFilters(RestRelation relation,
 			RestParameters params) { 
-		return null;
+		return relation.getFilters(params);		
 	}		
-
-	private String addStatements(String query,  ArrayList<String> statements) {
+	
+	private String addStatements(String query,  String... statements) {
 		StringBuilder statementsString = new StringBuilder();
-		if (statements != null && statements.size() > 0) {			
-			statementsString.append(statements.get(0));			 
-			for (int i = 1; i < statements.size(); i++) {
+				
+		if (statements != null && statements.length > 0) {			
+			statementsString.append(statements[0]);			 
+			for (int i = 1; i < statements.length; i++) {
 				statementsString.append(" ");				
 			}			
 		}		
-		return query.replace("[[statements]]", statementsString);
+		return query.replace(STATEMENTS_PLACEMARK, statementsString);
 	}
 
 	private String addLanguageFilter(String query, RestParameters params) {
@@ -126,18 +134,17 @@ String BOdyu_MULTIPLE =
 		languageFilter = languageFilter.replace("?lang", "\"" + params.getLanguageTag() + "\"");
 		filters.add(languageFilter);		
 		
-		return addFilters(query, "[[language]]", filters);
+		return addFilters(query, LANGUAGE_PLACEMARK, filters);
 	}
-	
 	
 	
 	private String addPaging(String query, long limit, long page) {
 		// TODO: check if count & page are valid
-		return query.replace("[[paging]]", "LIMIT "+ limit + " OFFSET " + limit * (page - 1));
+		return query.replace(PAGING_PLACEMARK, "LIMIT "+ limit + " OFFSET " + limit * (page - 1));
 	}
 	
 	private String addFilters(String query, ArrayList<String> filters) {
-		return addFilters(query, "[[filter]]", filters);
+		return addFilters(query, FILTER_PLACEMARK, filters);
 	}
 	
 	private String addFilters(String query, String placemark, ArrayList<String> filters) {		
@@ -156,8 +163,5 @@ String BOdyu_MULTIPLE =
 		
 		return query.replace(placemark, filter);
 	}
-	
-	
-	
 
 }

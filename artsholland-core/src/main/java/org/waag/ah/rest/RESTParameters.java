@@ -10,8 +10,8 @@ import org.apache.commons.lang.StringUtils;
 import org.openrdf.model.datatypes.XMLDatatypeUtil;
 
 public class RestParameters {
-	private long resultLimit = 0;
-	private long page = 0;
+	private long resultLimit = 10;
+	private long page = 1;
 	private String languageTag = "en";	
 	private XMLGregorianCalendar dateFrom = null;
 	private XMLGregorianCalendar dateTo = null;

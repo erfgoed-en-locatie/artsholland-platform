@@ -48,8 +48,19 @@ public class RestParametersArgumentResolver implements
 			params.setURIPathParts(normalizeRequestUri(request, restParams));
 			
 			if (restParams.paging() == true) {
-				params.setResultLimit(getLongValue(paramMap, "limit"));
-				params.setPage(getLongValue(paramMap, "page"));
+				/*
+				 * Use default value of limit and page 
+				 * defined by RestParams class if
+				 * equal to zero or invalid 
+				 */
+				long limit = getLongValue(paramMap, "limit");
+				long page = getLongValue(paramMap, "page");
+				if (limit > 0) {
+					params.setResultLimit(limit);
+				} 
+				if (page > 0) {
+					params.setPage(page);
+				}
 			}
 			
 			params.setDateFrom(getStringValue(paramMap, "dateFrom"));

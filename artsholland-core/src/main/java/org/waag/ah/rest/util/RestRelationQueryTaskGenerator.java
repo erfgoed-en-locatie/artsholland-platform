@@ -12,6 +12,7 @@ import org.waag.ah.rest.RestParameters;
 import org.waag.ah.rest.model.RestRelation;
 import org.waag.ah.rest.model.RestRelation.RelationQuantity;
 import org.waag.ah.rest.model.RestRelation.RelationType;
+import org.waag.ah.rest.model.SPARQLQuery;
 
 public class RestRelationQueryTaskGenerator {
 //	private static final Logger logger = LoggerFactory
@@ -226,6 +227,7 @@ public class RestRelationQueryTaskGenerator {
 	public RdfQueryDefinition generate(RestParameters params)
 			throws MalformedQueryException {
 
+
 		LinkedList<String> uriPathParts = params.getURIPathParts();
 		RestRelation relation = rootRelation.findRelation(uriPathParts);
 		
@@ -314,7 +316,9 @@ public class RestRelationQueryTaskGenerator {
 //		}
 		
 		query = addPaging(query, params.getResultLimit(), params.getPage());
+		query = addLanguageFilter(query, params);
 		query = addFilters(query, generateFilters(relation, params));
+		query = addStatements(query, relation.getStatements(params));		
 		
 		RdfQueryDefinition queryTask = new RdfQueryDefinition(
 				QueryLanguage.SPARQL,
