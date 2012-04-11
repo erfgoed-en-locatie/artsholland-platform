@@ -21,11 +21,6 @@ public class XSPARQLCharacterEncoder {
 	private static final String SUFFIX = "]]";
 
 	private static final Map<String, String> ENCODINGS = createMap();
-
-	public static Map<String, String> getEncodings() {
-		return ENCODINGS;
-	}
-
 	private static Map<String, String> createMap() {
       Map<String, String> result = new HashMap<String, String>();
       
@@ -37,6 +32,10 @@ public class XSPARQLCharacterEncoder {
       
       return Collections.unmodifiableMap(result);
   }
+	
+	public static Map<String, String> getEncodings() {
+		return ENCODINGS;
+	}
 	
 	public static String getXQueryReplaceString() {		
 		return getXQueryReplaceString(ENCODINGS.entrySet().iterator());

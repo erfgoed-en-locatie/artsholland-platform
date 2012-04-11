@@ -1,7 +1,6 @@
 package org.waag.ah.spring.controller;
 
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;

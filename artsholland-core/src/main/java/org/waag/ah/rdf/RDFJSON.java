@@ -1,4 +1,4 @@
-package org.waag.ah.rest;
+package org.waag.ah.rdf;
 
 import java.io.Writer;
 import java.util.Iterator;
@@ -189,6 +189,7 @@ public class RDFJSON {
     		}
     		
             result.write(writer);
+            
             
             return writer;
 	    } 

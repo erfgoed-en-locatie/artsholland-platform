@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE urlrewrite PUBLIC "-//tuckey.org//DTD UrlRewrite 3.2//EN"
+        "http://www.tuckey.org/res/dtds/urlrewrite3.2.dtd">
+
+<urlrewrite>
+  <rule>
+    <condition name="host" next="or">data.artsholland.com</condition>
+    <condition name="host" next="or">data.ah.local</condition>
+    <from>^\/(.*)$</from>
+    <to>/data/$1</to>
+  </rule>
+</urlrewrite>
