@@ -1,9 +1,12 @@
 package org.waag.ah.rest.model;
 
 
+
 import java.util.ArrayList;
 
 import org.waag.ah.rest.RestParameters;
+
+
 
 
 public class SPARQLQuery {
@@ -18,7 +21,11 @@ public class SPARQLQuery {
 	//private String base = "   { SELECT ?object WHERE { ?object a ?class. [[statements]] [[filter]]} ORDER BY ?object [[paging]] } [[language]]"
 	
 
+
 	/*
+=======
+	
+>>>>>>> Started work on SPARQLQuery class.
 	private static final String QUERY_SINGLE_SELF = 
 			"CONSTRUCT { ?object ?p ?o. }"
 		+ "WHERE {"
@@ -27,6 +34,7 @@ public class SPARQLQuery {
 		+ "    ?object a ?class. [[language]] }"
 		+ "} ORDER BY ?object ?p";
 	
+<<<<<<< HEAD
 	*/
 	
 	/*
@@ -151,4 +159,5 @@ String BOdyu_MULTIPLE =
 	
 	
 	
+
 }

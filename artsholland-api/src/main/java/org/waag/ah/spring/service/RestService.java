@@ -32,6 +32,7 @@ public class RestService implements InitializingBean {
 		RDFFormat.register(RDFJSONFormat.RESTAPIJSON);
 
 		rootRelation = new RestRelation();
+<<<<<<< HEAD
 
 		RestRelation eventsRelation = rootRelation.addRelation("event",
 				"Event", RelationQuantity.MULTIPLE, RelationType.SELF, false);
@@ -75,6 +76,13 @@ public class RestService implements InitializingBean {
 				RelationQuantity.SINGLE, RelationType.SELF, true);
 		
 		
+=======
+  	
+  	RestRelation eventsRelation = rootRelation.addRelation("event", "Event", RelationQuantity.MULTIPLE, RelationType.SELF, false);
+  	RestRelation venuesRelation = rootRelation.addRelation("venue", "Venue", RelationQuantity.MULTIPLE, RelationType.SELF, false);
+  	RestRelation productionsRelation = rootRelation.addRelation("production", "Production", RelationQuantity.MULTIPLE, RelationType.SELF, false);
+  	
+>>>>>>> Started work on SPARQLQuery class.
   	// TODO: ?this instead of ?object  ???
   	SPARQLFilter venuesLocalityFilter = new SPARQLFilter("locality", "?object vcard:locality ?locality.", "?locality = \"?parameter\"");
   	venuesRelation.addFilter(venuesLocalityFilter);
@@ -85,7 +93,35 @@ public class RestService implements InitializingBean {
   	eventsRelation.addFilter(eventsLocalityFilter);
   	eventsRelation.addFilter(eventsBeforeFilter);
   	eventsRelation.addFilter(eventsAfterFilter);
+<<<<<<< HEAD
   	//?time < "2012-06-02T17:00:00Z"^^xsd:dateTime
+=======
+  	
+  	RestRelation eventRelation = eventsRelation.addRelation("cidn", "Event", RelationQuantity.SINGLE, RelationType.SELF, true);
+  	RestRelation venueRelation = venuesRelation.addRelation("cidn", "Venue", RelationQuantity.SINGLE, RelationType.SELF, true);
+  	RestRelation productionRelation = productionsRelation.addRelation("cidn", "Production", RelationQuantity.SINGLE, RelationType.SELF, true);
+  	
+  	eventRelation.addRelation("production", "Production", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+  	eventRelation.addRelation("venue", "Venue", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+  	eventRelation.addRelation("room", "Room", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+  	
+  	venueRelation.addRelation("event", "Event", RelationQuantity.MULTIPLE, RelationType.BACKWARD, false);
+  	venueRelation.addRelation("production", "Production", RelationQuantity.MULTIPLE, RelationType.BACKWARDFORWARD, false);
+  	venueRelation.addRelation("room", "Room", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+  	
+  	productionRelation.addRelation("event", "Event", RelationQuantity.MULTIPLE, RelationType.BACKWARD, false);
+  	productionRelation.addRelation("venue", "Venue", RelationQuantity.MULTIPLE, RelationType.BACKWARDFORWARD, false);
+  	
+  	RestRelation venueAttachmentRelation = venueRelation.addRelation("attachment", "Attachment", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+  	venueAttachmentRelation.addRelation("id", "Attachment", RelationQuantity.SINGLE, RelationType.SELF, true); 	
+		
+  	RestRelation eventAttachmentRelation = eventRelation.addRelation("attachment", "Attachment", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+  	eventAttachmentRelation.addRelation("id", "Attachment", RelationQuantity.SINGLE, RelationType.SELF, true); 	
+		
+  	queryTaskGenerator = new RestRelationQueryTaskGenerator(context, conn, config.getString("platform.baseUri"), rootRelation);
+
+	}
+>>>>>>> Started work on SPARQLQuery class.
 
 		queryTaskGenerator = new RestRelationQueryTaskGenerator(rootRelation);
 	}
