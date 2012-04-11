@@ -29,14 +29,6 @@ public class RestController { // implements InitializingBean
 	@Autowired
 	private QueryTaskView view;
 	
-//	@Autowired
-//	private QueryService queryService;
-
-//	@Override
-//	public void afterPropertiesSet() throws Exception {
-//		this.view = getApplicationContext().getBean("mybean");//new QueryTaskView(queryService);
-//	}
-	
 	@RequestMapping(value="/data/*/*", method=RequestMethod.GET)
 	public ModelAndView getObjectByUri(
 			final HttpServletRequest request,

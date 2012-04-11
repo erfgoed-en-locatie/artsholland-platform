@@ -38,7 +38,6 @@ import org.waag.ah.QueryTask;
 import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.bigdata.BigdataQueryService.BigdataRDFContextWrapper.AbstractBigdataQueryTask;
 import org.waag.ah.rdf.ConfigurableRDFWriter;
-import org.waag.ah.rdf.RDFJSONFormat;
 import org.waag.ah.rdf.RDFWriterConfig;
 
 import com.bigdata.journal.IIndexManager;
