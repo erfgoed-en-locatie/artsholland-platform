@@ -17,7 +17,6 @@ import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.WebUtils;
 import org.waag.ah.QueryService;
 import org.waag.ah.QueryTask;
-import org.waag.ah.rdf.RDFJSONFormat;
 import org.waag.ah.rdf.RDFWriterConfig;
 import org.waag.ah.rdf.RdfQueryDefinition;
 
@@ -31,9 +30,10 @@ public class QueryTaskView extends AbstractView {
 
 	private static Map<String, String> supportedFormats = new HashMap<String, String>();
 	static {
-		supportedFormats.put("json", RDFJSONFormat.MIMETYPE);
+		supportedFormats.put("json", "application/json");
 		supportedFormats.put("rdf", "application/rdf");
 		supportedFormats.put("turtle", "text/turtle");
+//		supportedFormats.put("n3", "text/n3"); // Not supported by Bigdata/Sesame
 	}
 	
 	public QueryTaskView(QueryService queryService) {
