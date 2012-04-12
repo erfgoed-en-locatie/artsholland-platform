@@ -68,7 +68,7 @@ public class StoringRDFParser {
 			jobId = vf.createLiteral(metadata.getJobIdentifier());
 			parser.parse(in, metadata.getBaseURI());
 		} catch (RepositoryException e) {
-			logger.error(e.getMessage(), e);
+			logger.error(e.getMessage());
 		}
     }
 

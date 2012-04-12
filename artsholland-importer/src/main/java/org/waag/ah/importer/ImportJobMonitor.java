@@ -2,7 +2,7 @@ package org.waag.ah.importer;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import javax.annotation.Resource;
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
@@ -14,7 +14,7 @@ import org.quartz.impl.matchers.GroupMatcher;
 import org.quartz.listeners.JobListenerSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.ah.SchedulerService;
+import org.waag.ah.service.SchedulerService;
 
 @Startup
 @Singleton
@@ -23,8 +23,8 @@ public class ImportJobMonitor extends JobListenerSupport {
 			.getLogger(ImportJobMonitor.class);
 	public static String NAME = ImportJobMonitor.class.getName();
 
-	@Resource(name = "java:app/scheduler/QuartzSchedulerService")
-	private SchedulerService schedulerService;
+//	@Resource(name = "java:app/scheduler/SchedulerService")
+	private @EJB SchedulerService schedulerService;
 	
 //	@Resource(name = "java:app/datastore/MongoConnectionService")
 //	private MongoConnectionService mongo;
