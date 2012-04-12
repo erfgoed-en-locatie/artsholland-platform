@@ -32,6 +32,7 @@ public class RestService implements InitializingBean {
 		RDFFormat.register(RDFJSONFormat.RESTAPIJSON);
 
 		rootRelation = new RestRelation();
+<<<<<<< HEAD
 		
 		RestRelation eventsRelation = rootRelation.addRelation("events",
 				"Event", RelationQuantity.MULTIPLE, RelationType.SELF, false);
@@ -40,6 +41,49 @@ public class RestService implements InitializingBean {
 		RestRelation productionsRelation = rootRelation.addRelation("productions", 
 				"Production", RelationQuantity.MULTIPLE,
 				RelationType.SELF, false);
+=======
+  	
+  	RestRelation eventsRelation = rootRelation.addRelation("events", "Event", RelationQuantity.MULTIPLE, RelationType.SELF, false);
+  	RestRelation venuesRelation = rootRelation.addRelation("venues", "Venue", RelationQuantity.MULTIPLE, RelationType.SELF, false);
+  	RestRelation productionsRelation = rootRelation.addRelation("productions", "Production", RelationQuantity.MULTIPLE, RelationType.SELF, false);
+  	
+  	// TODO: ?this instead of ?object  ???
+  	SPARQLFilter venuesLocalityFilter = new SPARQLFilter("locality", "?object vcard:locality ?locality.", "?locality = \"?parameter\"");
+  	venuesRelation.addFilter(venuesLocalityFilter);
+
+  	SPARQLFilter eventsLocalityFilter = new SPARQLFilter("locality", "?object <http://purl.org/artsholland/1.0/venue> ?venue . ?venue vcard:locality ?locality .", "?locality = \"?parameter\"");
+  	SPARQLFilter eventsBeforeFilter = new SPARQLFilter("before", "?object time:hasBeginning ?hasBeginning.", "?hasBeginning < \"?parameter\"^^xsd:dateTime");
+  	SPARQLFilter eventsAfterFilter = new SPARQLFilter("after", "?object time:hasBeginning ?hasBeginning.", "?hasBeginning > \"?parameter\"^^xsd:dateTime");
+  	eventsRelation.addFilter(eventsLocalityFilter);
+  	eventsRelation.addFilter(eventsBeforeFilter);
+  	eventsRelation.addFilter(eventsAfterFilter);
+  	//?time < "2012-06-02T17:00:00Z"^^xsd:dateTime
+  	
+  	RestRelation eventRelation = eventsRelation.addRelation("cidn", "Event", RelationQuantity.SINGLE, RelationType.SELF, true);
+  	RestRelation venueRelation = venuesRelation.addRelation("cidn", "Venue", RelationQuantity.SINGLE, RelationType.SELF, true);
+  	RestRelation productionRelation = productionsRelation.addRelation("cidn", "Production", RelationQuantity.SINGLE, RelationType.SELF, true);
+  	
+  	eventRelation.addRelation("productions", "Production", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+  	eventRelation.addRelation("venues", "Venue", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+  	eventRelation.addRelation("rooms", "Room", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+  	
+  	venueRelation.addRelation("events", "Event", RelationQuantity.MULTIPLE, RelationType.BACKWARD, false);
+  	venueRelation.addRelation("productions", "Production", RelationQuantity.MULTIPLE, RelationType.BACKWARDFORWARD, false);
+  	venueRelation.addRelation("rooms", "Room", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+  	
+  	productionRelation.addRelation("events", "Event", RelationQuantity.MULTIPLE, RelationType.BACKWARD, false);
+  	productionRelation.addRelation("venues", "Venue", RelationQuantity.MULTIPLE, RelationType.BACKWARDFORWARD, false);
+  	
+  	RestRelation venueAttachmentRelation = venueRelation.addRelation("attachments", "Attachment", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+  	venueAttachmentRelation.addRelation("id", "Attachment", RelationQuantity.SINGLE, RelationType.SELF, true); 	
+		
+  	RestRelation eventAttachmentRelation = eventRelation.addRelation("attachments", "Attachment", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+  	eventAttachmentRelation.addRelation("id", "Attachment", RelationQuantity.SINGLE, RelationType.SELF, true); 	
+		
+  	
+  	queryTaskGenerator = new RestRelationQueryTaskGenerator(context, conn, config.getString("platform.baseUri"), rootRelation);
+	}
+>>>>>>> c7553c699ea311d3f513afac03a7d4bbedf5de36
 
 		RestRelation eventRelation = eventsRelation.addRelation("cidn",
 				"Event", RelationQuantity.SINGLE, RelationType.SELF, true);

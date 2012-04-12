@@ -8,7 +8,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+<<<<<<< HEAD
 import org.waag.ah.rest.RestParameters;
+=======
+import org.waag.ah.rest.RESTParameters;
+>>>>>>> c7553c699ea311d3f513afac03a7d4bbedf5de36
 
 public class RestRelation {
 
@@ -206,7 +210,11 @@ public class RestRelation {
 		return this;
 	}
 
+<<<<<<< HEAD
 	public ArrayList<String> getStatements(RestParameters params) {
+=======
+	public ArrayList<String> getStatements(RESTParameters params) {
+>>>>>>> c7553c699ea311d3f513afac03a7d4bbedf5de36
 		
 		ArrayList<String> statements = new ArrayList<String>();
 		
@@ -221,7 +229,11 @@ public class RestRelation {
 		return statements;
 	}
 
+<<<<<<< HEAD
 	public ArrayList<String> getFilters(RestParameters params) {
+=======
+	public ArrayList<String> getFilters(RESTParameters params) {
+>>>>>>> c7553c699ea311d3f513afac03a7d4bbedf5de36
 		ArrayList<String> filters = new ArrayList<String>();
 		
 		for (Entry<String, String[]> uriParameter : params.getURIParameterMap().entrySet()) {
