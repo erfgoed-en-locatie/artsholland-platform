@@ -38,8 +38,9 @@ public class UitbaseURLGenerator {
 		List<URL> urls = new ArrayList<URL>();
 		
 		DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
+				
 		String dtParam = dt != null ? "&createdfrom="+fmt.withZone(DateTimeZone.UTC).print(dt) : "";
-		
+				
 		for (String resource : RESOURCES) {
 			int count = 0;
 			try {

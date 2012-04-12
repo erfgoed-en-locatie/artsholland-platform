@@ -29,6 +29,12 @@ public class XSPARQLCharacterEncoder {
       result.put(">", completeEncoding("greater_than"));
       result.put("\\", completeEncoding("backslash"));
       result.put("/", completeEncoding("slash"));
+     
+      /*
+       * To prevent the following parse error:
+       *   org.openrdf.rio.RDFParseException: Namespace prefix 'https' used but not defined [line 28]
+       */
+      result.put("https", completeEncoding("http"));
       
       return Collections.unmodifiableMap(result);
   }

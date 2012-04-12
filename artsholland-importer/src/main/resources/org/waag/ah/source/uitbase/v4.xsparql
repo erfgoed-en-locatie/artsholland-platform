@@ -13,7 +13,6 @@ declare namespace nub="http://resources.uitburo.nl/";
 declare namespace ah = "http://purl.org/artsholland/1.0/";
 
 import module namespace waag = "http://waag.org" at "http://localhost:8080/static/xquery/waag.xquery.jsp";
-import module namespace waag = "http://waag.org" at "http://localhost:8080/static/xquery/waag.xquery.jsp";
 
 let $baseuri := {"http://data.artsholland.com/"}
 let $baseuriUitburo := {"http://resources.uitburo.nl/"}
@@ -21,7 +20,7 @@ let $baseuriUitburo := {"http://resources.uitburo.nl/"}
 let $events := //event
 let $productions := //production
 let $venues := //location
-let $groups := //group
+#let $groups := //group
 
 ##############################################################################################################################
 ##################   Event   #################################################################################################
@@ -126,7 +125,7 @@ return
 					$muri dc:description {if ($description eq "") then () else $description}^^xsd:string.
 					
 					# TODO: string?
-					$muri ah:url {$medium/ref}^^xsd:string.
+					$muri ah:url {waag:replace-characters($medium/ref)}^^xsd:string.
 	
 					# TODO:
 					#	<alt>A family again</alt>
@@ -213,7 +212,7 @@ return
 					$muri dc:description {if ($description eq "") then () else $description}^^xsd:string.					
 					
 					# TODO: string?
-					$muri ah:url {$medium/ref}^^xsd:string.
+					$muri ah:url {waag:replace-characters($medium/ref)}^^xsd:string.
 										
 					# TODO:
 					#	<alt>A family again</alt>	
@@ -373,17 +372,17 @@ return
 ##################   Group   #################################################################################################
 ##############################################################################################################################
 
-return
-	for $group in $groups
-		
-		let $cidn := {$group/cidn}
-		let $guri := {concat($baseuri, "group/", $cidn)}
-		let $guriUitburo := {concat($baseuriUitburo, "groups/", $cidn)}
-			
-		construct { 
-			$guri a ah:Group.			
-			$guri owl:sameAs $guriUitburo.
-			
-			$guri ah:cidn {$cidn}^^xsd:string.
-				
-		}
+#return
+#	for $group in $groups
+#		
+#		let $cidn := {$group/cidn}
+#		let $guri := {concat($baseuri, "group/", $cidn)}
+#		let $guriUitburo := {concat($baseuriUitburo, "groups/", $cidn)}
+#			
+#		construct { 
+#			$guri a ah:Group.			
+#			$guri owl:sameAs $guriUitburo.
+#			
+#			$guri ah:cidn {$cidn}^^xsd:string.
+#				
+#		}

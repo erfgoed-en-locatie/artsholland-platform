@@ -29,19 +29,7 @@ public class UitbaseParser extends XMLParser {
 	@SuppressWarnings("serial")
 	private static final Set<MediaType> SUPPORTED_TYPES = new HashSet<MediaType>() {{ 
 		add(MediaType.application("x-waag-uitbase-v3+xml")); 
-		add(MediaType.application("x-waag-uitbase-v4+xml")); 
-		
-		//TODO: delete
-		/*
-		add(MediaType.application("x-waag-uitbase-v4-event+xml"));
-		add(MediaType.application("x-waag-uitbase-v4-production+xml"));
-		add(MediaType.application("x-waag-uitbase-v4-location+xml"));
-		add(MediaType.application("x-waag-uitbase-v4-group+xml"));
-		
-		add(MediaType.application("x-waag-uitbase-v4-event-old+xml"));
-		add(MediaType.application("x-waag-uitbase-v4-production-old+xml"));
-		add(MediaType.application("x-waag-uitbase-v4-location-old+xml"));
-		add(MediaType.application("x-waag-uitbase-v4-group-old+xml"));*/
+		add(MediaType.application("x-waag-uitbase-v4+xml"));
 	}};
 	
 	/*private static final Set<MediaType> SUPPORTED_TYPES = Collections.singleton(
@@ -49,14 +37,6 @@ public class UitbaseParser extends XMLParser {
 	
     public static final String UITBASEV3_MIME_TYPE = "application/x-waag-uitbase-v3+xml";
     public static final String UITBASEV4_MIME_TYPE = "application/x-waag-uitbase-v4+xml";
-    
-		//TODO: delete
-    /*
-    public static final String UITBASEV4_EVENT_MIME_TYPE = "application/x-waag-uitbase-v4-event+xml";
-    public static final String UITBASEV4_PRODUCTION_MIME_TYPE = "application/x-waag-uitbase-v4-production+xml";
-    public static final String UITBASEV4_LOCATION_MIME_TYPE = "application/x-waag-uitbase-v4-location+xml";
-    public static final String UITBASEV4_GROUP_MIME_TYPE = "application/x-waag-uitbase-v4-group+xml"; 
-*/
     
 	@Override
 	public Set<MediaType> getSupportedTypes(ParseContext context) {
@@ -100,7 +80,7 @@ public class UitbaseParser extends XMLParser {
 			} else if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_MIME_TYPE)) {
 				logger.debug("Parsing V4 document");
 				
-				InputStream xquery = getFileContents(getClass(), "v4xsparql");			
+				InputStream xquery = getFileContents(getClass(), "v4.xsparql");			
 				
 				return new MatchingContentHandler(
 						new XSPARQLQueryHandler(handler, metadata, context, xquery, "event", "production", "location", "group"),
