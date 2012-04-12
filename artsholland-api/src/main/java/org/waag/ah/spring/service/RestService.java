@@ -14,7 +14,7 @@ import org.waag.ah.rest.model.RestRelation;
 import org.waag.ah.rest.model.SPARQLFilter;
 import org.waag.ah.rest.model.RestRelation.RelationQuantity;
 import org.waag.ah.rest.model.RestRelation.RelationType;
-import org.waag.ah.rest.util.RestRelationQueryTaskGenerator;
+import org.waag.ah.rest.util.RestRelationQueryGenerator;
 
 @Service("restService")
 public class RestService implements InitializingBean {
@@ -22,7 +22,7 @@ public class RestService implements InitializingBean {
 //			.getLogger(RestService.class);
 
 	RestRelation rootRelation;
-	RestRelationQueryTaskGenerator queryTaskGenerator;
+	RestRelationQueryGenerator queryGenerator;
 	
 	@Autowired
 	PropertiesConfiguration platformConfig;
@@ -86,19 +86,19 @@ public class RestService implements InitializingBean {
   	eventsRelation.addFilter(eventsBeforeFilter);
   	eventsRelation.addFilter(eventsAfterFilter);
 	
-		queryTaskGenerator = new RestRelationQueryTaskGenerator(rootRelation);
+		queryGenerator = new RestRelationQueryGenerator(rootRelation);
 	}
 
 	public RdfQueryDefinition getObjectQuery(RestParameters params)
 			throws MalformedQueryException {
-		RdfQueryDefinition query = queryTaskGenerator.generate(params);
+		RdfQueryDefinition query = queryGenerator.generate(params);
 		query.setWriterConfig(getDefaultWriterConfig(params));
 		return query;
 	}
 
 	public RdfQueryDefinition getPagedQuery(RestParameters params)
 			throws MalformedQueryException {
-		RdfQueryDefinition query = queryTaskGenerator.generate(params);
+		RdfQueryDefinition query = queryGenerator.generate(params);
 		RDFWriterConfig config = getDefaultWriterConfig(params);
 		query.setWriterConfig(config);
 		config.setMetaData("page", String.valueOf(params.getPage()));
