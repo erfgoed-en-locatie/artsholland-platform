@@ -1,6 +1,5 @@
 package org.waag.ah.rest.util;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -15,249 +14,57 @@ import org.waag.ah.rest.model.RestRelation.RelationType;
 import org.waag.ah.rest.model.SPARQLQuery;
 
 public class RestRelationQueryTaskGenerator {
-//	private static final Logger logger = LoggerFactory
-//			.getLogger(RestRelationQueryTaskGenerator.class);
-	
-	// "!isLiteral(?hasValue) || datatype(?hasValue) != \"xsd:string\" || langMatches(lang(?hasValue), ?lang	) || langMatches(lang(?hasValue), \"\")"
-	// query = query.replace("?lang", "\"" + params.getLanguage() + "\"");
 	
 	/*
 	 * Check with http://localhost:8080/rest/venues/bf23f0c6-5c54-4d18-a0e5-35d1dc140508
 	 * (Paradiso Amsterdam)
-	 */
-	
-//	private BigdataQueryService context;
-//	private RepositoryConnection conn; 
-//	private String baseUri;
-	private RestRelation rootRelation;
-	
-	//private static final String PAGING_PLACEMARK = "[[paging]]";
-	//private static final String FILTER_PLACEMARK = "[[filter]]";
-	
-	private static final String QUERY_PREFIX = 
-			"PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n" + 
-			"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" + 
-			"PREFIX owl: <http://www.w3.org/2002/07/owl#>\n" + 
-			"PREFIX dc: <http://purl.org/dc/elements/1.1/>\n" + 
-			"PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n" + 
-			"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" + 
-			"PREFIX time: <http://www.w3.org/2006/time#>\n" + 
-			"PREFIX gr: <http://purl.org/goodrelations/v1#>\n" + 
-			"PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>\n" + 
-			"PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>\n" + 
-			"PREFIX nub: <http://resources.uitburo.nl/>\n" + 
-			"PREFIX ah: <http://data.artsholland.com/>\n";
-	
-	private static final String QUERY_SINGLE_SELF = 
-			"CONSTRUCT { ?object ?p ?o. }"
-		+ "WHERE {"
-		+ "  { ?object ?p ?o."
-		+ "    ?object a ?class. [[language]] }"
-		+ "} ORDER BY ?p";
+	 */	
 
-	private static final String QUERY_MULTIPLE_SELF =	
-			"CONSTRUCT { ?object ?p ?o. } "
-		+ "WHERE { "
-		+ "   OPTIONAL { ?object ?p ?o . } "
-		+ "   { SELECT ?object WHERE { ?object a ?class. [[statements]] [[filter]]} ORDER BY ?object [[paging]] } [[language]]"
-		+ "} ORDER BY ?object ?p";
+	private RestRelation rootRelation;	
 	
-	private static final String COUNT_SELF =
-		  "SELECT (COUNT(DISTINCT ?s) AS ?count) "
-		+ "WHERE { "
-		+ "?s a ?class .}";
-	
-	private static final String QUERY_SINGLE_FORWARD = 
-			"CONSTRUCT { ?s ?p2 ?o . }"
-		+ "WHERE {" 
-		+ "  OPTIONAL { ?s ?p2 ?o . }"
-		+ "  {"
-		+ "    SELECT DISTINCT ?s WHERE"
-		+ "    {"
-		+ "      ?object ?p ?s. "
-		+ "	     ?object a ?class."
-		+ "	     ?s a ?linkedClass."
-		+ "    } ORDER BY ?s LIMIT 1"
-		+ "  } [[language]]"
-		+ "} ORDER BY ?s ?p2";	
-	
-	private static final String QUERY_MULTIPLE_FORWARD = 
-			"CONSTRUCT { ?s ?p2 ?o . }"
-		+ "WHERE {" 
-		+ "  OPTIONAL { ?s ?p2 ?o . }"
-		+ "  {"
-		+ "    SELECT DISTINCT ?s WHERE"
-		+ "    {"
-		+ "      ?object ?p ?s. "
-		+ "	     ?object a ?class."
-		+ "	     ?s a ?linkedClass."
-		+ "    } ORDER BY ?s [[paging]]"
-		+ "  } [[language]]"
-		+ "} ORDER BY ?s ?p2";
-	
-	private static final String COUNT_FORWARD = 
-			"SELECT (COUNT(DISTINCT ?s) AS ?count)"
-		+ "WHERE {" 
-		+ "  OPTIONAL { ?s ?p2 ?o . }"
-		+ "  {"
-		+ "    SELECT DISTINCT ?s WHERE"
-		+ "    {"
-		+ "      ?object ?p ?s. "
-		+ "	     ?object a ?class."
-		+ "	     ?s a ?linkedClass."
-		+ "    } ORDER BY ?s "
-		+ "  }"
-		+ "} ORDER BY ?s ?p2";	
-	
-	private static final String QUERY_MULTIPLE_BACKWARD = 
-			"CONSTRUCT { ?s ?p2 ?o . }"
-		+ "WHERE" 
-		+ "{"
-		+ "  OPTIONAL { ?s ?p2 ?o . }"
-		+ "  {"
-		+ "    SELECT DISTINCT ?s WHERE"
-		+ "    {"
-		+ "      ?s ?p ?object."
-		+ "	     ?object a ?class."
-		+ "	     ?s a ?linkedClass."
-		+ "    } ORDER BY ?s [[paging]]"
-		+ "  } [[language]]"
-		+ "} ORDER BY ?s ?p2";
-	
-	private static final String COUNT_BACKWARD = 
-			"SELECT (COUNT(DISTINCT ?s) AS ?count)"
-		+ "WHERE" 
-		+ "{"
-		+ "  OPTIONAL { ?s ?p2 ?o . }"
-		+ "  {"
-		+ "    SELECT DISTINCT ?s WHERE"
-		+ "    {"
-		+ "      ?s ?p ?object."
-		+ "	     ?object a ?class."
-		+ "	     ?s a ?linkedClass."
-		+ "    } ORDER BY ?s "
-		+ "  }"
-		+ "} ORDER BY ?s ?p2";	
-	
-	private static final String QUERY_MULTIPLE_BACKWARDFORWARD = 
-			"CONSTRUCT { ?s ?p3 ?o . }"
-		+ "WHERE" 
-		+ "{"
-		+ "  OPTIONAL { ?s ?p3 ?o . }"
-		+ "  {"
-		+ "    SELECT DISTINCT ?s WHERE"
-		+ "    {"
-		+ "      ?i ?p1 ?object. ?i ?p2 ?s."
-		+ "	     ?object a ?class."
-		+ "	     ?s a ?linkedClass."
-		+ "    } ORDER BY ?s [[paging]]"
-		+ "  } [[language]]" 
-		+ "} ORDER BY ?url ?p3";	
-	
-	private static final String COUNT_BACKWARDFORWARD = 
-			"SELECT (COUNT(DISTINCT ?s) AS ?count)"
-		+ "WHERE" 
-		+ "{"
-		+ "  OPTIONAL { ?s ?p3 ?o . }"
-		+ "  {"
-		+ "    SELECT DISTINCT ?s WHERE"
-		+ "    {"
-		+ "      ?i ?p1 ?object. ?i ?p2 ?s."
-		+ "	     ?object a ?class."
-		+ "	     ?s a ?linkedClass."
-		+ "    } ORDER BY ?s "
-		+ "  }"
-		+ "} ORDER BY ?url ?p3";	
-	
-	
-	/*
-	private static final String QUERY_COUNT_OBJECTS_BY_CLASS =
-		  "SELECT (COUNT(DISTINCT ?s) AS ?count) "
-		+ "WHERE { "
-		+ "?s a ?class .}";
-		
-		
-			private static final String QUERY_COUNT_LINKED_OBJECTS_BY_CLASS = 			
-			"SELECT (COUNT(DISTINCT ?s) AS ?count) "
-			+ "WHERE { { ?object ?p ?s. } UNION { ?s ?p ?object. } UNION { ?i ?p1 ?object. ?i ?p2 ?s. } ?s a ?linkedClass. }";
-	 */
+	private static final SPARQLQuery querySingleSelf = new SPARQLQuery(true, "?object ?p ?o.", "?object a ?class.");
+	private static final SPARQLQuery queryMultipleSelf = new SPARQLQuery("?object a ?class.");		
+	private static final SPARQLQuery queryMultipleForward = new SPARQLQuery("?object2 ?p2 ?object.", "?object2 a ?class.", "?object a ?linkedClass.");		
+	private static final SPARQLQuery queryMultipleBackward = new SPARQLQuery("?object ?p ?this.", "?this a ?class.", "?object a ?linkedClass.");			 
+	private static final SPARQLQuery queryMultipleBackwardForward = new SPARQLQuery("?i ?p1 ?object.", "?i ?p2 ?s.", "?object a ?class.", "?s a ?linkedClass.");
 	
 	public RestRelationQueryTaskGenerator(RestRelation rootRelation) {
-//		this.conn = conn;
-//		this.baseUri = baseUri;
 		this.rootRelation = rootRelation;
-	}
-	
-	public String getCountQuery(String query, String objectURI, String classURI, String linkedClassURI) {
-
-		query = query.replace("?object", "<" + objectURI + ">");
-		query = query.replace("?class", "<" + classURI + ">");
-		query = query.replace("?linkedClass", "<" + linkedClassURI + ">");
-		
-		return QUERY_PREFIX + query;
-	}
-		
-	private String addPaging(String query, long limit, long page) {
-		// TODO: check if count & page are valid
-		return query.replace("[[paging]]", "LIMIT "+ limit + " OFFSET " + limit * (page - 1));
-	}
-	
-	private String addFilters(String query, ArrayList<String> filters) {
-		return addFilters(query, "[[filter]]", filters);
-	}
-	
-	private String addFilters(String query, String placemark, ArrayList<String> filters) {		
-		StringBuilder filter = new StringBuilder();
-		if (filters != null && filters.size() > 0) {			
-			filter.append("FILTER(");
-			
-			filter.append("(" + filters.get(0) + ")");			 
-			 
-			for (int i = 1; i < filters.size(); i++) {
-				filter.append(" && ");
-				filter.append("(" + filters.get(i) + ")");
-			 }
-			 filter.append(")");
-		}
-		
-		return query.replace(placemark, filter);
-	}
-	
+	}	
 	
 	public RdfQueryDefinition generate(RestParameters params)
 			throws MalformedQueryException {
-
 
 		LinkedList<String> uriPathParts = params.getURIPathParts();
 		RestRelation relation = rootRelation.findRelation(uriPathParts);
 		
 		if (relation == null) {
-			return null;
+			throw new MalformedQueryException();
 		}
-			
-		long page = params.getPage();
-		boolean calculateCount = (page == 1);
-		
-		String query = null;
-		String countQuery = null;	
-		
-		Map<String, String> bindings = new HashMap<String, String>();
 		
 		RelationType type = relation.getType();
 		RelationQuantity quantity = relation.getQuantity();
 		
+		long page = params.getPage();
+		boolean calculateCount = (page == 1) && (quantity == RelationQuantity.MULTIPLE);
+	
+		
+		SPARQLQuery query = null;
+		
+		Map<String, String> bindings = new HashMap<String, String>();
+		
+				
 		if (type == RelationType.SELF) {
+			
 			if (quantity == RelationQuantity.SINGLE) {
-				query = QUERY_SINGLE_SELF;
+				query = querySingleSelf;
 				bindings.put("object", relation.getObjectURI(uriPathParts, uriPathParts.size() - 1));
 				bindings.put("class", relation.getClassURI());
 			} else if (relation.getQuantity() == RelationQuantity.MULTIPLE) {
-				query = QUERY_MULTIPLE_SELF;
-				bindings.put("class", relation.getClassURI());
-				if (calculateCount) {
-					countQuery = getCountQuery(COUNT_SELF, null, relation.getClassURI(), null);
-				}
+				query = queryMultipleSelf;
+				bindings.put("class", relation.getClassURI());			
 			}
+			
 		} else { 
 			
 			if (relation.getParent() != null) {
@@ -267,27 +74,18 @@ public class RestRelationQueryTaskGenerator {
 				String linkedClassURI = relation.getClassURI();
 				
 				if (type == RelationType.FORWARD) {
-					if (quantity == RelationQuantity.SINGLE) {
-						query = QUERY_SINGLE_FORWARD;		
-					} else if (quantity == RelationQuantity.MULTIPLE) {
-						query = QUERY_MULTIPLE_FORWARD;
-						if (calculateCount) {
-							countQuery = getCountQuery(COUNT_FORWARD, objectURI, classURI, linkedClassURI);
-						}
-					}
-				} else if (type == RelationType.BACKWARD) {
-					query = QUERY_MULTIPLE_BACKWARD;
-					if (calculateCount) {
-						countQuery = getCountQuery(COUNT_BACKWARD, objectURI, classURI, linkedClassURI);
-					}
-				} else if (type == RelationType.BACKWARDFORWARD) {
-					query = QUERY_MULTIPLE_BACKWARDFORWARD;	
-					if (calculateCount) {
-						countQuery = getCountQuery(COUNT_BACKWARDFORWARD, objectURI, classURI, linkedClassURI);
-					}
+					query = queryMultipleForward;
+					/*
+					if (quantity == RelationQuantity.SINGLE) {					
+					} else if (quantity == RelationQuantity.MULTIPLE) {										
+					}*/
+				} else if (type == RelationType.BACKWARD) {					
+					query = queryMultipleBackward;				
+				} else if (type == RelationType.BACKWARDFORWARD) {					
+					query = queryMultipleBackwardForward;				
 				}
 				
-				bindings.put("object", objectURI);
+				bindings.put("this", objectURI);
 				bindings.put("class", classURI);
 				bindings.put("linkedClass", linkedClassURI);
 			}
@@ -296,63 +94,14 @@ public class RestRelationQueryTaskGenerator {
 		if (query == null) {
 			throw new MalformedQueryException();
 		}
-		
-		// TODO: why does setBinding not always work?
-		for (Map.Entry<String, String> entry : bindings.entrySet()) {
-			query = query.replace("?" + entry.getKey(), "<" + entry.getValue() + ">");
-
-		}
-		
-//		RDFWriterConfig config = new RDFWriterConfig();
-//		config.setPrettyPrint(true);
-//		if (quantity != RelationQuantity.SINGLE) {
-//			Map<String, Number> metaData = new HashMap<String, Number>();
-//			if (countQuery != 0) {
-//				metaData.put("count", countQuery);
-//			}
-//			metaData.put("page", page);
-//			metaData.put("limit", params.getResultLimit());
-//			config.setMetaData(metaData);
-//		}
-		
-		query = addPaging(query, params.getResultLimit(), params.getPage());
-		query = addLanguageFilter(query, params);
-		query = addFilters(query, generateFilters(relation, params));
-		query = addStatements(query, relation.getStatements(params));		
+					
+		String construct = query.generateContruct(relation, params, bindings, true);
+		String count = calculateCount ? query.generateCount(relation, params, bindings, true) : "";
 		
 		RdfQueryDefinition queryTask = new RdfQueryDefinition(
-				QueryLanguage.SPARQL,
-				QUERY_PREFIX + query, countQuery);
-		//			queryTask = context.getQueryTask(QUERY_PREFIX + query, baseUri, RDFJSONFormat.MIMETYPE, out, config);
+				QueryLanguage.SPARQL,	construct, count);
 		
 		return queryTask;
-	}
-
-
-	private ArrayList<String> generateFilters(RestRelation relation,
-			RestParameters params) { 
-		return null;
-	}		
-
-	private String addStatements(String query,  ArrayList<String> statements) {
-		StringBuilder statementsString = new StringBuilder();
-		if (statements != null && statements.size() > 0) {			
-			statementsString.append(statements.get(0));			 
-			for (int i = 1; i < statements.size(); i++) {
-				statementsString.append(" ");				
-			}			
-		}		
-		return query.replace("[[statements]]", statementsString);
-	}
-
-	private String addLanguageFilter(String query, RestParameters params) {
-		ArrayList<String> filters = new ArrayList<String>();
-		
-		String languageFilter = "!isLiteral(?o) || datatype(?o) != \"xsd:string\" || langMatches(lang(?o), ?lang	) || langMatches(lang(?o), \"\")";
-		languageFilter = languageFilter.replace("?lang", "\"" + params.getLanguageTag() + "\"");
-		filters.add(languageFilter);		
-		
-		return addFilters(query, "[[language]]", filters);
 	}
 	
 }
