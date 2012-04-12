@@ -33,11 +33,11 @@ public class RestService implements InitializingBean {
 
 		rootRelation = new RestRelation();
 		
-		RestRelation eventsRelation = rootRelation.addRelation("events",
+		RestRelation eventsRelation = rootRelation.addRelation("event",
 				"Event", RelationQuantity.MULTIPLE, RelationType.SELF, false);
-		RestRelation venuesRelation = rootRelation.addRelation("venues",
+		RestRelation venuesRelation = rootRelation.addRelation("venue",
 				"Venue", RelationQuantity.MULTIPLE, RelationType.SELF, false);
-		RestRelation productionsRelation = rootRelation.addRelation("productions", 
+		RestRelation productionsRelation = rootRelation.addRelation("production", 
 				"Production", RelationQuantity.MULTIPLE,
 				RelationType.SELF, false);
 
@@ -51,27 +51,33 @@ public class RestService implements InitializingBean {
 
 		eventRelation.addRelation("productions", "Production",
 				RelationQuantity.SINGLE, RelationType.FORWARD, false);
-		eventRelation.addRelation("venues", "Venue", RelationQuantity.SINGLE,
+		eventRelation.addRelation("venue", "Venue", RelationQuantity.SINGLE,
 				RelationType.FORWARD, false);
-		eventRelation.addRelation("rooms", "Room", RelationQuantity.MULTIPLE,
+		eventRelation.addRelation("room", "Room", RelationQuantity.MULTIPLE,
 				RelationType.FORWARD, false);
 
-		venueRelation.addRelation("events", "Event", RelationQuantity.MULTIPLE,
+		venueRelation.addRelation("event", "Event", RelationQuantity.MULTIPLE,
 				RelationType.BACKWARD, false);
-		venueRelation.addRelation("productions", "Production",
+		venueRelation.addRelation("production", "Production",
 				RelationQuantity.MULTIPLE, RelationType.BACKWARDFORWARD, false);
-		venueRelation.addRelation("rooms", "Room", RelationQuantity.MULTIPLE,
+		venueRelation.addRelation("room", "Room", RelationQuantity.MULTIPLE,
 				RelationType.FORWARD, false);
 
-		productionRelation.addRelation("events", "Event",
+		productionRelation.addRelation("event", "Event",
 				RelationQuantity.MULTIPLE, RelationType.BACKWARD, false);
-		productionRelation.addRelation("venues", "Venue",
+		productionRelation.addRelation("venue", "Venue",
 				RelationQuantity.MULTIPLE, RelationType.BACKWARDFORWARD, false);
 
 		RestRelation venueAttachmentRelation = venueRelation.addRelation(
-				"attachments", "Attachment", RelationQuantity.MULTIPLE,
+				"attachment", "Attachment", RelationQuantity.MULTIPLE,
 				RelationType.FORWARD, false);
 		venueAttachmentRelation.addRelation("id", "Attachment",
+				RelationQuantity.SINGLE, RelationType.SELF, true);
+		
+		RestRelation eventAttachmentRelation = eventRelation.addRelation(
+				"attachment", "Attachment", RelationQuantity.MULTIPLE,
+				RelationType.FORWARD, false);
+		eventAttachmentRelation.addRelation("id", "Attachment",
 				RelationQuantity.SINGLE, RelationType.SELF, true);
 		
 		
