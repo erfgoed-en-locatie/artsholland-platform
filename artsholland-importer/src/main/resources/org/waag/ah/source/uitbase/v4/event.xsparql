@@ -21,11 +21,11 @@ return
 	for $event in $events	
 	
 		let $cidn := {$event/cidn}
-		let $euri := {concat($baseuri, "events/", $cidn)}
+		let $euri := {concat($baseuri, "event/", $cidn)}
 		let $euriUitburo := {concat($baseuriUitburo, "events/", $cidn)}
 			
-		let $puri := {concat($baseuri, "productions/", $event/link[@type="production"]/@cidn)}
-		let $vuri := {concat($baseuri, "venues/", $event/link[@type="location"]/@cidn)}
+		let $puri := {concat($baseuri, "production/", $event/link[@type="production"]/@cidn)}
+		let $vuri := {concat($baseuri, "venue/", $event/link[@type="location"]/@cidn)}
 				
 		let $typeKey := {$event/type/@key}
 		let $typeClass := {if (waag:empty($typeKey)) then () else concat("ah:eventType", waag:capitalize-first-only(data($typeKey)))}
@@ -34,7 +34,7 @@ return
 		let $statusClass := {if (waag:empty($statusKey)) then () else concat("ah:eventStatus", waag:capitalize-first-only(data($statusKey)))}
 			
 		let $room := {$event/room}
-		let $ruri := {if ($room eq "") then () else concat($vuri, "/rooms/", waag:make-uri($room))}
+		let $ruri := {if ($room eq "") then () else concat($vuri, "/room/", waag:make-uri($room))}
 				
 		let $title := {waag:replace-characters($event/title)}
 		let $description := {waag:replace-characters($event/description)}
@@ -69,7 +69,7 @@ return
 			{ for $pricetag in $event/pricetags//pricetag
 	
 				# Als er events zijn met pricetags met zelfde type: gebruik $pos in uri
-				let $turi := {concat($euri, "/tickets/", waag:make-uri($pricetag/type))}
+				let $turi := {concat($euri, "/ticket/", waag:make-uri($pricetag/type))}
 				let $puri := {concat($turi, "/price")}
 				
 				let $name := {waag:replace-characters($pricetag/type)}
@@ -101,7 +101,7 @@ return
 			# $pos is counter (http://stackoverflow.com/questions/5652397/xquery-counters-inside-a-for)
 			{ for $medium at $pos in $event/media//medium				
 				
-				let $muri := {concat($euri, "/attachments/", $pos)}	
+				let $muri := {concat($euri, "/attachment/", $pos)}	
 				let $description := {waag:replace-characters($medium/description)}
 				let $title := {waag:replace-characters($medium/title)}
 							

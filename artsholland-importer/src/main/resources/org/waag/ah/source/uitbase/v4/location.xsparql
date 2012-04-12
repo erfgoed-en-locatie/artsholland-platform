@@ -20,7 +20,7 @@ return
 	for $location in $locations
 		
 		let $cidn := {$location/cidn}
-		let $vuri := {concat($baseuri, "venues/", $cidn)}
+		let $vuri := {concat($baseuri, "venue/", $cidn)}
 		let $vuriUitburo := {concat($baseuriUitburo, "locations/", $cidn)}
 		let $venueType := {concat("ah:venueType", waag:capitalize-first-only($location/type/@key))}
 			
@@ -39,7 +39,7 @@ return
 			$vuri dc:modified {$location/@date-changed}^^xsd:string.
 			
 			{ for $room in $location/rooms//room
-				let $ruri := {concat($vuri, "/rooms/", waag:make-uri($room))}
+				let $ruri := {concat($vuri, "/room/", waag:make-uri($room))}
 				construct {
 					$ruri a ah:Room.
 					$ruri rdfs:label {waag:replace-characters($room)}.
@@ -62,7 +62,7 @@ return
 			# $pos is counter (http://stackoverflow.com/questions/5652397/xquery-counters-inside-a-for)
 			{ for $medium at $pos in $location/media//medium				
 				
-				let $muri := {concat($vuri, "/attachments/", $pos)}
+				let $muri := {concat($vuri, "/attachment/", $pos)}
 				let $description := {waag:replace-characters($medium/description)}
 				let $title := {waag:replace-characters($medium/title)}
 				

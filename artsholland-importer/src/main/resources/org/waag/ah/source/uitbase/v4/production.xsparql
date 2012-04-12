@@ -18,7 +18,7 @@ return
 	for $production in $productions
 			
 		let $cidn := {$production/cidn}
-		let $puri := {concat($baseuri, "productions/", $cidn)}
+		let $puri := {concat($baseuri, "production/", $cidn)}
 		let $puriUitburo := {concat($baseuriUitburo, "productions/", $cidn)}
 	
 		let $title := {waag:replace-characters($production/title)}
