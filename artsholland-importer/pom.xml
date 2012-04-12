@@ -31,7 +31,7 @@
       <artifactId>artsholland-datastore</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <type>ejb</type>
-    </dependency>     
+    </dependency>        
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-parsers</artifactId>

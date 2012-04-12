@@ -11,17 +11,13 @@ import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.ah.SchedulerService;
+import org.waag.ah.service.SchedulerService;
 
 @Startup
 @Singleton
-public class QuartzSchedulerService implements SchedulerService {
-	final static Logger logger = LoggerFactory.getLogger(QuartzSchedulerService.class);
+public class SchedulerServiceImpl implements SchedulerService {
+	final static Logger logger = LoggerFactory.getLogger(SchedulerService.class);
 	private Scheduler scheduler;
-
-	public QuartzSchedulerService() {
-		logger.info("STARTING SCHEDULER SERVICE");
-	}
 
 	@PostConstruct  
 	public void init() { 
