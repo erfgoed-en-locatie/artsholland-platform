@@ -60,18 +60,10 @@ public class RestJSONWriter extends RDFJSONWriter implements
 	public void startRDF() throws RDFHandlerException {
 		try {
 			jsonWriter.beginObject();
-<<<<<<< HEAD
 			if (config.getMetaData() != null && config.getMetaData().size() > 0) {
 				jsonWriter.name("metadata");
 				jsonWriter.beginObject();
 				for (Entry<String, String> entry : config.getMetaData().entrySet()) {
-=======
-			
-			if (config.getPagination().size() > 0) {
-				jsonWriter.name("pagination");
-				jsonWriter.beginObject();
-				for (Map.Entry<String, Number> entry : config.getPagination().entrySet()) {
->>>>>>> c7553c699ea311d3f513afac03a7d4bbedf5de36
 					jsonWriter.name(entry.getKey());
 					jsonWriter.value(entry.getValue());
 				}

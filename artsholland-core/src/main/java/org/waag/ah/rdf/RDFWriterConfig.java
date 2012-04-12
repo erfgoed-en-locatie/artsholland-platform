@@ -7,7 +7,7 @@ public class RDFWriterConfig {
 	private String format;
 	private boolean prettyPrint;
 	private String languageTag;
-<<<<<<< HEAD
+
 	private Map<String, String> metaData = new HashMap<String, String>();
 	private String baseUri;
 	
@@ -18,10 +18,7 @@ public class RDFWriterConfig {
 	public String getFormat() {
 		return format;
 	}
-=======
-	private Map<String, Number> pagination;
->>>>>>> c7553c699ea311d3f513afac03a7d4bbedf5de36
-	
+
 	public void setPrettyPrint(boolean prettyPrint) {
 		this.prettyPrint = prettyPrint;
 	}
@@ -42,7 +39,6 @@ public class RDFWriterConfig {
 		setMetaData(key, String.valueOf(value));
 	}
 	
-<<<<<<< HEAD
 	public void setMetaData(String key, String value) {
 		if (metaData.containsKey(key) && value == null) {
 			metaData.remove(key);
@@ -55,14 +51,6 @@ public class RDFWriterConfig {
 
 	public final Map<String, String> getMetaData() {
 		return metaData;
-=======
-	public void setPagination(Map<String, Number> pagination) {
-		this.pagination = pagination;
-	}
-
-	public Map<String, Number> getPagination() {
-		return pagination;
->>>>>>> c7553c699ea311d3f513afac03a7d4bbedf5de36
 	}
 	
 	public final String getMetaData(String key) {

@@ -1,20 +1,16 @@
 package org.waag.ah.rest.model;
 
-<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.Map;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.waag.ah.rest.RestParameters;
 
-=======
->>>>>>> c7553c699ea311d3f513afac03a7d4bbedf5de36
 public class SPARQLQuery {
 	
 	private static final String PAGING_PLACEMARK = "[[paging]]";
 	private static final String STATEMENTS_PLACEMARK = "[[statements]]";
 	private static final String FILTER_PLACEMARK = "[[filter]]";
-<<<<<<< HEAD
 	private static final String LANGUAGE_PLACEMARK = "[[language]]";
 
 	/*
@@ -192,6 +188,4 @@ public class SPARQLQuery {
 		return query.replace(placemark, filter);
 	}
 
-=======
->>>>>>> c7553c699ea311d3f513afac03a7d4bbedf5de36
 }
