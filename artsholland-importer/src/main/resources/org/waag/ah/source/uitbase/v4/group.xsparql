@@ -20,7 +20,7 @@ return
 	for $group in $groups
 		
 		let $cidn := {$group/cidn}
-		let $guri := {concat($baseuri, "groups/", $cidn)}
+		let $guri := {concat($baseuri, "group/", $cidn)}
 		let $guriUitburo := {concat($baseuriUitburo, "groups/", $cidn)}
 			
 		construct { 

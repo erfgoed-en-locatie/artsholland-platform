@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -40,7 +41,7 @@ import org.xml.sax.helpers.AttributesImpl;
 public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 //	private Logger logger = Logger.getLogger(XSPARQLQueryHandler.class);
 	private XQueryEvaluator evaluator;
-	private String rootElement;
+	private String[] rootElements;
 	private ToXMLContentHandler xmlCollector;
 //	private ContentHandler handler;
 	private TurtleParser turtleParser;
@@ -51,7 +52,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	private Matcher matcher;
 
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata, 
-			ParseContext context, InputStream xquery, String rootElement)	throws TikaException {
+			ParseContext context, InputStream xquery, String... rootElements)	throws TikaException {
 //		super(handler);
 		this.matcher = new XPathParser("rdf", RDF.NAMESPACE).parse("/rdf:RDF/descendant::node()");
 		this.handler = handler;
@@ -59,7 +60,10 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		this.context = context;
 		this.metadata = metadata; 
 		this.turtleParser = new TurtleParser();
-		this.rootElement = rootElement;
+		
+		this.rootElements = rootElements;		
+		Arrays.sort(this.rootElements);
+
 		try {
 			XSPARQLProcessor xp = new XSPARQLProcessor();			
 			String q = xp.process(xquery);//.process(new StringReader(query));
@@ -110,9 +114,9 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		/*if (rootElement == null) {
 			rootElement = localName;
 		}*/
-		
+			
 		// Start collecting characters when we encounter our root element.
-		if (localName.equals(rootElement)) {
+		if (Arrays.binarySearch(rootElements, localName) > -1) {
 			xmlCollector = new ToXMLContentHandler();
 		}
 		if (currentNode()) {
@@ -134,7 +138,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		if (currentNode()) {
 			xmlCollector.endElement(uri, localName, qName);
 		}
-		if (localName.equals(rootElement)) {
+		if (Arrays.binarySearch(rootElements, localName) > -1) {
 			
 			String xmlString = xmlCollector.toString();
 			
