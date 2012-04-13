@@ -29,6 +29,7 @@ public class XSPARQLCharacterEncoder {
       result.put(">", completeEncoding("greater_than"));
       result.put("\\", completeEncoding("backslash"));
       result.put("/", completeEncoding("slash"));
+      result.put("https", completeEncoding("http"));
      
       /*
        * To prevent the following parse error:
