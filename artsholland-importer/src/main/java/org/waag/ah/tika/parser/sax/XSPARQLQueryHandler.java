@@ -19,7 +19,6 @@ import net.sf.saxon.s9api.XQueryCompiler;
 import net.sf.saxon.s9api.XQueryEvaluator;
 import net.sf.saxon.s9api.XdmItem;
 
-import org.antlr.runtime.RecognitionException;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
@@ -32,6 +31,7 @@ import org.apache.tika.sax.xpath.XPathParser;
 import org.deri.xsparql.XSPARQLProcessor;
 import org.openrdf.model.vocabulary.RDF;
 import org.waag.ah.XSPARQLCharacterEncoder;
+import org.waag.ah.exception.ParserException;
 import org.waag.ah.tika.parser.rdf.TurtleParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -51,15 +51,16 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	private ContentHandler handler;
 	private Matcher matcher;
 
-	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata, 
-			ParseContext context, InputStream xquery, String... rootElements)	throws TikaException {
-//		super(handler);
+	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata,
+			ParseContext context, InputStream xquery, String... rootElements)
+			throws ParserException {
 		this.matcher = new XPathParser("rdf", RDF.NAMESPACE).parse("/rdf:RDF/descendant::node()");
 		this.handler = handler;
 		super.setContentHandler(this.handler);
 		this.context = context;
 		this.metadata = metadata; 
 		this.turtleParser = new TurtleParser();
+		this.namepool = new NamespaceCollector();
 		
 		this.rootElements = rootElements;		
 		Arrays.sort(this.rootElements);
@@ -68,20 +69,12 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			XSPARQLProcessor xp = new XSPARQLProcessor();			
 			String q = xp.process(xquery);//.process(new StringReader(query));
 			Configuration config = new Configuration();
-			namepool = new NamespaceCollector();
 			config.setNamePool(namepool);
 			Processor processor = new Processor(config);
 			XQueryCompiler compiler = processor.newXQueryCompiler();			
 			evaluator = compiler.compile(q).load();	
-		} catch (SaxonApiException e) {
-			e.printStackTrace();
-		} catch (RecognitionException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
+			throw new ParserException(e.getMessage());
 		}			
 	}
 

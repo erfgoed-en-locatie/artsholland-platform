@@ -3,10 +3,6 @@ package org.waag.ah.sesame;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.ejb.Stateful;
-
 import org.openrdf.model.Literal;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
@@ -25,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.waag.ah.ImportMetadata;
 
-@Stateful
 public class StoringRDFParser {
 	final static Logger logger = LoggerFactory.getLogger(StoringRDFParser.class);
 	private RepositoryConnection conn;
@@ -34,36 +29,20 @@ public class StoringRDFParser {
 	private URI source;
 	private CustomRDFXMLParser parser;
 	
-	@PostConstruct
-	public void connect() {
-		Assert.isNull(conn, "Already connected");
-		try {
-			source = new URIImpl("http://purl.org/artsholland/1.0/metadata/source");
-			parser = new CustomRDFXMLParser();
-			parser.setRDFHandler(new CustomRDFHandler());
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
+	public StoringRDFParser(RepositoryConnection conn) {
+		this.conn = conn;
+		this.source = new URIImpl("http://purl.org/artsholland/1.0/metadata/source");
+		this.parser = new CustomRDFXMLParser();
+		this.parser.setRDFHandler(new CustomRDFHandler());
 	}
 	
-	@PreDestroy
-	public void disconnect() {
-		try {
-			logger.debug("Closing repository connection");
-			conn.close();
-		} catch (RepositoryException e) {
-			logger.error(e.getMessage(), e);
-		}
-	}
-	
-	public void parse(RepositoryConnection conn, InputStream in, ImportMetadata metadata)
+	public void parse(InputStream in, ImportMetadata metadata)
 			throws RDFParseException, RDFHandlerException, IOException {
 		try {
 			Assert.notNull(conn, "Connection to triple stote not initialized");
 			Assert.isTrue(conn.isOpen(), "Not connected to triple store");
 			Assert.notNull(metadata.getBaseURI(), "RDF parser needs a base URI");
 			Assert.notNull(metadata.getJobIdentifier(), "RDF parser needs a base URI");
-			this.conn = conn;
 			vf = conn.getValueFactory();
 			jobId = vf.createLiteral(metadata.getJobIdentifier());
 			parser.parse(in, metadata.getBaseURI());
