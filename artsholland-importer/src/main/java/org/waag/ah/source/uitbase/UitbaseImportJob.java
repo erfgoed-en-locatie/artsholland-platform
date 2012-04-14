@@ -58,7 +58,7 @@ public class UitbaseImportJob extends AbstractImportJob {
 					"Cannot execute job: Uitbase config not loaded");
 		}
 		
-		DateTime dt = new DateTime();//DateTimeZone.forID("Europe/Amsterdam")
+		DateTime dt = new DateTime(2012, 4, 1, 0, 0, 0, 0);//DateTimeZone.forID("Europe/Amsterdam")
 		long ts = dt.getMillis();
 		
 		JobKey key = context.getJobDetail().getKey();

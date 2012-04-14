@@ -4,10 +4,10 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Stack;
 
 import javax.xml.transform.stream.StreamSource;
 
@@ -30,6 +30,8 @@ import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
 import org.deri.xsparql.XSPARQLProcessor;
 import org.openrdf.model.vocabulary.RDF;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.waag.ah.XSPARQLCharacterEncoder;
 import org.waag.ah.exception.ParserException;
 import org.waag.ah.tika.parser.rdf.TurtleParser;
@@ -39,20 +41,19 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 public class XSPARQLQueryHandler extends ContentHandlerDecorator {
-//	private Logger logger = Logger.getLogger(XSPARQLQueryHandler.class);
+	private Logger logger = LoggerFactory.getLogger(XSPARQLQueryHandler.class);
 	private XQueryEvaluator evaluator;
-	private String[] rootElements;
 	private ToXMLContentHandler xmlCollector;
-//	private ContentHandler handler;
 	private TurtleParser turtleParser;
 	private ParseContext context;
 	private Metadata metadata;
 	private NamespaceCollector namepool;
 	private ContentHandler handler;
 	private Matcher matcher;
+	private Stack<String> stack;
 
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata,
-			ParseContext context, InputStream xquery, String... rootElements)
+			ParseContext context, InputStream xquery)
 			throws ParserException {
 		this.matcher = new XPathParser("rdf", RDF.NAMESPACE).parse("/rdf:RDF/descendant::node()");
 		this.handler = handler;
@@ -61,10 +62,8 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		this.metadata = metadata; 
 		this.turtleParser = new TurtleParser();
 		this.namepool = new NamespaceCollector();
+		this.stack = new Stack<String>();
 		
-		this.rootElements = rootElements;		
-		Arrays.sort(this.rootElements);
-
 		try {
 			XSPARQLProcessor xp = new XSPARQLProcessor();			
 			String q = xp.process(xquery);//.process(new StringReader(query));
@@ -78,18 +77,16 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		}			
 	}
 
-	private boolean currentNode() {
-		return xmlCollector != null;
+	private boolean processing() {
+		return stack.size() > 0;
 	}
 
 	@Override
 	public void startDocument() throws SAXException {
-//		System.out.println("START");
 		this.handler.startDocument();
 		AttributesImpl atts = new AttributesImpl();
 		for (Entry<String, String> mapping : namepool.getMappings().entrySet()) {
 			this.handler.startPrefixMapping(mapping.getKey(), mapping.getValue());
-//			System.out.println(mapping.getKey()+" : "+mapping.getValue());
 		}
 		this.handler.startElement(RDF.NAMESPACE, "RDF", "rdf:RDF", atts);
 	}
@@ -103,24 +100,17 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
-		
-		/*if (rootElement == null) {
-			rootElement = localName;
-		}*/
-			
-		// Start collecting characters when we encounter our root element.
-		if (Arrays.binarySearch(rootElements, localName) > -1) {
+		if (!processing()) {
 			xmlCollector = new ToXMLContentHandler();
 		}
-		if (currentNode()) {
-			xmlCollector.startElement(uri, localName, qName, attributes);
-		}				
+		stack.push(localName);
+		xmlCollector.startElement(uri, localName, qName, attributes);			
 	}
     
 	@Override
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
-		if (currentNode()) {
+		if (processing()) {
 			xmlCollector.characters(ch, start, length);
 		}			
 	}
@@ -128,21 +118,22 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	@Override
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
-		if (currentNode()) {
-			xmlCollector.endElement(uri, localName, qName);
-		}
-		if (Arrays.binarySearch(rootElements, localName) > -1) {
-			
-			String xmlString = xmlCollector.toString();
-			
-			StreamSource xml = new StreamSource(new StringReader(xmlString));	
-			
-//			System.out.println(xmlCollector.toString());
+		xmlCollector.endElement(uri, localName, qName);
+		stack.pop();
+		
+		if (!processing()) {
 			try {
+				String xmlString = xmlCollector.toString();
+				
+				if (logger.isDebugEnabled()) {
+					logger.debug("Importing XML: "+xmlString);
+				}
+				
+				StreamSource xml = new StreamSource(new StringReader(xmlString));	
 				evaluator.setSource(xml);
 				StringBuilder combined = new StringBuilder();
+				
 				for (XdmItem item : evaluator) {
-//					System.out.println(item);
 					combined.append(item);
 				}
 				
@@ -157,76 +148,17 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 						new MatchingContentHandler(
 						new EmbeddedContentHandler(this.handler), matcher), mdata, context);
 				
-//				handler.endDocument();
 			} catch (SaxonApiException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (TikaException e) {
 				e.printStackTrace();
-			} finally {
-				xmlCollector = null;
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}
-	
-//	private static class EmbeddedRDFHandler extends EmbeddedContentHandler {
-//		private boolean started = false;
-//
-//		public EmbeddedRDFHandler(ContentHandler handler) {
-//			super(handler);
-//			// TODO Auto-generated constructor stub
-//		}
-//
-//		@Override
-//		public void startElement(String uri, String localName, String name,
-//				Attributes atts) throws SAXException {
-//			if (name != "rdf:RDF") {
-//				super.startElement(uri, localName, name, atts);
-//			} else {
-//				started = true;
-//				System.out.println("START");
-//			}
-//		}
-//
-//		@Override
-//		public void endElement(String uri, String localName, String name)
-//				throws SAXException {
-//			if (name != "rdf:RDF") {
-//				super.endElement(uri, localName, name);
-//			}
-//		}
-//
-//		@Override
-//		public void startPrefixMapping(String prefix, String uri)
-//				throws SAXException {
-////			if (!started) {
-////				System.out.println(prefix+":"+uri);
-////			}
-//			super.startPrefixMapping(prefix, uri);
-//		}
-//
-////		@Override
-////		public void startDocument() throws SAXException {
-////			if (!started) {
-////				System.out.println("STARTING");
-////				super.startDocument();
-////				started = true;
-////			}
-////		}
-//
-////		@Override
-////		public void endDocument() throws SAXException {
-////			// TODO Auto-generated method stub
-////			super.endDocument();
-////		}
-////		public EmbeddedRDFHandler(ContentHandler handler) {
-////			super(handler);
-////		}
-//
-//		
-//		
-//	}
 	
 	private static class NamespaceCollector extends NamePool {
 		private static final long serialVersionUID = -2352244560755994347L;
