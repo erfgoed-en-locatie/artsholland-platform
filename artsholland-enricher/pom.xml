@@ -28,4 +28,12 @@
     </plugins>
   </build>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.waag.artsholland</groupId>
+      <artifactId>artsholland-core</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <type>ejb</type>
+    </dependency>
+  </dependencies>
 </project>
