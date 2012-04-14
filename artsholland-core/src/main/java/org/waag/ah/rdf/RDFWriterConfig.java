@@ -12,6 +12,10 @@ public class RDFWriterConfig {
 	private String baseUri;
 	
 	public void setFormat(String format) {
+		// TODO: This is, of course, a hack :)
+		if (format.equals("application/json")) {
+			format = RDFJSONFormat.MIMETYPE;
+		}
 		this.format = format;
 	}
 	

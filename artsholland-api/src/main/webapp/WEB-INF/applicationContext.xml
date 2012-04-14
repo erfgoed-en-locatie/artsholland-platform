@@ -14,7 +14,7 @@
         http://www.springframework.org/schema/web-services http://www.springframework.org/schema/web-services/web-services-2.0.xsd
         http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd">
   
-  <bean id="platformConfigFactory" class="org.waag.ah.PlatformConfig"
+  <bean id="platformConfigFactory" class="org.waag.ah.PlatformConfigHelper"
     factory-method="getConfig" />
   
   <bean class="org.waag.ah.spring.view.QueryTaskView">

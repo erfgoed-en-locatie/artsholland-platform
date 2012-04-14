@@ -14,11 +14,11 @@ import org.slf4j.LoggerFactory;
  *  
  * @author Raoul Wissink <raoul@raoul.net>
  */
-public class PlatformConfig extends PropertiesConfiguration {
-	final static Logger logger = LoggerFactory.getLogger(PlatformConfig.class);
-	private static PropertiesConfiguration platformConfig;
+public class PlatformConfigHelper extends PropertiesConfiguration {
+	final static Logger logger = LoggerFactory.getLogger(PlatformConfigHelper.class);
+	private static PlatformConfig platformConfig;
 	
-	private PlatformConfig() {}
+	private PlatformConfigHelper() {}
 	
 	/**
 	 * Return platform configuration instance.
@@ -27,11 +27,11 @@ public class PlatformConfig extends PropertiesConfiguration {
 	 * @author	Raoul Wissink <raoul@raoul.net>
 	 * @since	Mar 8, 2012
 	 */
-	public synchronized static PropertiesConfiguration getConfig() 
+	public synchronized static PlatformConfig getConfig() 
 			throws ConfigurationException {
 		if (platformConfig == null) {
 			String file = "file://"+System.getProperty("user.home")+"/.artsholland/artsholland.properties";
-			platformConfig = new PropertiesConfiguration(file);
+			platformConfig = new PlatformConfig(file);
 		}
 		return platformConfig;
 	}
@@ -40,7 +40,7 @@ public class PlatformConfig extends PropertiesConfiguration {
 			throws ConfigurationException {
 		List<String> list = new ArrayList<String>();
 		list.add(property);
-		return PlatformConfig.getProperties(list);
+		return PlatformConfigHelper.getProperties(list);
 	}
 	
 	public static Properties getProperties(List<String> proplist) 
@@ -52,5 +52,11 @@ public class PlatformConfig extends PropertiesConfiguration {
 					config.getProperty(config.getString(property)));
 		}
 		return properties;
+	}
+	
+	public static class PlatformConfig extends PropertiesConfiguration {
+		public PlatformConfig(String fileName) throws ConfigurationException {
+			super(fileName);
+		}
 	}
 }

@@ -3,6 +3,11 @@ package org.waag.ah.model.rdf;
 import java.math.BigDecimal;
 import java.util.Set;
 
+import org.codehaus.jackson.annotate.JsonAutoDetect;
+import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize.Inclusion;
 import org.openrdf.annotations.Iri;
 import org.openrdf.repository.object.LangString;
 
