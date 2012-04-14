@@ -49,6 +49,10 @@ public abstract class AbstractImportJob implements Job {
 		for (URL url : urls) {
 			resources.add(ImportResourceFactory.getimportResource(url));
 		}
-		importServiceBean.importResource(resources, metadata);
+		if (urls.size() > 0) {
+			importServiceBean.importResource(resources, metadata);
+		} else {
+			logger.info("No resources to import");
+		}
 	}
 }

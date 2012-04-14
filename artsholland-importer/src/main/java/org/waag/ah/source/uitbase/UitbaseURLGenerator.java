@@ -22,12 +22,12 @@ public class UitbaseURLGenerator {
 	
 	private static final int ROWS = 500;
 	
-	public static final String[] RESOURCES = { 
-		"events", 
-		"locations", 
-		"productions",
-		"groups" 
-	};
+//	public static final String[] RESOURCES = { 
+//		"events", 
+//		"locations", 
+//		"productions",
+//		"groups" 
+//	};
 	
 	public UitbaseURLGenerator(String endpoint, String apiKey) {
 		BASE_URL = endpoint + "/search";
@@ -40,28 +40,28 @@ public class UitbaseURLGenerator {
 		DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
 		String dtParam = dt != null ? "&createdfrom="+fmt.withZone(DateTimeZone.UTC).print(dt) : "";
 		
-		for (String resource : RESOURCES) {
-			int count = 0;
-			try {
-				String content = readURL(getCountURL(resource));
-				count = getCount(content);	
-			} catch (IOException e) {			
-				e.printStackTrace();
-			}
-			int i = 0;
-			while (i < count) {
-				// TODO: use something like URLBuilder 
-//				String url = addAPIKey(BASE_URL + resource) + "&rows=" + ROWS + "&start=" + i + dtParam;
-				String url = addAPIKey(BASE_URL) + 
-						"&resolve=true" +
-						"&resource=" + resource +
-						"&rows=" + ROWS + 
-						"&start=" + i + 
-						dtParam;
-				urls.add(new URL(url));
-				i += ROWS;
-			}
-		}		
+//		for (String resource : RESOURCES) {
+		int count = 0;
+		try {
+			String content = readURL(getCountURL(dtParam));
+			count = getCount(content);	
+		} catch (IOException e) {			
+			e.printStackTrace();
+		}
+		int i = 0;
+		while (i < count) {
+			// TODO: use something like URLBuilder 
+//			String url = addAPIKey(BASE_URL + resource) + "&rows=" + ROWS + "&start=" + i + dtParam;
+			String url = addAPIKey(BASE_URL) + 
+					"&resolve=true" +
+//					"&resource=" + resource +
+					"&rows=" + ROWS + 
+					"&start=" + i + 
+					dtParam;
+			urls.add(new URL(url));
+			i += ROWS;
+		}
+//		}		
 		return urls;
 	}
 		
@@ -84,8 +84,8 @@ public class UitbaseURLGenerator {
 		return 0;
 	}
 
-	private String getCountURL(String resource) {
-		return addAPIKey(BASE_URL) + "&rows=0&resource="+resource;
+	private String getCountURL(String filter) {
+		return addAPIKey(BASE_URL) + "&rows=0"+filter;
 	}
 
 	private String addAPIKey(String url) {
