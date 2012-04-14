@@ -1,4 +1,4 @@
-package org.waag.ah.rest;
+package org.waag.ah.rdf;
 
 import java.io.Writer;
 import java.util.Iterator;
@@ -15,8 +15,6 @@ import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.gson.stream.JsonWriter;
 
 /**
  * A utility class to help converting Sesame Graphs from and to RDF/JSON.

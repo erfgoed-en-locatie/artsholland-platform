@@ -8,7 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.waag.ah.rest.RESTParameters;
+import org.waag.ah.rest.RestParameters;
+
 
 public class RestRelation {
 
@@ -136,6 +137,13 @@ public class RestRelation {
 		relations.add(relation);
 	}
 	
+	public void addRelations(RestRelation... relations) {
+		for (RestRelation relation : relations) {
+			relation.setParent(this);
+			this.relations.add(relation);
+		}
+	}
+	
 	public RestRelation addRelation(String parameter, String classURI,
 			RelationQuantity quantity, RelationType type, boolean parameterized) {
 		RestRelation relation = new RestRelation(parameter, classURI, quantity,
@@ -199,7 +207,7 @@ public class RestRelation {
 		return this;
 	}
 
-	public ArrayList<String> getStatements(RESTParameters params) {
+	public ArrayList<String> getStatements(RestParameters params) {
 		
 		ArrayList<String> statements = new ArrayList<String>();
 		
@@ -214,7 +222,8 @@ public class RestRelation {
 		return statements;
 	}
 
-	public ArrayList<String> getFilters(RESTParameters params) {
+
+	public ArrayList<String> getFilters(RestParameters params) {
 		ArrayList<String> filters = new ArrayList<String>();
 		
 		for (Entry<String, String[]> uriParameter : params.getURIParameterMap().entrySet()) {

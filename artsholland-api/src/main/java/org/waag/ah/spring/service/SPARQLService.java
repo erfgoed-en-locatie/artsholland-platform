@@ -1,7 +1,6 @@
 package org.waag.ah.spring.service;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -9,26 +8,26 @@ import java.util.Map;
 import java.util.concurrent.FutureTask;
 
 import javax.ejb.EJB;
-import javax.naming.OperationNotSupportedException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.QueryLanguage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.waag.ah.bigdata.BigdataQueryService;
-import org.waag.ah.bigdata.BigdataQueryService.QueryTask;
+import org.waag.ah.QueryService;
+import org.waag.ah.QueryTask;
+import org.waag.ah.rdf.RDFWriterConfig;
+import org.waag.ah.rdf.RdfQueryDefinition;
 import org.waag.ah.rest.util.MIMEParse;
-
-import com.bigdata.journal.TimestampUtility;
 
 @Service(value="sparqlService")
 public class SPARQLService {
 	private static final Logger logger = LoggerFactory.getLogger(SPARQLService.class);
 	
 	@EJB(mappedName="java:app/datastore/BigdataQueryService")
-	private BigdataQueryService context;
+	private QueryService context;
 
 	public static final transient String
 		MIME_TEXT_PLAIN 			= "text/plain",
@@ -68,91 +67,29 @@ public class SPARQLService {
         }
         
         try {
-    		final OutputStream out = response.getOutputStream();
-    		final String query = request.getParameter("query");
-            final String baseURI = request.getRequestURL().toString();
-//          final boolean explain = request.getParameter(BigdataQueryService.EXPLAIN) != null;
-//          final String timestamp = request.getParameter("timestamp");
-
-            final QueryTask queryTask;
-            try {
-                queryTask = context.getQueryTask(query, baseURI, mimeType, out);
-            } catch (MalformedQueryException ex) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-                        ex.getLocalizedMessage());
-                return;
-            }
-            
-            final FutureTask<Void> ft = new FutureTask<Void>(queryTask);
+        	RDFWriterConfig config = new RDFWriterConfig();
+        	config.setBaseUri(request.getRequestURL().toString());
+        	config.setFormat(mimeType);
+        	
+			RdfQueryDefinition query = new RdfQueryDefinition(
+					QueryLanguage.SPARQL, request.getParameter("query"));
+        	
+			final QueryTask queryTask = context.getQueryTask(query, config,
+					response.getOutputStream());
 
             if (logger.isTraceEnabled()) {
                 logger.trace("Will run query: " + query);
             }
-            
-            response.setStatus(HttpServletResponse.SC_OK);
 
-            if (queryTask.getExplain()) {
-//                response.setContentType(BigdataServlet.MIME_TEXT_HTML);
-//                final Writer w = new OutputStreamWriter(os, queryTask.getCharset());
-//                try {
-//                    // Begin executing the query (asynchronous)
-//                    getBigdataRDFContextWrapper().queryService.execute(ft);
-//                    // Send an explanation instead of the query results.
-//                    explainQuery(query, queryTask, ft, w);
-//                } finally {
-//                    w.flush();
-//                    w.close();
-//                    os.flush();
-//                    os.close();
-//                }
-            	throw new OperationNotSupportedException("Explain queries are not yet supported.");
-            } else {
-                response.setContentType(queryTask.getMimeType());
-                if (queryTask.getCharset() != null) {
-                    response.setCharacterEncoding(queryTask.getCharset().name());
-                }
-                if (isAttachment(queryTask.getMimeType())) {
-                    response.setHeader("Content-disposition",
-                            "attachment; filename=query" + queryTask.getQueryId()
-                                    + "." + queryTask.getFileExt());
-                }
-                if (TimestampUtility.isCommitTime(queryTask.getTimestamp())) {
-                    response.addHeader("Cache-Control", "public");
-                    // response.addHeader("Cache-Control", "no-cache");
-                }
-                context.executeQueryTask(ft);
-                ft.get();
-            }
+            FutureTask<Void> ft = context.executeQueryTask(queryTask);
+            response.setStatus(HttpServletResponse.SC_OK);
+            ft.get();
+		} catch (MalformedQueryException ex) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+					ex.getLocalizedMessage());
 		} catch (Exception e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					e.getLocalizedMessage());
-		}		
+		}
 	}
-	
-    private boolean isAttachment(final String mimeType) {
-        if(mimeType.equals(MIME_TEXT_PLAIN)) {
-            return false;
-        } else if(mimeType.equals(MIME_SPARQL_RESULTS_XML)) {
-            return false;
-        } else if(mimeType.equals(MIME_SPARQL_RESULTS_JSON)) {
-            return false;
-        } else if(mimeType.equals(MIME_APPLICATION_XML)) {
-            return false;
-        }
-        return true;
-    }
-    
-//	public void proxyQuery(HttpServletRequest request,
-//			HttpServletResponse response, String query) {
-//		try {
-//			URL url = new URL(SPARQL_ENDPOINT.expand(query).encode().toUriString());
-//			response.setContentType("application/xml");
-//			URLConnection conn = url.openConnection();
-//			IOUtils.copy(conn.getInputStream(), response.getOutputStream());
-//		} catch (MalformedURLException e) {
-//			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-//		} catch (IOException e) {
-//			response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
-//		}
-//	}
 }

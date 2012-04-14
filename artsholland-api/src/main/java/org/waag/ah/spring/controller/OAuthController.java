@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-public class OAuthAccessConfirmationController {
-//	private static final Logger logger = LoggerFactory.getLogger(OAuthAccessConfirmationController.class);
+public class OAuthController {
+//	private static final Logger logger = LoggerFactory.getLogger(OAuthController.class);
 	
 	@Autowired
 	private OAuthProviderTokenServices tokenServices;

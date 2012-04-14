@@ -6,51 +6,68 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.openrdf.rio.RDFFormat;
+import org.openrdf.query.MalformedQueryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.waag.ah.rest.RDFJSONFormat;
-import org.waag.ah.rest.RESTParametersImpl;
+import org.springframework.web.servlet.ModelAndView;
+import org.waag.ah.rest.RestParameters;
 import org.waag.ah.spring.annotation.RestRequestParameters;
 import org.waag.ah.spring.service.RestService;
+import org.waag.ah.spring.view.QueryTaskView;
 
 @Controller
-public class RestController {
+public class RestController { // implements InitializingBean
 	final static Logger logger = LoggerFactory.getLogger(RestController.class);
 
 	@Resource(name = "restService")
 	private RestService restService;
 
 	@Autowired
-	PropertiesConfiguration config;
+	private QueryTaskView view;
+	
+//	@Autowired
+//	private QueryService queryService;
 
-	public RestController() {
-		RDFFormat.register(RDFJSONFormat.RESTAPIJSON);
-	}
-
-	@RequestMapping(value="/data/{objectClass}/{objectId}", method=RequestMethod.GET)
-	public void restRequest(
+//	@Override
+//	public void afterPropertiesSet() throws Exception {
+//		this.view = getApplicationContext().getBean("mybean");//new QueryTaskView(queryService);
+//	}
+	
+	@RequestMapping(value="/data/*/*", method=RequestMethod.GET)
+	public ModelAndView getObjectByUri(
 			final HttpServletRequest request,
 			final HttpServletResponse response,
-			@RestRequestParameters(urlStartIndex=1) RESTParametersImpl params,
-			@PathVariable String objectClass, 
-			@PathVariable String objectId)
+			@RestRequestParameters(prefixLength=1) RestParameters params)
 			throws IOException {
-		restService.restRequest(params, response);
+		try {
+			return new ModelAndView(view, QueryTaskView.MODEL_QUERY,
+					restService.getObjectQuery(params));
+		} catch (MalformedQueryException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+		} catch (Exception e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+		}
+		return null;
 	}
 
 	@RequestMapping(value="/rest/**", method=RequestMethod.GET)
-	public void restRequest(
+	public ModelAndView restRequest(
 			final HttpServletRequest request,
 			final HttpServletResponse response,
-			@RestRequestParameters(urlStartIndex=1, paging=true) RESTParametersImpl params)
+			@RestRequestParameters(prefixLength=1, paging=true) RestParameters params)
 			throws IOException {
-		restService.restRequest(params, response);
+		try {
+			return new ModelAndView(view, QueryTaskView.MODEL_QUERY,
+					restService.getPagedQuery(params));
+		} catch (MalformedQueryException e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+		} catch (Exception e) {
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+		}
+		return null;
 	}
 }
