@@ -11,7 +11,7 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import org.waag.ah.rest.RestParameters;
+import org.waag.ah.rest.RESTParameters;
 import org.waag.ah.spring.annotation.RestRequestParameters;
 
 public class RestParametersArgumentResolver implements
@@ -21,7 +21,7 @@ public class RestParametersArgumentResolver implements
 
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
-		return RestParameters.class.isAssignableFrom(parameter.getParameterType());
+		return RESTParameters.class.isAssignableFrom(parameter.getParameterType());
 	}
 	
 	@Override
@@ -36,7 +36,7 @@ public class RestParametersArgumentResolver implements
 					.getNativeRequest();
 			
 			Map<String, String[]> paramMap = request.getParameterMap();
-			RestParameters params = new RestParameters();
+			RESTParameters params = new RESTParameters();
 			
 			if (paramMap.containsKey("lang") && paramMap.get("lang").length == 1) {
 				params.setLanguageTag(paramMap.get("lang")[0]);

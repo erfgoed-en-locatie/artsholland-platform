@@ -15,7 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.waag.ah.rest.RestParameters;
+import org.waag.ah.rest.RESTParameters;
 import org.waag.ah.spring.annotation.RestRequestParameters;
 import org.waag.ah.spring.service.RestService;
 import org.waag.ah.spring.view.QueryTaskView;
@@ -34,7 +34,7 @@ public class RestController { // implements InitializingBean
 	public ModelAndView getObjectByUri(
 			final HttpServletRequest request,
 			final HttpServletResponse response,
-			@RestRequestParameters(prefixLength=1) RestParameters params)
+			@RestRequestParameters(prefixLength=1) RESTParameters params)
 			throws IOException {
 		try {
 			return new ModelAndView(view, QueryTaskView.MODEL_QUERY,
@@ -52,7 +52,7 @@ public class RestController { // implements InitializingBean
 	public ModelAndView restRequest(
 			final HttpServletRequest request,
 			final HttpServletResponse response,
-			@RestRequestParameters(prefixLength=1, paging=true) RestParameters params)
+			@RestRequestParameters(prefixLength=1, paging=true) RESTParameters params)
 			throws IOException {
 		try {
 			return new ModelAndView(view, QueryTaskView.MODEL_QUERY,

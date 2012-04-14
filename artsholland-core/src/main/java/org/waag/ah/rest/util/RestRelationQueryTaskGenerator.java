@@ -8,7 +8,7 @@ import java.util.Map;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryLanguage;
 import org.waag.ah.rdf.RdfQueryDefinition;
-import org.waag.ah.rest.RestParameters;
+import org.waag.ah.rest.RESTParameters;
 import org.waag.ah.rest.model.RestRelation;
 import org.waag.ah.rest.model.RestRelation.RelationQuantity;
 import org.waag.ah.rest.model.RestRelation.RelationType;
@@ -221,7 +221,7 @@ public class RestRelationQueryTaskGenerator {
 	}
 	
 	
-	public RdfQueryDefinition generate(RestParameters params)
+	public RdfQueryDefinition generate(RESTParameters params)
 			throws MalformedQueryException {
 
 		LinkedList<String> uriPathParts = params.getURIPathParts();
@@ -322,7 +322,7 @@ public class RestRelationQueryTaskGenerator {
 	}
 
 	private ArrayList<String> generateFilters(RestRelation relation,
-			RestParameters params) { 
+			RESTParameters params) { 
 		
 		ArrayList<String> filters = new ArrayList<String>();
 				
