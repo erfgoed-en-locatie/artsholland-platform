@@ -9,7 +9,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.apache.commons.lang.StringUtils;
 import org.openrdf.model.datatypes.XMLDatatypeUtil;
 
-public class RestParameters {
+public class RESTParameters {
 	private long resultLimit = 0;
 	private long page = 0;
 	private String languageTag = "en";	

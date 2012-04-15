@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.waag.ah.rdf.RDFJSONFormat;
 import org.waag.ah.rdf.RDFWriterConfig;
 import org.waag.ah.rdf.RdfQueryDefinition;
-import org.waag.ah.rest.RestParameters;
+import org.waag.ah.rest.RESTParameters;
 import org.waag.ah.rest.model.RestRelation;
 import org.waag.ah.rest.model.RestRelation.RelationQuantity;
 import org.waag.ah.rest.model.RestRelation.RelationType;
@@ -76,14 +76,14 @@ public class RestService implements InitializingBean {
 		queryTaskGenerator = new RestRelationQueryTaskGenerator(rootRelation);
 	}
 
-	public RdfQueryDefinition getObjectQuery(RestParameters params)
+	public RdfQueryDefinition getObjectQuery(RESTParameters params)
 			throws MalformedQueryException {
 		RdfQueryDefinition query = queryTaskGenerator.generate(params);
 		query.setWriterConfig(getDefaultWriterConfig(params));
 		return query;
 	}
 
-	public RdfQueryDefinition getPagedQuery(RestParameters params)
+	public RdfQueryDefinition getPagedQuery(RESTParameters params)
 			throws MalformedQueryException {
 		RdfQueryDefinition query = queryTaskGenerator.generate(params);
 		RDFWriterConfig config = getDefaultWriterConfig(params);
@@ -93,7 +93,7 @@ public class RestService implements InitializingBean {
 		return query;
 	}
 	
-	private RDFWriterConfig getDefaultWriterConfig(RestParameters params) {
+	private RDFWriterConfig getDefaultWriterConfig(RESTParameters params) {
 		RDFWriterConfig config = new RDFWriterConfig();
 		config.setPrettyPrint(params.getPretty());
 		config.setBaseUri(platformConfig.getString("platform.baseUri"));		
