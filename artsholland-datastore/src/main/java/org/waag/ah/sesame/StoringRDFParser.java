@@ -37,18 +37,19 @@ public class StoringRDFParser {
 	}
 	
 	public void parse(InputStream in, ImportMetadata metadata)
-			throws RDFParseException, RDFHandlerException, IOException {
-		try {
-			Assert.notNull(conn, "Connection to triple stote not initialized");
-			Assert.isTrue(conn.isOpen(), "Not connected to triple store");
-			Assert.notNull(metadata.getBaseURI(), "RDF parser needs a base URI");
-			Assert.notNull(metadata.getJobIdentifier(), "RDF parser needs a base URI");
-			vf = conn.getValueFactory();
-			jobId = vf.createLiteral(metadata.getJobIdentifier());
-			parser.parse(in, metadata.getBaseURI());
-		} catch (RepositoryException e) {
-			logger.error(e.getMessage());
-		}
+			throws RDFParseException, RDFHandlerException, IOException,
+			RepositoryException {
+		//		try {
+		Assert.notNull(conn, "Connection to triple stote not initialized");
+		Assert.isTrue(conn.isOpen(), "Not connected to triple store");
+		Assert.notNull(metadata.getBaseURI(), "RDF parser needs a base URI");
+		Assert.notNull(metadata.getJobIdentifier(), "RDF parser needs a base URI");
+		vf = conn.getValueFactory();
+		jobId = vf.createLiteral(metadata.getJobIdentifier());
+		parser.parse(in, metadata.getBaseURI());
+//		} catch (RepositoryException e) {
+//			logger.error(e.getMessage());
+//		}
     }
 
 	public void commit() throws RepositoryException {

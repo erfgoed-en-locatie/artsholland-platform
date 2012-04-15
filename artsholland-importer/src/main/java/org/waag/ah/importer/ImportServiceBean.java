@@ -49,7 +49,7 @@ public class ImportServiceBean implements ImportService {
 	}
 	
 	public void importResource(List<ImportResource> resources,
-			ImportMetadata metadata) {
+			ImportMetadata metadata) throws Exception {
 		Assert.notNull(conn, "Connection not initialized");
 		Assert.notEmpty(resources, "No resources provided for import");
 		logger.debug("Processing importing job: "+metadata.getJobIdentifier());
@@ -75,6 +75,7 @@ public class ImportServiceBean implements ImportService {
 		} catch (Exception e) {
 			logger.error("Error importimg url <"+curResource+">: "+e, e);
 			parser.rollback();
+			throw e;
 		}
 	}
 	

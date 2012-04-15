@@ -33,18 +33,23 @@ public class UitbaseURLGenerator {
 		BASE_URL = endpoint + "/search";
 		API_KEY = apiKey;
 	}	
+	
+	public List<URL> getURLs() throws MalformedURLException {
+		return getURLs(null, null);
+	}
 
-	public List<URL> getURLs(DateTime dt) throws MalformedURLException {
+	public List<URL> getURLs(DateTime dtTo, DateTime dtFrom) throws MalformedURLException {
 		List<URL> urls = new ArrayList<URL>();
 		
 		DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
-		String dtParam = dt != null ? "&createdfrom="+fmt.withZone(DateTimeZone.UTC).print(dt) : "";
+		String dtToParam = dtTo != null ? "&createdto="+fmt.withZone(DateTimeZone.UTC).print(dtTo) : "";
+		String dtFromParam = dtFrom != null ? "&createdfrom="+fmt.withZone(DateTimeZone.UTC).print(dtFrom) : "";
 		
 //		for (String resource : RESOURCES) {
 		int count = 0;
 		try {
-			String content = readURL(getCountURL(dtParam));
-			count = getCount(content);	
+			String content = readURL(getCountURL(dtFromParam+dtToParam));
+			count = 1000; //getCount(content);	
 		} catch (IOException e) {			
 			e.printStackTrace();
 		}
@@ -57,16 +62,12 @@ public class UitbaseURLGenerator {
 //					"&resource=" + resource +
 					"&rows=" + ROWS + 
 					"&start=" + i + 
-					dtParam;
+					dtFromParam+dtToParam;
 			urls.add(new URL(url));
 			i += ROWS;
 		}
 //		}		
 		return urls;
-	}
-		
-	public List<URL> getURLs() throws MalformedURLException {
-		return getURLs(null);
 	}
 	
 	private static int getCount(String content) {

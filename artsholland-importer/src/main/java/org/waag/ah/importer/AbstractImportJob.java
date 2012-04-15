@@ -17,13 +17,11 @@ import org.waag.ah.ImportMetadata;
 import org.waag.ah.ImportResource;
 import org.waag.ah.ImportService;
 import org.waag.ah.PlatformConfigHelper;
-import org.waag.ah.mongo.MongoConnectionService;
 
 public abstract class AbstractImportJob implements Job {
 	private Logger logger = LoggerFactory.getLogger(AbstractImportJob.class);
 	private ImportService importServiceBean;
 	private PropertiesConfiguration config;
-	protected MongoConnectionService mongo;
 	
 	public AbstractImportJob() {
 		try {
@@ -31,16 +29,12 @@ public abstract class AbstractImportJob implements Job {
 			Context ctx = new InitialContext();
 			importServiceBean = (ImportService) ctx
 					.lookup("java:global/artsholland-platform/importer/ImportServiceBean");
-			mongo = (MongoConnectionService) ctx
-					.lookup("java:global/artsholland-platform/datastore/MongoConnectionService");
 		} catch (NamingException e) {
 			logger.error(e.getMessage(), e);
 		} catch (ConfigurationException e) {
 			logger.error("Error loading platform config", e);
 		}
 	}
-
-	// protected abstract URL buildResourceURL() throws MalformedURLException;
 
 	protected void doImport(List<URL> urls, ImportMetadata metadata)
 			throws Exception {
