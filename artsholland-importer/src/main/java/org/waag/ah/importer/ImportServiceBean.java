@@ -6,10 +6,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 
 import org.openrdf.repository.RepositoryConnection;
+import org.openrdf.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -22,12 +24,10 @@ import org.waag.ah.sesame.StoringRDFParser;
 @Stateful
 public class ImportServiceBean implements ImportService {
 	private static final Logger logger = LoggerFactory.getLogger(ImportServiceBean.class);
+	private RepositoryConnection conn;
 
 	@EJB(mappedName="java:app/datastore/BigdataConnectionService")
 	private RepositoryConnectionFactory cf;
-	
-	private @EJB StoringRDFParser parser;
-	private RepositoryConnection conn;
 	
 	@PostConstruct
 	public void init() {
@@ -39,11 +39,22 @@ public class ImportServiceBean implements ImportService {
 		}
 	}
 	
+	@PreDestroy
+	public void destroy() {
+		try {
+			conn.close();
+		} catch (RepositoryException e) {
+			logger.error(e.getMessage());
+		}
+	}
+	
 	public void importResource(List<ImportResource> resources,
-			ImportMetadata metadata) {
+			ImportMetadata metadata) throws Exception {
 		Assert.notNull(conn, "Connection not initialized");
+		Assert.notEmpty(resources, "No resources provided for import");
 		logger.debug("Processing importing job: "+metadata.getJobIdentifier());
 		ImportResource curResource = null;
+		StoringRDFParser parser = new StoringRDFParser(conn);
 		try {
 			long oldsize = conn.size();
 			Iterator<ImportResource> it = resources.iterator();
@@ -53,7 +64,7 @@ public class ImportServiceBean implements ImportService {
 				try {
 					logger.info("Importing: "+curResource);
 					stream = curResource.parse();
-					parser.parse(conn, stream, metadata);
+					parser.parse(stream, metadata);
 				} finally {
 					stream.close();
 				}
@@ -64,6 +75,7 @@ public class ImportServiceBean implements ImportService {
 		} catch (Exception e) {
 			logger.error("Error importimg url <"+curResource+">: "+e, e);
 			parser.rollback();
+			throw e;
 		}
 	}
 	

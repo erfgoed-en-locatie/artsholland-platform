@@ -1,8 +1,6 @@
 package org.waag.ah.importer;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -11,18 +9,18 @@ import org.bson.BSONObject;
 
 import com.mongodb.DBObject;
 
-public class ImportJob implements DBObject {
+public class ImportJobResult implements DBObject {
 	public static String STRATEGY_FULL = "full";
 	public static String STRATEGY_INCREMENTAL = "incremental";
 	
 	private final Map<String, Object> data = new HashMap<String, Object>();
-	private final Set<String> fields = new HashSet<String>(Arrays.asList(
-			"_id",
-			"_transientFields",
-			"timestamp",
-			"jobId",
-			"strategy",
-			"source"));
+//	private final Set<String> fields = new HashSet<String>(Arrays.asList(
+//			"_id",
+//			"_transientFields",
+//			"timestamp",
+//			"jobId",
+//			"strategy",
+//			"source"));
 
 	@Override
 	public void markAsPartialObject() {}
@@ -31,12 +29,17 @@ public class ImportJob implements DBObject {
 	public boolean isPartialObject() {
 		return false;
 	}
+	
+	@Override
+	public String toString() {
+		return data.toString();
+	}
 
 	@Override
 	public Object put(String key, Object value) {
-		if (!containsField(key)) {
-			throw new IllegalArgumentException();
-		}
+//		if (!containsField(key)) {
+//			throw new IllegalArgumentException();
+//		}
 		data.put(key, value);
 		return value;
 	}
@@ -58,9 +61,9 @@ public class ImportJob implements DBObject {
 
 	@Override
 	public Object get(String key) {
-		if (!containsField(key)) {
-			throw new IllegalArgumentException("Field '"+key+"' not defined");
-		}
+//		if (!containsField(key)) {
+//			throw new IllegalArgumentException("Field '"+key+"' not defined");
+//		}
 		return data.get(key);
 	}
 
@@ -81,11 +84,11 @@ public class ImportJob implements DBObject {
 
 	@Override
 	public boolean containsField(String s) {
-		return fields.contains(s);
+		return data.containsKey(s);
 	}
 
 	@Override
 	public final Set<String> keySet() {
-		return fields;
+		return data.keySet();
 	}	
 }

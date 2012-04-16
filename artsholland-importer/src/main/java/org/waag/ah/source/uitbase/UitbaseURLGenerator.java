@@ -22,52 +22,53 @@ public class UitbaseURLGenerator {
 	
 	private static final int ROWS = 500;
 	
-	public static final String[] RESOURCES = { 
-		"events", 
-		"locations", 
-		"productions",
-		"groups" 
-	};
+//	public static final String[] RESOURCES = { 
+//		"events", 
+//		"locations", 
+//		"productions",
+//		"groups" 
+//	};
 	
 	public UitbaseURLGenerator(String endpoint, String apiKey) {
 		BASE_URL = endpoint + "/search";
 		API_KEY = apiKey;
 	}	
+	
+	public List<URL> getURLs() throws MalformedURLException {
+		return getURLs(null, null);
+	}
 
-	public List<URL> getURLs(DateTime dt) throws MalformedURLException {
+	public List<URL> getURLs(DateTime dtTo, DateTime dtFrom) throws MalformedURLException {
 		List<URL> urls = new ArrayList<URL>();
 		
 		DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
-				
-		String dtParam = dt != null ? "&createdfrom="+fmt.withZone(DateTimeZone.UTC).print(dt) : "";
-				
-		for (String resource : RESOURCES) {
-			int count = 0;
-			try {
-				String content = readURL(getCountURL(resource));
-				count = getCount(content);	
-			} catch (IOException e) {			
-				e.printStackTrace();
-			}
-			int i = 0;
-			while (i < count) {
-				// TODO: use something like URLBuilder 
-//				String url = addAPIKey(BASE_URL + resource) + "&rows=" + ROWS + "&start=" + i + dtParam;
-				String url = addAPIKey(BASE_URL) + 
-						"&resolve=true" +
-						"&resource=" + resource +
-						"&rows=" + ROWS + 
-						"&start=" + i + 
-						dtParam;
-				urls.add(new URL(url));
-				i += ROWS;
-			}
-		}		
-		return urls;
-	}
+
+		String dtToParam = dtTo != null ? "&createdto="+fmt.withZone(DateTimeZone.UTC).print(dtTo) : "";
+		String dtFromParam = dtFrom != null ? "&createdfrom="+fmt.withZone(DateTimeZone.UTC).print(dtFrom) : "";
 		
-	public List<URL> getURLs() throws MalformedURLException {
-		return getURLs(null);
+//		for (String resource : RESOURCES) {
+		int count = 0;
+		try {
+			String content = readURL(getCountURL(dtFromParam+dtToParam));
+			count = 1000; //getCount(content);	
+		} catch (IOException e) {			
+			e.printStackTrace();
+		}
+		int i = 0;
+		while (i < count) {
+			// TODO: use something like URLBuilder 
+//			String url = addAPIKey(BASE_URL + resource) + "&rows=" + ROWS + "&start=" + i + dtParam;
+			String url = addAPIKey(BASE_URL) + 
+					"&resolve=true" +
+//					"&resource=" + resource +
+					"&rows=" + ROWS + 
+					"&start=" + i + 
+					dtFromParam+dtToParam;
+			urls.add(new URL(url));
+			i += ROWS;
+		}
+//		}		
+		return urls;
 	}
 	
 	private static int getCount(String content) {
@@ -85,8 +86,8 @@ public class UitbaseURLGenerator {
 		return 0;
 	}
 
-	private String getCountURL(String resource) {
-		return addAPIKey(BASE_URL) + "&rows=0&resource="+resource;
+	private String getCountURL(String filter) {
+		return addAPIKey(BASE_URL) + "&rows=0"+filter;
 	}
 
 	private String addAPIKey(String url) {

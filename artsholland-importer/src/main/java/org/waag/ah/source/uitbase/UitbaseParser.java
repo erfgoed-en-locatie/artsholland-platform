@@ -52,12 +52,15 @@ public class UitbaseParser extends XMLParser {
       }
 
       TaggedContentHandler tagged = new TaggedContentHandler(handler);
+      ContentHandler wrappedHandler = getContentHandler(tagged, metadata, context);
+      if (wrappedHandler == null) {
+    	  throw new TikaException("Parsing aborted, unable to init Tika handler");
+      }
       
       try {
           context.getSAXParser().parse(
                   new CloseShieldInputStream(stream),
-                  new OfflineContentHandler(
-                  		getContentHandler(tagged, metadata, context)));
+                  new OfflineContentHandler(wrappedHandler));
       } catch (SAXException e) {
           tagged.throwIfCauseOf(e);
           throw new TikaException("XML parse error", e);
@@ -71,26 +74,23 @@ public class UitbaseParser extends XMLParser {
 			// for XQuery processing, we handle each node separately
 			// (event/production/location/group).
 			if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV3_MIME_TYPE)) {
-				logger.debug("Parsing V3 document");
 				InputStream xquery = getFileContents(getClass(), "v3/event.xsparql");    			
 				return new MatchingContentHandler(
-					new XSPARQLQueryHandler(handler, metadata, context, xquery, ""), 
+					new XSPARQLQueryHandler(handler, metadata, context, xquery), 
 					getXPathMatcher("/nubxml/events/descendant::node()"));
 				
 			} else if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_MIME_TYPE)) {
-				logger.debug("Parsing V4 document");
-				
-				InputStream xquery = getFileContents(getClass(), "v4.xsparql");			
-				
+				InputStream xquery = getFileContents(getClass(), "v4.xsparql");
+				if (xquery == null) {
+					throw new IOException("XQuery definition file not found");
+				}
 				return new MatchingContentHandler(
-						new XSPARQLQueryHandler(handler, metadata, context, xquery, "event", "production", "location", "group"),
-						getXPathMatcher("/descendant::node()"));
-				
+						new XSPARQLQueryHandler(handler, metadata, context, xquery),
+						getXPathMatcher("/search/descendant::node()"));
 			}
-		} catch (TikaException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			return null;
 		}
 		return handler;
     }
