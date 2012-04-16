@@ -14,9 +14,11 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.waag.ah.rest.RESTParameters;
 import org.waag.ah.spring.annotation.RestRequestParameters;
+import org.waag.ah.spring.service.GeoService;
 import org.waag.ah.spring.service.RestService;
 import org.waag.ah.spring.view.QueryTaskView;
 
@@ -26,6 +28,9 @@ public class RestController { // implements InitializingBean
 
 	@Resource(name = "restService")
 	private RestService restService;
+	
+	@Resource(name = "geoService")
+	private GeoService geoService;
 
 	@Autowired
 	private QueryTaskView view;
@@ -64,4 +69,16 @@ public class RestController { // implements InitializingBean
 		}
 		return null;
 	}
+	
+	@Secured("ROLE_API_USER")
+	@RequestMapping(value="/geo/**", method=RequestMethod.GET)
+	public @ResponseBody String geoRequest(
+			final HttpServletRequest request,
+			final HttpServletResponse response,
+			@RestRequestParameters(prefixLength=1, paging=true) RESTParameters params)
+			throws IOException {
+
+		return geoService.getVis();		
+	}
+	
 }

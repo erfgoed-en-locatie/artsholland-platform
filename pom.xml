@@ -1,99 +1,103 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>org.waag.artsholland</groupId>
-  <artifactId>artsholland</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <name>Parent</name>
-  
-  <organization>
-    <name>Waag Society</name>
-    <url>http://waag.org</url>
-  </organization>
-      
-  <developers>
-    <developer>
-        <name>Raoul Wissink</name>
-        <email>raoul@waag.org</email>
-        <roles>
-            <role>developer</role>
-        </roles>
-    </developer>
-    <developer>
-        <name>Bert Spaan</name>
-        <email>bert@waag.org</email>
-        <roles>
-            <role>developer</role>
-        </roles>
-    </developer>
-    <developer>
-        <name>Tom Demeyer</name>
-        <email>tom@waag.org</email>
-        <roles>
-            <role>developer</role>
-        </roles>
-    </developer>
-  </developers>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  <modules>
-    <module>artsholland-api</module>
-    <module>artsholland-core</module>
-    <module>artsholland-datastore</module>
-    <module>artsholland-importer</module>
-    <module>artsholland-platform</module>
-    <module>artsholland-scheduler</module>
-  </modules>
-                  
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.0.2</version>
-        <configuration>
-          <source>${jdkLevel}</source>
-          <target>${jdkLevel}</target>
-          <encoding>${project.reporting.outputEncoding}</encoding>
-        </configuration>
-      </plugin>       
-    </plugins>
-  </build>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.waag.artsholland</groupId>
+	<artifactId>artsholland</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>Parent</name>
 
-  <repositories>
-    <repository>
-      <id>releases</id>
-      <name>waag</name>
-      <url>http://api.artsholland.com:8081/nexus/content/groups/public</url>
-    </repository>
-    <repository>
-      <id>snapshots</id>
-      <name>waag</name>
-      <url>http://api.artsholland.com:8081/nexus/content/repositories/snapshots</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-    
-  <dependencies>
-    <dependency>
-      <groupId>javax</groupId>
-      <artifactId>javaee-api</artifactId>
-      <version>6.0</version>
-    </dependency>
-  </dependencies>
+	<organization>
+		<name>Waag Society</name>
+		<url>http://waag.org</url>
+	</organization>
 
-  <properties>
-    <jdkLevel>1.6</jdkLevel>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <ejb.version>3.1</ejb.version>
-    <bigdata.version>1.2.0</bigdata.version>
-    <mongo.version>2.7.2</mongo.version>
-    <quartz.version>2.1.0</quartz.version>
-    <spring.version>3.1.0.RELEASE</spring.version>
-    <sesame.version>2.6.5</sesame.version>
-    <alibaba.version>2.0-rc1</alibaba.version>
-  </properties>
+	<developers>
+		<developer>
+			<name>Raoul Wissink</name>
+			<email>raoul@waag.org</email>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<name>Bert Spaan</name>
+			<email>bert@waag.org</email>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<name>Tom Demeyer</name>
+			<email>tom@waag.org</email>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<modules>
+		<module>artsholland-api</module>
+		<module>artsholland-core</module>
+		<module>artsholland-datastore</module>
+		<module>artsholland-importer</module>
+		<module>artsholland-platform</module>
+		<module>artsholland-scheduler</module>
+	</modules>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+					<source>${jdkLevel}</source>
+					<target>${jdkLevel}</target>
+					<encoding>${project.reporting.outputEncoding}</encoding>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>releases</id>
+			<name>waag</name>
+			<url>http://api.artsholland.com:8081/nexus/content/groups/public</url>
+		</repository>
+		<repository>
+			<id>snapshots</id>
+			<name>waag</name>
+			<url>http://api.artsholland.com:8081/nexus/content/repositories/snapshots</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>public.opensahara.com</id>
+			<url>http://dev.opensahara.com/nexus/content/groups/public/</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<version>6.0</version>
+		</dependency>
+	</dependencies>
+
+	<properties>
+		<jdkLevel>1.6</jdkLevel>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<ejb.version>3.1</ejb.version>
+		<bigdata.version>1.2.0</bigdata.version>
+		<mongo.version>2.7.2</mongo.version>
+		<quartz.version>2.1.0</quartz.version>
+		<spring.version>3.1.0.RELEASE</spring.version>
+		<sesame.version>2.6.5</sesame.version>
+		<alibaba.version>2.0-rc1</alibaba.version>
+	</properties>
 </project>
