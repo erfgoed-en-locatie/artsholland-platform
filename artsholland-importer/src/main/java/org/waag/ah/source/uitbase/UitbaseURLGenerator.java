@@ -20,7 +20,7 @@ public class UitbaseURLGenerator {
 	private final String BASE_URL;
 	private final String API_KEY;
 	
-	private static final int ROWS = 500;
+	private static final int ROWS = 100;
 	
 //	public static final String[] RESOURCES = { 
 //		"events", 
@@ -44,6 +44,11 @@ public class UitbaseURLGenerator {
 		DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
 		String dtToParam = dtTo != null ? "&createdto="+fmt.withZone(DateTimeZone.UTC).print(dtTo) : "";
 		String dtFromParam = dtFrom != null ? "&createdfrom="+fmt.withZone(DateTimeZone.UTC).print(dtFrom) : "";
+
+		dtToParam = "&createdto=2012-04-30T00:00:00.014Z";
+		dtFromParam = "&createdfrom=2012-04-01T14:08:00.012Z";
+				
+		
 		
 //		for (String resource : RESOURCES) {
 		int count = 0;

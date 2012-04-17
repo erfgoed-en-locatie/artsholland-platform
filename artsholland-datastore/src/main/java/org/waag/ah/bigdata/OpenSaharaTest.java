@@ -51,8 +51,8 @@ public class OpenSaharaTest {
 		settings.setDataSource(pgDatasource);
 		
 		PostgisIndexMatcher wktMatcher = new PostgisIndexMatcher();
-		wktMatcher.setPredicate("http://purl.org/artsholland/1.0/wkt"); 
-		
+		wktMatcher.setPredicate("http://purl.org/artsholland/1.0/geo"); 
+													   
 		//		//specify statements that should be indexed:
 //		PostgisIndexMatcher matcher1 = new PostgisIndexMatcher();
 //		matcher1.setPredicate("http://example.org/geometry"); //to index statements with this predicate, adapt to your needs
