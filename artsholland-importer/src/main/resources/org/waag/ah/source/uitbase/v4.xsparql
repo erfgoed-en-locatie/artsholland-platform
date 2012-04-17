@@ -8,7 +8,6 @@ declare namespace gr="http://purl.org/goodrelations/v1#";
 declare namespace foaf="http://xmlns.com/foaf/0.1/";
 declare namespace geo = "http://www.w3.org/2003/01/geo/wgs84_pos#";
 declare namespace vcard = "http://www.w3.org/2006/vcard/ns#";
-declare namespace wkt = "http://rdf.opensahara.com/type/geo/";
 
 declare namespace nub="http://resources.uitburo.nl/";
 declare namespace ah = "http://purl.org/artsholland/1.0/";
@@ -28,347 +27,351 @@ let $venues := //location
 ##############################################################################################################################
 
 return
-	for $event in $events	
-	
-		let $cidn := {$event/cidn}
-		let $euri := {concat($baseuri, "event/", $cidn)}
-		let $euriUitburo := {concat($baseuriUitburo, "events/", $cidn)}
-			
-		let $puri := {concat($baseuri, "production/", $event/link[@type="production"]/@cidn)}
-		let $vuri := {concat($baseuri, "venue/", $event/link[@type="location"]/@cidn)}
-				
-		let $typeKey := {$event/type/@key}
-		let $typeClass := {if (waag:empty($typeKey)) then () else concat("ah:eventType", waag:capitalize-first-only(data($typeKey)))}
+	if ($events) {
+		for $event in $events	
 		
-		let $statusKey := {$event/status/@key}
-		let $statusClass := {if (waag:empty($statusKey)) then () else concat("ah:eventStatus", waag:capitalize-first-only(data($statusKey)))}
-			
-		let $room := {$event/room}
-		let $ruri := {if ($room eq "") then () else concat($vuri, "/room/", waag:make-uri($room))}
+			let $cidn := {$event/cidn}
+			let $euri := {concat($baseuri, "event/", $cidn)}
+			let $euriUitburo := {concat($baseuriUitburo, "events/", $cidn)}
 				
-		let $title := {waag:replace-characters($event/title)}
-		let $description := {waag:replace-characters($event/description)}
-		
-		construct { 
-		
-			$euri a ah:Event.
-			$euri owl:sameAs $euriUitburo.
-			
-			$euri ah:cidn {$cidn}^^xsd:string.
-			
-			$vuri a ah:Venue.			
-			$euri ah:venue $vuri.
-			
-			$puri a ah:Production.
-			$euri ah:production $puri.
-			
-			$euri dc:created {$event/@date-created}^^xsd:string.
-			$euri dc:modified {$event/@date-changed}^^xsd:string.
-			
-			$euri dc:title {if ($title eq "") then () else $title}^^xsd:string.
-			$euri dc:description {if ($description eq "") then () else $description}^^xsd:string.
-						
-			$euri ah:eventType $typeClass.
-			$typeClass a ah:EventType.			
-			$typeClass rdfs:label {if (waag:empty($typeKey)) then () else $typeKey}^^xsd:string.
-			
-			$euri ah:eventStatus $statusClass.
-			$statusClass a ah:EventStatus.			
-			$statusClass rdfs:label {if (waag:empty($statusKey)) then () else $statusKey}^^xsd:string.
-			
-			{ for $pricetag in $event/pricetags//pricetag
-	
-				# Als er events zijn met pricetags met zelfde type: gebruik $pos in uri
-				let $turi := {concat($euri, "/ticket/", waag:make-uri($pricetag/type))}
-				let $puri := {concat($turi, "/price")}
-				
-				let $name := {waag:replace-characters($pricetag/type)}
-				let $description := {waag:replace-characters($pricetag/description)}			
-				
-				construct {
-				
-					$euri ah:ticket $turi.
-					$turi a gr:Offering.			
+			let $puri := {concat($baseuri, "production/", $event/link[@type="production"]/@cidn)}
+			let $vuri := {concat($baseuri, "venue/", $event/link[@type="location"]/@cidn)}
 					
-					$turi gr:name	{if ($name eq "") then () else $name}^^xsd:string.
-					$turi dc:description {if ($description eq "") then () else $description}^^xsd:string.					
-						
-					# TODO:
-					#	<ticketsalesinformation>kvk info</ticketsalesinformation>
-					#	<ticketsalesphone>kvk telefoon</ticketsalesphone>
-					#	<ticketsalesurl>kvk url</ticketsalesurl>
+			let $typeKey := {$event/type/@key}
+			let $typeClass := {if (waag:empty($typeKey)) then () else concat("ah:eventType", waag:capitalize-first-only(data($typeKey)))}
 			
-					$turi gr:hasPriceSpecification $puri.
-					$puri a gr:UnitPriceSpecification.
-			
-					$puri gr:hasMinCurrencyValue {$pricetag/lowest}^^xsd:decimal.			
-					$puri gr:hasMaxCurrencyValue {$pricetag/highest}^^xsd:decimal.
-					$puri gr:hasCurrency "EUR"^^xsd:string.
-								
-				}
-			}.
-			
-			# $pos is counter (http://stackoverflow.com/questions/5652397/xquery-counters-inside-a-for)
-			{ for $medium at $pos in $event/media//medium				
+			let $statusKey := {$event/status/@key}
+			let $statusClass := {if (waag:empty($statusKey)) then () else concat("ah:eventStatus", waag:capitalize-first-only(data($statusKey)))}
 				
-				let $muri := {concat($euri, "/attachment/", $pos)}	
-				let $description := {waag:replace-characters($medium/description)}
-				let $title := {waag:replace-characters($medium/title)}
+			let $room := {$event/room}
+			let $ruri := {if ($room eq "") then () else concat($vuri, "/room/", waag:make-uri($room))}
+					
+			let $title := {waag:replace-characters($event/title)}
+			let $description := {waag:replace-characters($event/description)}
+			
+			construct { 
+			
+				$euri a ah:Event.
+				$euri owl:sameAs $euriUitburo.
+				
+				$euri ah:cidn {$cidn}^^xsd:string.
+				
+				$vuri a ah:Venue.			
+				$euri ah:venue $vuri.
+				
+				$puri a ah:Production.
+				$euri ah:production $puri.
+				
+				$euri dc:created {$event/@date-created}^^xsd:string.
+				$euri dc:modified {$event/@date-changed}^^xsd:string.
+				
+				$euri dc:title {if ($title eq "") then () else $title}^^xsd:string.
+				$euri dc:description {if ($description eq "") then () else $description}^^xsd:string.
 							
-				let $typeKey := {waag:replace-characters($medium/type)}
-				let $typeClass := {if ($typeKey eq "") then () else concat("ah:attachmentType", waag:capitalize-first-only(data($typeKey)))}
+				$euri ah:eventType $typeClass.
+				$typeClass a ah:EventType.			
+				$typeClass rdfs:label {if (waag:empty($typeKey)) then () else $typeKey}^^xsd:string.
 				
-				construct {
+				$euri ah:eventStatus $statusClass.
+				$statusClass a ah:EventStatus.			
+				$statusClass rdfs:label {if (waag:empty($statusKey)) then () else $statusKey}^^xsd:string.
 				
-				 	$euri ah:attachment $muri.
-				 	$muri a ah:Attachment.
-					$muri dc:title {if ($title eq "") then () else $title}^^xsd:string.
-					$muri dc:description {if ($description eq "") then () else $description}^^xsd:string.
+				{ for $pricetag in $event/pricetags//pricetag
+		
+					# Als er events zijn met pricetags met zelfde type: gebruik $pos in uri
+					let $turi := {concat($euri, "/ticket/", waag:make-uri($pricetag/type))}
+					let $puri := {concat($turi, "/price")}
 					
-					# TODO: string?
-					$muri ah:url {$medium/ref}^^xsd:string.
-	
-					# TODO:
-					#	<alt>A family again</alt>
+					let $name := {waag:replace-characters($pricetag/type)}
+					let $description := {waag:replace-characters($pricetag/description)}			
 					
-					$muri ah:attachmentType $typeClass.				
-					$typeClass a ah:AttachmentType.			
-					$typeClass rdfs:label {if ($typeKey eq "") then () else $typeKey}^^xsd:string.				
+					construct {
 					
-				}
-			}.
-			
-			$ruri a ah:Room.
-			$ruri rdfs:label {if ($room eq "") then () else $room}.
-			$euri ah:room $ruri.
-			$vuri ah:room $ruri.
-			
-			$euri time:hasBeginning {$event/datetime-start}^^xsd:dateTime.
-			$euri time:hasEnd {$event/datetime-end}^^xsd:dateTime.
-				 	
+						$euri ah:ticket $turi.
+						$turi a gr:Offering.			
+						
+						$turi gr:name	{if ($name eq "") then () else $name}^^xsd:string.
+						$turi dc:description {if ($description eq "") then () else $description}^^xsd:string.					
+							
+						# TODO:
+						#	<ticketsalesinformation>kvk info</ticketsalesinformation>
+						#	<ticketsalesphone>kvk telefoon</ticketsalesphone>
+						#	<ticketsalesurl>kvk url</ticketsalesurl>
+				
+						$turi gr:hasPriceSpecification $puri.
+						$puri a gr:UnitPriceSpecification.
+				
+						$puri gr:hasMinCurrencyValue {$pricetag/lowest}^^xsd:decimal.			
+						$puri gr:hasMaxCurrencyValue {$pricetag/highest}^^xsd:decimal.
+						$puri gr:hasCurrency "EUR"^^xsd:string.
+									
+					}
+				}.
+				
+				# $pos is counter (http://stackoverflow.com/questions/5652397/xquery-counters-inside-a-for)
+				{ for $medium at $pos in $event/media//medium				
+					
+					let $muri := {concat($euri, "/attachment/", $pos)}	
+					let $description := {waag:replace-characters($medium/description)}
+					let $title := {waag:replace-characters($medium/title)}
+								
+					let $typeKey := {waag:replace-characters($medium/type)}
+					let $typeClass := {if ($typeKey eq "") then () else concat("ah:attachmentType", waag:capitalize-first-only(data($typeKey)))}
+					
+					construct {
+					
+					 	$euri ah:attachment $muri.
+					 	$muri a ah:Attachment.
+						$muri dc:title {if ($title eq "") then () else $title}^^xsd:string.
+						$muri dc:description {if ($description eq "") then () else $description}^^xsd:string.
+						
+						# TODO: string?
+						$muri ah:url {$medium/ref}^^xsd:string.
+		
+						# TODO:
+						#	<alt>A family again</alt>
+						
+						$muri ah:attachmentType $typeClass.				
+						$typeClass a ah:AttachmentType.			
+						$typeClass rdfs:label {if ($typeKey eq "") then () else $typeKey}^^xsd:string.				
+						
+					}
+				}.
+				
+				$ruri a ah:Room.
+				$ruri rdfs:label {if ($room eq "") then () else $room}.
+				$euri ah:room $ruri.
+				$vuri ah:room $ruri.
+				
+				$euri time:hasBeginning {$event/datetime-start}^^xsd:dateTime.
+				$euri time:hasEnd {$event/datetime-end}^^xsd:dateTime.
+					 	
+			}
 		}
 			
 ##############################################################################################################################
 ##################   Venue   #################################################################################################
 ##############################################################################################################################
 
-return
-	for $venue in $venues
-		
-		let $cidn := {$venue/cidn}
-		let $vuri := {concat($baseuri, "venue/", $cidn)}
-		let $vuriUitburo := {concat($baseuriUitburo, "locations/", $cidn)}
-		let $venueType := {concat("ah:venueType", waag:capitalize-first-only($venue/type/@key))}
+	else if ($venues) {
+		for $venue in $venues
 			
-		construct {
-			$vuri a ah:Venue.			
-			$vuri owl:sameAs $vuriUitburo.
-			
-			$vuri ah:cidn {$cidn}^^xsd:string.
+			let $cidn := {$venue/cidn}
+			let $vuri := {concat($baseuri, "venue/", $cidn)}
+			let $vuriUitburo := {concat($baseuriUitburo, "locations/", $cidn)}
+			let $venueType := {concat("ah:venueType", waag:capitalize-first-only($venue/type/@key))}
+				
+			construct {
+				$vuri a ah:Venue.			
+				$vuri owl:sameAs $vuriUitburo.
+				
+				$vuri ah:cidn {$cidn}^^xsd:string.
+							
+				$vuri dc:title {if ($venue/name eq "") then () else waag:replace-characters($venue/name)}^^xsd:string.
+	
+				$vuri geo:lat {data($venue/geocode/latitude)}^^xsd:decimal.
+				$vuri geo:long {data($venue/geocode/longitude)}^^xsd:decimal.
+				
+				$vuri ah:wkt {concat('POINT(', data($venue/geocode/latitude), ' ', data($venue/geocode/longitude), ')' ) }^^wkt:wkt.
+	
+				$vuri dc:created {$venue/@date-created}^^xsd:string.
+				$vuri dc:modified {$venue/@date-changed}^^xsd:string.
+				
+				{ for $room in $venue/rooms//room
+					let $ruri := {concat($vuri, "/room/", waag:make-uri($room))}
+					construct {
+						$ruri a ah:Room.
+						$ruri rdfs:label {waag:replace-characters($room)}.
+						$vuri ah:room $ruri.
+					}
+				}.
+				
+				{ for $url in $venue/urls//url
+					construct {					
 						
-			$vuri dc:title {if ($venue/name eq "") then () else waag:replace-characters($venue/name)}^^xsd:string.
-
-			$vuri geo:lat {data($venue/geocode/latitude)}^^xsd:decimal.
-			$vuri geo:long {data($venue/geocode/longitude)}^^xsd:decimal.
-			
-			#$vuri ah:wkt {concat('POINT(', data($venue/geocode/latitude), ' ', data($venue/geocode/longitude), ')' ) }^^wkt:wkt.
-
-			$vuri dc:created {$venue/@date-created}^^xsd:string.
-			$vuri dc:modified {$venue/@date-changed}^^xsd:string.
-			
-			{ for $room in $venue/rooms//room
-				let $ruri := {concat($vuri, "/room/", waag:make-uri($room))}
-				construct {
-					$ruri a ah:Room.
-					$ruri rdfs:label {waag:replace-characters($room)}.
-					$vuri ah:room $ruri.
-				}
-			}.
-			
-			{ for $url in $venue/urls//url
-				construct {					
+						$vuri foaf:homepage {if ($url eq "") then () else waag:replace-characters(waag:correct-url($url))}^^xsd:string.
+						
+					}
+				}.
+				
+				$vuri ah:venueType $venueType.
+				$venueType a ah:VenueType.	
+				$venueType rdfs:label {waag:replace-characters($venue/type)}.
+	
+				# $pos is counter (http://stackoverflow.com/questions/5652397/xquery-counters-inside-a-for)
+				{ for $medium at $pos in $venue/media//medium				
 					
-					$vuri foaf:homepage {if ($url eq "") then () else waag:replace-characters(waag:correct-url($url))}^^xsd:string.
+					let $muri := {concat($vuri, "/attachment/", $pos)}
+					let $description := {waag:replace-characters($medium/description)}
+					let $title := {waag:replace-characters($medium/title)}
 					
-				}
-			}.
-			
-			$vuri ah:venueType $venueType.
-			$venueType a ah:VenueType.	
-			$venueType rdfs:label {waag:replace-characters($venue/type)}.
-
-			# $pos is counter (http://stackoverflow.com/questions/5652397/xquery-counters-inside-a-for)
-			{ for $medium at $pos in $venue/media//medium				
-				
-				let $muri := {concat($vuri, "/attachment/", $pos)}
-				let $description := {waag:replace-characters($medium/description)}
-				let $title := {waag:replace-characters($medium/title)}
-				
-				let $typeKey := {waag:replace-characters($medium/type)}
-				let $typeClass := {if ($typeKey eq "") then () else concat("ah:attachmentType", waag:capitalize-first-only(data($typeKey)))}
-				
-				construct {
-				
-					$vuri ah:attachment $muri.
-					$muri a ah:Attachment.					
-					$muri dc:title {if ($title eq "") then () else $title}^^xsd:string.
-					$muri dc:description {if ($description eq "") then () else $description}^^xsd:string.					
+					let $typeKey := {waag:replace-characters($medium/type)}
+					let $typeClass := {if ($typeKey eq "") then () else concat("ah:attachmentType", waag:capitalize-first-only(data($typeKey)))}
 					
-					# TODO: string?
-					$muri ah:url {$medium/ref}^^xsd:string.
+					construct {
+					
+						$vuri ah:attachment $muri.
+						$muri a ah:Attachment.					
+						$muri dc:title {if ($title eq "") then () else $title}^^xsd:string.
+						$muri dc:description {if ($description eq "") then () else $description}^^xsd:string.					
+						
+						# TODO: string?
+						$muri ah:url {$medium/ref}^^xsd:string.
+											
+						# TODO:
+						#	<alt>A family again</alt>	
+						
+						$muri ah:attachmentType $typeClass.
+						$typeClass a ah:AttachmentType.			
+						$typeClass rdfs:label {if ($typeKey eq "") then () else $typeKey}^^xsd:string.	
 										
-					# TODO:
-					#	<alt>A family again</alt>	
-					
-					$muri ah:attachmentType $typeClass.
-					$typeClass a ah:AttachmentType.			
-					$typeClass rdfs:label {if ($typeKey eq "") then () else $typeKey}^^xsd:string.	
-									
-				}
-			}.
-			
-			$vuri vcard:street-address {concat($venue/street/name, " ", $venue/street/number, $venue/street/addition)}.
-			$vuri vcard:locality {waag:replace-characters($venue/place)}.
-			$vuri vcard:postal-code {$venue/postal-code}.
-
-			{ for $tag in $venue/tags//tag
+					}
+				}.
 				
-				construct {	
+				$vuri vcard:street-address {concat($venue/street/name, " ", $venue/street/number, $venue/street/addition)}.
+				$vuri vcard:locality {waag:replace-characters($venue/place)}.
+				$vuri vcard:postal-code {$venue/postal-code}.
+	
+				{ for $tag in $venue/tags//tag
 					
-					$vuri ah:tag {if ($tag eq "") then () else waag:replace-characters($tag)}.
-					
-				}
-			}.
-			
-			{ for $language in $venue/languages//language
-			
-				let $locale := {$language/@locale}
-				let $language-tag := {waag:get-language-tag($locale)}
+					construct {	
+						
+						$vuri ah:tag {if ($tag eq "") then () else waag:replace-characters($tag)}.
+						
+					}
+				}.
 				
-				let $title := {waag:replace-characters($language/sortname)}
-				let $description := {waag:replace-characters($language/description)}
-				let $shortDescription := {waag:replace-characters($language/short-description)}					
-				let $openingHours := {waag:replace-characters($language/opening-hours)}
-				let $publicTransportInformation := {waag:replace-characters($language/ov-info)}
-				let $disabilityInformation := {waag:replace-characters($language/handicapped-info)}
-				let $pricingInformation := {waag:replace-characters($language/pricing-information)}
+				{ for $language in $venue/languages//language
 				
-				construct {
-									 
-					$vuri dc:title {if ($title eq "") then () else $title}@{$language-tag}.
+					let $locale := {$language/@locale}
+					let $language-tag := {waag:get-language-tag($locale)}
 					
-					$vuri dc:description {if ($description eq "") then () else $description}@{$language-tag}.
-					$vuri ah:shortDescription {if ($shortDescription eq "") then () else $shortDescription}@{$language-tag}.
+					let $title := {waag:replace-characters($language/sortname)}
+					let $description := {waag:replace-characters($language/description)}
+					let $shortDescription := {waag:replace-characters($language/short-description)}					
+					let $openingHours := {waag:replace-characters($language/opening-hours)}
+					let $publicTransportInformation := {waag:replace-characters($language/ov-info)}
+					let $disabilityInformation := {waag:replace-characters($language/handicapped-info)}
+					let $pricingInformation := {waag:replace-characters($language/pricing-information)}
 					
-					$vuri ah:openingHours {if ($openingHours eq "") then () else $openingHours}@{$language-tag}.
-					$vuri ah:publicTransportInformation {if ($publicTransportInformation eq "") then () else $publicTransportInformation}@{$language-tag}.		
-					$vuri ah:disabilityInformation {if ($disabilityInformation eq "") then () else $disabilityInformation}@{$language-tag}.					
-					$vuri ah:pricingInformation {if ($pricingInformation eq "") then () else $pricingInformation}@{$language-tag}.
-
+					construct {
+										 
+						$vuri dc:title {if ($title eq "") then () else $title}@{$language-tag}.
+						
+						$vuri dc:description {if ($description eq "") then () else $description}@{$language-tag}.
+						$vuri ah:shortDescription {if ($shortDescription eq "") then () else $shortDescription}@{$language-tag}.
+						
+						$vuri ah:openingHours {if ($openingHours eq "") then () else $openingHours}@{$language-tag}.
+						$vuri ah:publicTransportInformation {if ($publicTransportInformation eq "") then () else $publicTransportInformation}@{$language-tag}.		
+						$vuri ah:disabilityInformation {if ($disabilityInformation eq "") then () else $disabilityInformation}@{$language-tag}.					
+						$vuri ah:pricingInformation {if ($pricingInformation eq "") then () else $pricingInformation}@{$language-tag}.
+	
+					}
 				}
+				
+				#	TODO:
+				#	editions		
 			}
-			
-			#	TODO:
-			#	editions		
 		}
 		
 ##############################################################################################################################
 ##################   Production   ############################################################################################
 ##############################################################################################################################
 
-return
-	for $production in $productions
+	else if ($productions) {
+		for $production in $productions
+				
+			let $cidn := {$production/cidn}
+			let $puri := {concat($baseuri, "production/", $cidn)}
+			let $puriUitburo := {concat($baseuriUitburo, "productions/", $cidn)}
+		
+			let $title := {waag:replace-characters($production/title)}
 			
-		let $cidn := {$production/cidn}
-		let $puri := {concat($baseuri, "production/", $cidn)}
-		let $puriUitburo := {concat($baseuriUitburo, "productions/", $cidn)}
+			let $typeKey := {$production/type/@key}
+			let $typeClass := {if (waag:empty($typeKey)) then () else concat("ah:productionType", waag:capitalize-first-only(data($typeKey)))}
+				
+			construct {
+			
+				$puri a ah:Production.			
+				$puri owl:sameAs $puriUitburo.
+				
+				$puri ah:cidn {$cidn}^^xsd:string.
+				
+				#$puri dc:title {if ($title eq "") then () else $title}.
+				#$puri dc:title {if ($title eq "") then () else $title}^^xsd:string.
+					
+				$puri ah:productionType $typeClass.
+				$typeClass a ah:ProductionType.			
+				$typeClass rdfs:label {if ($typeKey eq "") then () else $typeKey}^^xsd:string.
+				
+				{ for $genre in $production/genres//genre
+					
+					let $genreKey := {$genre/@key}
+					let $genreClass := {if (waag:empty($genreKey)) then () else concat("ah:genre", waag:capitalize-first-only(data($genreKey)))}
+					
+					construct {				
+						
+						$puri ah:genre $genreClass.
+						$genreClass a ah:Genre.			
+						$genreClass rdfs:label {if ($genre eq "") then () else $genre}^^xsd:string.
+						
+					}
+				}.
+				
+				{ for $url in $production/urls//url			
+					construct {				
+						
+						$puri foaf:homepage {if ($url eq "") then () else waag:replace-characters(waag:correct-url($url))}^^xsd:string.
+						
+					}
+				}.
+				
+				{ for $language in $production/languages//language
+				
+					let $locale := {$language/@locale}
+					let $language-tag := {waag:get-language-tag($locale)}
+					
+					let $title := {waag:replace-characters($language/sortname)}					
+					let $description := {waag:replace-characters($language/description)}
+					let $shortDescription := {waag:replace-characters($language/short-description)}					
+					let $party := {waag:replace-characters($language/party)}
+					let $people := {waag:replace-characters($language/people)}
+					
+					construct {				
+						
+						$puri dc:title {if ($title eq "") then () else $title}@{$language-tag}.
+						
+						$puri dc:description {if ($description eq "") then () else $description}@{$language-tag}.
+						$puri ah:shortDescription {if ($shortDescription eq "") then () else $shortDescription}@{$language-tag}.
+						
+						$puri ah:party {if ($party eq "") then () else $party}@{$language-tag}.
+						$puri ah:people {if ($people eq "") then () else $people}@{$language-tag}.								
 	
-		let $title := {waag:replace-characters($production/title)}
-		
-		let $typeKey := {$production/type/@key}
-		let $typeClass := {if (waag:empty($typeKey)) then () else concat("ah:productionType", waag:capitalize-first-only(data($typeKey)))}
-			
-		construct {
-		
-			$puri a ah:Production.			
-			$puri owl:sameAs $puriUitburo.
-			
-			$puri ah:cidn {$cidn}^^xsd:string.
-			
-			#$puri dc:title {if ($title eq "") then () else $title}.
-			#$puri dc:title {if ($title eq "") then () else $title}^^xsd:string.
+					}
+				}.
 				
-			$puri ah:productionType $typeClass.
-			$typeClass a ah:ProductionType.			
-			$typeClass rdfs:label {if ($typeKey eq "") then () else $typeKey}^^xsd:string.
-			
-			{ for $genre in $production/genres//genre
+				$puri ah:ageLimitLower {$production/age/lower}^^xsd:integer.
+				$puri ah:ageLimitUpper {$production/age/upper}^^xsd:integer.
 				
-				let $genreKey := {$genre/@key}
-				let $genreClass := {if (waag:empty($genreKey)) then () else concat("ah:genre", waag:capitalize-first-only(data($genreKey)))}
+				{ for $tag in $production/tags//tag
 				
-				construct {				
-					
-					$puri ah:genre $genreClass.
-					$genreClass a ah:Genre.			
-					$genreClass rdfs:label {if ($genre eq "") then () else $genre}^^xsd:string.
-					
-				}
-			}.
-			
-			{ for $url in $production/urls//url			
-				construct {				
-					
-					$puri foaf:homepage {if ($url eq "") then () else waag:replace-characters(waag:correct-url($url))}^^xsd:string.
-					
-				}
-			}.
-			
-			{ for $language in $production/languages//language
-			
-				let $locale := {$language/@locale}
-				let $language-tag := {waag:get-language-tag($locale)}
+					construct {
+											
+						$puri ah:tag {if ($tag eq "") then () else waag:replace-characters($tag)}^^xsd:string.					
+						
+					}
+				}.
+	
+				#	TODO:
+				#	notes
+				#	<country>NL</country>
+				#	<language>nl_NL</language>
+				#	<subtitles>en_UK</subtitles>
 				
-				let $title := {waag:replace-characters($language/sortname)}					
-				let $description := {waag:replace-characters($language/description)}
-				let $shortDescription := {waag:replace-characters($language/short-description)}					
-				let $party := {waag:replace-characters($language/party)}
-				let $people := {waag:replace-characters($language/people)}
-				
-				construct {				
-					
-					$puri dc:title {if ($title eq "") then () else $title}@{$language-tag}.
-					
-					$puri dc:description {if ($description eq "") then () else $description}@{$language-tag}.
-					$puri ah:shortDescription {if ($shortDescription eq "") then () else $shortDescription}@{$language-tag}.
-					
-					$puri ah:party {if ($party eq "") then () else $party}@{$language-tag}.
-					$puri ah:people {if ($people eq "") then () else $people}@{$language-tag}.								
-
-				}
-			}.
-			
-			$puri ah:ageLimitLower {$production/age/lower}^^xsd:integer.
-			$puri ah:ageLimitUpper {$production/age/upper}^^xsd:integer.
-			
-			{ for $tag in $production/tags//tag
-			
-				construct {
-										
-					$puri ah:tag {if ($tag eq "") then () else waag:replace-characters($tag)}^^xsd:string.					
-					
-				}
-			}.
-
-			#	TODO:
-			#	notes
-			#	<country>NL</country>
-			#	<language>nl_NL</language>
-			#	<subtitles>en_UK</subtitles>
-			
-			$puri dc:language {waag:get-language-tag($production/language)}.			
-			$puri ah:subtitleLanguage {waag:get-language-tag($production/subtitles)}			
-							
+				$puri dc:language {waag:get-language-tag($production/language)}.			
+				$puri ah:subtitleLanguage {waag:get-language-tag($production/subtitles)}			
+								
+			}
 		}
 		
 ##############################################################################################################################
@@ -391,3 +394,8 @@ return
 				
 		}
 :)
+
+##############################################################################################################################
+##############################################################################################################################
+
+	else ()
