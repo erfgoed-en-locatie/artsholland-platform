@@ -21,12 +21,19 @@ public class GeoService implements InitializingBean {
 	@Override
 	public void afterPropertiesSet() throws Exception {
 			conn = koek.getConnection();
-			conn.close();
+			if (conn != null) {
+				conn.close();
+			}
 	}
 
 	public String getVis() {
 		// TODO Auto-generated method stub
 		return "Hondje";	
+		
+	}
+
+	public void reindex() {
+		// TODO Auto-generated method stub
 		
 	}
 }

@@ -34,7 +34,7 @@ public class OpenSaharaTest {
 	}
 	
 	public SailRepositoryConnection getConnection() throws SailException, RepositoryException {
-		
+		/*
 		Sail sail = getSail();		
 		
 		 //Initialize the datasource to be used for connections to Postgres:
@@ -73,11 +73,11 @@ public class OpenSaharaTest {
 		//repository.initialize();
 		
 	
-		/*
-		IndexingSailConnection koek = idxSail.getConnection();
-		koek.reindex();*/
 		
-		return repository.getConnection();
+		//IndexingSailConnection koek = idxSail.getConnection();
+		//koek.reindex();
 		
+		return repository.getConnection();*/
+		return null;
 	}
 }
