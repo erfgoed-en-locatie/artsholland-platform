@@ -129,6 +129,8 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 					logger.debug("Importing XML: "+xmlString);
 				}
 				
+				logger.info("Importing XML: "+xmlString);
+				
 				StreamSource xml = new StreamSource(new StringReader(xmlString));	
 				evaluator.setSource(xml);
 				StringBuilder combined = new StringBuilder();

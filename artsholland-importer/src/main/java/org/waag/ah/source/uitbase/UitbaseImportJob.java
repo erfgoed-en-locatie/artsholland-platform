@@ -19,7 +19,7 @@ import org.waag.ah.importer.AbstractImportJob;
 public class UitbaseImportJob extends AbstractImportJob {
 	private Logger logger = LoggerFactory.getLogger(UitbaseImportJob.class);
 //	private URL resource;
-//	private String strategy;
+	private String strategy;
 
 	private PlatformConfig config;
 	private UitbaseURLGenerator urlGenerator = null;
@@ -51,8 +51,8 @@ public class UitbaseImportJob extends AbstractImportJob {
 //			logger.info("INCOMING DATAMAP: "+dataMap.getWrappedMap());
 
 			List<URL> urls = urlGenerator.getURLs(
-					(DateTime) context.get("endTime"), 
-					(DateTime) context.get("startTime"));
+					(DateTime) context.get("endTime"), null/*, 
+					(DateTime) context.get("startTime")*/);
 			logger.info(urls.toString());
 			
 			doImport(urls, metadata);
@@ -65,7 +65,7 @@ public class UitbaseImportJob extends AbstractImportJob {
 //		this.resource = new URL(url);
 //	}
 
-//	public void setStrategy(String strategy) {
-//		this.strategy = strategy;
-//	}
+	public void setStrategy(String strategy) {
+		this.strategy = strategy;
+	}
 }

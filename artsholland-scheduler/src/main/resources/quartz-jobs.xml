@@ -26,7 +26,7 @@
       <recover>false</recover>
     </job>
 		
-<!--     <trigger>
+    <trigger>
       <cron>
         <name>UitbaseIncrementalImportTrigger</name>
         <group>IncrementalImport</group>
@@ -46,7 +46,7 @@
         <cron-expression>0 0/2 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
-    </trigger> -->
+    </trigger>
 		
   </schedule>
 </job-scheduling-data>

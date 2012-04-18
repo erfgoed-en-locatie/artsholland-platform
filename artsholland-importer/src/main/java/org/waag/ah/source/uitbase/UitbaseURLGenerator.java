@@ -15,7 +15,7 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UitbaseURLGenerator {
+class UitbaseURLGenerator {
 	final static Logger logger = LoggerFactory.getLogger(UitbaseURLGenerator.class);
 	private final String BASE_URL;
 	private final String API_KEY;
@@ -49,7 +49,7 @@ public class UitbaseURLGenerator {
 		int count = 0;
 		try {
 			String content = readURL(getCountURL(dtFromParam+dtToParam));
-			count = 1000; //getCount(content);	
+			count = 10000; //getCount(content);	
 		} catch (IOException e) {			
 			e.printStackTrace();
 		}
