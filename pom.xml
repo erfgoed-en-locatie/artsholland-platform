@@ -74,6 +74,16 @@
         <enabled>true</enabled>
       </snapshots>
     </repository>
+    
+    <repository>
+			<id>public.opensahara.com</id>
+			<name>opensahara</name>
+    	<url>http://dev.opensahara.com/nexus/content/groups/public/</url>
+    	<snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+		</repository>    
+    
   </repositories>
     
   <dependencies>
