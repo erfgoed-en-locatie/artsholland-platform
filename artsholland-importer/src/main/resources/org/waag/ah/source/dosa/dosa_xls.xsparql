@@ -19,6 +19,8 @@ declare namespace qb="http://purl.org/linked-data/cube#";
 declare namespace waag="http://waag.org";
 declare namespace dosa="http://www.os.amsterdam.nl/test/";
 
+declare namespace dosa="http://www.os.amsterdam.nl/test/";
+
 declare namespace sdmxa="http://purl.org/linked-data/sdmx/2009/attribute#";
 declare namespace sdmxc="http://purl.org/linked-data/sdmx/2009/concept#";
 (: declare namespace sdmxd"http://purl.org/linked-data/sdmx/2009/dimension#"; :)
@@ -62,7 +64,7 @@ for $sheet in $sheets
 	# decimalen	0
 
   let $name := data($sheet/h1)  
-
+  
   let $meting    := $sheet//tr[ 1]/td[2]
   let $kenmerk   := $sheet//tr[ 2]/td[2]
   let $type      := $sheet//tr[ 3]/td[2]
@@ -84,7 +86,7 @@ for $sheet in $sheets
  		$duri a qb:DataSet ;
     	rdfs:label $name ;
     	dc:description $tekst .
-    
+
     #rdfs:comment {$sheet//tr[1]/td[1]};
      
     { for $row in (1 to count($rows))
@@ -103,7 +105,7 @@ for $sheet in $sheets
       		#event:time os:jaar-2009 ;
       	
       		scovo:dataset $duri .
-      		    
+
       }
     }  
   }
