@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.net.URI;
+import java.net.URL;
 import java.nio.charset.Charset;
 
 import javax.xml.transform.stream.StreamSource;
@@ -24,6 +26,7 @@ import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.ContentHandlerDecorator;
 import org.apache.tika.sax.ToXMLContentHandler;
 import org.deri.xsparql.XSPARQLProcessor;
+import org.waag.ah.source.dosa.DOSAParser;
 import org.waag.ah.tika.parser.rdf.TurtleParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -39,6 +42,9 @@ public class XQueryContentHandler extends ContentHandlerDecorator {
 	private ParseContext context;
 	private Metadata metadata;
 
+	/*
+	 * TODO: only used by DOSAParser. Rename, or merge with XSPARQLQueryHandler
+	 */
 	public XQueryContentHandler(ContentHandler handler, InputStream query, 
 			Metadata metadata, ParseContext context)
 			throws TikaException {
@@ -78,7 +84,10 @@ public class XQueryContentHandler extends ContentHandlerDecorator {
 			evaluator = executable.load();	
 			
 			DocumentBuilder docBuilder = processor.newDocumentBuilder();
-			XdmNode document = docBuilder.build(new File("ejbModule/org/waag/ah/source/dosa/META-INF/tables.xml"));
+			
+			URI tablesURI = DOSAParser.getFileURI(DOSAParser.class, "tables.xml");			
+			XdmNode document = docBuilder.build(new File(tablesURI));
+			//XdmNode document = docBuilder.build(new File("ejbModule/org/waag/ah/source/dosa/tables.xml"));
 			evaluator.setExternalVariable(new QName("config"), document);
 			
 			evaluator.setSource(new StreamSource(new StringReader(xmlCollector.toString())));

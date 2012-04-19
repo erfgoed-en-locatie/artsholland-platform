@@ -4,7 +4,7 @@
     <sub-class-of type="application/vnd.ms-excel"/>
     <acronym>DOSAXLS</acronym>
     <_comment>Dienst onderzoek en statistiek (Amsterdam) Excel</_comment>
-    <glob pattern="http://127.0.0.1/ah/dos/*.xls"/>
+    <glob pattern="http://127.0.0.1/ah/dosa/*.xls"/>
   </mime-type>
   
    <!-- UitBase v3 -->
