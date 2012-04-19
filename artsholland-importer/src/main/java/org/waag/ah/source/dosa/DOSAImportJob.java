@@ -23,8 +23,8 @@ public class DOSAImportJob extends AbstractImportJob {
 	
 	public static final String[] RESOURCES = { 
 		"2010_oov.xls",
-		"2011_cm.xls",
-		"2011_wie.xls"
+		//"2011_cm.xls",
+		//"2011_wie.xls"
 	};	
 
 	@Override
