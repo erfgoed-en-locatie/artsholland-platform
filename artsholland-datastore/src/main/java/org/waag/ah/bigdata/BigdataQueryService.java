@@ -64,7 +64,7 @@ public class BigdataQueryService implements QueryService {
 	
 	@EJB(mappedName="java:module/BigdataConnectionService")
 	private RepositoryConnectionFactory cf;
-	
+
 	@PostConstruct
 	public void init() {
 		context = new BigdataRDFContextWrapper(getConfig(), getIndexManager());

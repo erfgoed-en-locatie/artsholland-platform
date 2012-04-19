@@ -45,6 +45,10 @@ public class UitbaseURLGenerator {
 		String dtToParam = dtTo != null ? "&createdto="+fmt.withZone(DateTimeZone.UTC).print(dtTo) : "";
 		String dtFromParam = dtFrom != null ? "&createdfrom="+fmt.withZone(DateTimeZone.UTC).print(dtFrom) : "";
 		
+		dtToParam = "&createdto=2012-04-19T09:00:00.007Z";
+		dtFromParam = "&createdfrom=2012-04-01T09:02:00.008Z";
+		
+		
 //		for (String resource : RESOURCES) {
 		int count = 0;
 		try {
@@ -86,7 +90,7 @@ public class UitbaseURLGenerator {
 	}
 
 	private String getCountURL(String filter) {
-		return addAPIKey(BASE_URL) + "&rows=0"+filter;
+		return addAPIKey(BASE_URL) + "&rows=0" + filter;
 	}
 
 	private String addAPIKey(String url) {

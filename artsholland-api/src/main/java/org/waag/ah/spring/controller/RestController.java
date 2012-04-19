@@ -78,9 +78,7 @@ public class RestController { // implements InitializingBean
 			@RestRequestParameters(prefixLength=1, paging=true) RESTParameters params)
 			throws IOException {
 		
-		geoService.reindex();
-		
-		return "Visje";
+		return geoService.getVis();
 		
 	}
 }

@@ -143,6 +143,9 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
        				
 				String turtleString = XSPARQLCharacterEncoder.decode(combined.toString());
 				
+				
+				turtleString = turtleString.replace("^^<osgeo:wkt>", "^^<http://rdf.opensahara.com/type/geo/wkt>");
+				
 				turtleParser.parse(
 						new ByteArrayInputStream(turtleString.getBytes()), 
 						new MatchingContentHandler(
