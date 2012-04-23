@@ -2,7 +2,14 @@ package org.waag.ah.spring.service;
 
 import javax.ejb.EJB;
 
+import org.openrdf.query.BindingSet;
+import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.QueryEvaluationException;
+import org.openrdf.query.QueryLanguage;
+import org.openrdf.query.TupleQuery;
+import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryConnection;
+import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepositoryConnection;
 import org.openrdf.sail.SailException;
 import org.springframework.beans.factory.InitializingBean;
@@ -18,7 +25,7 @@ public class GeoService implements InitializingBean {
 	@EJB(mappedName="java:app/datastore/OpenSaharaConnectionService")
 	private OpenSaharaConnectionService openSahara;
 	
-	private IndexingSailConnection conn;
+	private RepositoryConnection conn;
 
 	
 	@Override
@@ -26,9 +33,19 @@ public class GeoService implements InitializingBean {
 			conn = openSahara.getConnection();
 	}
 	
-	
-	public String getVis() {
+	public String getVis() throws QueryEvaluationException, MalformedQueryException, RepositoryException {
 		// TODO Auto-generated method stub
+		String query = 
+				"SELECT DISTINCT ?resource ?value" +
+				"WHERE { ?resource <http://purl.org/artsholland/1.0/wkt> ?value }" +
+				"ORDER BY ?resource ?value";
+		
+		TupleQuery koek = conn.prepareTupleQuery(QueryLanguage.SPARQL, query);
+		TupleQueryResult hond = koek.evaluate();
+		
+		while (hond.hasNext()) {
+			BindingSet chips = hond.next();
+		}
 		
 		return "Hondje";	
 		

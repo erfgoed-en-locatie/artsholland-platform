@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.QueryEvaluationException;
+import org.openrdf.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,9 +78,19 @@ public class RestController { // implements InitializingBean
 			final HttpServletRequest request,
 			final HttpServletResponse response,
 			@RestRequestParameters(prefixLength=1, paging=true) RESTParameters params)
-			throws IOException {
+			throws IOException, QueryEvaluationException, MalformedQueryException, RepositoryException {
 		
-		return geoService.getVis();
-		
+		return geoService.getVis();		
+	}
+	
+	@Secured("ROLE_API_USER")
+	@RequestMapping(value="/georeindex/**", method=RequestMethod.GET)
+	public @ResponseBody String geoReindex(
+			final HttpServletRequest request,
+			final HttpServletResponse response,
+			@RestRequestParameters(prefixLength=1, paging=true) RESTParameters params)
+			throws IOException, QueryEvaluationException, MalformedQueryException, RepositoryException {
+		geoService.reindex();
+		return "Ja toch!";		
 	}
 }

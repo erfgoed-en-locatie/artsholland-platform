@@ -15,6 +15,7 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.repository.sail.SailRepositoryConnection;
 import org.openrdf.sail.Sail;
+import org.openrdf.sail.SailConnection;
 import org.openrdf.sail.SailException;
 import org.waag.ah.RepositoryConnectionFactory;
 
@@ -38,7 +39,7 @@ public class OpenSaharaConnectionService {
 	private SailRepository repo;
 
 	@PostConstruct
-	public void create() {
+	public void create() throws RepositoryException {
 		
 		Sail sail = getSail();
 
@@ -69,7 +70,6 @@ public class OpenSaharaConnectionService {
 		// Wrap in a SailRepository:
 		repo = new SailRepository(idxSail);
 		
-		// repository.initialize();
 	}
 	
 	public BigdataSail getSail() {
@@ -79,19 +79,22 @@ public class OpenSaharaConnectionService {
 
 	public void reindex() throws SailException, IndexException {
 		IndexingSailConnection idxConn = idxSail.getConnection();
-		idxConn.reindex();		
+		idxConn.reindex();
+		idxConn.close();
 	}
 
 	public Repository getRepository() {
 		return repo;
 	}
-
-	public IndexingSailConnection getConnection() throws IOException,
-			RepositoryException, SailException {
-
-		IndexingSailConnection idxConn = idxSail.getConnection();		
-		return idxConn;				
-	}
 	
+	public RepositoryConnection getConnection () throws RepositoryException {
+		return repo.getConnection();
+	}
+
+	public IndexingSailConnection getIndexingSailConnection() throws IOException,
+			RepositoryException, SailException {		
+		IndexingSailConnection idxConn = idxSail.getConnection();		
+		return idxConn;
+	}	
 	
 }
