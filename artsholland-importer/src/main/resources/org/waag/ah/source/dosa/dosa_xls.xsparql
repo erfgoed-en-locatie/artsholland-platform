@@ -1,12 +1,22 @@
 declare namespace dc="http://purl.org/dc/elements/1.1/";
+declare namespace begrip="http://linkeddata.few.vu.nl/os-amsterdam/begrip/";
+declare namespace do="http://dbpedia.org/ontology/";
+declare namespace dp="http://dbpedia.org/property/";
+declare namespace event="http://purl.org/NET/c4dm/event.owl#";
+declare namespace foaf="http://xmlns.com/foaf/0.1/";
+declare namespace geo="http://www.w3.org/2003/01/geo/wgs84_pos#";
 declare namespace os="http://linkeddata.few.vu.nl/os-amsterdam/schema/";
-declare namespace osgeo="http://linkeddata.few.vu.nl/os-amsterdam/plaats/";
-declare namespace qb="http://purl.org/linked-data/cube#";
+declare namespace osr="http://linkeddata.few.vu.nl/os/resource/";
+declare namespace owl="http://www.w3.org/2002/07/owl#";
+declare namespace plaats="http://linkeddata.few.vu.nl/os-amsterdam/plaats/";
 declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace rdfs="http://www.w3.org/2000/01/rdf-schema#";
+declare namespace scovo="http://purl.org/NET/scovo#";
+declare namespace skos="http://www.w3.org/2004/02/skos/core#";
 declare namespace xsd="http://www.w3.org/2001/XMLSchema#";
-declare namespace waag="http://waag.org";
+declare namespace qb="http://purl.org/linked-data/cube#";
 
+declare namespace waag="http://waag.org";
 declare namespace dosa="http://www.os.amsterdam.nl/test/";
 
 declare namespace sdmxa="http://purl.org/linked-data/sdmx/2009/attribute#";
@@ -52,6 +62,18 @@ for $sheet in $sheets
 	# decimalen	0
 
   let $name := data($sheet/h1)  
+
+  let $meting    := $sheet//tr[ 1]/td[2]
+  let $kenmerk   := $sheet//tr[ 2]/td[2]
+  let $type      := $sheet//tr[ 3]/td[2]
+  let $titel     := $sheet//tr[ 4]/td[2]
+  let $label     := $sheet//tr[ 5]/td[2]
+  let $kop       := $sheet//tr[ 6]/td[2]
+  let $bron      := $sheet//tr[ 7]/td[2]
+  let $kaart     := $sheet//tr[ 8]/td[2]
+  let $sd        := $sheet//tr[ 9]/td[2]
+  let $tekst     := $sheet//tr[10]/td[2]
+  let $decimalen := $sheet//tr[11]/td[2] 
 	  
   let $duri := {concat($baseuri, "dataset/", $name)}
    
@@ -59,27 +81,29 @@ for $sheet in $sheets
 
   construct {
   
- 		$duri a qb:DataSet.
-    $duri rdfs:label $name.
+ 		$duri a qb:DataSet ;
+    	rdfs:label $name ;
+    	dc:description $tekst .
     
     #rdfs:comment {$sheet//tr[1]/td[1]};
      
     { for $row in (1 to count($rows))
     
-    	let $code := { data($rows[$row]/td[1]) }    	
-    	let $naam := { data($rows[$row]/td[2]) }
-    	let $value := { data($rows[$row]/td[3]) }      
-          
-      let $guri := { concat($baseuri, "gebied/", $code) }
-      let $predicate := { concat("dataset/", $name, "/value") }
+    	let $code  := { data($rows[$row]/td[1]) }    	
+    	let $naam  := { data($rows[$row]/td[2]) }
+    	let $value := { data($rows[$row]/td[3]) } 
       
       construct {
-      	$guri a dosa:Gebied.
-        $guri dosa:code $code.
-        $guri dosa:naam $naam. 
-        $guri dosa:{$predicate} $value.  
-          
+      	
+      	_:b a scovo:Item ;
+      		rdf:value $value ;
+      		
+      		#os:dimensie os:gemiddelde_woz_waarde ;
+      		os:locatie plaats:{$code} ;
+      		#event:time os:jaar-2009 ;
+      	
+      		scovo:dataset $duri .
+      		    
       }
-    }
-    
+    }  
   }

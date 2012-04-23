@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Set;
 
@@ -17,6 +16,7 @@ import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.Parser;
 import org.apache.tika.parser.microsoft.OfficeParser;
 import org.apache.tika.sax.TaggedContentHandler;
+import org.apache.tika.sax.xpath.Matcher;
 import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
 import org.slf4j.Logger;
@@ -25,7 +25,6 @@ import org.waag.ah.tika.parser.sax.XQueryContentHandler;
 import org.waag.ah.tika.parser.sax.XSPARQLQueryHandler;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
-import org.apache.tika.sax.xpath.Matcher;
 
 public class DOSAParser extends CompositeParser {
 	private Logger logger = LoggerFactory.getLogger(DOSAParser.class);

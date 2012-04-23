@@ -5,9 +5,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URI;
-import java.net.URL;
-import java.nio.charset.Charset;
-
 import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.Configuration;
@@ -24,9 +21,15 @@ import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.ContentHandlerDecorator;
+import org.apache.tika.sax.EmbeddedContentHandler;
 import org.apache.tika.sax.ToXMLContentHandler;
+import org.apache.tika.sax.xpath.Matcher;
+import org.apache.tika.sax.xpath.MatchingContentHandler;
+import org.apache.tika.sax.xpath.XPathParser;
 import org.deri.xsparql.XSPARQLProcessor;
 import org.waag.ah.source.dosa.DOSAParser;
+import org.openrdf.model.vocabulary.RDF;
+import org.waag.ah.XSPARQLCharacterEncoder;
 import org.waag.ah.tika.parser.rdf.TurtleParser;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -82,6 +85,7 @@ public class XQueryContentHandler extends ContentHandlerDecorator {
 			XQueryCompiler compiler = processor.newXQueryCompiler();
 			XQueryExecutable executable = compiler.compile(q);
 			evaluator = executable.load();	
+			Matcher matcher = new XPathParser("rdf", RDF.NAMESPACE).parse("/rdf:RDF/descendant::node()");
 			
 			DocumentBuilder docBuilder = processor.newDocumentBuilder();
 			
@@ -96,10 +100,11 @@ public class XQueryContentHandler extends ContentHandlerDecorator {
 			for (XdmItem item : evaluator) {
 				combined.append(item);
 			}
-			
+			/*
 			Metadata metadata = new Metadata();
 			metadata.set(Metadata.CONTENT_TYPE, "text/turtle");
-        
+			metadata.set(Metadata.RESOURCE_NAME_KEY, "vis");
+			
 			System.out.println(combined.toString());
 			
 			Charset charset = Charset.forName(this.metadata.get(Metadata.CONTENT_ENCODING));
@@ -107,8 +112,22 @@ public class XQueryContentHandler extends ContentHandlerDecorator {
 					new ByteArrayInputStream(combined.toString().getBytes(charset)), 
 					handler, metadata, context);
 			
+			*/
+			
+			System.out.println(combined.toString());
+			Metadata mdata = new Metadata();
+			mdata.set(Metadata.CONTENT_TYPE, "text/turtle");
+			mdata.set(Metadata.RESOURCE_NAME_KEY, metadata.get(Metadata.RESOURCE_NAME_KEY));
+     				
+			String turtleString = XSPARQLCharacterEncoder.decode(combined.toString());
+		
+			turtleParser.parse(
+					new ByteArrayInputStream(turtleString.getBytes()), 
+					new MatchingContentHandler(
+					new EmbeddedContentHandler(this.handler), matcher), mdata, context);
+			
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}			
 		
 	}
