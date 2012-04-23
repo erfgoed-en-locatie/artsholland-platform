@@ -76,7 +76,7 @@ for $sheet in $sheets
   let $sd        := $sheet//tr[ 9]/td[2]
   let $tekst     := $sheet//tr[10]/td[2]
   let $decimalen := $sheet//tr[11]/td[2] 
-	  
+
   let $duri := {concat($baseuri, "dataset/", $name)}
    
   let $rows := $sheet//tr[position() > 31 and td[1]!=""] 
