@@ -18,7 +18,7 @@ declare namespace osr="http://linkeddata.few.vu.nl/os/resource/";
 declare namespace plaats="http://linkeddata.few.vu.nl/os-amsterdam/plaats/";
 
 declare namespace waag="http://waag.org";
-declare namespace dosa="http://www.os.amsterdam.nl/test/";
+declare namespace dosa="http://data.os.amsterdam.nl/";
 
 
 declare namespace sdmxa="http://purl.org/linked-data/sdmx/2009/attribute#";
@@ -41,6 +41,10 @@ declare function waag:capitalize-first($arg as xs:string) as xs:string {
 declare function waag:abs-uri($arg as xs:string, $context) as xs:string {
   let $parent := resolve-QName($arg, $context)
   return concat(namespace-uri-from-QName($parent), local-name-from-QName($parent))
+};
+
+declare function waag:make-uri($arg as xs:string) as xs:string {
+	encode-for-uri(lower-case(translate($arg, " ", "-")))
 };
 
 declare variable $config external; 
@@ -77,34 +81,35 @@ for $sheet in $sheets
   let $tekst     := $sheet//tr[10]/td[2]
   let $decimalen := $sheet//tr[11]/td[2] 
 
-  let $duri := {concat($baseuri, "dataset/", $name)}
+  let $dimensie := {concat($baseuri, "dataset/", waag:make-uri($kenmerk))}
+  let $dataset := {concat($dimensie, "/", waag:make-uri($meting))}
    
   let $rows := $sheet//tr[position() > 31 and td[1]!=""] 
 
   construct {
   
- 		$duri a qb:DataSet ;
-    	rdfs:label $name ;
-    	dc:description $tekst .
+ 		$dataset a qb:DataSet .
+ 		$dataset dc:title {$titel}@{"nl"} .
+    $dataset rdfs:label {$label}@{"nl"} .
+    $dataset dc:description {$tekst}@{"nl"} .
 
     #rdfs:comment {$sheet//tr[1]/td[1]};
      
     { for $row in (1 to count($rows))
     
-    	let $code  := { data($rows[$row]/td[1]) }    	
+    	let $code  := { data($rows[$row]/td[1]) }
     	let $naam  := { data($rows[$row]/td[2]) }
-    	let $value := { data($rows[$row]/td[3]) } 
+    	let $value := { data($rows[$row]/td[3]) }
       
       construct {
       	
       	_:b a scovo:Item ;
       		rdf:value $value ;
       		
-      		#os:dimensie os:gemiddelde_woz_waarde ;
+      		os:dimensie $dimensie ;
       		os:locatie plaats:{$code} ;
       		#event:time os:jaar-2009 ;
-      	
-      		scovo:dataset $duri .
+      		scovo:dataset $dataset .
 
       }
     }  
