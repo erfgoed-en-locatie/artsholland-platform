@@ -13,13 +13,10 @@ import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
-import org.openrdf.repository.sail.SailRepositoryConnection;
 import org.openrdf.sail.Sail;
-import org.openrdf.sail.SailConnection;
 import org.openrdf.sail.SailException;
 import org.waag.ah.RepositoryConnectionFactory;
 
-import com.bigdata.journal.Journal;
 import com.bigdata.rdf.sail.BigdataSail;
 import com.bigdata.rdf.sail.BigdataSailRepository;
 import com.useekm.indexing.IndexingSail;
@@ -46,7 +43,7 @@ public class OpenSaharaConnectionService {
 		// Initialize the datasource to be used for connections to Postgres:
 		BasicDataSource pgDatasource = new BasicDataSource();
 		pgDatasource.setDriverClassName("org.postgresql.Driver");
-		pgDatasource.setUrl("jdbc:postgresql://localhost:5432/artsholland-geo");
+		pgDatasource.setUrl("jdbc:postgresql://localhost:5432/useekm");
 		pgDatasource.setUsername("artsholland");
 		pgDatasource.setPassword("artsholland");
 
