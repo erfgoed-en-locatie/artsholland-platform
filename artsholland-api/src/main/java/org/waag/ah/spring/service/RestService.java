@@ -23,7 +23,7 @@ public class RestService implements InitializingBean {
 //			.getLogger(RestService.class);
 
 	RestRelation rootRelation;
-	RestRelationQueryGenerator queryTaskGenerator;
+	RestRelationQueryGenerator queryGenerator;
 	
 	@Autowired
 	PropertiesConfiguration platformConfig;
@@ -78,13 +78,13 @@ public class RestService implements InitializingBean {
   	eventsRelation.addFilter(eventsBeforeFilter);
   	eventsRelation.addFilter(eventsAfterFilter);
 
-		queryTaskGenerator = new RestRelationQueryGenerator(rootRelation);
+		queryGenerator = new RestRelationQueryGenerator(rootRelation);
 	}
 
 	public RdfQueryDefinition getObjectQuery(RestParameters params)
 			throws MalformedQueryException {
 		params.setRequestType(RequestType.DATA);
-		RdfQueryDefinition query = queryTaskGenerator.generate(params);
+		RdfQueryDefinition query = queryGenerator.generate(params);
 		query.setWriterConfig(getDefaultWriterConfig(params));
 		return query;
 	}
@@ -92,7 +92,7 @@ public class RestService implements InitializingBean {
 	public RdfQueryDefinition getPagedQuery(RestParameters params)
 			throws MalformedQueryException {
 		params.setRequestType(RequestType.REST);
-		RdfQueryDefinition query = queryTaskGenerator.generate(params);
+		RdfQueryDefinition query = queryGenerator.generate(params);
 		RDFWriterConfig config = getDefaultWriterConfig(params);
 		query.setWriterConfig(config);
 		config.setMetaData("page", String.valueOf(params.getPage()));
