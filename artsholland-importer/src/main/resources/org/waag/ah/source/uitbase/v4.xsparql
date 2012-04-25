@@ -4,7 +4,6 @@ declare namespace rdfs="http://www.w3.org/2000/01/rdf-schema#";
 declare namespace xsd="http://www.w3.org/2001/XMLSchema#";
 declare namespace owl="http://www.w3.org/2002/07/owl#";
 declare namespace time="http://www.w3.org/2006/time#"; 
-declare namespace gr="http://purl.org/goodrelations/v1#";
 declare namespace foaf="http://xmlns.com/foaf/0.1/";
 declare namespace geo = "http://www.w3.org/2003/01/geo/wgs84_pos#";
 declare namespace vcard = "http://www.w3.org/2006/vcard/ns#";
@@ -90,7 +89,7 @@ return
 					construct {
 					
 						$euri ah:ticket $turi.
-						$turi a gr:Offering.			
+						$turi a ah:Ticket.			
 						
 						$turi gr:name	{if ($name eq "") then () else $name}^^xsd:string.
 						$turi dc:description {if ($description eq "") then () else $description}^^xsd:string.					
@@ -98,14 +97,11 @@ return
 						# TODO:
 						#	<ticketsalesinformation>kvk info</ticketsalesinformation>
 						#	<ticketsalesphone>kvk telefoon</ticketsalesphone>
-						#	<ticketsalesurl>kvk url</ticketsalesurl>
+						#	<ticketsalesurl>kvk url</ticketsalesurl>						
 				
-						$turi gr:hasPriceSpecification $puri.
-						$puri a gr:UnitPriceSpecification.
-				
-						$puri gr:hasMinCurrencyValue {$pricetag/lowest}^^xsd:decimal.			
-						$puri gr:hasMaxCurrencyValue {$pricetag/highest}^^xsd:decimal.
-						$puri gr:hasCurrency "EUR"^^xsd:string.
+						$turi ah:lowPrice {$pricetag/lowest}^^xsd:decimal.			
+						$turi ah:highPrice {$pricetag/highest}^^xsd:decimal.
+						$turi ah:priceCurrency "EUR"^^xsd:string.
 									
 					}
 				}.

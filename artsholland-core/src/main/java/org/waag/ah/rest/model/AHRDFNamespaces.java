@@ -20,7 +20,6 @@ public class AHRDFNamespaces {
 		result.put("foaf", "http://xmlns.com/foaf/0.1/");
 		result.put("xsd", "http://www.w3.org/2001/XMLSchema#");
 		result.put("time", "http://www.w3.org/2006/time#");
-		result.put("gr", "http://purl.org/goodrelations/v1#");
 		result.put("geo", "http://www.w3.org/2003/01/geo/wgs84_pos#");
 		result.put("vcard", "http://www.w3.org/2006/vcard/ns#");
 
