@@ -10,7 +10,6 @@ import org.waag.ah.rdf.RDFJSONFormat;
 import org.waag.ah.rdf.RDFWriterConfig;
 import org.waag.ah.rdf.RdfQueryDefinition;
 import org.waag.ah.rest.RestParameters;
-import org.waag.ah.rest.RestParameters.RequestType;
 import org.waag.ah.rest.model.RestRelation;
 import org.waag.ah.rest.model.RestRelation.RelationQuantity;
 import org.waag.ah.rest.model.RestRelation.RelationType;
@@ -83,9 +82,10 @@ public class RestService implements InitializingBean {
 
 	public RdfQueryDefinition getObjectQuery(RestParameters params)
 			throws MalformedQueryException {
-		params.setRequestType(RequestType.DATA);
 		RdfQueryDefinition query = queryGenerator.generate(params);
-		query.setWriterConfig(getDefaultWriterConfig(params));
+		RDFWriterConfig config = getDefaultWriterConfig(params);
+		query.setWriterConfig(config);
+		config.setWrapResults(false);
 		return query;
 	}
 
@@ -100,6 +100,7 @@ public class RestService implements InitializingBean {
 		query.setWriterConfig(config);
 		config.setMetaData("page", String.valueOf(params.getPage()));
 		config.setMetaData("limit", String.valueOf(params.getResultLimit()));
+		config.setWrapResults(true);
 		return query;
 	}
 	
