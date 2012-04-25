@@ -17,8 +17,8 @@ import org.openrdf.sail.Sail;
 import org.openrdf.sail.SailException;
 import org.waag.ah.RepositoryConnectionFactory;
 
-import com.bigdata.rdf.sail.BigdataSail;
 import com.bigdata.rdf.sail.BigdataSailRepository;
+import com.useekm.bigdata.BigdataSail;
 import com.useekm.indexing.IndexingSail;
 import com.useekm.indexing.IndexingSailConnection;
 import com.useekm.indexing.exception.IndexException;
@@ -71,7 +71,7 @@ public class OpenSaharaConnectionService {
 	
 	public BigdataSail getSail() {
 		BigdataSailRepository repo = (BigdataSailRepository) cf.getRepository();
-		return repo.getSail();
+		return new BigdataSail(repo);
 	}
 
 	public void reindex() throws SailException, IndexException {

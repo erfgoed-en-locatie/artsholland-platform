@@ -1,6 +1,5 @@
 package org.waag.ah.bigdata;
 
-import java.sql.Connection;
 import java.util.Arrays;
 
 import javax.ejb.DependsOn;
