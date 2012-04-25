@@ -2,14 +2,12 @@ declare namespace dc="http://purl.org/dc/elements/1.1/";
 declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace rdfs="http://www.w3.org/2000/01/rdf-schema#";
 declare namespace xsd="http://www.w3.org/2001/XMLSchema#";
-declare namespace owl ="http://www.w3.org/2002/07/owl#";
-declare namespace time = "http://www.w3.org/2006/time#"; 
-declare namespace gr = "http://purl.org/goodrelations/v1#";
-declare namespace foaf = "http://xmlns.com/foaf/0.1/";
+declare namespace owl="http://www.w3.org/2002/07/owl#";
+declare namespace time="http://www.w3.org/2006/time#"; 
+declare namespace foaf="http://xmlns.com/foaf/0.1/";
+declare namespace geo = "http://www.w3.org/2003/01/geo/wgs84_pos#";
 declare namespace vcard = "http://www.w3.org/2006/vcard/ns#";
-
-#declare namespace geo = "http://www.w3.org/2003/01/geo/wgs84_pos#";
-declare namespace geo = "http://rdf.opensahara.com/type/geo/";
+declare namespace wkt = "http://rdf.opensahara.com/type/geo/";
 
 declare namespace nub="http://resources.uitburo.nl/";
 declare namespace ah = "http://purl.org/artsholland/1.0/";
@@ -31,7 +29,6 @@ return
 ##############################################################################################################################
 
 	if ($events) then {
-
 		for $event in $events	
 		
 			let $cidn := {$event/cidn}
@@ -87,27 +84,27 @@ return
 					let $puri := {concat($turi, "/price")}
 					
 					let $name := {waag:replace-characters($pricetag/type)}
-					let $description := {waag:replace-characters($pricetag/description)}			
+					let $description := {waag:replace-characters($pricetag/description)}		
+					
+					let $salesInformation := {waag:replace-characters($pricetag/ticketsalesinformation)}
+					let $salesPhone := {waag:replace-characters($pricetag/ticketsalesphone)}
+					let $salesUrl := {waag:replace-characters($pricetag/ticketsalesurl)}	
 					
 					construct {
 					
-						$euri ah:ticket $turi.
-						$turi a gr:Offering.			
+						$euri ah:ticket $turi .
+						$turi a ah:Ticket .
 						
-						$turi gr:name	{if ($name eq "") then () else $name}^^xsd:string.
-						$turi dc:description {if ($description eq "") then () else $description}^^xsd:string.					
-							
-						# TODO:
-						#	<ticketsalesinformation>kvk info</ticketsalesinformation>
-						#	<ticketsalesphone>kvk telefoon</ticketsalesphone>
-						#	<ticketsalesurl>kvk url</ticketsalesurl>
+						$turi gr:name	{if ($name eq "") then () else $name}^^xsd:string .
+						$turi dc:description {if ($description eq "") then () else $description}^^xsd:string .
+						
+						$turi ah:ticketSalesInformation {if ($salesInformation eq "") then () else $salesInformation}^^xsd:string .
+						$turi ah:ticketSalesTelephone {if ($salesPhone eq "") then () else $salesPhone}^^xsd:string .
+						$turi ah:ticketSalesUrl {if ($salesUrl eq "") then () else $salesUrl}^^xsd:string .				
 				
-						$turi gr:hasPriceSpecification $puri.
-						$puri a gr:UnitPriceSpecification.
-				
-						$puri gr:hasMinCurrencyValue {$pricetag/lowest}^^xsd:decimal.			
-						$puri gr:hasMaxCurrencyValue {$pricetag/highest}^^xsd:decimal.
-						$puri gr:hasCurrency "EUR"^^xsd:string.
+						$turi ah:lowPrice {$pricetag/lowest}^^xsd:decimal .			
+						$turi ah:highPrice {$pricetag/highest}^^xsd:decimal .
+						$turi ah:priceCurrency "EUR"^^xsd:string.
 									
 					}
 				}.
@@ -156,9 +153,8 @@ return
 ##############################################################################################################################
 ##################   Venue   #################################################################################################
 ##############################################################################################################################
-
+	
 	else if ($venues) then {
-
 		for $venue in $venues
 			
 			let $cidn := {$venue/cidn}
@@ -174,11 +170,11 @@ return
 							
 				$vuri dc:title {if ($venue/name eq "") then () else waag:replace-characters($venue/name)}^^xsd:string.
 	
-				#$vuri geo:lat {data($venue/geocode/latitude)}^^xsd:decimal.
-				#$vuri geo:long {data($venue/geocode/longitude)}^^xsd:decimal.				
+				$vuri geo:lat {data($venue/geocode/latitude)}^^xsd:decimal.
+				$vuri geo:long {data($venue/geocode/longitude)}^^xsd:decimal.
 	
-				$vuri ah:geo {concat( 'POINT(', data($venue/geocode/latitude), ' ', data($venue/geocode/longitude), ')' )}^^geo:wkt.
-	
+				$vuri ah:wkt {concat( 'POINT(', data($venue/geocode/latitude), ' ', data($venue/geocode/longitude), ')' )}^^wkt:wkt.
+				
 				$vuri dc:created {$venue/@date-created}^^xsd:string.
 				$vuri dc:modified {$venue/@date-changed}^^xsd:string.
 				
@@ -233,10 +229,13 @@ return
 					}
 				}.
 				
-				$vuri vcard:street-address {concat($venue/street/name, " ", $venue/street/number, $venue/street/addition)}.
-				$vuri vcard:locality {waag:replace-characters($venue/place)}.
-				$vuri vcard:postal-code {$venue/postal-code}.
-	
+				$vuri vcard:street-address {concat($venue/street/name, " ", $venue/street/number, $venue/street/addition)} .
+				$vuri vcard:locality {waag:replace-characters($venue/place)} .
+				$vuri vcard:postal-code {$venue/postal-code} .
+				$vuri vcard:email {waag:replace-characters($venue/email)} .
+				$vuri ah:telephone {waag:replace-characters($venue/telephone)}.
+				$vuri ah:fax {waag:replace-characters($venue/fax)}.
+					
 				{ for $tag in $venue/tags//tag
 					
 					construct {	
@@ -369,9 +368,7 @@ return
 	
 				#	TODO:
 				#	notes
-				#	<country>NL</country>
-				#	<language>nl_NL</language>
-				#	<subtitles>en_UK</subtitles>
+				#	<country>NL</country>							
 				
 				$puri dc:language {waag:get-language-tag($production/language)}.			
 				$puri ah:subtitleLanguage {waag:get-language-tag($production/subtitles)}			
@@ -383,22 +380,22 @@ return
 ##################   Group   #################################################################################################
 ##############################################################################################################################
 
-(:
-return
-	for $group in $groups
-		
-		let $cidn := {$group/cidn}
-		let $guri := {concat($baseuri, "group/", $cidn)}
-		let $guriUitburo := {concat($baseuriUitburo, "groups/", $cidn)}
+	(:
+	return
+		for $group in $groups
 			
-		construct { 
-			$guri a ah:Group.			
-			$guri owl:sameAs $guriUitburo.
-			
-			$guri ah:cidn {$cidn}^^xsd:string.
+			let $cidn := {$group/cidn}
+			let $guri := {concat($baseuri, "group/", $cidn)}
+			let $guriUitburo := {concat($baseuriUitburo, "groups/", $cidn)}
 				
-		}
-:)
+			construct { 
+				$guri a ah:Group.			
+				$guri owl:sameAs $guriUitburo.
+				
+				$guri ah:cidn {$cidn}^^xsd:string.
+					
+			}
+	:)
 
 ##############################################################################################################################
 ##############################################################################################################################

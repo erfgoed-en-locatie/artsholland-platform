@@ -9,6 +9,7 @@ public class RDFWriterConfig {
 	private String languageTag;
 	private Map<String, String> metaData = new HashMap<String, String>();
 	private String baseUri;
+	private boolean wrapResults;
 	
 	public void setFormat(String format) {
 		// TODO: This is, of course, a hack :)
@@ -66,5 +67,13 @@ public class RDFWriterConfig {
 
 	public String getBaseUri() {
 		return this.baseUri;
+	}
+
+	public boolean isWrapResults() {
+		return wrapResults;
+	}
+
+	public void setWrapResults(boolean wrapResults) {
+		this.wrapResults = wrapResults;
 	}
 }

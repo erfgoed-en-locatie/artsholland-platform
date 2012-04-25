@@ -18,6 +18,8 @@ import org.waag.ah.service.SchedulerService;
 public class SchedulerServiceImpl implements SchedulerService {
 	final static Logger logger = LoggerFactory.getLogger(SchedulerService.class);
 	private Scheduler scheduler;
+//	private CascadingClassLoadHelper classLoadHelper;
+//	private XMLSchedulingDataProcessor processor;
 
 	@PostConstruct  
 	public void init() { 
@@ -27,14 +29,17 @@ public class SchedulerServiceImpl implements SchedulerService {
             SchedulerFactory sf = new StdSchedulerFactory("quartz.properties");
 			scheduler = sf.getScheduler();
 			scheduler.start();
+			
+//	        classLoadHelper = new CascadingClassLoadHelper();
+//	        classLoadHelper.initialize();
+//	        processor = new XMLSchedulingDataProcessor(this.classLoadHelper);
+	        
 		} catch (SchedulerException e) {
 			e.printStackTrace();
+//		} catch (ParserConfigurationException e) {
+//			e.printStackTrace();
 		}
 	} 
-	
-	public final Scheduler getScheduler() {
-		return scheduler;
-	}
 	
 	@PreDestroy     
 	public void cleanUp() {
@@ -44,5 +49,19 @@ public class SchedulerServiceImpl implements SchedulerService {
 			e.printStackTrace();
 		}
 	}    
+	
+	@Override
+	public final Scheduler getScheduler() {
+		return scheduler;
+	}
+	
+//	@Override
+//	public void scheduleJobsFromFile(String fileName) {
+//        try {
+//            processor.processFileAndScheduleJobs(fileName, scheduler);
+//        } catch (Exception e) {
+//            logger.error("Error scheduling jobs: " + e.getMessage(), e);
+//        }
+//	}
 }
 

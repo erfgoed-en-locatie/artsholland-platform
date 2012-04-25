@@ -5,4 +5,5 @@ import org.waag.ah.Service;
 
 public interface SchedulerService extends Service {
 	Scheduler getScheduler();
+//	void scheduleJobsFromFile(String fileName);
 }

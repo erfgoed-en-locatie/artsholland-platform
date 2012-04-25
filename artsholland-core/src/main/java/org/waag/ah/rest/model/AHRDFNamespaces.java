@@ -1,10 +1,10 @@
-package org.waag.ah;
+package org.waag.ah.rest.model;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class Namespaces {
+public class AHRDFNamespaces {
 
 	private static final Map<String, String> NAMESPACES = createMap();
 
@@ -20,14 +20,28 @@ public class Namespaces {
 		result.put("foaf", "http://xmlns.com/foaf/0.1/");
 		result.put("xsd", "http://www.w3.org/2001/XMLSchema#");
 		result.put("time", "http://www.w3.org/2006/time#");
-		result.put("gr", "http://purl.org/goodrelations/v1#");
 		result.put("geo", "http://www.w3.org/2003/01/geo/wgs84_pos#");
 		result.put("vcard", "http://www.w3.org/2006/vcard/ns#");
 
-		//result.put("ah2", "http://data.artsholland.com/");
-
-		return Collections.unmodifiableMap(result);
+		return Collections.unmodifiableMap(result);	
 	}
 	
+	private static final String PREFIX = getSPARQLPrefix();
+	
+	public static String getSPARQLPrefix() {
+		String prefix = "";
+		for (Map.Entry<String, String> namespace: NAMESPACES.entrySet()) {
+			prefix += "PREFIX " + namespace.getKey() + ": <" + namespace.getValue() + ">\n";
+		}
+		return prefix;
+	}
+
+	public static String getPrefix() {
+		return PREFIX;
+	}
+	
+	public static Map<String, String> getNamespaces() {
+		return NAMESPACES;
+	}	
 	
 }
