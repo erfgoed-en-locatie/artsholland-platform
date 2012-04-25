@@ -92,7 +92,7 @@ public class RestService implements InitializingBean {
 	public RdfQueryDefinition getPagedQuery(RestParameters params)
 			throws MalformedQueryException {
                 params.setRequestType(RequestType.REST);
-		RdfQueryDefinition query = queryTaskGenerator.generate(params);
+		RdfQueryDefinition query = queryGenerator.generate(params);
 		if (query == null) {
 			throw new MalformedQueryException();
 		}
