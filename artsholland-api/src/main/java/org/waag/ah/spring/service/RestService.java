@@ -10,6 +10,7 @@ import org.waag.ah.rdf.RDFJSONFormat;
 import org.waag.ah.rdf.RDFWriterConfig;
 import org.waag.ah.rdf.RdfQueryDefinition;
 import org.waag.ah.rest.RESTParameters;
+import org.waag.ah.rest.RESTParameters.RequestType;
 import org.waag.ah.rest.model.RestRelation;
 import org.waag.ah.rest.model.RestRelation.RelationQuantity;
 import org.waag.ah.rest.model.RestRelation.RelationType;
@@ -32,12 +33,12 @@ public class RestService implements InitializingBean {
 
 		rootRelation = new RestRelation();
 
-		RestRelation eventsRelation = rootRelation.addRelation("events",
+		RestRelation eventsRelation = rootRelation.addRelation("event",
 				"Event", RelationQuantity.MULTIPLE, RelationType.SELF, false);
-		RestRelation venuesRelation = rootRelation.addRelation("venues",
+		RestRelation venuesRelation = rootRelation.addRelation("venue",
 				"Venue", RelationQuantity.MULTIPLE, RelationType.SELF, false);
 		RestRelation productionsRelation = rootRelation.addRelation(
-				"productions", "Production", RelationQuantity.MULTIPLE,
+				"production", "Production", RelationQuantity.MULTIPLE,
 				RelationType.SELF, false);
 
 		RestRelation eventRelation = eventsRelation.addRelation("cidn",
@@ -52,23 +53,23 @@ public class RestService implements InitializingBean {
 				RelationQuantity.SINGLE, RelationType.FORWARD, false);
 		eventRelation.addRelation("venue", "Venue", RelationQuantity.SINGLE,
 				RelationType.FORWARD, false);
-		eventRelation.addRelation("rooms", "Room", RelationQuantity.MULTIPLE,
+		eventRelation.addRelation("room", "Room", RelationQuantity.MULTIPLE,
 				RelationType.FORWARD, false);
 
-		venueRelation.addRelation("events", "Event", RelationQuantity.MULTIPLE,
+		venueRelation.addRelation("event", "Event", RelationQuantity.MULTIPLE,
 				RelationType.BACKWARD, false);
-		venueRelation.addRelation("productions", "Production",
+		venueRelation.addRelation("production", "Production",
 				RelationQuantity.MULTIPLE, RelationType.BACKWARDFORWARD, false);
-		venueRelation.addRelation("rooms", "Room", RelationQuantity.MULTIPLE,
+		venueRelation.addRelation("room", "Room", RelationQuantity.MULTIPLE,
 				RelationType.FORWARD, false);
 
-		productionRelation.addRelation("events", "Event",
+		productionRelation.addRelation("event", "Event",
 				RelationQuantity.MULTIPLE, RelationType.BACKWARD, false);
-		productionRelation.addRelation("venues", "Venue",
+		productionRelation.addRelation("venue", "Venue",
 				RelationQuantity.MULTIPLE, RelationType.BACKWARDFORWARD, false);
 
 		RestRelation venueAttachmentRelation = venueRelation.addRelation(
-				"attachments", "Attachment", RelationQuantity.MULTIPLE,
+				"attachment", "Attachment", RelationQuantity.MULTIPLE,
 				RelationType.FORWARD, false);
 		venueAttachmentRelation.addRelation("id", "Attachment",
 				RelationQuantity.SINGLE, RelationType.SELF, true);
@@ -78,6 +79,7 @@ public class RestService implements InitializingBean {
 
 	public RdfQueryDefinition getObjectQuery(RESTParameters params)
 			throws MalformedQueryException {
+		params.setRequestType(RequestType.DATA);
 		RdfQueryDefinition query = queryTaskGenerator.generate(params);
 		query.setWriterConfig(getDefaultWriterConfig(params));
 		return query;
@@ -85,6 +87,7 @@ public class RestService implements InitializingBean {
 
 	public RdfQueryDefinition getPagedQuery(RESTParameters params)
 			throws MalformedQueryException {
+		params.setRequestType(RequestType.REST);
 		RdfQueryDefinition query = queryTaskGenerator.generate(params);
 		RDFWriterConfig config = getDefaultWriterConfig(params);
 		query.setWriterConfig(config);
