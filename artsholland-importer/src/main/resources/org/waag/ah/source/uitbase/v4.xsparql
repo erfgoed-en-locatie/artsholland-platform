@@ -95,7 +95,7 @@ return
 						$euri ah:ticket $turi .
 						$turi a ah:Ticket .
 						
-						$turi gr:name	{if ($name eq "") then () else $name}^^xsd:string .
+						$turi dc:title	{if ($name eq "") then () else $name}^^xsd:string .
 						$turi dc:description {if ($description eq "") then () else $description}^^xsd:string .
 						
 						$turi ah:ticketSalesInformation {if ($salesInformation eq "") then () else $salesInformation}^^xsd:string .
