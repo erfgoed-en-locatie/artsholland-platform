@@ -10,7 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openrdf.model.datatypes.XMLDatatypeUtil;
 import org.waag.ah.rest.model.RestRelation.RelationQuantity;
 
-public class RESTParameters {
+public class RestParameters {
 	
 	public static enum RequestType {
 		REST,
