@@ -81,7 +81,6 @@ return
 		
 					# Als er events zijn met pricetags met zelfde type: gebruik $pos in uri
 					let $turi := {concat($euri, "/ticket/", waag:make-uri($pricetag/type))}
-					let $puri := {concat($turi, "/price")}
 					
 					let $name := {waag:replace-characters($pricetag/type)}
 					let $description := {waag:replace-characters($pricetag/description)}		

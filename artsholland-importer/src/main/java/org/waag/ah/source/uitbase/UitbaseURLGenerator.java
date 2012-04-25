@@ -20,7 +20,7 @@ public class UitbaseURLGenerator {
 	private final String BASE_URL;
 	private final String API_KEY;
 	
-	private static final int ROWS = 100;
+	private static final int ROWS = 500;
 	
 //	public static final String[] RESOURCES = { 
 //		"events", 
@@ -49,7 +49,7 @@ public class UitbaseURLGenerator {
 		int count = 0;
 		try {
 			String content = readURL(getCountURL(dtFromParam+dtToParam));
-			count = 200; //getCount(content);	
+			count = 1000; //getCount(content);	
 		} catch (IOException e) {			
 			e.printStackTrace();
 		}
