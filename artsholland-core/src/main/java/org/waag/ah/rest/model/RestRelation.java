@@ -1,9 +1,13 @@
 package org.waag.ah.rest.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
+import org.waag.ah.rest.RestParameters;
 
 public class RestRelation {
 
@@ -29,10 +33,16 @@ public class RestRelation {
 
 	List<RestRelation> relations = new ArrayList<RestRelation>();
 	
-	private RestRelation parent = null;
-
+	Map<String, SPARQLFilter> filters = new HashMap<String, SPARQLFilter>();
+	
+	private RestRelation parent = null;	
+	
 	public RestRelation() {
-		
+		this.parameter = null;
+		this.classURI = null;
+		this.quantity = null;
+		this.type = null;
+		this.parameterized = false;
 	}
 	
 	public RestRelation(String parameter, String classURI, RelationQuantity quantity, RelationType type, boolean parameterized) {
@@ -123,6 +133,15 @@ public class RestRelation {
 		this.parameterized = parameterized;
 	}
 	
+	public void addFilter(SPARQLFilter filter) {
+		filters.put(filter.getParameter(), filter);		
+	}
+	
+	public SPARQLFilter findFilter(String parameter) {
+		return filters.get(parameter);				
+	}
+
+	
 	public void addRelation(RestRelation relation) {
 		relation.setParent(this);
 		relations.add(relation);
@@ -181,6 +200,39 @@ public class RestRelation {
 			}
 		}
 		return this;
+	}
+	
+	public ArrayList<String> getStatements(RestParameters params) {
+		
+		ArrayList<String> statements = new ArrayList<String>();
+		
+		for (Map.Entry<String, String[]> uriParameter : params.getURIParameterMap().entrySet()) {
+			String parameter = uriParameter.getKey();
+			SPARQLFilter filter = findFilter(parameter);
+			if (filter != null) {
+				statements.add(filter.getStatement());
+			}
+		}
+			
+		return statements;
+	}
+
+
+	public ArrayList<String> getFilters(RestParameters params) {
+		ArrayList<String> filters = new ArrayList<String>();
+		
+		for (Map.Entry<String, String[]> uriParameter : params.getURIParameterMap().entrySet()) {
+			String parameter = uriParameter.getKey();			
+			SPARQLFilter filter = findFilter(parameter);
+			if (filter != null) {
+				String[] value = uriParameter.getValue();
+				if (value.length > 0) {
+					filters.add(filter.getFilter(value[0]));
+				}				
+			}
+		}
+			
+		return filters;
 	}
 	
 }
