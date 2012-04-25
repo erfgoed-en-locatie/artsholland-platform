@@ -53,13 +53,16 @@ public class RestParameters {
 	}
 	
 	public long getResultLimit() {
+		if (resultLimit == 0) {
+			return DEFAULT_RESULT_LIMIT;
+		}
 		return resultLimit;
 	}
 
 	public long getPage() {
-//		if (!isPagingEnabled()) {
-//			return 0;
-//		}
+		if (page == 0) {
+			return 1;
+		}
 		return page;
 	}
 
