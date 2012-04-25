@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.waag.ah.rest.RESTParameters;
+import org.waag.ah.rest.RestParameters;
 import org.waag.ah.spring.annotation.RestRequestParameters;
 import org.waag.ah.spring.service.GeoService;
 import org.waag.ah.spring.service.RestService;
@@ -41,7 +41,7 @@ public class RestController { // implements InitializingBean
 	public ModelAndView getObjectByUri(
 			final HttpServletRequest request,
 			final HttpServletResponse response,
-			@RestRequestParameters(prefixLength=1) RESTParameters params)
+			@RestRequestParameters(prefixLength=1) RestParameters params)
 			throws IOException {
 		try {
 			return new ModelAndView(view, QueryTaskView.MODEL_QUERY,
@@ -59,7 +59,7 @@ public class RestController { // implements InitializingBean
 	public ModelAndView restRequest(
 			final HttpServletRequest request,
 			final HttpServletResponse response,
-			@RestRequestParameters(prefixLength=1, paging=true) RESTParameters params)
+			@RestRequestParameters(prefixLength=1, paging=true) RestParameters params)
 			throws IOException {
 		try {
 			return new ModelAndView(view, QueryTaskView.MODEL_QUERY,
@@ -77,7 +77,8 @@ public class RestController { // implements InitializingBean
 	public @ResponseBody String geoRequest(
 			final HttpServletRequest request,
 			final HttpServletResponse response,
-			@RestRequestParameters(prefixLength=1, paging=true) RESTParameters params)
+			@RestRequestParameters(prefixLength=1, paging=true) RestParameters params)
+
 			throws IOException, QueryEvaluationException, MalformedQueryException, RepositoryException {
 		
 		return geoService.getVis();		
@@ -88,9 +89,10 @@ public class RestController { // implements InitializingBean
 	public @ResponseBody String geoReindex(
 			final HttpServletRequest request,
 			final HttpServletResponse response,
-			@RestRequestParameters(prefixLength=1, paging=true) RESTParameters params)
+			@RestRequestParameters(prefixLength=1, paging=true) RestParameters params)
 			throws IOException, QueryEvaluationException, MalformedQueryException, RepositoryException {
 		geoService.reindex();
 		return "Ja toch!";		
 	}
+
 }

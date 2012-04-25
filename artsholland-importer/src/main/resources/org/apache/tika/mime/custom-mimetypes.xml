@@ -20,7 +20,8 @@
     <sub-class-of type="application/xml"/>
     <acronym>NUBXML</acronym>
     <_comment>NUB UitBase V4</_comment>
-    <root-XML localName="search"/>
+    <!-- <root-XML localName="search"/> -->
+    <glob pattern="http://ps4.uitburo.nl/api/*"/>
   </mime-type>
     
   <mime-type type="text/turtle">
