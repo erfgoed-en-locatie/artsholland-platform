@@ -8,6 +8,7 @@ import javax.ejb.DependsOn;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
@@ -15,10 +16,10 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.sail.Sail;
 import org.openrdf.sail.SailException;
+import org.waag.ah.PlatformConfig;
+import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.RepositoryConnectionFactory;
 
-import com.bigdata.rdf.sail.BigdataSailRepository;
-import com.useekm.bigdata.BigdataSail;
 import com.useekm.indexing.IndexingSail;
 import com.useekm.indexing.IndexingSailConnection;
 import com.useekm.indexing.exception.IndexException;
@@ -32,20 +33,22 @@ public class OpenSaharaConnectionService {
 	@EJB(mappedName = "java:app/datastore/BigdataConnectionService")
 	private RepositoryConnectionFactory cf;
 	
+	private PlatformConfig config;
 	private IndexingSail idxSail;
 	private SailRepository repo;
 
 	@PostConstruct
-	public void create() throws RepositoryException {
+	public void create() throws RepositoryException, ConfigurationException {
 		
+		config = PlatformConfigHelper.getConfig();
 		Sail sail = cf.getSail();
 
 		// Initialize the datasource to be used for connections to Postgres:
 		BasicDataSource pgDatasource = new BasicDataSource();
 		pgDatasource.setDriverClassName("org.postgresql.Driver");
 		pgDatasource.setUrl("jdbc:postgresql://localhost:5432/useekm");
-		pgDatasource.setUsername("artsholland");
-		pgDatasource.setPassword("artsholland");
+		pgDatasource.setUsername(config.getString("postgres.username"));
+		pgDatasource.setPassword(config.getString("postgres.password"));
 
 		// Initialize the settings for the Postgis Indexer:
 		PostgisIndexerSettings settings = new PostgisIndexerSettings();

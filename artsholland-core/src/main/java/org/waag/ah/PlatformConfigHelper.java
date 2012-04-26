@@ -54,9 +54,9 @@ public class PlatformConfigHelper extends PropertiesConfiguration {
 		return properties;
 	}
 	
-	public static class PlatformConfig extends PropertiesConfiguration {
-		public PlatformConfig(String fileName) throws ConfigurationException {
-			super(fileName);
-		}
-	}
+//	public static class PlatformConfig extends PropertiesConfiguration {
+//		public PlatformConfig(String fileName) throws ConfigurationException {
+//			super(fileName);
+//		}
+//	}
 }
