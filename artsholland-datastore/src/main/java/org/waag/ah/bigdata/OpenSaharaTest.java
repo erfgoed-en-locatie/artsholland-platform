@@ -29,7 +29,7 @@ public class OpenSaharaTest {
 	private RepositoryConnectionFactory cf;
 	
 	public BigdataSail getSail()  {
-		BigdataSailRepository repo = (BigdataSailRepository) cf.getRepository();
+		BigdataSailRepository repo = (BigdataSailRepository) cf.getSail();
 		return repo.getSail();		
 	}
 	

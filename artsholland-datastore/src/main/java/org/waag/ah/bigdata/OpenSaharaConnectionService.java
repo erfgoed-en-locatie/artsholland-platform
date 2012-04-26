@@ -38,7 +38,7 @@ public class OpenSaharaConnectionService {
 	@PostConstruct
 	public void create() throws RepositoryException {
 		
-		Sail sail = getSail();
+		Sail sail = cf.getSail();
 
 		// Initialize the datasource to be used for connections to Postgres:
 		BasicDataSource pgDatasource = new BasicDataSource();
@@ -67,11 +67,6 @@ public class OpenSaharaConnectionService {
 		// Wrap in a SailRepository:
 		repo = new SailRepository(idxSail);
 		
-	}
-	
-	public BigdataSail getSail() {
-		BigdataSailRepository repo = (BigdataSailRepository) cf.getRepository();
-		return new BigdataSail(repo);
 	}
 
 	public void reindex() throws SailException, IndexException {
