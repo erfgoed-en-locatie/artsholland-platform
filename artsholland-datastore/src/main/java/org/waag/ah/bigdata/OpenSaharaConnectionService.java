@@ -55,9 +55,13 @@ public class OpenSaharaConnectionService {
 		PostgisIndexMatcher wktMatcher = new PostgisIndexMatcher();
 		wktMatcher.setPredicate("http://purl.org/artsholland/1.0/wkt");
 		
+		PostgisIndexMatcher descriptionMatcher = new PostgisIndexMatcher();
+		descriptionMatcher.setPredicate("http://purl.org/dc/elements/1.1/description");
+		descriptionMatcher.setSearchConfig("simple");
+		
 		// add matchers for each predicate for wich statements need to be indexed:
 		settings.setMatchers(Arrays
-				.asList(new PostgisIndexMatcher[] { wktMatcher }));
+				.asList(new PostgisIndexMatcher[] { wktMatcher, descriptionMatcher }));
 
 		// Initialize the IndexingSail that wraps your BigdataSail:
 		settings.initialize(true);
