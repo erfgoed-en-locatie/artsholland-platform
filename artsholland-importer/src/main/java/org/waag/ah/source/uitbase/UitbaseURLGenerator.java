@@ -20,14 +20,7 @@ public class UitbaseURLGenerator {
 	private final String BASE_URL;
 	private final String API_KEY;
 	
-	private static final int ROWS = 100;
-	
-//	public static final String[] RESOURCES = { 
-//		"events", 
-//		"locations", 
-//		"productions",
-//		"groups" 
-//	};
+	private static final int ROWS = 500;
 	
 	public UitbaseURLGenerator(String endpoint, String apiKey) {
 		BASE_URL = endpoint + "/search";
@@ -45,28 +38,23 @@ public class UitbaseURLGenerator {
 		String dtToParam = dtTo != null ? "&createdto="+fmt.withZone(DateTimeZone.UTC).print(dtTo) : "";
 		String dtFromParam = dtFrom != null ? "&createdfrom="+fmt.withZone(DateTimeZone.UTC).print(dtFrom) : "";
 		
-//		for (String resource : RESOURCES) {
 		int count = 0;
 		try {
-			String content = readURL(getCountURL(dtFromParam+dtToParam));
-			count = 200; //getCount(content);	
+			count = getCount(readURL(getCountURL(dtFromParam+dtToParam)));	
 		} catch (IOException e) {			
 			e.printStackTrace();
 		}
 		int i = 0;
 		while (i < count) {
 			// TODO: use something like URLBuilder 
-//			String url = addAPIKey(BASE_URL + resource) + "&rows=" + ROWS + "&start=" + i + dtParam;
 			String url = addAPIKey(BASE_URL) + 
 					"&resolve=true" +
-//					"&resource=" + resource +
 					"&rows=" + ROWS + 
 					"&start=" + i + 
 					dtFromParam+dtToParam;
 			urls.add(new URL(url));
 			i += ROWS;
 		}
-//		}		
 		return urls;
 	}
 	
