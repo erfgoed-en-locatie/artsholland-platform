@@ -3,7 +3,9 @@ package org.waag.ah.rdf;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RDFWriterConfig {
+import org.waag.ah.WriterConfig;
+
+public class RDFWriterConfig implements WriterConfig {
 	private String format;
 	private boolean prettyPrint;
 	private String languageTag;
@@ -19,6 +21,7 @@ public class RDFWriterConfig {
 		this.format = format;
 	}
 	
+	@Override
 	public String getFormat() {
 		return format;
 	}
@@ -27,6 +30,7 @@ public class RDFWriterConfig {
 		this.prettyPrint = prettyPrint;
 	}
 	
+	@Override
 	public boolean isPrettyPrint() {
 		return prettyPrint;
 	}
@@ -35,6 +39,7 @@ public class RDFWriterConfig {
 		this.languageTag = languageTag;
 	}
 	
+	@Override
 	public String getLanguageTag() {
 		return languageTag;
 	}
@@ -53,10 +58,12 @@ public class RDFWriterConfig {
 		}
 	}
 
+	@Override
 	public final Map<String, String> getMetaData() {
 		return metaData;
 	}
 	
+	@Override
 	public final String getMetaData(String key) {
 		return metaData.get(key);
 	}
@@ -65,10 +72,12 @@ public class RDFWriterConfig {
 		this.baseUri = baseUri;
 	}
 
+	@Override
 	public String getBaseUri() {
 		return this.baseUri;
 	}
 
+	@Override
 	public boolean isWrapResults() {
 		return wrapResults;
 	}
