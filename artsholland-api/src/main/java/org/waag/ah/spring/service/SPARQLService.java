@@ -81,8 +81,9 @@ public class SPARQLService {
                 logger.trace("Will run query: " + query);
             }
 
-            FutureTask<Void> ft = context.executeQueryTask(queryTask);
+            FutureTask<Void> ft = new FutureTask<Void>(queryTask);//context.executeQueryTask(queryTask);
             response.setStatus(HttpServletResponse.SC_OK);
+            ft.run();
             ft.get();
 		} catch (MalformedQueryException ex) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST,

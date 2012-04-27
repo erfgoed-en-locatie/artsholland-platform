@@ -13,13 +13,14 @@ import com.bigdata.journal.Journal;
 @Local
 public interface RepositoryConnectionFactory {
 	
-//	public Repository getRepository();
+	// TODO: Get rid of this method.
 	public Journal getJournal();
+	
 	public Sail getSail();
 	
 	public RepositoryConnection getConnection() 
 			throws IOException, RepositoryException;
 	
-	public RepositoryConnection getReadOnlyConnection()
-		throws IOException, RepositoryException;
+//	public RepositoryConnection getReadOnlyConnection()
+//		throws IOException, RepositoryException;
 }

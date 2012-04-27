@@ -1266,23 +1266,13 @@ public class BigdataRDFContext extends BigdataBaseContext {
      */
     public AbstractTripleStore getTripleStore(final String namespace,
             final long timestamp) {
-        
-//        if (timestamp == ITx.UNISOLATED)
-//            throw new IllegalArgumentException("UNISOLATED reads disallowed.");
-
-        // resolve the default namespace.
         final AbstractTripleStore tripleStore = (AbstractTripleStore) getIndexManager()
                 .getResourceLocator().locate(namespace, timestamp);
-
         if (tripleStore == null) {
-
             throw new RuntimeException("Not found: namespace=" + namespace
                     + ", timestamp=" + TimestampUtility.toString(timestamp));
-
         }
-
         return tripleStore;
-        
     }
 
     /**

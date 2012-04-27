@@ -1,7 +1,6 @@
 package org.waag.ah.tika.parser.sax;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.HashMap;
@@ -14,12 +13,10 @@ import javax.xml.transform.stream.StreamSource;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.NamePool;
 import net.sf.saxon.s9api.Processor;
-import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XQueryCompiler;
 import net.sf.saxon.s9api.XQueryEvaluator;
 import net.sf.saxon.s9api.XdmItem;
 
-import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.ContentHandlerDecorator;
@@ -151,14 +148,15 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 						new MatchingContentHandler(
 						new EmbeddedContentHandler(this.handler), matcher), mdata, context);
 				
-			} catch (SaxonApiException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (TikaException e) {
-				e.printStackTrace();
+//			} catch (SaxonApiException e) {
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			} catch (TikaException e) {
+//				e.printStackTrace();
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error(e.getMessage(), e);
+				throw new SAXException(e.getMessage());
 			}
 		}
 	}

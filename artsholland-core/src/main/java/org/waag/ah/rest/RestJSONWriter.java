@@ -12,10 +12,10 @@ import net.fortytwo.sesametools.rdfjson.RDFJSONWriter;
 import org.openrdf.model.Statement;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
+import org.waag.ah.WriterConfig;
 import org.waag.ah.rdf.ConfigurableRDFWriter;
 import org.waag.ah.rdf.RDFGSON;
 import org.waag.ah.rdf.RDFJSONFormat;
-import org.waag.ah.rdf.RDFWriterConfig;
 
 import com.google.gson.stream.JsonWriter;
 
@@ -25,7 +25,7 @@ public class RestJSONWriter extends RDFJSONWriter implements
 
 	private JsonWriter jsonWriter;
 	private RDFGSON rdfGSON;
-	private RDFWriterConfig config;
+	private WriterConfig config;
 
 	public RestJSONWriter(final OutputStream out) {
 		this(new OutputStreamWriter(out, Charset.forName("UTF-8")));
@@ -40,7 +40,7 @@ public class RestJSONWriter extends RDFJSONWriter implements
 	}
 
 	@Override
-	public void setConfig(RDFWriterConfig config) {
+	public void setConfig(WriterConfig config) {
 		this.config = config;
 		
 		if (config.isPrettyPrint()) {
