@@ -85,6 +85,7 @@
 			<artifactId>jts</artifactId>
 			<version>1.12</version>
       <exclusions>
+        <!-- Exluded because of conflicts with Saxon/Tika Xerces implementation. -->
         <exclusion>
           <groupId>xerces</groupId>
           <artifactId>xercesImpl</artifactId>

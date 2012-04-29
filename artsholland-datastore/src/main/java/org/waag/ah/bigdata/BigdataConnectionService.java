@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.RepositoryConnectionFactory;
 
-import com.bigdata.journal.Journal;
 import com.bigdata.journal.Options;
 import com.bigdata.rdf.sail.BigdataSailRepository;
 import com.useekm.bigdata.BigdataSail;
@@ -68,9 +67,9 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 		return new BigdataSail(repo);
 	}	
 	
-	public Journal getJournal() {
-		return new Journal(ConfigurationConverter.getProperties(properties));
-	}
+//	public Journal getJournal() {
+//		return new Journal(ConfigurationConverter.getProperties(properties));
+//	}
 	
 	/**
 	 * Return read/write connection to the BigData repository.
