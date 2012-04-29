@@ -8,14 +8,13 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang.StringUtils;
 import org.openrdf.model.datatypes.XMLDatatypeUtil;
-import org.waag.ah.rest.model.RestRelation.RelationQuantity;
 
 public class RestParameters {
 	
-	public static enum RequestType {
-		REST,
-		DATA
-	};
+//	public static enum RequestType {
+//		REST,
+//		DATA
+//	};
 	
 	private long resultLimit = 0;
 	private long page = 0;
@@ -25,8 +24,8 @@ public class RestParameters {
 	private boolean hideMetadata = false;
 	private boolean prettyPrint = false;
 	
-	private RequestType requestType = null;
-	private RelationQuantity quantity = null;
+	//private RequestType requestType = null;
+	//private RelationQuantity quantity = null;
 
 	public static long DEFAULT_RESULT_LIMIT = 10;
 
@@ -54,13 +53,16 @@ public class RestParameters {
 	}
 	
 	public long getResultLimit() {
+		if (resultLimit == 0) {
+			return DEFAULT_RESULT_LIMIT;
+		}
 		return resultLimit;
 	}
 
 	public long getPage() {
-//		if (!isPagingEnabled()) {
-//			return 0;
-//		}
+		if (page == 0) {
+			return 1;
+		}
 		return page;
 	}
 
@@ -134,21 +136,6 @@ public class RestParameters {
 		this.prettyPrint = pretty;
 	}
 
-	public RequestType getRequestType() {
-		return requestType;
-	}
-
-	public void setRequestType(RequestType requestType) {
-		this.requestType = requestType;
-	}
-
-	public RelationQuantity getQuantity() {
-		return quantity;
-	}
-
-	public void setQuantity(RelationQuantity quantity) {
-		this.quantity = quantity;
-	}
 }
 
 //package org.waag.ah.rest;

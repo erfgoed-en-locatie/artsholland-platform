@@ -3,7 +3,6 @@ package org.waag.ah.source.uitbase;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,51 +21,34 @@ class UitbaseURLGenerator {
 	
 	private static final int ROWS = 500;
 	
-//	public static final String[] RESOURCES = { 
-//		"events", 
-//		"locations", 
-//		"productions",
-//		"groups" 
-//	};
-	
 	public UitbaseURLGenerator(String endpoint, String apiKey) {
 		BASE_URL = endpoint + "/search";
 		API_KEY = apiKey;
 	}	
 	
-	public List<URL> getURLs() throws MalformedURLException {
+	public List<URL> getURLs() throws IOException {
 		return getURLs(null, null);
 	}
 
-	public List<URL> getURLs(DateTime dtTo, DateTime dtFrom) throws MalformedURLException {
+	public List<URL> getURLs(DateTime dtTo, DateTime dtFrom) throws IOException {
 		List<URL> urls = new ArrayList<URL>();
 		
 		DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
 		String dtToParam = dtTo != null ? "&createdto="+fmt.withZone(DateTimeZone.UTC).print(dtTo) : "";
 		String dtFromParam = dtFrom != null ? "&createdfrom="+fmt.withZone(DateTimeZone.UTC).print(dtFrom) : "";
 		
-//		for (String resource : RESOURCES) {
-		int count = 0;
-		try {
-			String content = readURL(getCountURL(dtFromParam+dtToParam));
-			count = 10000; //getCount(content);	
-		} catch (IOException e) {			
-			e.printStackTrace();
-		}
+		int count = getCount(readURL(getCountURL(dtFromParam+dtToParam)));	
 		int i = 0;
 		while (i < count) {
 			// TODO: use something like URLBuilder 
-//			String url = addAPIKey(BASE_URL + resource) + "&rows=" + ROWS + "&start=" + i + dtParam;
 			String url = addAPIKey(BASE_URL) + 
 					"&resolve=true" +
-//					"&resource=" + resource +
 					"&rows=" + ROWS + 
 					"&start=" + i + 
 					dtFromParam+dtToParam;
 			urls.add(new URL(url));
 			i += ROWS;
 		}
-//		}		
 		return urls;
 	}
 	

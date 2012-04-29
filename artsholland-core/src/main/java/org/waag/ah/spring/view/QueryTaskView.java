@@ -64,7 +64,8 @@ public class QueryTaskView extends AbstractView {
 				config.setMetaData("count", queryTask.getCount());
 			}
 			response.setStatus(HttpServletResponse.SC_OK);
-			FutureTask<Void> ft = queryService.executeQueryTask(queryTask);
+			FutureTask<Void> ft = new FutureTask<Void>(queryTask);//queryService.executeQueryTask(queryTask);
+			ft.run();
 			ft.get();
 		} catch (MalformedQueryException e) {
 			logger.error("BAD QUERY: "+query.getQuery());

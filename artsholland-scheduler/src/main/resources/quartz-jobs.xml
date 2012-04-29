@@ -39,7 +39,7 @@
           </entry>
           <entry>
             <key>strategy</key>
-            <value>incremental</value>
+            <value>full</value>
           </entry>
         </job-data-map>
         <!-- <misfire-instruction>MISFIRE_INSTRUCTION_DO_NOTHING</misfire-instruction> -->

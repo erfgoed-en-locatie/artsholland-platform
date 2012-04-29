@@ -12,10 +12,10 @@ import net.fortytwo.sesametools.rdfjson.RDFJSONWriter;
 import org.openrdf.model.Statement;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFHandlerException;
+import org.waag.ah.WriterConfig;
 import org.waag.ah.rdf.ConfigurableRDFWriter;
 import org.waag.ah.rdf.RDFGSON;
 import org.waag.ah.rdf.RDFJSONFormat;
-import org.waag.ah.rdf.RDFWriterConfig;
 
 import com.google.gson.stream.JsonWriter;
 
@@ -25,7 +25,7 @@ public class RestJSONWriter extends RDFJSONWriter implements
 
 	private JsonWriter jsonWriter;
 	private RDFGSON rdfGSON;
-	private RDFWriterConfig config;
+	private WriterConfig config;
 
 	public RestJSONWriter(final OutputStream out) {
 		this(new OutputStreamWriter(out, Charset.forName("UTF-8")));
@@ -40,7 +40,7 @@ public class RestJSONWriter extends RDFJSONWriter implements
 	}
 
 	@Override
-	public void setConfig(RDFWriterConfig config) {
+	public void setConfig(WriterConfig config) {
 		this.config = config;
 		
 		if (config.isPrettyPrint()) {
@@ -58,20 +58,22 @@ public class RestJSONWriter extends RDFJSONWriter implements
 
 	@Override
 	public void startRDF() throws RDFHandlerException {
-		try {
-			jsonWriter.beginObject();
-			if (config.getMetaData() != null && config.getMetaData().size() > 0) {
-				jsonWriter.name("metadata");
+		try {			
+			if (config.isWrapResults()) {
 				jsonWriter.beginObject();
-				for (Entry<String, String> entry : config.getMetaData().entrySet()) {
-					jsonWriter.name(entry.getKey());
-					jsonWriter.value(entry.getValue());
+				if (config.getMetaData() != null && config.getMetaData().size() > 0) {
+					jsonWriter.name("metadata");
+					jsonWriter.beginObject();
+					for (Entry<String, String> entry : config.getMetaData().entrySet()) {
+						jsonWriter.name(entry.getKey());
+						jsonWriter.value(entry.getValue());
+					}
+					jsonWriter.endObject();
 				}
-				jsonWriter.endObject();
-			}
-			// TODO: move to RDFGSON
-			jsonWriter.name("results");
-			jsonWriter.beginArray();			
+
+				jsonWriter.name("results");
+				jsonWriter.beginArray();		
+			}					
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -83,8 +85,11 @@ public class RestJSONWriter extends RDFJSONWriter implements
 
 		try {
 			rdfGSON.end();
-			jsonWriter.endArray();
-			jsonWriter.endObject();
+			if (config.isWrapResults()) {
+				jsonWriter.endArray();
+				jsonWriter.endObject();
+			}
+			
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

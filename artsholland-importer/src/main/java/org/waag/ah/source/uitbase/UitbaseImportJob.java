@@ -18,11 +18,13 @@ import org.waag.ah.importer.AbstractImportJob;
 @DisallowConcurrentExecution
 public class UitbaseImportJob extends AbstractImportJob {
 	private Logger logger = LoggerFactory.getLogger(UitbaseImportJob.class);
-//	private URL resource;
 	private String strategy;
 
 	private PlatformConfig config;
 	private UitbaseURLGenerator urlGenerator = null;
+	
+//	private static String STRATEGY_INCREMENTAL = "incremental";
+	private static String STRATEGY_FULL = "full";
 
 	public UitbaseImportJob() {
 		try {
@@ -50,20 +52,21 @@ public class UitbaseImportJob extends AbstractImportJob {
 //			JobDataMap dataMap = context.getMergedJobDataMap();
 //			logger.info("INCOMING DATAMAP: "+dataMap.getWrappedMap());
 
+			DateTime startTime = strategy.equals(STRATEGY_FULL) ? null
+					: (DateTime) context.get("startTime");
 			List<URL> urls = urlGenerator.getURLs(
 					(DateTime) context.get("endTime"), null/*, 
 					(DateTime) context.get("startTime")*/);
-			logger.info(urls.toString());
+			
+			if (logger.isDebugEnabled()) {
+				logger.debug("Importing URLs: "+urls.toString());
+			}
 			
 			doImport(urls, metadata);
 		} catch (Exception e) {
 			throw new JobExecutionException(e);
 		}
 	}
-
-//	public void setResource(String url) throws MalformedURLException {
-//		this.resource = new URL(url);
-//	}
 
 	public void setStrategy(String strategy) {
 		this.strategy = strategy;
