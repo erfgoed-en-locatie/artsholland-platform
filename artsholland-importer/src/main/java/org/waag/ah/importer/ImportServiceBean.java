@@ -56,15 +56,17 @@ public class ImportServiceBean implements ImportService {
 		ImportResource curResource = null;
 		StoringRDFParser parser = new StoringRDFParser(conn);
 		try {
+			int pos = 1;
 			long oldsize = conn.size();
 			Iterator<ImportResource> it = resources.iterator();
 			while (it.hasNext()) {
 				curResource = it.next();
 				InputStream stream = null;
 				try {
-					logger.info("Importing: "+curResource);
+					logger.info("Importing "+pos+"/"+resources.size()+": "+curResource);
 					stream = curResource.parse();
 					parser.parse(stream, metadata);
+					pos++;
 				} finally {
 					stream.close();
 				}
@@ -73,7 +75,7 @@ public class ImportServiceBean implements ImportService {
 			parser.commit();
 			logger.info("Import comitted, "+(conn.size()-oldsize)+" added");
 		} catch (Exception e) {
-			logger.error("Error importimg url <"+curResource+">: "+e, e);
+			logger.error("Error importimg url <"+curResource+">: "+e);
 			parser.rollback();
 			throw e;
 		}

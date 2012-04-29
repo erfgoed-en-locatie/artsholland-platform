@@ -108,7 +108,9 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
 		if (processing()) {
-			xmlCollector.characters(ch, start, length);
+			StringBuffer chars = new StringBuffer().append(ch, start, length);
+			String encoded = XSPARQLCharacterEncoder.encode(chars.toString());
+			xmlCollector.characters(encoded.toCharArray(), 0, encoded.length());
 		}			
 	}
 
@@ -119,15 +121,16 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		stack.pop();
 		
 		if (!processing()) {
+			String xmlString = "";
+			String turtleString = "";
 			try {
-				String xmlString = xmlCollector.toString();
+				xmlString = xmlCollector.toString();
 				
 				if (logger.isDebugEnabled()) {
 					logger.debug("Importing XML: "+xmlString);
 				}
 				
-				StreamSource xml = new StreamSource(new StringReader(xmlString));	
-				evaluator.setSource(xml);
+				evaluator.setSource(new StreamSource(new StringReader(xmlString)));
 				StringBuilder combined = new StringBuilder();
 				
 				for (XdmItem item : evaluator) {
@@ -138,22 +141,17 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				mdata.set(Metadata.CONTENT_TYPE, "text/turtle");
 				mdata.set(Metadata.RESOURCE_NAME_KEY, metadata.get(Metadata.RESOURCE_NAME_KEY));
        				
-				String turtleString = XSPARQLCharacterEncoder.decode(combined.toString());
+				turtleString = XSPARQLCharacterEncoder.decode(combined.toString());
 				
 				turtleParser.parse(
 						new ByteArrayInputStream(turtleString.getBytes()), 
 						new MatchingContentHandler(
 						new EmbeddedContentHandler(this.handler), matcher), mdata, context);
 				
-//			} catch (SaxonApiException e) {
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			} catch (TikaException e) {
-//				e.printStackTrace();
 			} catch (Exception e) {
-//				logger.error(e.getMessage(), e);
 				throw new SAXException(e.getMessage(), e);
+			} finally {
+				xmlCollector = null;
 			}
 		}
 	}
