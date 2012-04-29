@@ -52,9 +52,14 @@ public class ImportServiceBean implements ImportService {
 			ImportMetadata metadata) throws Exception {
 		Assert.notNull(conn, "Connection not initialized");
 		Assert.notEmpty(resources, "No resources provided for import");
-		logger.debug("Processing importing job: "+metadata.getJobIdentifier());
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("Processing importing job: "+metadata.getJobIdentifier());
+		}
+		
 		ImportResource curResource = null;
 		StoringRDFParser parser = new StoringRDFParser(conn);
+		
 		try {
 			int pos = 1;
 			long oldsize = conn.size();

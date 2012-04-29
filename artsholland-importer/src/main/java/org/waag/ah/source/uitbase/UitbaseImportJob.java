@@ -56,7 +56,10 @@ public class UitbaseImportJob extends AbstractImportJob {
 					: (DateTime) context.get("startTime");
 			List<URL> urls = urlGenerator.getURLs(
 					(DateTime) context.get("endTime"), startTime);
-			logger.info(urls.toString());
+			
+			if (logger.isDebugEnabled()) {
+				logger.debug("Importing URLs: "+urls.toString());
+			}
 			
 			doImport(urls, metadata);
 		} catch (Exception e) {
