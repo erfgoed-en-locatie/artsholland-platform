@@ -1,4 +1,4 @@
-package org.waag.ah;
+package org.waag.ah.tika.util;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,6 +29,7 @@ public class XSPARQLCharacterEncoder {
       result.put(">", completeEncoding("greater_than"));
       result.put("\\", completeEncoding("backslash"));
       result.put("/", completeEncoding("slash"));
+      result.put("https", completeEncoding("http"));
       
       return Collections.unmodifiableMap(result);
   }
