@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URI;
+
 import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.Configuration;
@@ -27,10 +28,10 @@ import org.apache.tika.sax.xpath.Matcher;
 import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
 import org.deri.xsparql.XSPARQLProcessor;
-import org.waag.ah.source.dosa.DOSAParser;
 import org.openrdf.model.vocabulary.RDF;
-import org.waag.ah.XSPARQLCharacterEncoder;
+import org.waag.ah.source.dosa.DOSAParser;
 import org.waag.ah.tika.parser.rdf.TurtleParser;
+import org.waag.ah.tika.util.XSPARQLCharacterEncoder;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -127,9 +128,9 @@ public class XQueryContentHandler extends ContentHandlerDecorator {
 					new EmbeddedContentHandler(this.handler), matcher), mdata, context);
 			
 		} catch (Exception e) {
-			//e.printStackTrace();
+//			e.printStackTrace();
+			throw new SAXException(e.getMessage(), e);
 		}			
-		
 	}
 
 	@Override
