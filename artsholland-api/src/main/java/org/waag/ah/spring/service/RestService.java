@@ -58,6 +58,10 @@ public class RestService implements InitializingBean {
 		productionRelation.addRelation("event", "Event", RelationQuantity.MULTIPLE, RelationType.BACKWARD, false);
 		productionRelation.addRelation("venue", "Venue", RelationQuantity.MULTIPLE, RelationType.BACKWARDFORWARD, false);
 
+		RestRelation eventTicketRelation = 
+				eventRelation.addRelation("ticket", "Ticket", RelationQuantity.MULTIPLE,	RelationType.FORWARD, false);
+		eventTicketRelation.addRelation("id", "Ticket",	RelationQuantity.SINGLE, RelationType.SELF, true);
+		
 		RestRelation venueAttachmentRelation = 
 				venueRelation.addRelation("attachment", "Attachment", RelationQuantity.MULTIPLE,	RelationType.FORWARD, false);
 		venueAttachmentRelation.addRelation("id", "Attachment",	RelationQuantity.SINGLE, RelationType.SELF, true);
@@ -77,7 +81,15 @@ public class RestService implements InitializingBean {
   	eventsRelation.addFilter(eventsBeforeFilter);
   	eventsRelation.addFilter(eventsAfterFilter);
 
-		queryGenerator = new RestRelationQueryGenerator(rootRelation);
+   	SPARQLFilter eventsNearbyFilter = new SPARQLFilter("nearby", "?object <http://purl.org/artsholland/1.0/venue> ?venue . ?venue <http://purl.org/artsholland/1.0/wkt> ?geometry .", "search:distance(?geometry, \"?parameter\"^^<http://rdf.opensahara.com/type/geo/wkt>) < 0.06");
+  	eventsRelation.addFilter(eventsNearbyFilter);
+  	
+  	SPARQLFilter venuesNearbyFilter = new SPARQLFilter("nearby", "?object <http://purl.org/artsholland/1.0/wkt> ?geometry .", "search:distance(?geometry, \"?parameter\"^^<http://rdf.opensahara.com/type/geo/wkt>) < 0.06");
+  	//eventsNearbyFilter.addConfiguration(new	SPARQLFilterConfiguration("distance"));
+  	venuesRelation.addFilter(venuesNearbyFilter);
+  	
+  	
+  	queryGenerator = new RestRelationQueryGenerator(rootRelation);
 	}
 
 	public RdfQueryDefinition getObjectQuery(RestParameters params)
