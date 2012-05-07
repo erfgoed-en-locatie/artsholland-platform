@@ -13,7 +13,12 @@ var D2R_namespacePrefixes = {
     gr: "http://purl.org/goodrelations/v1#",
     geo: "http://www.w3.org/2003/01/geo/wgs84_pos#",
     vcard: "http://www.w3.org/2006/vcard/ns#",
+    
+    osgeo: "http://rdf.opensahara.com/type/geo/",
+	search: "http://rdf.opensahara.com/search#",
+	fn: "http://www.w3.org/2005/xpath-functions#",
+	    
     nub: "http://resources.uitburo.nl/",
-    ah: "http://purl.org/artsholland/1.0/",    
+    ah: "http://purl.org/artsholland/1.0/",  
 };
 

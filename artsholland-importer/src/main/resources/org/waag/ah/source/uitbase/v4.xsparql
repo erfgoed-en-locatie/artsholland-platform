@@ -95,7 +95,7 @@ return
 						$euri ah:ticket $turi .
 						$turi a ah:Ticket .
 						
-						$turi gr:name	{if ($name eq "") then () else $name}^^xsd:string .
+						$turi dc:title {if ($name eq "") then () else $name}^^xsd:string .
 						$turi dc:description {if ($description eq "") then () else $description}^^xsd:string .
 						
 						$turi ah:ticketSalesInformation {if ($salesInformation eq "") then () else $salesInformation}^^xsd:string .
@@ -163,7 +163,7 @@ return
 			let $venueType := {concat("ah:venueType", waag:capitalize-first-only($venue/type/@key))}
 				
 			let $lat := { $venue/geocode/latitude }
-			let $g := { $venue/geocode/longitude }
+			let $long := { $venue/geocode/longitude }
 						
 			let $latData := { if ( fn:empty(number($lat)) or number($lat) eq 0 ) then () else data($lat) }
 			let $longData := { if ( fn:empty(number($long)) or number($long) eq 0 ) then () else data($long) }
