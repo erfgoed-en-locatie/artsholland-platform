@@ -10,7 +10,6 @@ var D2R_namespacePrefixes = {
     /*ov: 'http://open.vocab.org/terms/',*/
     xsd: 'http://www.w3.org/2001/XMLSchema#',
     time: "http://www.w3.org/2006/time#", 
-    gr: "http://purl.org/goodrelations/v1#",
     geo: "http://www.w3.org/2003/01/geo/wgs84_pos#",
     vcard: "http://www.w3.org/2006/vcard/ns#",
     
