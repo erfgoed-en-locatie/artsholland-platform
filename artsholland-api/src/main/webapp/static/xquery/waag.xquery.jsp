@@ -1,5 +1,5 @@
 <%@ page import="java.util.*" %>
-<%@ page import="org.waag.ah.XSPARQLCharacterEncoder" %>
+<%@ page import="org.waag.ah.tika.util.XSPARQLCharacterEncoder" %>
 <%@ page contentType="text/html" %>
 <%@ page trimDirectiveWhitespaces="true" %>
 <%

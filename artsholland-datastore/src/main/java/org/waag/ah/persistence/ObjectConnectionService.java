@@ -6,6 +6,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.config.RepositoryConfigException;
 import org.openrdf.repository.object.ObjectConnection;
@@ -14,8 +15,19 @@ import org.openrdf.repository.object.config.ObjectRepositoryConfig;
 import org.openrdf.repository.object.config.ObjectRepositoryFactory;
 import org.waag.ah.ObjectConnectionFactory;
 import org.waag.ah.bigdata.BigdataConnectionService;
-import org.waag.ah.model.decorator.*;
-import org.waag.ah.model.rdf.*;
+import org.waag.ah.model.decorator.EventJsonDecorator;
+import org.waag.ah.model.decorator.ProductionJsonDecorator;
+import org.waag.ah.model.rdf.Attachment;
+import org.waag.ah.model.rdf.AttachmentType;
+import org.waag.ah.model.rdf.EventStatus;
+import org.waag.ah.model.rdf.EventType;
+import org.waag.ah.model.rdf.Genre;
+import org.waag.ah.model.rdf.Offering;
+import org.waag.ah.model.rdf.ProductionType;
+import org.waag.ah.model.rdf.Room;
+import org.waag.ah.model.rdf.UnitPriceSpecification;
+import org.waag.ah.model.rdf.Venue;
+import org.waag.ah.model.rdf.VenueType;
 
 @Singleton
 public class ObjectConnectionService extends BigdataConnectionService implements ObjectConnectionFactory {
@@ -32,7 +44,7 @@ public class ObjectConnectionService extends BigdataConnectionService implements
 
 		try {		
 			
-			if (getRepository() == null) {
+			if (getSail() == null) {
 				super.create();
 			}		
 			
@@ -57,7 +69,7 @@ public class ObjectConnectionService extends BigdataConnectionService implements
 			config.addDatatype(Integer.class, "xsd:integer");
 			config.addDatatype(XMLGregorianCalendar.class, "xsd:dateTime");
 
-			repository = repositoryFactory.createRepository(config, getRepository());
+			repository = repositoryFactory.createRepository(config, (Repository) getSail());
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

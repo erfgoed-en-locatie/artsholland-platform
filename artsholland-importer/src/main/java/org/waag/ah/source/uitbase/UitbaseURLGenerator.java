@@ -3,7 +3,6 @@ package org.waag.ah.source.uitbase;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,11 +33,11 @@ public class UitbaseURLGenerator {
 		API_KEY = apiKey;
 	}	
 	
-	public List<URL> getURLs() throws MalformedURLException {
+	public List<URL> getURLs() throws IOException {
 		return getURLs(null, null);
 	}
 
-	public List<URL> getURLs(DateTime dtTo, DateTime dtFrom) throws MalformedURLException {
+	public List<URL> getURLs(DateTime dtTo, DateTime dtFrom) throws IOException {
 		List<URL> urls = new ArrayList<URL>();
 		
 		DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
@@ -53,20 +52,18 @@ public class UitbaseURLGenerator {
 		} catch (IOException e) {			
 			e.printStackTrace();
 		}
+
 		int i = 0;
 		while (i < count) {
 			// TODO: use something like URLBuilder 
-//			String url = addAPIKey(BASE_URL + resource) + "&rows=" + ROWS + "&start=" + i + dtParam;
 			String url = addAPIKey(BASE_URL) + 
 					"&resolve=true" +
-//					"&resource=" + resource +
 					"&rows=" + ROWS + 
 					"&start=" + i + 
 					dtFromParam+dtToParam;
 			urls.add(new URL(url));
 			i += ROWS;
 		}
-//		}		
 		return urls;
 	}
 	

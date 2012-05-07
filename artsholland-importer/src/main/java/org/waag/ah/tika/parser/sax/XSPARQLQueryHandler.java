@@ -1,7 +1,6 @@
 package org.waag.ah.tika.parser.sax;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.HashMap;
@@ -14,12 +13,11 @@ import javax.xml.transform.stream.StreamSource;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.NamePool;
 import net.sf.saxon.s9api.Processor;
-import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XQueryCompiler;
 import net.sf.saxon.s9api.XQueryEvaluator;
 import net.sf.saxon.s9api.XdmItem;
 
-import org.apache.tika.exception.TikaException;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.ContentHandlerDecorator;
@@ -32,9 +30,9 @@ import org.deri.xsparql.XSPARQLProcessor;
 import org.openrdf.model.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.ah.XSPARQLCharacterEncoder;
 import org.waag.ah.exception.ParserException;
 import org.waag.ah.tika.parser.rdf.TurtleParser;
+import org.waag.ah.tika.util.XSPARQLCharacterEncoder;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -103,6 +101,13 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		if (!processing()) {
 			xmlCollector = new ToXMLContentHandler();
 		}
+		// Make sure element attribute values don't contain unwanted HTML chars.
+		for (int idx=0; idx<attributes.getLength(); idx++) {
+			if (attributes.getType(idx).equals("CDATA")) {
+				((AttributesImpl) attributes).setValue(idx,
+						StringEscapeUtils.escapeHtml(attributes.getValue(idx)));
+			}
+		}
 		stack.push(localName);
 		xmlCollector.startElement(uri, localName, qName, attributes);			
 	}
@@ -111,7 +116,9 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
 		if (processing()) {
-			xmlCollector.characters(ch, start, length);
+			StringBuffer chars = new StringBuffer().append(ch, start, length);
+			String encoded = XSPARQLCharacterEncoder.encode(chars.toString());
+			xmlCollector.characters(encoded.toCharArray(), 0, encoded.length());
 		}			
 	}
 
@@ -122,15 +129,16 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		stack.pop();
 		
 		if (!processing()) {
+			String xmlString = "";
+			String turtleString = "";
 			try {
-				String xmlString = xmlCollector.toString();
+				xmlString = xmlCollector.toString();
 				
 				if (logger.isDebugEnabled()) {
 					logger.debug("Importing XML: "+xmlString);
 				}
 				
-				StreamSource xml = new StreamSource(new StringReader(xmlString));	
-				evaluator.setSource(xml);
+				evaluator.setSource(new StreamSource(new StringReader(xmlString)));
 				StringBuilder combined = new StringBuilder();
 				
 				for (XdmItem item : evaluator) {
@@ -141,21 +149,17 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				mdata.set(Metadata.CONTENT_TYPE, "text/turtle");
 				mdata.set(Metadata.RESOURCE_NAME_KEY, metadata.get(Metadata.RESOURCE_NAME_KEY));
        				
-				String turtleString = XSPARQLCharacterEncoder.decode(combined.toString());
+				turtleString = XSPARQLCharacterEncoder.decode(combined.toString());
 				
 				turtleParser.parse(
 						new ByteArrayInputStream(turtleString.getBytes()), 
 						new MatchingContentHandler(
 						new EmbeddedContentHandler(this.handler), matcher), mdata, context);
 				
-			} catch (SaxonApiException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (TikaException e) {
-				e.printStackTrace();
 			} catch (Exception e) {
-				e.printStackTrace();
+				throw new SAXException(e.getMessage(), e);
+			} finally {
+				xmlCollector = null;
 			}
 		}
 	}
