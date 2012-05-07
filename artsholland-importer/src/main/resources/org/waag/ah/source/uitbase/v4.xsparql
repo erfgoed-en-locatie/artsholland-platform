@@ -7,8 +7,8 @@ declare namespace time="http://www.w3.org/2006/time#";
 declare namespace foaf="http://xmlns.com/foaf/0.1/";
 declare namespace geo = "http://www.w3.org/2003/01/geo/wgs84_pos#";
 declare namespace vcard = "http://www.w3.org/2006/vcard/ns#";
-declare namespace wkt = "http://rdf.opensahara.com/type/geo/";
-
+declare namespace osgeo = "http://rdf.opensahara.com/type/geo/";
+												
 declare namespace nub="http://resources.uitburo.nl/";
 declare namespace ah = "http://purl.org/artsholland/1.0/";
 
@@ -57,7 +57,7 @@ return
 				
 				$euri ah:cidn {$cidn}^^xsd:string.
 				
-				$vuri a ah:Venue.			
+				$vuri a ah:Venue.
 				$euri ah:venue $vuri.
 				
 				$puri a ah:Production.
@@ -81,6 +81,7 @@ return
 		
 					# Als er events zijn met pricetags met zelfde type: gebruik $pos in uri
 					let $turi := {concat($euri, "/ticket/", waag:make-uri($pricetag/type))}
+					let $puri := {concat($turi, "/price")}
 					
 					let $name := {waag:replace-characters($pricetag/type)}
 					let $description := {waag:replace-characters($pricetag/description)}		
@@ -94,7 +95,7 @@ return
 						$euri ah:ticket $turi .
 						$turi a ah:Ticket .
 						
-						$turi dc:title	{if ($name eq "") then () else $name}^^xsd:string .
+						$turi gr:name	{if ($name eq "") then () else $name}^^xsd:string .
 						$turi dc:description {if ($description eq "") then () else $description}^^xsd:string .
 						
 						$turi ah:ticketSalesInformation {if ($salesInformation eq "") then () else $salesInformation}^^xsd:string .
@@ -161,6 +162,15 @@ return
 			let $vuriUitburo := {concat($baseuriUitburo, "locations/", $cidn)}
 			let $venueType := {concat("ah:venueType", waag:capitalize-first-only($venue/type/@key))}
 				
+			let $lat := { $venue/geocode/latitude }
+			let $g := { $venue/geocode/longitude }
+						
+			let $latData := { if ( fn:empty(number($lat)) or number($lat) eq 0 ) then () else data($lat) }
+			let $longData := { if ( fn:empty(number($long)) or number($long) eq 0 ) then () else data($long) }
+			
+			# Apparently, 'or' statements have to be grouped in tuples:
+			let $point := { if ( fn:empty($latData) or fn:empty($longData) ) then () else concat( 'POINT(', $longData, ' ', $latData, ')' ) }
+						
 			construct {
 				$vuri a ah:Venue.			
 				$vuri owl:sameAs $vuriUitburo.
@@ -169,10 +179,10 @@ return
 							
 				$vuri dc:title {if ($venue/name eq "") then () else waag:replace-characters($venue/name)}^^xsd:string.
 	
-				$vuri geo:lat {data($venue/geocode/latitude)}^^xsd:decimal.
-				$vuri geo:long {data($venue/geocode/longitude)}^^xsd:decimal.
+				$vuri geo:lat {if ( fn:empty($latData) ) then () else $latData }^^xsd:decimal.
+				$vuri geo:long {if ( fn:empty($longData) ) then () else $longData }^^xsd:decimal.
 	
-				$vuri ah:wkt {concat( 'POINT(', data($venue/geocode/latitude), ' ', data($venue/geocode/longitude), ')' )}^^wkt:wkt.
+				$vuri ah:wkt {if ( fn:empty($point) ) then () else $point }^^osgeo:wkt.
 				
 				$vuri dc:created {$venue/@date-created}^^xsd:string.
 				$vuri dc:modified {$venue/@date-changed}^^xsd:string.
