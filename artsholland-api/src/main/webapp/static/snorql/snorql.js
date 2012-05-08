@@ -22,6 +22,8 @@ function Snorql() {
     this._namespaces = {};
     this._graph = null;
     this._xsltDOM = null;
+    
+    this._codeMirror = null;
 
     this.start = function() {
         // TODO: Extract a QueryType class
@@ -152,7 +154,7 @@ function Snorql() {
         });
         
         
-        var codeMirror = CodeMirror.fromTextArea(document.getElementById("querytext"), { 
+        this._codeMirror = CodeMirror.fromTextArea(document.getElementById("querytext"), { 
             //lineNumbers: true, 
             matchBrackets: true,            
             indentUnit: 4, 
@@ -251,7 +253,10 @@ function Snorql() {
     };
 
     this.submitQuery = function() {
-        var mode = this._selectedOutputMode();
+    	
+    	this._codeMirror.save();
+    	
+    	var mode = this._selectedOutputMode();
         if (mode == 'browse') {
             document.getElementById('queryform').action = this._browserBase;            
             document.getElementById('query').value = document.getElementById('querytext').value;
