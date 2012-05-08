@@ -28,12 +28,15 @@ function Snorql() {
     this.start = function() {
         // TODO: Extract a QueryType class
         this.setBrowserBase(document.location.href.replace(/\?.*/, ''));
-        this._displayEndpointURL();
+        //this._displayEndpointURL();
         this._displayPoweredBy();
         this.setNamespaces(D2R_namespacePrefixes);
         this.updateOutputMode();
         var match = document.location.href.match(/\?(.*)/);
         var queryString = match ? match[1] : '';
+        
+        //document.getElementById('toggleprefixes').setAttribute('onclick', this._togglePrefixes());
+        document.getElementById('toggleprefixes').onclick = this._togglePrefixes;
         
         var apiKeyRegEx = queryString.match(/apiKey=([^&]*)/);
         var apiKeyUrl = apiKeyRegEx ? apiKeyRegEx[0] : null;
@@ -98,13 +101,12 @@ function Snorql() {
                     '}\n' +
                     'ORDER BY (!BOUND(?hasValue)) ?property ?hasValue ?isValueOf';
         }
+        query += '\nLIMIT 100';
         if (queryString.match(/query=/)) {
             var resultTitle = 'SPARQL results:';
             querytext = this._betterUnescape(queryString.match(/query=([^&]*)/)[1]);
             var query = prefixes + querytext;
-        }
-        
-        query += '\nLIMIT 100';
+        }       
         
         if (!querytext) {
             querytext = query;
@@ -357,6 +359,17 @@ function Snorql() {
     this._betterUnescape = function(s) {
         return unescape(s.replace(/\+/g, ' '));
     };
+    
+    this._togglePrefixes = function() {    	
+    	//document.getElementById('prefixestext').style.height = '';
+    	var prefixestext = document.getElementById('prefixestext');
+    	var toggleprefixes = document.getElementById('toggleprefixes');
+    	toggleprefixes.style.display = "none"; 
+    	prefixestext.style.display = "block";
+    	
+    	return false;
+    };
+    
 }
 
 

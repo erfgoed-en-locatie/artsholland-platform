@@ -7,7 +7,8 @@ h1 { font-weight: normal; font-size: 160%; margin: 0; text-align: center; }
 h2 { font-weight: normal; font-size: 120%; margin: 0; padding: 0 0 0.2em 0; }
 form { margin: 0; }
 textarea { width: 100%; }
-#prefixestext { color: #555; margin: 0; }
+#prefixestext { color: #555; margin: 0; /*height: 1em; overflow: hidden;*/ display: none;}
+#toggleprefixes {}
 ul { margin: 0; padding: 0; }
 li { margin: 0 0 0 1em; padding: 0; }
 img { border: none; }

@@ -1,4 +1,7 @@
 var D2R_namespacePrefixes = {
+	ah: "http://purl.org/artsholland/1.0/",
+	nub: "http://resources.uitburo.nl/",	    
+		
     rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
     owl: 'http://www.w3.org/2002/07/owl#',
@@ -15,9 +18,7 @@ var D2R_namespacePrefixes = {
     
     osgeo: "http://rdf.opensahara.com/type/geo/",
 	search: "http://rdf.opensahara.com/search#",
-	fn: "http://www.w3.org/2005/xpath-functions#",
-	    
-    nub: "http://resources.uitburo.nl/",
-    ah: "http://purl.org/artsholland/1.0/",  
+	fn: "http://www.w3.org/2005/xpath-functions#", 
+      
 };
 

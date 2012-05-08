@@ -13,7 +13,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <title>Snorql: A SPARQL Explorer</title>
+    <title>ArtsHolland - SPARQL Endpoint</title>
     <link rel="stylesheet" type="text/css" href="/static/snorql/style.css" />
     <script type="text/javascript" src="/static/snorql/prototype.js"></script>
     <script type="text/javascript" src="/static/snorql/scriptaculous/scriptaculous.js"></script>
@@ -30,7 +30,7 @@
 
   <body class="snorql" onload="snorql.start()">
     <div id="header">
-      <h1 id="title">Snorql: A SPARQL Explorer</h1>
+      <h1 id="title">ArtsHolland - SPARQL Endpoint</h1>
     </div>
 
     <div class="section" style="float: right; width: 8em">
@@ -60,7 +60,10 @@
 
     <div class="section" style="margin-right: 12em">
       <h2>SPARQL:</h2>
-      <pre id="prefixestext"></pre>
+      <div>
+      	<a href="/sparql" id="toggleprefixes">Show PREFIX tags</a>
+      	<pre id="prefixestext"></pre>      	
+      </div>
       <form id="queryform" action="#" method="get"><div>
         <input type="hidden" name="query" value="" id="query" />
         <input type="hidden" name="apiKey" value="<%= apiKey %>" id="apiKey" />
