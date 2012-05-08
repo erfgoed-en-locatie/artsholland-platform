@@ -21,7 +21,8 @@ import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.ah.tika.parser.sax.XQueryContentHandler;
+import org.waag.ah.exception.ParserException;
+import org.waag.ah.tika.parser.sax.DOSAContentHandler;
 import org.waag.ah.tika.parser.sax.XSPARQLQueryHandler;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -59,9 +60,14 @@ public class DOSAParser extends CompositeParser {
 //		vars.put("config", UitbaseParser.getFileContents(getClass(), "META-INF/tables.xml"));
 		
 		Parser parser = getParser(MediaType.application("vnd.ms-excel"));
-		parser.parse(stream, new XQueryContentHandler(handler, getFileContents(getClass(), "dosa_xls.xsparql"),
-				metadata, context), 
-				metadata, context);
+		try {
+			parser.parse(stream, new DOSAContentHandler(handler, getFileContents(getClass(), "dosa_xls.xsparql"),
+					metadata, context), 
+					metadata, context);
+		} catch (ParserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 		
