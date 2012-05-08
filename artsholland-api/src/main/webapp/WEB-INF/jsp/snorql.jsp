@@ -25,6 +25,7 @@
 		<script src="/static/codemirror/mode/sparql/sparql.js"></script>
     
     <link rel="stylesheet" href="/static/codemirror/lib/codemirror.css">
+    <!-- <link rel="stylesheet" href="/static/codemirror/theme/eclipse.css"> -->
   </head>
 
   <body class="snorql" onload="snorql.start()">

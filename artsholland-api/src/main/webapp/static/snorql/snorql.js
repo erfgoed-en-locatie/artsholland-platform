@@ -154,12 +154,10 @@ function Snorql() {
         
         var codeMirror = CodeMirror.fromTextArea(document.getElementById("querytext"), { 
             //lineNumbers: true, 
-            matchBrackets: true,             
-            
-            indentUnit: 3, 
+            matchBrackets: true,            
+            indentUnit: 4, 
             indentWithTabs: true, 
-            enterMode: "keep", 
-            tabMode: "shift" 
+            //theme: "eclipse"
         }); 
         
     };
