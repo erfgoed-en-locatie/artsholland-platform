@@ -20,6 +20,11 @@
     <script type="text/javascript" src="/static/snorql/sparql.js"></script>
     <script type="text/javascript" src="/static/snorql/namespaces.js"></script>
     <script type="text/javascript" src="/static/snorql/snorql.js"></script>
+    
+    <script src="/static/codemirror/lib/codemirror.js"></script>
+		<script src="/static/codemirror/mode/sparql/sparql.js"></script>
+    
+    <link rel="stylesheet" href="/static/codemirror/lib/codemirror.css">
   </head>
 
   <body class="snorql" onload="snorql.start()">

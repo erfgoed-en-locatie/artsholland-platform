@@ -150,6 +150,18 @@ function Snorql() {
                 }
             }
         });
+        
+        
+        var codeMirror = CodeMirror.fromTextArea(document.getElementById("querytext"), { 
+            //lineNumbers: true, 
+            matchBrackets: true,             
+            
+            indentUnit: 3, 
+            indentWithTabs: true, 
+            enterMode: "keep", 
+            tabMode: "shift" 
+        }); 
+        
     };
 
     this.setBrowserBase = function(url) {
