@@ -35,6 +35,7 @@ return
 			let $euri := {concat($baseuri, "event/", $cidn)}
 			let $euriUitburo := {concat($baseuriUitburo, "events/", $cidn)}
 				
+			# TODO: if valid
 			let $puri := {concat($baseuri, "production/", $event/link[@type="production"]/@cidn)}
 			let $vuri := {concat($baseuri, "venue/", $event/link[@type="location"]/@cidn)}
 					
@@ -379,6 +380,7 @@ return
 				#	notes
 				#	<country>NL</country>							
 				
+				#TODO : if not empty
 				$puri dc:language {waag:get-language-tag($production/language)}.			
 				$puri ah:subtitleLanguage {waag:get-language-tag($production/subtitles)}			
 								
