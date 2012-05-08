@@ -103,6 +103,9 @@ function Snorql() {
             querytext = this._betterUnescape(queryString.match(/query=([^&]*)/)[1]);
             var query = prefixes + querytext;
         }
+        
+        query += '\nLIMIT 100';
+        
         if (!querytext) {
             querytext = query;
         }
