@@ -47,8 +47,7 @@ public class RestRelationQueryGenerator {
 		RelationType type = relation.getType();
 		RelationQuantity quantity = relation.getQuantity();
 		
-		long page = params.getPage();
-		boolean calculateCount = (page == 1) && (quantity == RelationQuantity.MULTIPLE);
+		boolean calculateCount = /*(params.getPage() == 1) &&*/ params.isCountTotals() && (quantity == RelationQuantity.MULTIPLE);
 	
 		SPARQLQuery query = null;
 		

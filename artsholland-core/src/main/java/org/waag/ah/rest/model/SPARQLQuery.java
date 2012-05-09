@@ -13,6 +13,8 @@ public class SPARQLQuery {
 	private static final String FILTER_PLACEMARK = "[[filter]]";
 	private static final String LANGUAGE_PLACEMARK = "[[language]]";
 
+	private static final long MAXIMUM_PER_PAGE = 250;
+	
 	/*
 	 * SPARQL headers
 	 */
@@ -68,7 +70,7 @@ public class SPARQLQuery {
 	public String generateContruct(RestRelation relation, RestParameters params, Map<String, String> bindings, boolean includePrefix) {
 		String query = SPARQL_HEADER_CONSTRUCT + body;		
 
-		query = addPaging(query, params.getResultLimit(), params.getPage());
+		query = addPaging(query, params.getPerPage(), params.getPage());
 		query = addLanguageFilter(query, params);
 		query = addFilters(query, generateFilters(relation, params));		
 		query = addStatements(query, (String[]) ArrayUtils.addAll(statements, relation.getStatements(params).toArray()));
@@ -162,9 +164,19 @@ public class SPARQLQuery {
 	}
 	
 	
-	private String addPaging(String query, long limit, long page) {
+	private String addPaging(String query, long perPage, long page) {
 		// TODO: check if count & page are valid
-		return query.replace(PAGING_PLACEMARK, "LIMIT "+ limit + " OFFSET " + limit * (page - 1));
+		long oldPerPage = perPage;
+		
+		if (perPage > MAXIMUM_PER_PAGE) {
+			perPage = MAXIMUM_PER_PAGE;
+		}
+		
+		if (page < 1) {
+			page = 1;
+		}
+		
+		return query.replace(PAGING_PLACEMARK, "LIMIT " + perPage + " OFFSET " + oldPerPage * (page - 1));
 	}
 	
 	private String addFilters(String query, ArrayList<String> filters) {

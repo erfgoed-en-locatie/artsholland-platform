@@ -39,6 +39,9 @@ public class RestService implements InitializingBean {
 				rootRelation.addRelation("venue", "Venue", RelationQuantity.MULTIPLE, RelationType.SELF, false);
 		RestRelation productionsRelation = 
 				rootRelation.addRelation("production", "Production", RelationQuantity.MULTIPLE, RelationType.SELF, false);
+		
+		rootRelation.addRelation("genre", "Genre", RelationQuantity.MULTIPLE, RelationType.SELF, false);
+		rootRelation.addRelation("venuetype", "VenueType", RelationQuantity.MULTIPLE, RelationType.SELF, false);
 
 		RestRelation eventRelation = 
 				eventsRelation.addRelation("cidn", "Event", RelationQuantity.SINGLE, RelationType.SELF, true);
@@ -71,7 +74,8 @@ public class RestService implements InitializingBean {
 		eventAttachmentRelation.addRelation("id", "Attachment",	RelationQuantity.SINGLE, RelationType.SELF, true);
 		
   	// TODO: ?this instead of ?object  ???
-  	SPARQLFilter venuesLocalityFilter = new SPARQLFilter("locality", "?object vcard:locality ?locality.", "fn:lower-case(?locality) = fn:lower-case(\"?parameter\")");
+  	//SPARQLFilter venuesLocalityFilter = new SPARQLFilter("locality", "?object vcard:locality ?locality.", "fn:lower-case(?locality) = fn:lower-case(\"?parameter\")");
+  	SPARQLFilter venuesLocalityFilter = new SPARQLFilter("locality", "?object vcard:locality ?locality.", "lcase(?locality) = lcase(\"?parameter\")");
   	venuesRelation.addFilter(venuesLocalityFilter);
 
   	SPARQLFilter eventsLocalityFilter = new SPARQLFilter("locality", "?object <http://purl.org/artsholland/1.0/venue> ?venue . ?venue vcard:locality ?locality .", "fn:lower-case(?locality) = fn:lower-case(\"?parameter\")");
@@ -81,21 +85,23 @@ public class RestService implements InitializingBean {
   	eventsRelation.addFilter(eventsBeforeFilter);
   	eventsRelation.addFilter(eventsAfterFilter);
 
-   	SPARQLFilter eventsNearbyFilter = new SPARQLFilter("nearby", "?object <http://purl.org/artsholland/1.0/venue> ?venue . ?venue <http://purl.org/artsholland/1.0/wkt> ?geometry .", "search:distance(?geometry, \"?parameter\"^^<http://rdf.opensahara.com/type/geo/wkt>) < ?distance");
+  	//public double metersToDegrees(double meters) { return meters / (Math.PI/180) / 6378137; } 	
+  	
+  	SPARQLFilter eventsNearbyFilter = new SPARQLFilter("nearby", "?object <http://purl.org/artsholland/1.0/venue> ?venue . ?venue <http://purl.org/artsholland/1.0/wkt> ?geometry .", "search:distance(?geometry, \"?parameter\"^^<http://rdf.opensahara.com/type/geo/wkt>) < ?distance * 365440977.627703");
   	eventsNearbyFilter.addExtraParameter("distance");
    	eventsRelation.addFilter(eventsNearbyFilter);
-  	
-  	SPARQLFilter venuesNearbyFilter = new SPARQLFilter("nearby", "?object <http://purl.org/artsholland/1.0/wkt> ?geometry .", "search:distance(?geometry, \"?parameter\"^^<http://rdf.opensahara.com/type/geo/wkt>) < 0.06");
-  	//eventsNearbyFilter.addConfiguration(new	SPARQLFilterConfiguration("distance"));
+  	   	
+   	SPARQLFilter venuesNearbyFilter = new SPARQLFilter("nearby", "?object <http://purl.org/artsholland/1.0/wkt> ?geometry .", "search:distance(?geometry, \"?parameter\"^^<http://rdf.opensahara.com/type/geo/wkt>) < ?distance * 365440977.627703");
+   	venuesNearbyFilter.addExtraParameter("distance");
   	venuesRelation.addFilter(venuesNearbyFilter);
   	
   	SPARQLFilter productionGenreFilter = new SPARQLFilter(
-  			"genre", "?object <http://purl.org/artsholland/1.0/genre> ?genre .", "?genre = ah:genre?parameter"
+  			"genre", "?object <http://purl.org/artsholland/1.0/genre> ?genre .", "?genre = ah:genre?parameter OR ?genre = ah:?parameter"
   			);    	
   	productionsRelation.addFilter(productionGenreFilter);
   	
   	SPARQLFilter venueTypeFilter = new SPARQLFilter(
-  			"type", "?object <http://purl.org/artsholland/1.0/venueType> ?type .", "?type = ah:venueType?parameter"
+  			"type", "?object <http://purl.org/artsholland/1.0/venueType> ?type .", "?type = ah:venueType?parameter OR ?type = ah:?parameter"
   			);    	
   	venuesRelation.addFilter(venueTypeFilter);
   		
@@ -119,8 +125,10 @@ public class RestService implements InitializingBean {
 		}
 		RDFWriterConfig config = getDefaultWriterConfig(params);
 		query.setWriterConfig(config);
+		
 		config.setMetaData("page", String.valueOf(params.getPage()));
-		config.setMetaData("limit", String.valueOf(params.getResultLimit()));
+		config.setMetaData("per_page", String.valueOf(params.getPerPage()));
+		
 		config.setWrapResults(true);
 		return query;
 	}
