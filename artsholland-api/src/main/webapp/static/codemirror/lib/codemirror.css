@@ -6,6 +6,7 @@
   border-style: groove;
   border-width: 2px;
   border-color: #aaaaaa;
+  margin: 0.5em 0;
 }
 
 .CodeMirror-scroll {

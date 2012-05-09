@@ -59,11 +59,8 @@
     </div>
 
     <div class="section" style="margin-right: 12em">
-      <h2>SPARQL:</h2>
-      <div>
-      	<a href="/sparql" id="toggleprefixes">Show PREFIX tags</a>
-      	<pre id="prefixestext"></pre>      	
-      </div>
+      <h2>SPARQL <a href="/sparql" id="toggleprefixes">(show PREFIX tags)</a>:</h2>
+      <pre id="prefixestext"></pre>
       <form id="queryform" action="#" method="get"><div>
         <input type="hidden" name="query" value="" id="query" />
         <input type="hidden" name="apiKey" value="<%= apiKey %>" id="apiKey" />
