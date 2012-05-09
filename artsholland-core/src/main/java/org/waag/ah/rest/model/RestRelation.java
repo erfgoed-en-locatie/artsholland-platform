@@ -227,7 +227,7 @@ public class RestRelation {
 			if (filter != null) {
 				String[] value = uriParameter.getValue();
 				if (value.length > 0) {
-					filters.add(filter.getFilter(value[0]));
+					filters.add(filter.getFilter(value[0], params.getURIParameterMap()));
 				}				
 			}
 		}

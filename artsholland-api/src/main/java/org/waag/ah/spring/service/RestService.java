@@ -81,14 +81,24 @@ public class RestService implements InitializingBean {
   	eventsRelation.addFilter(eventsBeforeFilter);
   	eventsRelation.addFilter(eventsAfterFilter);
 
-   	SPARQLFilter eventsNearbyFilter = new SPARQLFilter("nearby", "?object <http://purl.org/artsholland/1.0/venue> ?venue . ?venue <http://purl.org/artsholland/1.0/wkt> ?geometry .", "search:distance(?geometry, \"?parameter\"^^<http://rdf.opensahara.com/type/geo/wkt>) < 0.06");
-  	eventsRelation.addFilter(eventsNearbyFilter);
+   	SPARQLFilter eventsNearbyFilter = new SPARQLFilter("nearby", "?object <http://purl.org/artsholland/1.0/venue> ?venue . ?venue <http://purl.org/artsholland/1.0/wkt> ?geometry .", "search:distance(?geometry, \"?parameter\"^^<http://rdf.opensahara.com/type/geo/wkt>) < ?distance");
+  	eventsNearbyFilter.addExtraParameter("distance");
+   	eventsRelation.addFilter(eventsNearbyFilter);
   	
   	SPARQLFilter venuesNearbyFilter = new SPARQLFilter("nearby", "?object <http://purl.org/artsholland/1.0/wkt> ?geometry .", "search:distance(?geometry, \"?parameter\"^^<http://rdf.opensahara.com/type/geo/wkt>) < 0.06");
   	//eventsNearbyFilter.addConfiguration(new	SPARQLFilterConfiguration("distance"));
   	venuesRelation.addFilter(venuesNearbyFilter);
   	
+  	SPARQLFilter productionGenreFilter = new SPARQLFilter(
+  			"genre", "?object <http://purl.org/artsholland/1.0/genre> ?genre .", "?genre = ah:genre?parameter"
+  			);    	
+  	productionsRelation.addFilter(productionGenreFilter);
   	
+  	SPARQLFilter venueTypeFilter = new SPARQLFilter(
+  			"type", "?object <http://purl.org/artsholland/1.0/venueType> ?type .", "?type = ah:venueType?parameter"
+  			);    	
+  	venuesRelation.addFilter(venueTypeFilter);
+  		
   	queryGenerator = new RestRelationQueryGenerator(rootRelation);
 	}
 
