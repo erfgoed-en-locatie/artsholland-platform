@@ -113,9 +113,7 @@ function Snorql() {
         }
         document.getElementById('querytext').value = querytext;
         this.displayBusyMessage();
-        var service = new SPARQL.Service(this._endpoint + '?apiKey=1e4263ef2d20da8eff6996381bb0d78b');
-        
-        
+        var service = new SPARQL.Service(this._endpoint + '?apiKey=1e4263ef2d20da8eff6996381bb0d78b');        
         
         if (this._graph) {
             service.addDefaultGraph(this._graph);
@@ -285,6 +283,12 @@ function Snorql() {
     };
 
     this.displayErrorMessage = function(message) {
+    	if (message.indexOf('<html>') == 0) {
+    		// JBoss error page
+    		var bodyStart = message.indexOf('<body>'); 
+    		var bodyEnd = message.indexOf('</body>');    		
+    		message = message.substring(bodyStart + 6, bodyEnd).replace('h1', 'h2');
+    	}
         var pre = document.createElement('pre');
         pre.innerHTML = message;
         this._display(pre, 'result');
