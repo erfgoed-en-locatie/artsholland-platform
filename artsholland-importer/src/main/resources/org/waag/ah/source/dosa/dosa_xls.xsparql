@@ -1,7 +1,6 @@
 declare namespace dc="http://purl.org/dc/elements/1.1/";
 declare namespace do="http://dbpedia.org/ontology/";
 declare namespace dp="http://dbpedia.org/property/";
-declare namespace event="http://purl.org/NET/c4dm/event.owl#";
 declare namespace foaf="http://xmlns.com/foaf/0.1/";
 declare namespace geo="http://www.w3.org/2003/01/geo/wgs84_pos#";
 declare namespace owl="http://www.w3.org/2002/07/owl#";
@@ -20,13 +19,7 @@ declare namespace plaats="http://linkeddata.few.vu.nl/os-amsterdam/plaats/";
 declare namespace waag="http://waag.org";
 declare namespace dosa="http://data.os.amsterdam.nl/";
 
-
-declare namespace sdmxa="http://purl.org/linked-data/sdmx/2009/attribute#";
-declare namespace sdmxc="http://purl.org/linked-data/sdmx/2009/concept#";
-(: declare namespace sdmxd"http://purl.org/linked-data/sdmx/2009/dimension#"; :)
-declare namespace sdmxmm="http://purl.org/linked-data/sdmx/2009/measure#";
-
-declare default element namespace "http://www.w3.org/1999/xhtml";
+declare namespace xhtml="http://www.w3.org/1999/xhtml";
 
 declare function waag:if-empty($arg, $value) {
   if (string($arg) != "")
