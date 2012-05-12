@@ -88,10 +88,10 @@ for $sheet in $sheets
 
   construct {
   
- 		$dataset a qb:DataSet .
- 		$dataset dc:title {$titel}@{"nl"} .
-    $dataset rdfs:label {$label}@{"nl"} .
-    $dataset dc:description {$tekst}@{"nl"} .
+ 		$dataset a qb:DataSet ;
+ 		dc:title {$titel} ;
+    rdfs:label {$label} ;
+    dc:description {$tekst} .
 
     #rdfs:comment {$sheet//tr[1]/td[1]};
      

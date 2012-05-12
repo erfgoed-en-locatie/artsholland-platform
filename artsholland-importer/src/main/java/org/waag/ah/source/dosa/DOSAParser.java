@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.tika.exception.TikaException;
@@ -17,11 +19,10 @@ import org.apache.tika.parser.Parser;
 import org.apache.tika.parser.microsoft.OfficeParser;
 import org.apache.tika.sax.TaggedContentHandler;
 import org.apache.tika.sax.xpath.Matcher;
-import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.ah.tika.parser.sax.XQueryContentHandler;
+import org.waag.ah.exception.ParserException;
 import org.waag.ah.tika.parser.sax.XSPARQLQueryHandler;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -57,13 +58,31 @@ public class DOSAParser extends CompositeParser {
 		
 //		Map<String, String> vars = new HashMap<String, String>();
 //		vars.put("config", UitbaseParser.getFileContents(getClass(), "META-INF/tables.xml"));
-		
+//		
 		Parser parser = getParser(MediaType.application("vnd.ms-excel"));
-		parser.parse(stream, new XQueryContentHandler(handler, getFileContents(getClass(), "dosa_xls.xsparql"),
-				metadata, context), 
-				metadata, context);
-		
-		
+//		parser.parse(stream, new XQueryContentHandler(handler, getFileContents(getClass(), "dosa_xls.xsparql"),
+//				metadata, context), 
+//				metadata, context);
+  
+//	      try {
+//	          context.getSAXParser().parse(
+//	                  new CloseShieldInputStream(stream),
+//	                  new OfflineContentHandler(wrappedHandler));
+//	      } catch (SAXException e) {
+//	          tagged.throwIfCauseOf(e);
+//	          throw new TikaException("XML parse error", e);
+//	      }
+		Map<String, URI> includes = new HashMap<String, URI>();
+		includes.put("config", DOSAParser.getFileURI(DOSAParser.class, "tables.xml"));	      
+		try {
+			parser.parse(stream, new XSPARQLQueryHandler(handler, metadata,
+					context, getFileContents(getClass(), "dosa_xls.xsparql"), includes),
+					metadata, context);
+		} catch (ParserException e) {
+			// TODO Auto-generated catch block
+			// e.printStackTrace();
+			throw new SAXException(e.getMessage(), e);
+		}
 		
 	
 /*
@@ -83,12 +102,17 @@ public class DOSAParser extends CompositeParser {
 			Metadata metadata, ParseContext context) {
 		try {
 
-			if (metadata.get(Metadata.CONTENT_TYPE).equals(DOSAXLS_MIME_TYPE)) {
+//			if (metadata.get(Metadata.CONTENT_TYPE).equals(DOSAXLS_MIME_TYPE)) {
 				
-				InputStream xquery = getFileContents(getClass(), "dosa_xls.xsparql");
-				if (xquery == null) {
-					throw new IOException("XQuery definition file not found");
-				}				
+				Map<String, URI> includes = new HashMap<String, URI>();
+				includes.put("config", DOSAParser.getFileURI(DOSAParser.class, "tables.xml"));
+				return new XSPARQLQueryHandler(handler, metadata,
+						context, getFileContents(getClass(), "dosa_xls.xsparql"), includes);  
+				
+//				InputStream xquery = getFileContents(getClass(), "dosa_xls.xsparql");
+//				if (xquery == null) {
+//					throw new IOException("XQuery definition file not found");
+//				}				
 				
 				//Map<String, String> vars = new HashMap<String, String>();
 				//vars.put("config", getFileContents(getClass(), "tables.xml"));
@@ -102,16 +126,16 @@ public class DOSAParser extends CompositeParser {
 				// metadata, context);				
 				
 				
-				return new MatchingContentHandler(new XSPARQLQueryHandler(handler,
-						metadata, context, xquery),
-						getXPathMatcher("/"));
+//				return new MatchingContentHandler(new XSPARQLQueryHandler(handler,
+//						metadata, context, xquery),
+//						getXPathMatcher("/"));
 				
-			}
+//			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return null;
 		}
-		return handler;
+//		return handler;
 	}
 	
 	private Parser getParser(MediaType mediaType) {
