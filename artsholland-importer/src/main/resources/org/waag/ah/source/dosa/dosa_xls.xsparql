@@ -19,7 +19,8 @@ declare namespace plaats="http://linkeddata.few.vu.nl/os-amsterdam/plaats/";
 declare namespace waag="http://waag.org";
 declare namespace dosa="http://data.os.amsterdam.nl/";
 
-declare namespace xhtml="http://www.w3.org/1999/xhtml";
+# declare namespace xhtml="http://www.w3.org/1999/xhtml";
+declare default element namespace "http://www.w3.org/1999/xhtml";
 
 declare function waag:if-empty($arg, $value) {
   if (string($arg) != "")
