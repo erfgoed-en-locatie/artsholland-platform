@@ -183,7 +183,7 @@ return
 				$vuri geo:lat {if ( fn:empty($latData) ) then () else $latData }^^xsd:decimal.
 				$vuri geo:long {if ( fn:empty($longData) ) then () else $longData }^^xsd:decimal.
 	
-				$vuri ah:wkt {if ( fn:empty($point) ) then () else $point }^^osgeo:wkt.
+				$vuri ah:geometry {if ( fn:empty($point) ) then () else $point }^^osgeo:wkt.
 				
 				$vuri dc:created {$venue/@date-created}^^xsd:string.
 				$vuri dc:modified {$venue/@date-changed}^^xsd:string.
