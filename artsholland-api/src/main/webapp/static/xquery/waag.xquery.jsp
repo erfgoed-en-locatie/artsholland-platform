@@ -7,6 +7,10 @@
 %>
 module namespace waag = "http://waag.org";
 
+declare function waag:string($arg as xs:string?) {
+	if (waag:empty($arg)) then () else waag:replace-characters($arg)
+};
+
 declare function waag:replace-characters($arg as xs:string?) as xs:string {
 	(: See https://redmine.waag.org/issues/6297 :)
 	replace(<%= replace %>, '"', '\\"')

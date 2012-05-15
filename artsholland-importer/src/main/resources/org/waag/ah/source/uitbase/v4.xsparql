@@ -213,47 +213,45 @@ return
 				{ for $medium at $pos in $venue/media//medium				
 					
 					let $muri := {concat($vuri, "/attachment/", $pos)}
-					let $description := {waag:replace-characters($medium/description)}
-					let $title := {waag:replace-characters($medium/title)}
-					
+										
 					let $typeKey := {waag:replace-characters($medium/type)}
 					let $typeClass := {if ($typeKey eq "") then () else concat("ah:attachmentType", waag:capitalize-first-only(data($typeKey)))}
 					
 					construct {
 					
-						$vuri ah:attachment $muri.
-						$muri a ah:Attachment.					
-						$muri dc:title {if ($title eq "") then () else $title}^^xsd:string.
-						$muri dc:description {if ($description eq "") then () else $description}^^xsd:string.					
+						$vuri ah:attachment $muri .
+						$muri a ah:Attachment .
+						$muri dc:title {waag:string($medium/title)}^^xsd:string .
+						$muri dc:description {waag:string($medium/description)}^^xsd:string .
 						
 						# TODO: string?
-						$muri ah:url {$medium/ref}^^xsd:string.
+						$muri ah:url {$medium/ref}^^xsd:string .
 											
 						# TODO:
 						#	<alt>A family again</alt>	
 						
-						$muri ah:attachmentType $typeClass.
-						$typeClass a ah:AttachmentType.			
-						$typeClass rdfs:label {if ($typeKey eq "") then () else $typeKey}^^xsd:string.	
+						$muri ah:attachmentType $typeClass .
+						$typeClass a ah:AttachmentType .
+						$typeClass rdfs:label {if ($typeKey eq "") then () else $typeKey}^^xsd:string .
 										
 					}
-				}.
+				} .
 				
 				$vuri vcard:street-address {concat($venue/street/name, " ", $venue/street/number, $venue/street/addition)} .
-				$vuri vcard:locality {waag:replace-characters($venue/place)} .
-				$vuri vcard:postal-code {$venue/postal-code} .
-				$vuri vcard:email {waag:replace-characters($venue/email)} .
-				$vuri ah:telephone {waag:replace-characters($venue/telephone)}.
-				$vuri ah:fax {waag:replace-characters($venue/fax)}.
+				$vuri vcard:locality {waag:string($venue/place)} .
+				$vuri vcard:postal-code {waag:string($venue/postal-code)} .
+				$vuri vcard:email {waag:string($venue/email)} .
+				$vuri ah:telephone {waag:string($venue/telephone)} .
+				$vuri ah:fax {waag:string($venue/fax)} .
 					
 				{ for $tag in $venue/tags//tag
 					
 					construct {	
 						
-						$vuri ah:tag {if ($tag eq "") then () else waag:replace-characters($tag)}.
+						$vuri ah:tag {waag:string($tag)} .
 						
 					}
-				}.
+				} .
 				
 				{ for $language in $venue/languages//language
 				
