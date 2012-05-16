@@ -85,13 +85,14 @@ public class RestService implements InitializingBean {
   	eventsRelation.addFilter(eventsBeforeFilter);
   	eventsRelation.addFilter(eventsAfterFilter);
 
-  	//public double metersToDegrees(double meters) { return meters / (Math.PI/180) / 6378137; } 	
+  	//public double metersToDegrees(double meters) { return meters / (Math.PI/180) / 6378137; }  	
+  	double metersToDegrees = 1 / ((Math.PI/180) * 6378137);
   	
-  	SPARQLFilter eventsNearbyFilter = new SPARQLFilter("nearby", "?object <http://purl.org/artsholland/1.0/venue> ?venue . ?venue <http://purl.org/artsholland/1.0/wkt> ?geometry .", "search:distance(?geometry, \"?parameter\"^^<http://rdf.opensahara.com/type/geo/wkt>) < ?distance * 365440977.627703");
+  	SPARQLFilter eventsNearbyFilter = new SPARQLFilter("nearby", "?object <http://purl.org/artsholland/1.0/venue> ?venue . ?venue <http://purl.org/artsholland/1.0/geometry> ?geometry .", "search:distance(?geometry, \"?parameter\"^^<http://rdf.opensahara.com/type/geo/wkt>) < ?distance * " + metersToDegrees);
   	eventsNearbyFilter.addExtraParameter("distance");
    	eventsRelation.addFilter(eventsNearbyFilter);
   	   	
-   	SPARQLFilter venuesNearbyFilter = new SPARQLFilter("nearby", "?object <http://purl.org/artsholland/1.0/wkt> ?geometry .", "search:distance(?geometry, \"?parameter\"^^<http://rdf.opensahara.com/type/geo/wkt>) < ?distance * 365440977.627703");
+   	SPARQLFilter venuesNearbyFilter = new SPARQLFilter("nearby", "?object <http://purl.org/artsholland/1.0/geometry> ?geometry .", "search:distance(?geometry, \"?parameter\"^^<http://rdf.opensahara.com/type/geo/wkt>) < ?distance * " + metersToDegrees);
    	venuesNearbyFilter.addExtraParameter("distance");
   	venuesRelation.addFilter(venuesNearbyFilter);
   	
@@ -103,10 +104,15 @@ public class RestService implements InitializingBean {
   	SPARQLFilter venueTypeFilter = new SPARQLFilter(
   			"type", "?object <http://purl.org/artsholland/1.0/venueType> ?type .", "?type = ah:venueType?parameter OR ?type = ah:?parameter"
   			);    	
-  	venuesRelation.addFilter(venueTypeFilter);
+  	venuesRelation.addFilter(venueTypeFilter);  	
+  	
+  	SPARQLFilter searchFilter = new SPARQLFilter("search", "?object dc:description ?desc .", "search:text(?desc, \"?parameter\")");   
+  	eventsRelation.addFilter(searchFilter);
+  	productionsRelation.addFilter(searchFilter);
+  	venuesRelation.addFilter(searchFilter);
   	
   	
-  	// search:text(?bandname, "Florence & Machine") &&
+  	
     // search:within(?geometry, "POLYGON((4 53, 4 54, 5 54, 5 53, 4 53))"^^geo:wkt)
   	
   	queryGenerator = new RestRelationQueryGenerator(rootRelation);
