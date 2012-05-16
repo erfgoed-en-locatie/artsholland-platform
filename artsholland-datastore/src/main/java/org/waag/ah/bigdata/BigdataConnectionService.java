@@ -22,6 +22,7 @@ import com.bigdata.journal.Options;
 import com.bigdata.rdf.sail.BigdataSailRepository;
 import com.useekm.bigdata.BigdataSail;
 import com.useekm.indexing.IndexingSail;
+import com.useekm.indexing.IndexingSailConnection;
 import com.useekm.indexing.exception.IndexException;
 import com.useekm.indexing.postgis.PostgisIndexerSettings;
 
@@ -73,11 +74,14 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 	
 	@Override
 	public Sail getIndexingSail() throws ConnectionException {
-		Sail sail = getSail();		
+		Sail sail = new BigdataSail(bigdataRepo);		
 		PostgisIndexerSettings settings = PostgisIndexerSettingsGenerator.generateSettings();
 		IndexingSail idxSail = new IndexingSail(sail, settings);
 		try {
-			idxSail.getConnection().reindex();
+			IndexingSailConnection idxConn = idxSail.getConnection();
+			idxConn.reindex();
+			idxConn.commit();
+			idxConn.close();
 		} catch (IndexException e) {
 			logger.error(e.getMessage(), e);
 		} catch (SailException e) {
