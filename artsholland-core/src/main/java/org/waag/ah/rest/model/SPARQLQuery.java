@@ -18,9 +18,15 @@ public class SPARQLQuery {
 	/*
 	 * SPARQL headers
 	 */
-	private static final String SPARQL_HEADER_COUNT = "SELECT (COUNT(DISTINCT ?object) AS ?count)";
 	private static final String SPARQL_HEADER_CONSTRUCT = "CONSTRUCT { ?object ?p ?o . }";
+	private static final String SPARQL_HEADER_COUNT = "SELECT (COUNT(DISTINCT ?object) AS ?count)";
 	
+	/*
+	 * SPARQL footers
+	 */
+	private static final String SPARQL_FOOTER_CONSTRUCT = "CONSTRUCT { ?object ?p ?o . }";
+	private static final String SPARQL_FOOTER_COUNT = "SELECT (COUNT(DISTINCT ?object) AS ?count)";
+		
 	/*
 	 * SPARQL body 
 	 */

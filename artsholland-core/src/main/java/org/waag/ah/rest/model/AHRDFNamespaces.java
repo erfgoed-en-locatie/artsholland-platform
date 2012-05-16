@@ -45,6 +45,15 @@ public class AHRDFNamespaces {
 	
 	public static Map<String, String> getNamespaces() {
 		return NAMESPACES;
+	}
+
+	public static String getFullURI(String namespaceURI) {
+		String[] split = namespaceURI.split(":");
+		if (split.length == 2 && NAMESPACES.containsKey(split[0])) {
+				return NAMESPACES.get(split[0]) + split[1];
+		}
+		
+		return null;
 	}	
 	
 }

@@ -1,7 +1,5 @@
 package org.waag.ah.bigdata;
 
-import java.util.Arrays;
-
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 
@@ -9,7 +7,7 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.dbcp.BasicDataSource;
+import org.java.ah.useekm.PostgisIndexerSettingsGenerator;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.repository.sail.SailRepositoryConnection;
@@ -19,22 +17,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.RepositoryConnectionFactory;
-
 import com.bigdata.journal.Options;
 import com.bigdata.rdf.sail.BigdataSailRepository;
+//import com.bigdata.rdf.sail.BigdataSail;
 import com.useekm.bigdata.BigdataSail;
 import com.useekm.indexing.IndexingSail;
 import com.useekm.indexing.exception.IndexException;
-import com.useekm.indexing.postgis.PostgisIndexMatcher;
 import com.useekm.indexing.postgis.PostgisIndexerSettings;
 
 @Singleton
 public class BigdataConnectionService implements RepositoryConnectionFactory {
 	final static Logger logger = LoggerFactory.getLogger(BigdataConnectionService.class);
 
-	private BigdataSailRepository repo;
+	private BigdataSailRepository bigdataRepo;
 
 	private PropertiesConfiguration properties;
+
+	private Sail sail;
+	
+	private SailRepository repo; 
 	
 	/**
 	 * Initialize BigData repository.
@@ -46,8 +47,12 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 	public void create() {
 		try {
 			logger.info("CREATE REPOSITORY");
-			repo = createRepository(loadProperties());
-			repo.initialize();
+			bigdataRepo = createRepository(loadProperties());
+			bigdataRepo.initialize();
+			
+			sail = getIndexingSail();
+			repo = new SailRepository(sail);
+			
 		} catch (RepositoryException e) {
 			e.printStackTrace();
 		} catch (ConfigurationException e) {
@@ -70,43 +75,16 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 		return properties;
 	}
 	
-	
-	public Sail getSail2() {
-		return new BigdataSail(repo);
-	}	
-	
-	
 	@Override
 	public Sail getSail() {
+		return new BigdataSail(bigdataRepo);
+	}
+	
+	public Sail getIndexingSail() {
 		
-		Sail sail = getSail2();
-		return sail;
-		/*
-		// Initialize the datasource to be used for connections to Postgres:
-		BasicDataSource pgDatasource = new BasicDataSource();
-		pgDatasource.setDriverClassName("org.postgresql.Driver");
-		pgDatasource.setUrl("jdbc:postgresql://localhost:5432/useekm");
-		pgDatasource.setUsername("artsholland");
-		pgDatasource.setPassword("artsholland");
-
-		// Initialize the settings for the Postgis Indexer:
-		PostgisIndexerSettings settings = new PostgisIndexerSettings();
-
-		settings.setDataSource(pgDatasource);
-
-		PostgisIndexMatcher wktMatcher = new PostgisIndexMatcher();
-		wktMatcher.setPredicate("http://purl.org/artsholland/1.0/wkt");
+		Sail sail = getSail();		
 		
-		PostgisIndexMatcher descriptionMatcher = new PostgisIndexMatcher();
-		descriptionMatcher.setPredicate("http://purl.org/dc/elements/1.1/description");
-		descriptionMatcher.setSearchConfig("simple");
-		
-		// add matchers for each predicate for wich statements need to be indexed:
-		settings.setMatchers(Arrays
-				.asList(new PostgisIndexMatcher[] { wktMatcher, descriptionMatcher }));
-
-		// Initialize the IndexingSail that wraps your BigdataSail:
-		settings.initialize(true);
+		PostgisIndexerSettings settings = PostgisIndexerSettingsGenerator.generateSettings();
 		
 		IndexingSail idxSail = new IndexingSail(sail, settings);
 
@@ -120,8 +98,7 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 			e.printStackTrace();
 		}
 		
-		return idxSail;
-		*/
+		return idxSail;		
 		
 	}
 	
@@ -139,8 +116,10 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 	 */
 	public SailRepositoryConnection getConnection() throws RepositoryException { 
 //		BigdataSailRepositoryConnection conn = repo.getReadWriteConnection();
-		SailRepository repo = new SailRepository(getSail());
-		SailRepositoryConnection conn = repo.getConnection();		
+//		SailRepository repo = new SailRepository(sail);
+//		SailRepositoryConnection conn = repo.getConnection();
+		
+		SailRepositoryConnection conn = repo.getConnection();
 		conn.setAutoCommit(false);
 		return conn;
     }

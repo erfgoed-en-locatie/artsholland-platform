@@ -104,7 +104,11 @@ public class RestService implements InitializingBean {
   			"type", "?object <http://purl.org/artsholland/1.0/venueType> ?type .", "?type = ah:venueType?parameter OR ?type = ah:?parameter"
   			);    	
   	venuesRelation.addFilter(venueTypeFilter);
-  		
+  	
+  	
+  	// search:text(?bandname, "Florence & Machine") &&
+    // search:within(?geometry, "POLYGON((4 53, 4 54, 5 54, 5 53, 4 53))"^^geo:wkt)
+  	
   	queryGenerator = new RestRelationQueryGenerator(rootRelation);
 	}
 
