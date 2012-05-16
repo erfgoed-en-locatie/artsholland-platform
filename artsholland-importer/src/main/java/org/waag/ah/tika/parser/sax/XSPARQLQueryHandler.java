@@ -150,6 +150,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				mdata.set(Metadata.RESOURCE_NAME_KEY, metadata.get(Metadata.RESOURCE_NAME_KEY));
        				
 				turtleString = XSPARQLCharacterEncoder.decode(combined.toString());
+				turtleString = XSPARQLCharacterEncoder.repairInvalidTypeURIs(turtleString);
 				
 				turtleParser.parse(
 						new ByteArrayInputStream(turtleString.getBytes()), 
