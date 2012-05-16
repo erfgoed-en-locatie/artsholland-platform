@@ -44,12 +44,13 @@ public class UitbaseURLGenerator {
 		
 		String dtToParam = dtTo != null ? "&createdto="+fmt.withZone(DateTimeZone.UTC).print(dtTo) : "";
 		String dtFromParam = dtFrom != null ? "&createdfrom="+fmt.withZone(DateTimeZone.UTC).print(dtFrom) : "";
+		dtFromParam = "&createdfrom=2012-04-29T13:14:59.999Z";
 		
 //		for (String resource : RESOURCES) {
 		int count = 0;
 		try {
 			String content = readURL(getCountURL(dtFromParam+dtToParam));
-			count = 1000; //getCount(content);	
+			count = getCount(content);	
 		} catch (IOException e) {			
 			e.printStackTrace();
 		}
