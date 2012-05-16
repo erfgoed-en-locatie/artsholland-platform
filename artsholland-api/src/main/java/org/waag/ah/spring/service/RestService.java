@@ -18,12 +18,12 @@ import org.waag.ah.rest.util.RestRelationQueryGenerator;
 
 @Service("restService")
 public class RestService implements InitializingBean {
-//	private static final Logger logger = LoggerFactory
-//			.getLogger(RestService.class);
+	// private static final Logger logger = LoggerFactory
+	// .getLogger(RestService.class);
 
 	RestRelation rootRelation;
 	RestRelationQueryGenerator queryGenerator;
-	
+
 	@Autowired
 	PropertiesConfiguration platformConfig;
 
@@ -110,6 +110,7 @@ public class RestService implements InitializingBean {
     // search:within(?geometry, "POLYGON((4 53, 4 54, 5 54, 5 53, 4 53))"^^geo:wkt)
   	
   	queryGenerator = new RestRelationQueryGenerator(rootRelation);
+
 	}
 
 	public RdfQueryDefinition getObjectQuery(RestParameters params)
@@ -129,18 +130,18 @@ public class RestService implements InitializingBean {
 		}
 		RDFWriterConfig config = getDefaultWriterConfig(params);
 		query.setWriterConfig(config);
-		
+
 		config.setMetaData("page", String.valueOf(params.getPage()));
 		config.setMetaData("per_page", String.valueOf(params.getPerPage()));
-		
+
 		config.setWrapResults(true);
 		return query;
 	}
-	
+
 	private RDFWriterConfig getDefaultWriterConfig(RestParameters params) {
 		RDFWriterConfig config = new RDFWriterConfig();
 		config.setPrettyPrint(params.getPretty());
-		config.setBaseUri(platformConfig.getString("platform.baseUri"));		
+		config.setBaseUri(platformConfig.getString("platform.baseUri"));
 		return config;
 	}
 }

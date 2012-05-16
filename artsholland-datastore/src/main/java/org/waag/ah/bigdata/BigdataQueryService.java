@@ -13,6 +13,7 @@ import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.ParsedTupleQuery;
 import org.openrdf.query.parser.QueryParser;
 import org.openrdf.query.parser.sparql.SPARQLParserFactory;
+import org.openrdf.repository.RepositoryConnection;
 import org.waag.ah.QueryDefinition;
 import org.waag.ah.QueryService;
 import org.waag.ah.QueryTask;
@@ -38,13 +39,17 @@ public class BigdataQueryService implements QueryService {
 		QueryParser parser = new SPARQLParserFactory().getParser();
 		ParsedQuery parsedQuery = parser.parseQuery(query.getQuery(),
 				config.getBaseUri());
-		
-		if (parsedQuery instanceof ParsedTupleQuery) {
-			return new TupleQueryTask(cf, query, config, out);
-		} else if (parsedQuery instanceof ParsedBooleanQuery) {
-			return new AskQueryTask(cf, query, config, out);
-		} else if (parsedQuery instanceof ParsedGraphQuery) {
-			return new GraphQueryTask(cf, query, config, out);
+		try {
+			RepositoryConnection conn = cf.getConnection();
+			if (parsedQuery instanceof ParsedTupleQuery) {
+				return new TupleQueryTask(conn, query, config, out);
+			} else if (parsedQuery instanceof ParsedBooleanQuery) {
+				return new AskQueryTask(conn, query, config, out);
+			} else if (parsedQuery instanceof ParsedGraphQuery) {
+				return new GraphQueryTask(conn, query, config, out);
+			}			
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
 		}
 		
 		throw new MalformedQueryException("Unknown query type: "
