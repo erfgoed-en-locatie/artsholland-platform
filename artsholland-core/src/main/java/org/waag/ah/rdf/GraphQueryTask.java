@@ -10,15 +10,14 @@ import org.openrdf.rio.RDFWriterRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.QueryDefinition;
-import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.WriterConfig;
 
 public class GraphQueryTask extends AbstractQueryTask {
 	final static Logger logger = LoggerFactory.getLogger(GraphQueryTask.class);
 
-	public GraphQueryTask(RepositoryConnectionFactory cf,
+	public GraphQueryTask(RepositoryConnection conn,
 			QueryDefinition query, WriterConfig config, OutputStream os) {
-		super(cf, query, config, os);
+		super(conn, query, config, os);
 	}
 
 	@Override

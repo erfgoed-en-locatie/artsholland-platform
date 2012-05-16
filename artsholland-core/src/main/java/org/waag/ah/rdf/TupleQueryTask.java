@@ -8,14 +8,13 @@ import org.openrdf.query.resultio.TupleQueryResultWriter;
 import org.openrdf.query.resultio.TupleQueryResultWriterRegistry;
 import org.openrdf.repository.RepositoryConnection;
 import org.waag.ah.QueryDefinition;
-import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.WriterConfig;
 
 public class TupleQueryTask extends AbstractQueryTask {
 
-	public TupleQueryTask(RepositoryConnectionFactory cf,
-			QueryDefinition query, WriterConfig config, OutputStream os) {
-		super(cf, query, config, os);
+	public TupleQueryTask(RepositoryConnection conn, QueryDefinition query,
+			WriterConfig config, OutputStream os) {
+		super(conn, query, config, os);
 	}
 
 	@Override

@@ -8,14 +8,13 @@ import org.openrdf.query.resultio.BooleanQueryResultWriter;
 import org.openrdf.query.resultio.BooleanQueryResultWriterRegistry;
 import org.openrdf.repository.RepositoryConnection;
 import org.waag.ah.QueryDefinition;
-import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.WriterConfig;
 
 public class AskQueryTask extends AbstractQueryTask {
 
-	public AskQueryTask(RepositoryConnectionFactory cf, QueryDefinition query,
+	public AskQueryTask(RepositoryConnection conn, QueryDefinition query,
 			WriterConfig config, OutputStream os) {
-		super(cf, query, config, os);
+		super(conn, query, config, os);
 	}
 
 	@Override

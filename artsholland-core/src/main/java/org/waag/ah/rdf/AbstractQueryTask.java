@@ -2,28 +2,28 @@ package org.waag.ah.rdf;
 
 import java.io.OutputStream;
 
+import org.openrdf.model.Literal;
+import org.openrdf.model.Value;
+import org.openrdf.query.BindingSet;
+import org.openrdf.query.QueryLanguage;
+import org.openrdf.query.TupleQuery;
+import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryConnection;
+import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.RDFWriter;
 import org.waag.ah.QueryDefinition;
 import org.waag.ah.QueryTask;
-import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.WriterConfig;
 
 abstract class AbstractQueryTask implements QueryTask {
-
-//	private Map<String, Value> bindings = new HashMap<String, Value>();
-//	private RDFWriterConfig config;
-//	protected String mimeType;
-
-//	private ASTContainer astContainer;
-	private RepositoryConnectionFactory cf;
+	private RepositoryConnection conn;
 	private OutputStream os;
 	private final QueryDefinition query;
 	private final WriterConfig config;
 	
-	public AbstractQueryTask(RepositoryConnectionFactory cf,
-			QueryDefinition query, WriterConfig config, OutputStream os) {
-		this.cf = cf;
+	public AbstractQueryTask(RepositoryConnection conn, QueryDefinition query,
+			WriterConfig config, OutputStream os) {
+		this.conn = conn;
 		this.query = query;
 		this.config = config;
 		this.os = os;
@@ -31,12 +31,40 @@ abstract class AbstractQueryTask implements QueryTask {
 	
 	@Override
 	public long getCount() throws UnsupportedOperationException {
+		String countQuery = query.getCountQuery();
+		if (countQuery == null) {
+			throw new UnsupportedOperationException("No count qwuery specified");
+		}
+		try {
+			TupleQuery tupleQuery = conn.prepareTupleQuery(
+					QueryLanguage.SPARQL, countQuery);
+			TupleQueryResult result = tupleQuery.evaluate();
+			if (result.hasNext()) {
+				BindingSet next = result.next();
+				if (next.hasBinding("count")) {
+					Value value = next.getValue("count");
+					if (value instanceof Literal) {
+						return ((Literal) value).longValue();
+					}
+				}
+			}
+			return 0;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				try {
+					conn.close();
+				} catch (RepositoryException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 		return 0;
 	}
 
 	@Override
 	public Void call() throws Exception {
-		RepositoryConnection conn = cf.getConnection();
 		try {
 			doQuery(query, config, conn, os);
 		} finally {
