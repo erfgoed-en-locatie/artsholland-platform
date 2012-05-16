@@ -18,12 +18,12 @@ import org.waag.ah.rest.util.RestRelationQueryGenerator;
 
 @Service("restService")
 public class RestService implements InitializingBean {
-//	private static final Logger logger = LoggerFactory
-//			.getLogger(RestService.class);
+	// private static final Logger logger = LoggerFactory
+	// .getLogger(RestService.class);
 
 	RestRelation rootRelation;
 	RestRelationQueryGenerator queryGenerator;
-	
+
 	@Autowired
 	PropertiesConfiguration platformConfig;
 
@@ -33,49 +33,72 @@ public class RestService implements InitializingBean {
 
 		rootRelation = new RestRelation();
 
-		RestRelation eventsRelation =
-				rootRelation.addRelation("event",	"Event", RelationQuantity.MULTIPLE, RelationType.SELF, false);
-		RestRelation venuesRelation =
-				rootRelation.addRelation("venue", "Venue", RelationQuantity.MULTIPLE, RelationType.SELF, false);
-		RestRelation productionsRelation = 
-				rootRelation.addRelation("production", "Production", RelationQuantity.MULTIPLE, RelationType.SELF, false);
+		RestRelation eventsRelation = rootRelation.addRelation("event",
+				"Event", RelationQuantity.MULTIPLE, RelationType.SELF, false);
+		RestRelation venuesRelation = rootRelation.addRelation("venue",
+				"Venue", RelationQuantity.MULTIPLE, RelationType.SELF, false);
+		RestRelation productionsRelation = rootRelation.addRelation(
+				"production", "Production", RelationQuantity.MULTIPLE,
+				RelationType.SELF, false);
 
-		RestRelation eventRelation = 
-				eventsRelation.addRelation("cidn", "Event", RelationQuantity.SINGLE, RelationType.SELF, true);
-		RestRelation venueRelation = 
-				venuesRelation.addRelation("cidn", "Venue", RelationQuantity.SINGLE, RelationType.SELF, true);
-		RestRelation productionRelation = 
-				productionsRelation.addRelation("cidn", "Production", RelationQuantity.SINGLE, RelationType.SELF, true);
+		RestRelation eventRelation = eventsRelation.addRelation("cidn",
+				"Event", RelationQuantity.SINGLE, RelationType.SELF, true);
+		RestRelation venueRelation = venuesRelation.addRelation("cidn",
+				"Venue", RelationQuantity.SINGLE, RelationType.SELF, true);
+		RestRelation productionRelation = productionsRelation.addRelation(
+				"cidn", "Production", RelationQuantity.SINGLE,
+				RelationType.SELF, true);
 
-		eventRelation.addRelation("production", "Production",	RelationQuantity.SINGLE, RelationType.FORWARD, false);
-		eventRelation.addRelation("venue", "Venue", RelationQuantity.SINGLE, RelationType.FORWARD, false);
-		eventRelation.addRelation("room", "Room", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+		eventRelation.addRelation("production", "Production",
+				RelationQuantity.SINGLE, RelationType.FORWARD, false);
+		eventRelation.addRelation("venue", "Venue", RelationQuantity.SINGLE,
+				RelationType.FORWARD, false);
+		eventRelation.addRelation("room", "Room", RelationQuantity.MULTIPLE,
+				RelationType.FORWARD, false);
 
-		venueRelation.addRelation("event", "Event", RelationQuantity.MULTIPLE, RelationType.BACKWARD, false);
-		venueRelation.addRelation("production", "Production",	RelationQuantity.MULTIPLE, RelationType.BACKWARDFORWARD, false);
-		venueRelation.addRelation("room", "Room", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+		venueRelation.addRelation("event", "Event", RelationQuantity.MULTIPLE,
+				RelationType.BACKWARD, false);
+		venueRelation.addRelation("production", "Production",
+				RelationQuantity.MULTIPLE, RelationType.BACKWARDFORWARD, false);
+		venueRelation.addRelation("room", "Room", RelationQuantity.MULTIPLE,
+				RelationType.FORWARD, false);
 
-		productionRelation.addRelation("event", "Event", RelationQuantity.MULTIPLE, RelationType.BACKWARD, false);
-		productionRelation.addRelation("venue", "Venue", RelationQuantity.MULTIPLE, RelationType.BACKWARDFORWARD, false);
+		productionRelation.addRelation("event", "Event",
+				RelationQuantity.MULTIPLE, RelationType.BACKWARD, false);
+		productionRelation.addRelation("venue", "Venue",
+				RelationQuantity.MULTIPLE, RelationType.BACKWARDFORWARD, false);
 
-		RestRelation venueAttachmentRelation = 
-				venueRelation.addRelation("attachment", "Attachment", RelationQuantity.MULTIPLE,	RelationType.FORWARD, false);
-		venueAttachmentRelation.addRelation("id", "Attachment",	RelationQuantity.SINGLE, RelationType.SELF, true);
-		
-		RestRelation eventAttachmentRelation = 
-				eventRelation.addRelation("attachment", "Attachment", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
-		eventAttachmentRelation.addRelation("id", "Attachment",	RelationQuantity.SINGLE, RelationType.SELF, true);
-		
-  	// TODO: ?this instead of ?object  ???
-  	SPARQLFilter venuesLocalityFilter = new SPARQLFilter("locality", "?object vcard:locality ?locality.", "?locality = \"?parameter\"");
-  	venuesRelation.addFilter(venuesLocalityFilter);
+		RestRelation venueAttachmentRelation = venueRelation.addRelation(
+				"attachment", "Attachment", RelationQuantity.MULTIPLE,
+				RelationType.FORWARD, false);
+		venueAttachmentRelation.addRelation("id", "Attachment",
+				RelationQuantity.SINGLE, RelationType.SELF, true);
 
-  	SPARQLFilter eventsLocalityFilter = new SPARQLFilter("locality", "?object <http://purl.org/artsholland/1.0/venue> ?venue . ?venue vcard:locality ?locality .", "?locality = \"?parameter\"");
-  	SPARQLFilter eventsBeforeFilter = new SPARQLFilter("before", "?object time:hasBeginning ?hasBeginning.", "?hasBeginning < \"?parameter\"^^xsd:dateTime");
-  	SPARQLFilter eventsAfterFilter = new SPARQLFilter("after", "?object time:hasBeginning ?hasBeginning.", "?hasBeginning > \"?parameter\"^^xsd:dateTime");
-  	eventsRelation.addFilter(eventsLocalityFilter);
-  	eventsRelation.addFilter(eventsBeforeFilter);
-  	eventsRelation.addFilter(eventsAfterFilter);
+		RestRelation eventAttachmentRelation = eventRelation.addRelation(
+				"attachment", "Attachment", RelationQuantity.MULTIPLE,
+				RelationType.FORWARD, false);
+		eventAttachmentRelation.addRelation("id", "Attachment",
+				RelationQuantity.SINGLE, RelationType.SELF, true);
+
+		// TODO: ?this instead of ?object ???
+		SPARQLFilter venuesLocalityFilter = new SPARQLFilter("locality",
+				"?object vcard:locality ?locality.",
+				"?locality = \"?parameter\"");
+		venuesRelation.addFilter(venuesLocalityFilter);
+
+		SPARQLFilter eventsLocalityFilter = new SPARQLFilter(
+				"locality",
+				"?object <http://purl.org/artsholland/1.0/venue> ?venue . ?venue vcard:locality ?locality .",
+				"?locality = \"?parameter\"");
+		SPARQLFilter eventsBeforeFilter = new SPARQLFilter("before",
+				"?object time:hasBeginning ?hasBeginning.",
+				"?hasBeginning < \"?parameter\"^^xsd:dateTime");
+		SPARQLFilter eventsAfterFilter = new SPARQLFilter("after",
+				"?object time:hasBeginning ?hasBeginning.",
+				"?hasBeginning > \"?parameter\"^^xsd:dateTime");
+		eventsRelation.addFilter(eventsLocalityFilter);
+		eventsRelation.addFilter(eventsBeforeFilter);
+		eventsRelation.addFilter(eventsAfterFilter);
 
 		queryGenerator = new RestRelationQueryGenerator(rootRelation);
 	}
@@ -102,11 +125,11 @@ public class RestService implements InitializingBean {
 		config.setWrapResults(true);
 		return query;
 	}
-	
+
 	private RDFWriterConfig getDefaultWriterConfig(RestParameters params) {
 		RDFWriterConfig config = new RDFWriterConfig();
 		config.setPrettyPrint(params.getPretty());
-		config.setBaseUri(platformConfig.getString("platform.baseUri"));		
+		config.setBaseUri(platformConfig.getString("platform.baseUri"));
 		return config;
 	}
 }
