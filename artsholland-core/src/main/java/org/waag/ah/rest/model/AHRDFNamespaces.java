@@ -22,7 +22,10 @@ public class AHRDFNamespaces {
 		result.put("time", "http://www.w3.org/2006/time#");
 		result.put("geo", "http://www.w3.org/2003/01/geo/wgs84_pos#");
 		result.put("vcard", "http://www.w3.org/2006/vcard/ns#");
-
+		result.put("osgeo", "http://rdf.opensahara.com/type/geo/");
+		result.put("search", "http://rdf.opensahara.com/search#");
+		result.put("fn", "http://www.w3.org/2005/xpath-functions#");
+		
 		return Collections.unmodifiableMap(result);	
 	}
 	

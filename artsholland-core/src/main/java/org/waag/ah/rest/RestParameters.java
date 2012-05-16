@@ -4,38 +4,24 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Map;
 
-import javax.xml.datatype.XMLGregorianCalendar;
-
 import org.apache.commons.lang.StringUtils;
-import org.openrdf.model.datatypes.XMLDatatypeUtil;
 
 public class RestParameters {
 	
-//	public static enum RequestType {
-//		REST,
-//		DATA
-//	};
-	
-	private long resultLimit = 0;
+	private long perPage = 0;
 	private long page = 0;
 	private String languageTag = "en";	
-	private XMLGregorianCalendar dateFrom = null;
-	private XMLGregorianCalendar dateTo = null;
+	//private XMLGregorianCalendar dateFrom = null;
+	//private XMLGregorianCalendar dateTo = null;
 	private boolean hideMetadata = false;
 	private boolean prettyPrint = false;
-	
-	//private RequestType requestType = null;
-	//private RelationQuantity quantity = null;
+	private boolean countTotals = false;
 
 	public static long DEFAULT_RESULT_LIMIT = 10;
 
 	private LinkedList<String> uriPathParts = new LinkedList<String>();
 	private Map<String, String[]> parameterMap;
-	
-	public void setResultLimit(long resultLimit) {
-		this.resultLimit = resultLimit;
-	}
-	
+		
 	public boolean isPrettyPrint() {
 		return prettyPrint;
 	}
@@ -52,15 +38,19 @@ public class RestParameters {
 		this.hideMetadata = hideMetadata;
 	}
 	
-	public long getResultLimit() {
-		if (resultLimit == 0) {
+	public void setPerPage(long perPage) {
+		this.perPage = perPage;
+	}
+	
+	public long getPerPage() {
+		if (perPage == 0) {
 			return DEFAULT_RESULT_LIMIT;
 		}
-		return resultLimit;
+		return perPage;
 	}
 
 	public long getPage() {
-		if (page == 0) {
+		if (page < 1) {
 			return 1;
 		}
 		return page;
@@ -77,7 +67,7 @@ public class RestParameters {
 	public void setLanguageTag(String languageTag) {
 		this.languageTag = languageTag;		
 	}
-
+/*
 	public void setDateFrom(String dateFrom) {
 		if (dateFrom != null && dateFrom.length() > 0) {
 			this.dateFrom = XMLDatatypeUtil.parseCalendar(dateFrom);
@@ -97,11 +87,11 @@ public class RestParameters {
 	public XMLGregorianCalendar getDateTo() {
 		return dateTo;
 	}
+*/
 	
 	public boolean getHideMetadata() {
 		return hideMetadata;
-	}
-	
+	}	
 	
 	public void setURIPathParts(String... uriParts) {
 		String joined = StringUtils.join(uriParts, "/").replaceAll("/+", "/");
@@ -134,6 +124,14 @@ public class RestParameters {
 	
 	public void setPretty(boolean pretty) {
 		this.prettyPrint = pretty;
+	}
+
+	public boolean isCountTotals() {
+		return countTotals;
+	}
+
+	public void setCountTotals(boolean countTotals) {
+		this.countTotals = countTotals;
 	}
 
 }

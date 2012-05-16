@@ -7,8 +7,8 @@ declare namespace time="http://www.w3.org/2006/time#";
 declare namespace foaf="http://xmlns.com/foaf/0.1/";
 declare namespace geo = "http://www.w3.org/2003/01/geo/wgs84_pos#";
 declare namespace vcard = "http://www.w3.org/2006/vcard/ns#";
-declare namespace wkt = "http://rdf.opensahara.com/type/geo/";
-
+declare namespace osgeo = "http://rdf.opensahara.com/type/geo/";
+												
 declare namespace nub="http://resources.uitburo.nl/";
 declare namespace ah = "http://purl.org/artsholland/1.0/";
 
@@ -35,6 +35,7 @@ return
 			let $euri := {concat($baseuri, "event/", $cidn)}
 			let $euriUitburo := {concat($baseuriUitburo, "events/", $cidn)}
 				
+			# TODO: if valid
 			let $puri := {concat($baseuri, "production/", $event/link[@type="production"]/@cidn)}
 			let $vuri := {concat($baseuri, "venue/", $event/link[@type="location"]/@cidn)}
 					
@@ -57,7 +58,7 @@ return
 				
 				$euri ah:cidn {$cidn}^^xsd:string.
 				
-				$vuri a ah:Venue.			
+				$vuri a ah:Venue.
 				$euri ah:venue $vuri.
 				
 				$puri a ah:Production.
@@ -95,7 +96,7 @@ return
 						$euri ah:ticket $turi .
 						$turi a ah:Ticket .
 						
-						$turi dc:title	{if ($name eq "") then () else $name}^^xsd:string .
+						$turi dc:title {if ($name eq "") then () else $name}^^xsd:string .
 						$turi dc:description {if ($description eq "") then () else $description}^^xsd:string .
 						
 						$turi ah:ticketSalesInformation {if ($salesInformation eq "") then () else $salesInformation}^^xsd:string .
@@ -162,6 +163,15 @@ return
 			let $vuriUitburo := {concat($baseuriUitburo, "locations/", $cidn)}
 			let $venueType := {concat("ah:venueType", waag:capitalize-first-only($venue/type/@key))}
 				
+			let $lat := { $venue/geocode/latitude }
+			let $long := { $venue/geocode/longitude }
+						
+			let $latData := { if ( fn:empty(number($lat)) or number($lat) eq 0 ) then () else data($lat) }
+			let $longData := { if ( fn:empty(number($long)) or number($long) eq 0 ) then () else data($long) }
+			
+			# Apparently, 'or' statements have to be grouped in tuples:
+			let $point := { if ( fn:empty($latData) or fn:empty($longData) ) then () else concat( 'POINT(', $longData, ' ', $latData, ')' ) }
+						
 			construct {
 				$vuri a ah:Venue.			
 				$vuri owl:sameAs $vuriUitburo.
@@ -170,10 +180,10 @@ return
 							
 				$vuri dc:title {if ($venue/name eq "") then () else waag:replace-characters($venue/name)}^^xsd:string.
 	
-				$vuri geo:lat {data($venue/geocode/latitude)}^^xsd:decimal.
-				$vuri geo:long {data($venue/geocode/longitude)}^^xsd:decimal.
+				$vuri geo:lat {if ( fn:empty($latData) ) then () else $latData }^^xsd:decimal.
+				$vuri geo:long {if ( fn:empty($longData) ) then () else $longData }^^xsd:decimal.
 	
-				$vuri ah:wkt {concat( 'POINT(', data($venue/geocode/latitude), ' ', data($venue/geocode/longitude), ')' )}^^wkt:wkt.
+				$vuri ah:geometry {if ( fn:empty($point) ) then () else $point }^^osgeo:wkt.
 				
 				$vuri dc:created {$venue/@date-created}^^xsd:string.
 				$vuri dc:modified {$venue/@date-changed}^^xsd:string.
@@ -203,47 +213,45 @@ return
 				{ for $medium at $pos in $venue/media//medium				
 					
 					let $muri := {concat($vuri, "/attachment/", $pos)}
-					let $description := {waag:replace-characters($medium/description)}
-					let $title := {waag:replace-characters($medium/title)}
-					
+										
 					let $typeKey := {waag:replace-characters($medium/type)}
 					let $typeClass := {if ($typeKey eq "") then () else concat("ah:attachmentType", waag:capitalize-first-only(data($typeKey)))}
 					
 					construct {
 					
-						$vuri ah:attachment $muri.
-						$muri a ah:Attachment.					
-						$muri dc:title {if ($title eq "") then () else $title}^^xsd:string.
-						$muri dc:description {if ($description eq "") then () else $description}^^xsd:string.					
+						$vuri ah:attachment $muri .
+						$muri a ah:Attachment .
+						$muri dc:title {waag:string($medium/title)}^^xsd:string .
+						$muri dc:description {waag:string($medium/description)}^^xsd:string .
 						
 						# TODO: string?
-						$muri ah:url {$medium/ref}^^xsd:string.
+						$muri ah:url {$medium/ref}^^xsd:string .
 											
 						# TODO:
 						#	<alt>A family again</alt>	
 						
-						$muri ah:attachmentType $typeClass.
-						$typeClass a ah:AttachmentType.			
-						$typeClass rdfs:label {if ($typeKey eq "") then () else $typeKey}^^xsd:string.	
+						$muri ah:attachmentType $typeClass .
+						$typeClass a ah:AttachmentType .
+						$typeClass rdfs:label {if ($typeKey eq "") then () else $typeKey}^^xsd:string .
 										
 					}
-				}.
+				} .
 				
 				$vuri vcard:street-address {concat($venue/street/name, " ", $venue/street/number, $venue/street/addition)} .
-				$vuri vcard:locality {waag:replace-characters($venue/place)} .
-				$vuri vcard:postal-code {$venue/postal-code} .
-				$vuri vcard:email {waag:replace-characters($venue/email)} .
-				$vuri ah:telephone {waag:replace-characters($venue/telephone)}.
-				$vuri ah:fax {waag:replace-characters($venue/fax)}.
+				$vuri vcard:locality {waag:string($venue/place)} .
+				$vuri vcard:postal-code {waag:string($venue/postal-code)} .
+				$vuri vcard:email {waag:string($venue/email)} .
+				$vuri ah:telephone {waag:string($venue/telephone)} .
+				$vuri ah:fax {waag:string($venue/fax)} .
 					
 				{ for $tag in $venue/tags//tag
 					
 					construct {	
 						
-						$vuri ah:tag {if ($tag eq "") then () else waag:replace-characters($tag)}.
+						$vuri ah:tag {waag:string($tag)} .
 						
 					}
-				}.
+				} .
 				
 				{ for $language in $venue/languages//language
 				
@@ -370,6 +378,7 @@ return
 				#	notes
 				#	<country>NL</country>							
 				
+				#TODO : if not empty
 				$puri dc:language {waag:get-language-tag($production/language)}.			
 				$puri ah:subtitleLanguage {waag:get-language-tag($production/subtitles)}			
 								

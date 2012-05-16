@@ -13,18 +13,24 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <title>Snorql: A SPARQL Explorer</title>
+    <title>Arts Holland - SPARQL Endpoint</title>
     <link rel="stylesheet" type="text/css" href="/static/snorql/style.css" />
     <script type="text/javascript" src="/static/snorql/prototype.js"></script>
     <script type="text/javascript" src="/static/snorql/scriptaculous/scriptaculous.js"></script>
     <script type="text/javascript" src="/static/snorql/sparql.js"></script>
     <script type="text/javascript" src="/static/snorql/namespaces.js"></script>
     <script type="text/javascript" src="/static/snorql/snorql.js"></script>
+    
+    <script src="/static/codemirror/lib/codemirror.js"></script>
+		<script src="/static/codemirror/mode/sparql/sparql.js"></script>
+    
+    <link rel="stylesheet" href="/static/codemirror/lib/codemirror.css">
+    <!-- <link rel="stylesheet" href="/static/codemirror/theme/eclipse.css"> -->
   </head>
 
   <body class="snorql" onload="snorql.start()">
     <div id="header">
-      <h1 id="title">Snorql: A SPARQL Explorer</h1>
+      <h1 id="title">Arts Holland - SPARQL Endpoint</h1>
     </div>
 
     <div class="section" style="float: right; width: 8em">
@@ -53,7 +59,7 @@
     </div>
 
     <div class="section" style="margin-right: 12em">
-      <h2>SPARQL:</h2>
+      <h2>SPARQL <a href="/sparql" id="toggleprefixes">(show PREFIX tags)</a>:</h2>
       <pre id="prefixestext"></pre>
       <form id="queryform" action="#" method="get"><div>
         <input type="hidden" name="query" value="" id="query" />
