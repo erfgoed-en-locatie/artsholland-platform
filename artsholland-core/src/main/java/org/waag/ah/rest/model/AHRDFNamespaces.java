@@ -22,7 +22,10 @@ public class AHRDFNamespaces {
 		result.put("time", "http://www.w3.org/2006/time#");
 		result.put("geo", "http://www.w3.org/2003/01/geo/wgs84_pos#");
 		result.put("vcard", "http://www.w3.org/2006/vcard/ns#");
-
+		result.put("osgeo", "http://rdf.opensahara.com/type/geo/");
+		result.put("search", "http://rdf.opensahara.com/search#");
+		result.put("fn", "http://www.w3.org/2005/xpath-functions#");
+		
 		return Collections.unmodifiableMap(result);	
 	}
 	
@@ -42,6 +45,15 @@ public class AHRDFNamespaces {
 	
 	public static Map<String, String> getNamespaces() {
 		return NAMESPACES;
+	}
+
+	public static String getFullURI(String namespaceURI) {
+		String[] split = namespaceURI.split(":");
+		if (split.length == 2 && NAMESPACES.containsKey(split[0])) {
+				return NAMESPACES.get(split[0]) + split[1];
+		}
+		
+		return null;
 	}	
 	
 }

@@ -1,6 +1,5 @@
 package org.waag.ah.bigdata;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 
 import org.apache.commons.configuration.Configuration;
@@ -11,39 +10,43 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.repository.sail.SailRepositoryConnection;
 import org.openrdf.sail.Sail;
+import org.openrdf.sail.SailException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.RepositoryConnectionFactory;
+import org.waag.ah.exception.ConnectionException;
+import org.waag.ah.useekm.PostgisIndexerSettingsGenerator;
 
 import com.bigdata.journal.Options;
 import com.bigdata.rdf.sail.BigdataSailRepository;
 import com.useekm.bigdata.BigdataSail;
+import com.useekm.indexing.IndexingSail;
+import com.useekm.indexing.exception.IndexException;
+import com.useekm.indexing.postgis.PostgisIndexerSettings;
 
 @Singleton
 public class BigdataConnectionService implements RepositoryConnectionFactory {
 	final static Logger logger = LoggerFactory.getLogger(BigdataConnectionService.class);
 
-	private BigdataSailRepository repo;
-
+	private BigdataSailRepository bigdataRepo;
 	private PropertiesConfiguration properties;
-	
-	/**
-	 * Initialize BigData repository.
-	 * 
-	 * @author	Raoul Wissink <raoul@raoul.net>
-	 * @since	Mar 8, 2012
-	 */
-	@PostConstruct
-	public void create() {
+	private Sail sail;
+	private SailRepository repo; 
+
+	private synchronized void connect() throws ConnectionException {
+		
 		try {
-			logger.info("CREATE REPOSITORY");
-			repo = createRepository(loadProperties());
-			repo.initialize();
-		} catch (RepositoryException e) {
-			e.printStackTrace();
-		} catch (ConfigurationException e) {
-			e.printStackTrace();
+			if (bigdataRepo == null) {
+				bigdataRepo = createRepository(loadProperties());
+				bigdataRepo.initialize();
+			}
+			if (repo == null) {
+				sail = getIndexingSail();
+				repo = new SailRepository(sail);
+			}
+		} catch (Exception e) {
+			throw new ConnectionException(e.getMessage(), e);
 		}
 	}
 	
@@ -63,13 +66,25 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 	}
 	
 	@Override
-	public Sail getSail() {
-		return new BigdataSail(repo);
-	}	
+	public Sail getSail() throws ConnectionException {
+		connect();
+		return new BigdataSail(bigdataRepo);
+	}
 	
-//	public Journal getJournal() {
-//		return new Journal(ConfigurationConverter.getProperties(properties));
-//	}
+	@Override
+	public Sail getIndexingSail() throws ConnectionException {
+		Sail sail = getSail();		
+		PostgisIndexerSettings settings = PostgisIndexerSettingsGenerator.generateSettings();
+		IndexingSail idxSail = new IndexingSail(sail, settings);
+		try {
+			idxSail.getConnection().reindex();
+		} catch (IndexException e) {
+			logger.error(e.getMessage(), e);
+		} catch (SailException e) {
+			throw new ConnectionException(e.getMessage(), e);
+		}
+		return idxSail;		
+	}
 	
 	/**
 	 * Return read/write connection to the BigData repository.
@@ -78,12 +93,19 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 	 * @throws ConfigurationException 
 	 * @since Mar 8, 2012
 	 */
-	public SailRepositoryConnection getConnection() throws RepositoryException { 
+	public SailRepositoryConnection getConnection() throws ConnectionException { 
 //		BigdataSailRepositoryConnection conn = repo.getReadWriteConnection();
-		SailRepository repo = new SailRepository(getSail());
-		SailRepositoryConnection conn = repo.getConnection();		
-		conn.setAutoCommit(false);
-		return conn;
+//		SailRepository repo = new SailRepository(sail);
+//		SailRepositoryConnection conn = repo.getConnection();
+		connect();
+		SailRepositoryConnection conn;
+		try {
+			conn = repo.getConnection();
+			conn.setAutoCommit(false);
+			return conn;			
+		} catch (RepositoryException e) {
+			throw new ConnectionException(e.getMessage(), e);
+		}
     }
 	
 	/**

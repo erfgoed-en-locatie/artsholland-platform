@@ -21,6 +21,13 @@ class UitbaseURLGenerator {
 	
 	private static final int ROWS = 500;
 	
+//	public static final String[] RESOURCES = { 
+//		"events", 
+//		"locations", 
+//		"productions",
+//		"groups" 
+//	};
+	
 	public UitbaseURLGenerator(String endpoint, String apiKey) {
 		BASE_URL = endpoint + "/search";
 		API_KEY = apiKey;
@@ -34,10 +41,19 @@ class UitbaseURLGenerator {
 		List<URL> urls = new ArrayList<URL>();
 		
 		DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
+		
 		String dtToParam = dtTo != null ? "&createdto="+fmt.withZone(DateTimeZone.UTC).print(dtTo) : "";
 		String dtFromParam = dtFrom != null ? "&createdfrom="+fmt.withZone(DateTimeZone.UTC).print(dtFrom) : "";
 		
-		int count = getCount(readURL(getCountURL(dtFromParam+dtToParam)));	
+//		for (String resource : RESOURCES) {
+		int count = 0;
+		try {
+			String content = readURL(getCountURL(dtFromParam+dtToParam));
+			count = 1000; //getCount(content);	
+		} catch (IOException e) {			
+			e.printStackTrace();
+		}
+
 		int i = 0;
 		while (i < count) {
 			// TODO: use something like URLBuilder 

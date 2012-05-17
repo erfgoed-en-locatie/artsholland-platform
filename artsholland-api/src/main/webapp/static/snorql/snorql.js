@@ -22,16 +22,21 @@ function Snorql() {
     this._namespaces = {};
     this._graph = null;
     this._xsltDOM = null;
+    
+    this._codeMirror = null;
 
     this.start = function() {
         // TODO: Extract a QueryType class
         this.setBrowserBase(document.location.href.replace(/\?.*/, ''));
-        this._displayEndpointURL();
+        //this._displayEndpointURL();
         this._displayPoweredBy();
         this.setNamespaces(D2R_namespacePrefixes);
         this.updateOutputMode();
         var match = document.location.href.match(/\?(.*)/);
         var queryString = match ? match[1] : '';
+        
+        //document.getElementById('toggleprefixes').setAttribute('onclick', this._togglePrefixes());
+        document.getElementById('toggleprefixes').onclick = this._togglePrefixes;
         
         var apiKeyRegEx = queryString.match(/apiKey=([^&]*)/);
         var apiKeyUrl = apiKeyRegEx ? apiKeyRegEx[0] : null;
@@ -96,19 +101,19 @@ function Snorql() {
                     '}\n' +
                     'ORDER BY (!BOUND(?hasValue)) ?property ?hasValue ?isValueOf';
         }
+        query += '\nLIMIT 100';
         if (queryString.match(/query=/)) {
             var resultTitle = 'SPARQL results:';
             querytext = this._betterUnescape(queryString.match(/query=([^&]*)/)[1]);
             var query = prefixes + querytext;
-        }
+        }       
+        
         if (!querytext) {
             querytext = query;
         }
         document.getElementById('querytext').value = querytext;
         this.displayBusyMessage();
-        var service = new SPARQL.Service(this._endpoint + '?apiKey=1e4263ef2d20da8eff6996381bb0d78b');
-        
-        
+        var service = new SPARQL.Service(this._endpoint + '?apiKey=1e4263ef2d20da8eff6996381bb0d78b');        
         
         if (this._graph) {
             service.addDefaultGraph(this._graph);
@@ -150,6 +155,16 @@ function Snorql() {
                 }
             }
         });
+        
+        
+        this._codeMirror = CodeMirror.fromTextArea(document.getElementById("querytext"), { 
+            //lineNumbers: true, 
+            matchBrackets: true,            
+            indentUnit: 4, 
+            indentWithTabs: true, 
+            //theme: "eclipse"
+        }); 
+        
     };
 
     this.setBrowserBase = function(url) {
@@ -241,7 +256,10 @@ function Snorql() {
     };
 
     this.submitQuery = function() {
-        var mode = this._selectedOutputMode();
+    	
+    	this._codeMirror.save();
+    	
+    	var mode = this._selectedOutputMode();
         if (mode == 'browse') {
             document.getElementById('queryform').action = this._browserBase;            
             document.getElementById('query').value = document.getElementById('querytext').value;
@@ -265,6 +283,12 @@ function Snorql() {
     };
 
     this.displayErrorMessage = function(message) {
+    	if (message.indexOf('<html>') == 0) {
+    		// JBoss error page
+    		var bodyStart = message.indexOf('<body>'); 
+    		var bodyEnd = message.indexOf('</body>');    		
+    		message = message.substring(bodyStart + 6, bodyEnd).replace('h1', 'h2');
+    	}
         var pre = document.createElement('pre');
         pre.innerHTML = message;
         this._display(pre, 'result');
@@ -339,6 +363,17 @@ function Snorql() {
     this._betterUnescape = function(s) {
         return unescape(s.replace(/\+/g, ' '));
     };
+    
+    this._togglePrefixes = function() {    	
+    	//document.getElementById('prefixestext').style.height = '';
+    	var prefixestext = document.getElementById('prefixestext');
+    	var toggleprefixes = document.getElementById('toggleprefixes');
+    	toggleprefixes.style.display = "none"; 
+    	prefixestext.style.display = "block";
+    	
+    	return false;
+    };
+    
 }
 
 

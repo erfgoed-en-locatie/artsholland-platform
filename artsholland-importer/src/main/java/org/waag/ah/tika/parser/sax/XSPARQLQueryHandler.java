@@ -17,6 +17,7 @@ import net.sf.saxon.s9api.XQueryCompiler;
 import net.sf.saxon.s9api.XQueryEvaluator;
 import net.sf.saxon.s9api.XdmItem;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.ContentHandlerDecorator;
@@ -99,6 +100,13 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			Attributes attributes) throws SAXException {
 		if (!processing()) {
 			xmlCollector = new ToXMLContentHandler();
+		}
+		// Make sure element attribute values don't contain unwanted HTML chars.
+		for (int idx=0; idx<attributes.getLength(); idx++) {
+			if (attributes.getType(idx).equals("CDATA")) {
+				((AttributesImpl) attributes).setValue(idx,
+						StringEscapeUtils.escapeHtml(attributes.getValue(idx)));
+			}
 		}
 		stack.push(localName);
 		xmlCollector.startElement(uri, localName, qName, attributes);			

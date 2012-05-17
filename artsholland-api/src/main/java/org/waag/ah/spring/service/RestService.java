@@ -25,7 +25,7 @@ public class RestService implements InitializingBean {
 
 	RestRelation rootRelation;
 	RestRelationQueryGenerator queryGenerator;
-	
+
 	@Autowired
 	PropertiesConfiguration platformConfig;
 
@@ -42,6 +42,9 @@ public class RestService implements InitializingBean {
 				rootRelation.addRelation("venue", "Venue", RelationQuantity.MULTIPLE, RelationType.SELF, false);
 		RestRelation productionsRelation = 
 				rootRelation.addRelation("production", "Production", RelationQuantity.MULTIPLE, RelationType.SELF, false);
+		
+		rootRelation.addRelation("genre", "Genre", RelationQuantity.MULTIPLE, RelationType.SELF, false);
+		rootRelation.addRelation("venuetype", "VenueType", RelationQuantity.MULTIPLE, RelationType.SELF, false);
 
 		RestRelation eventRelation = 
 				eventsRelation.addRelation("cidn", "Event", RelationQuantity.SINGLE, RelationType.SELF, true);
@@ -61,6 +64,10 @@ public class RestService implements InitializingBean {
 		productionRelation.addRelation("event", "Event", RelationQuantity.MULTIPLE, RelationType.BACKWARD, false);
 		productionRelation.addRelation("venue", "Venue", RelationQuantity.MULTIPLE, RelationType.BACKWARDFORWARD, false);
 
+		RestRelation eventTicketRelation = 
+				eventRelation.addRelation("ticket", "Ticket", RelationQuantity.MULTIPLE,	RelationType.FORWARD, false);
+		eventTicketRelation.addRelation("id", "Ticket",	RelationQuantity.SINGLE, RelationType.SELF, true);
+		
 		RestRelation venueAttachmentRelation = 
 				venueRelation.addRelation("attachment", "Attachment", RelationQuantity.MULTIPLE,	RelationType.FORWARD, false);
 		venueAttachmentRelation.addRelation("id", "Attachment",	RelationQuantity.SINGLE, RelationType.SELF, true);
@@ -70,17 +77,49 @@ public class RestService implements InitializingBean {
 		eventAttachmentRelation.addRelation("id", "Attachment",	RelationQuantity.SINGLE, RelationType.SELF, true);
 		
   	// TODO: ?this instead of ?object  ???
-  	SPARQLFilter venuesLocalityFilter = new SPARQLFilter("locality", "?object vcard:locality ?locality.", "?locality = \"?parameter\"");
+  	//SPARQLFilter venuesLocalityFilter = new SPARQLFilter("locality", "?object vcard:locality ?locality.", "fn:lower-case(?locality) = fn:lower-case(\"?parameter\")");
+  	SPARQLFilter venuesLocalityFilter = new SPARQLFilter("locality", "?object vcard:locality ?locality.", "lcase(?locality) = lcase(\"?parameter\")");
   	venuesRelation.addFilter(venuesLocalityFilter);
 
-  	SPARQLFilter eventsLocalityFilter = new SPARQLFilter("locality", "?object <http://purl.org/artsholland/1.0/venue> ?venue . ?venue vcard:locality ?locality .", "?locality = \"?parameter\"");
+  	SPARQLFilter eventsLocalityFilter = new SPARQLFilter("locality", "?object <http://purl.org/artsholland/1.0/venue> ?venue . ?venue vcard:locality ?locality .", "fn:lower-case(?locality) = fn:lower-case(\"?parameter\")");
   	SPARQLFilter eventsBeforeFilter = new SPARQLFilter("before", "?object time:hasBeginning ?hasBeginning.", "?hasBeginning < \"?parameter\"^^xsd:dateTime");
   	SPARQLFilter eventsAfterFilter = new SPARQLFilter("after", "?object time:hasBeginning ?hasBeginning.", "?hasBeginning > \"?parameter\"^^xsd:dateTime");
   	eventsRelation.addFilter(eventsLocalityFilter);
   	eventsRelation.addFilter(eventsBeforeFilter);
   	eventsRelation.addFilter(eventsAfterFilter);
 
-		queryGenerator = new RestRelationQueryGenerator(rootRelation);
+  	//public double metersToDegrees(double meters) { return meters / (Math.PI/180) / 6378137; }  	
+  	double metersToDegrees = 1 / ((Math.PI/180) * 6378137);
+  	
+  	SPARQLFilter eventsNearbyFilter = new SPARQLFilter("nearby", "?object <http://purl.org/artsholland/1.0/venue> ?venue . ?venue <http://purl.org/artsholland/1.0/geometry> ?geometry .", "search:distance(?geometry, \"?parameter\"^^<http://rdf.opensahara.com/type/geo/wkt>) < ?distance * " + metersToDegrees);
+  	eventsNearbyFilter.addExtraParameter("distance");
+   	eventsRelation.addFilter(eventsNearbyFilter);
+  	   	
+   	SPARQLFilter venuesNearbyFilter = new SPARQLFilter("nearby", "?object <http://purl.org/artsholland/1.0/geometry> ?geometry .", "search:distance(?geometry, \"?parameter\"^^<http://rdf.opensahara.com/type/geo/wkt>) < ?distance * " + metersToDegrees);
+   	venuesNearbyFilter.addExtraParameter("distance");
+  	venuesRelation.addFilter(venuesNearbyFilter);
+  	
+  	SPARQLFilter productionGenreFilter = new SPARQLFilter(
+  			"genre", "?object <http://purl.org/artsholland/1.0/genre> ?genre .", "?genre = ah:genre?parameter OR ?genre = ah:?parameter"
+  			);    	
+  	productionsRelation.addFilter(productionGenreFilter);
+  	
+  	SPARQLFilter venueTypeFilter = new SPARQLFilter(
+  			"type", "?object <http://purl.org/artsholland/1.0/venueType> ?type .", "?type = ah:venueType?parameter OR ?type = ah:?parameter"
+  			);    	
+  	venuesRelation.addFilter(venueTypeFilter);  	
+  	
+  	SPARQLFilter searchFilter = new SPARQLFilter("search", "?object dc:description ?desc .", "search:text(?desc, \"?parameter\")");   
+  	eventsRelation.addFilter(searchFilter);
+  	productionsRelation.addFilter(searchFilter);
+  	venuesRelation.addFilter(searchFilter);
+  	
+  	
+  	
+    // search:within(?geometry, "POLYGON((4 53, 4 54, 5 54, 5 53, 4 53))"^^geo:wkt)
+  	
+  	queryGenerator = new RestRelationQueryGenerator(rootRelation);
+
 	}
 
 	public RdfQueryDefinition getObjectQuery(RestParameters params)
@@ -101,17 +140,19 @@ public class RestService implements InitializingBean {
 		}
 		RDFWriterConfig config = getDefaultWriterConfig(params);
 		query.setWriterConfig(config);
+
 		config.setMetaData("page", String.valueOf(params.getPage()));
-		config.setMetaData("limit", String.valueOf(params.getResultLimit()));
+		config.setMetaData("per_page", String.valueOf(params.getPerPage()));
+
 		config.setWrapResults(true);
 		logger.info("RETURN PAGED QUERY");
 		return query;
 	}
-	
+
 	private RDFWriterConfig getDefaultWriterConfig(RestParameters params) {
 		RDFWriterConfig config = new RDFWriterConfig();
 		config.setPrettyPrint(params.getPretty());
-		config.setBaseUri(platformConfig.getString("platform.baseUri"));		
+		config.setBaseUri(platformConfig.getString("platform.baseUri"));
 		return config;
 	}
 }

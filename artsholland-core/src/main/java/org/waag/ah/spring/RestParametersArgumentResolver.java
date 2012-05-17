@@ -48,15 +48,18 @@ public class RestParametersArgumentResolver implements
 			params.setURIPathParts(normalizeRequestUri(request, restParams));
 			
 			if (restParams.paging() == true) {
-				params.setResultLimit(getLongValue(paramMap, "limit"));
+				params.setPerPage(getLongValue(paramMap, "per_page"));
 				params.setPage(getLongValue(paramMap, "page"));
+				//params.setPagedQuery(params.getPage() > 0);
 			}
 			
-			params.setDateFrom(getStringValue(paramMap, "dateFrom"));
-			params.setDateTo(getStringValue(paramMap, "dateTo"));
-			params.setPretty(getBooleanValue(paramMap, "pretty"));
+			//params.setDateFrom(getStringValue(paramMap, "dateFrom"));
+			//params.setDateTo(getStringValue(paramMap, "dateTo"));
 			
-			logger.info("PRETTY: "+params.getPretty());
+			params.setPretty(getBooleanValue(paramMap, "pretty"));
+			params.setCountTotals(getBooleanValue(paramMap, "count"));
+			
+			logger.info("PRETTY: " + params.getPretty());
 			
 			return params;
 		}

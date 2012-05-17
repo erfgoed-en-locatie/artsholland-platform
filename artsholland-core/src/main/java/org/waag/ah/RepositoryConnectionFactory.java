@@ -1,18 +1,14 @@
 package org.waag.ah;
 
-import java.io.IOException;
-
 import javax.ejb.Local;
 
 import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
 import org.openrdf.sail.Sail;
+import org.waag.ah.exception.ConnectionException;
 
 @Local
 public interface RepositoryConnectionFactory {
-	
-	public Sail getSail();
-	
-	public RepositoryConnection getConnection() 
-			throws IOException, RepositoryException;
+	Sail getSail() throws ConnectionException;
+	Sail getIndexingSail() throws ConnectionException;
+	RepositoryConnection getConnection() throws ConnectionException;
 }

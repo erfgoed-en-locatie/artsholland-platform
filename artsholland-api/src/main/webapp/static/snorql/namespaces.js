@@ -1,4 +1,7 @@
 var D2R_namespacePrefixes = {
+	ah: "http://purl.org/artsholland/1.0/",
+	nub: "http://resources.uitburo.nl/",	    
+		
     rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
     owl: 'http://www.w3.org/2002/07/owl#',
@@ -10,10 +13,12 @@ var D2R_namespacePrefixes = {
     /*ov: 'http://open.vocab.org/terms/',*/
     xsd: 'http://www.w3.org/2001/XMLSchema#',
     time: "http://www.w3.org/2006/time#", 
-    gr: "http://purl.org/goodrelations/v1#",
     geo: "http://www.w3.org/2003/01/geo/wgs84_pos#",
     vcard: "http://www.w3.org/2006/vcard/ns#",
-    nub: "http://resources.uitburo.nl/",
-    ah: "http://purl.org/artsholland/1.0/",    
+    
+    osgeo: "http://rdf.opensahara.com/type/geo/",
+	search: "http://rdf.opensahara.com/search#",
+	fn: "http://www.w3.org/2005/xpath-functions#", 
+      
 };
 

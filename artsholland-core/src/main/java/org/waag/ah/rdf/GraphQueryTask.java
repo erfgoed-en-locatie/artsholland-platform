@@ -7,14 +7,17 @@ import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.RDFWriterRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.waag.ah.QueryDefinition;
-import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.WriterConfig;
 
 public class GraphQueryTask extends AbstractQueryTask {
-	public GraphQueryTask(RepositoryConnectionFactory cf,
+	final static Logger logger = LoggerFactory.getLogger(GraphQueryTask.class);
+
+	public GraphQueryTask(RepositoryConnection conn,
 			QueryDefinition query, WriterConfig config, OutputStream os) {
-		super(cf, query, config, os);
+		super(conn, query, config, os);
 	}
 
 	@Override
@@ -23,11 +26,12 @@ public class GraphQueryTask extends AbstractQueryTask {
 		final GraphQuery sailGraphQuery = cxn
 				.prepareGraphQuery(query.getQueryLanguage(), query.getQuery(),
 						config.getBaseUri());
-//		RDFFormat.forMIMEType(config.getFormat(), RDFFormat.RDFXML)
-		final RDFFormat format = RDFWriterRegistry.getInstance()
-				.getFileFormatForMIMEType(config.getFormat());
+		final RDFFormat format = RDFFormat.forMIMEType(config.getFormat(),
+				RDFFormat.RDFXML);
+		// final RDFFormat format = RDFWriterRegistry.getInstance()
+		// .getFileFormatForMIMEType(config.getFormat());
 		final RDFWriter w = RDFWriterRegistry.getInstance().get(format)
-				.getWriter(os);	
+				.getWriter(os);
 		applyConfig(w);
 		sailGraphQuery.evaluate(w);
 	}

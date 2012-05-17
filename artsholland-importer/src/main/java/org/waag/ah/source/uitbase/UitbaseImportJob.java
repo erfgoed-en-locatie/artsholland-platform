@@ -52,6 +52,8 @@ public class UitbaseImportJob extends AbstractImportJob {
 //			JobDataMap dataMap = context.getMergedJobDataMap();
 //			logger.info("INCOMING DATAMAP: "+dataMap.getWrappedMap());
 
+			logger.info("Running import job with strategy: "+strategy);
+			
 			DateTime startTime = strategy.equals(STRATEGY_FULL) ? null
 					: (DateTime) context.get("startTime");
 			List<URL> urls = urlGenerator.getURLs(
