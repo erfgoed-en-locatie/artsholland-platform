@@ -3,6 +3,8 @@ package org.waag.ah.spring.service;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.rio.RDFFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,8 +20,8 @@ import org.waag.ah.rest.util.RestRelationQueryGenerator;
 
 @Service("restService")
 public class RestService implements InitializingBean {
-//	private static final Logger logger = LoggerFactory
-//			.getLogger(RestService.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(RestService.class);
 
 	RestRelation rootRelation;
 	RestRelationQueryGenerator queryGenerator;
@@ -30,6 +32,7 @@ public class RestService implements InitializingBean {
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		RDFFormat.register(RDFJSONFormat.RESTAPIJSON);
+//		RDFFormat.register(RDFFormat.RDFXML);
 
 		rootRelation = new RestRelation();
 
@@ -92,6 +95,7 @@ public class RestService implements InitializingBean {
 	public RdfQueryDefinition getPagedQuery(RestParameters params)
 			throws MalformedQueryException {
                 params.setRequestType(RequestType.REST);
+		logger.info("GET PAGED QUERY");
 		RdfQueryDefinition query = queryGenerator.generate(params);
 		if (query == null) {
 			throw new MalformedQueryException();
@@ -101,6 +105,7 @@ public class RestService implements InitializingBean {
 		config.setMetaData("page", String.valueOf(params.getPage()));
 		config.setMetaData("limit", String.valueOf(params.getResultLimit()));
 		config.setWrapResults(true);
+		logger.info("RETURN PAGED QUERY");
 		return query;
 	}
 	

@@ -5,9 +5,11 @@ import java.util.List;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.waag.ah.spring.RestParametersArgumentResolver;
+import org.waag.ah.spring.interceptor.MetricsInterceptor;
 
 /**
  * API configuration class.
@@ -32,8 +34,9 @@ public class BaseConfig extends WebMvcConfigurerAdapter {
 		registry.addResourceHandler("/favicon.ico").addResourceLocations("/static/favicon.ico");
 	}
 
-//	@Override
-//	public void addInterceptors(InterceptorRegistry registry) {
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
 //		registry.addInterceptor(new DataUrlInterceptor());
-//	}
+		registry.addInterceptor(new MetricsInterceptor());
+	}
 }

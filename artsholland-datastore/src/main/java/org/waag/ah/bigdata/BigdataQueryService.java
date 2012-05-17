@@ -13,6 +13,8 @@ import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.query.parser.ParsedTupleQuery;
 import org.openrdf.query.parser.QueryParser;
 import org.openrdf.query.parser.sparql.SPARQLParserFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.waag.ah.QueryDefinition;
 import org.waag.ah.QueryService;
 import org.waag.ah.QueryTask;
@@ -25,8 +27,8 @@ import org.waag.ah.rdf.TupleQueryTask;
 @Singleton
 @DependsOn("BigdataConnectionService")
 public class BigdataQueryService implements QueryService {
-//	private static final Logger logger = LoggerFactory
-//			.getLogger(BigdataQueryService.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(BigdataQueryService.class);
 	
 	@EJB(mappedName="java:module/BigdataConnectionService")
 	private RepositoryConnectionFactory cf;
@@ -35,9 +37,11 @@ public class BigdataQueryService implements QueryService {
 	public QueryTask getQueryTask(QueryDefinition query,
 			WriterConfig config, OutputStream out)
 			throws MalformedQueryException {
+		logger.info("PARSING QUERY");
 		QueryParser parser = new SPARQLParserFactory().getParser();
 		ParsedQuery parsedQuery = parser.parseQuery(query.getQuery(),
 				config.getBaseUri());
+		logger.info("PARSED QUERY, TYPE="+parsedQuery.getClass().getName());
 		
 		if (parsedQuery instanceof ParsedTupleQuery) {
 			return new TupleQueryTask(cf, query, config, out);
