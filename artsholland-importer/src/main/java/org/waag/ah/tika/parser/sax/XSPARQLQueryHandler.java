@@ -1,8 +1,10 @@
 package org.waag.ah.tika.parser.sax;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -12,10 +14,13 @@ import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.NamePool;
+import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.Processor;
+import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XQueryCompiler;
 import net.sf.saxon.s9api.XQueryEvaluator;
 import net.sf.saxon.s9api.XdmItem;
+import net.sf.saxon.s9api.XdmNode;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.tika.metadata.Metadata;
@@ -51,7 +56,12 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	private Stack<String> stack;
 
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata,
-			ParseContext context, InputStream xquery)
+			ParseContext context, InputStream xquery) throws ParserException {
+		this(handler, metadata, context, xquery, null);
+	}
+
+	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata,
+			ParseContext context, InputStream xquery, Map<String, URI> includes)
 			throws ParserException {
 		this.matcher = new XPathParser("rdf", RDF.NAMESPACE).parse("/rdf:RDF/descendant::node()");
 		this.handler = handler;
@@ -70,22 +80,35 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			Processor processor = new Processor(config);
 			XQueryCompiler compiler = processor.newXQueryCompiler();			
 			evaluator = compiler.compile(q).load();	
+			
+			if (includes != null) {
+				DocumentBuilder docBuilder = processor.newDocumentBuilder();
+				for (Entry<String, URI> item : includes.entrySet()) {
+					XdmNode document = docBuilder.build(new File(item.getValue()));
+					evaluator.setExternalVariable(new QName(item.getKey()), document);				
+				}
+			}
 		} catch (Exception e) {
 			throw new ParserException(e.getMessage());
-		}			
+		}		
 	}
 
 	private boolean processing() {
 		return stack.size() > 0;
 	}
-
+	
+	@Override
+	public void startPrefixMapping(String prefix, String uri)
+			throws SAXException {
+//		xmlCollector.startPrefixMapping(prefix, uri);
+		namepool.allocateNamespaceCode(prefix, uri);
+	}
+	
 	@Override
 	public void startDocument() throws SAXException {
 		this.handler.startDocument();
 		AttributesImpl atts = new AttributesImpl();
-		for (Entry<String, String> mapping : namepool.getMappings().entrySet()) {
-			this.handler.startPrefixMapping(mapping.getKey(), mapping.getValue());
-		}
+		applyNamespaces(handler);
 		this.handler.startElement(RDF.NAMESPACE, "RDF", "rdf:RDF", atts);
 	}
 
@@ -100,6 +123,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			Attributes attributes) throws SAXException {
 		if (!processing()) {
 			xmlCollector = new ToXMLContentHandler();
+			applyNamespaces(xmlCollector);
 		}
 		// Make sure element attribute values don't contain unwanted HTML chars.
 		for (int idx=0; idx<attributes.getLength(); idx++) {
@@ -162,6 +186,12 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				xmlCollector = null;
 			}
 		}
+	}
+	
+	private void applyNamespaces(ContentHandler handler) throws SAXException {
+		for (Entry<String, String> mapping : namepool.getMappings().entrySet()) {
+			handler.startPrefixMapping(mapping.getKey(), mapping.getValue());
+		}		
 	}
 	
 	private static class NamespaceCollector extends NamePool {

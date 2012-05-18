@@ -26,14 +26,14 @@
       <recover>false</recover>
     </job>
     
-    <!-- <job>
+    <job>
       <name>DOSA</name>
       <group>WebResourceImport</group>
       <description>Import data from DOSA</description>
       <job-class>org.waag.ah.source.dosa.DOSAImportJob</job-class>
       <durability>false</durability>
       <recover>false</recover>
-    </job> -->
+    </job>
 		
      <trigger>
       <cron>
@@ -57,7 +57,7 @@
       </cron>
     </trigger> 
     
-    <!-- <trigger>
+    <trigger>
       <cron>
         <name>DOSAImportTrigger</name>
         <group>Import</group>
@@ -67,7 +67,7 @@
         <cron-expression>0 0/1 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
-    </trigger> -->
+    </trigger>
 		
   </schedule>
 </job-scheduling-data>

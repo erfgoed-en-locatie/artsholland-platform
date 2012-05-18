@@ -6,6 +6,25 @@
     xmlns:sdmxd="http://purl.org/linked-data/sdmx/2009/dimension#"
     xmlns:sdmxm="http://purl.org/linked-data/sdmx/2009/measure#"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+  
+  <structure document="2010_oov.xls" sheet="objectief" name="os:Veiligheidsindex" layout-ref="">
+    <layout type="neighbourhoods" offsetx="30" rows="os:location" cols="os:nationality" vals="os:population"/>
+    <properties>
+    
+    
+    gebiedscode	gebiedsnaam	waarde
+    
+      <property type="dimension" lobel="Gebiedscode" name="os:gebiedscode" range="os:Plaats" extends="sdmxd:refArea" concept="sdmxc:refArea"/>
+      <property type="dimension" lobel="Gebiedsnaam" name="os:gebiedsnaam" range="os:Plaats" extends="sdmxd:refArea" concept="sdmxc:refArea"/>
+      <property type="measure" label="Population" name="os:population" range="xsd:nonNegativeInteger" extends="sdmxm:absValue"/>
+    </properties>
+    <subjects>
+      <sdmx-subject>1.4</sdmx-subject>
+      <sdmx-subject>3.2</sdmx-subject>
+    </subjects>
+  </structure>
+  
+  
   <structure sheet="2011_jaarboek_1816" name="os:Jaarboek_1816">
     <layout type="crosstab" offsetx="3" rows="os:location" cols="os:nationality" vals="os:population"/>
     <properties>
