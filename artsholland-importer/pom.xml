@@ -1,17 +1,18 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  
+
   <artifactId>artsholland-importer</artifactId>
   <packaging>ejb</packaging>
   <name>Importer</name>
   <description>Arts Holland importer module</description>
-  
+
   <parent>
     <groupId>org.waag.artsholland</groupId>
     <artifactId>artsholland</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-  </parent>  
-  
+  </parent>
+
   <build>
     <plugins>
       <plugin>
@@ -21,17 +22,17 @@
         <configuration>
           <ejbVersion>${ejb.version}</ejbVersion>
         </configuration>
-      </plugin>         
+      </plugin>
     </plugins>
   </build>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.waag.artsholland</groupId>
       <artifactId>artsholland-datastore</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <type>ejb</type>
-    </dependency>        
+    </dependency>
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-parsers</artifactId>
@@ -42,7 +43,7 @@
           <groupId>org.apache.xmlbeans</groupId>
         </exclusion>
       </exclusions>
-    </dependency>             
+    </dependency>
     <dependency>
       <groupId>org.antlr</groupId>
       <artifactId>antlr-runtime</artifactId>

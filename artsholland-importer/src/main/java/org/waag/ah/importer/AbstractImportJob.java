@@ -10,15 +10,15 @@ import javax.naming.NamingException;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.quartz.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.ImportMetadata;
 import org.waag.ah.ImportResource;
 import org.waag.ah.ImportService;
 import org.waag.ah.PlatformConfigHelper;
+import org.waag.ah.URLImportJob;
 
-public abstract class AbstractImportJob implements Job {
+public abstract class AbstractImportJob implements URLImportJob {
 	private Logger logger = LoggerFactory.getLogger(AbstractImportJob.class);
 	private ImportService importServiceBean;
 	private PropertiesConfiguration config;
