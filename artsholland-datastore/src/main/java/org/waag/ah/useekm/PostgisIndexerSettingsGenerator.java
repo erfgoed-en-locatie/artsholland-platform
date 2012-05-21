@@ -20,8 +20,8 @@ public class PostgisIndexerSettingsGenerator {
 		Map<String, Boolean> result = new LinkedHashMap<String, Boolean>();
 		
 		result.put("ah:geometry", false);
-		result.put("ah:shortDescription", true);
 		result.put("dc:description", true);
+		result.put("dc:title", true);
 		
 		return Collections.unmodifiableMap(result);	
 	}
