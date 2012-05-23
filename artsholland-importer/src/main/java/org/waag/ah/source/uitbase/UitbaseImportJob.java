@@ -57,9 +57,7 @@ public class UitbaseImportJob extends AbstractImportJob {
 			DateTime startTime = strategy.equals(STRATEGY_FULL) ? null
 					: (DateTime) context.get("startTime");
 			List<URL> urls = urlGenerator.getURLs(
-					(DateTime) context.get("endTime"), startTime/*, 
-					(DateTime) context.get("startTime")*/);
-			
+					(DateTime) context.get("endTime"), startTime);
 			if (logger.isDebugEnabled()) {
 				logger.debug("Importing URLs: "+urls.toString());
 			}
