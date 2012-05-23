@@ -79,5 +79,19 @@ public class XSPARQLCharacterEncoder {
 		}
 		return text;
 	}
-
+	
+	/*
+	 * XSPARQL parses SPARQL type definitions like ^^xsd:decimal and encloses
+	 * those definition with < and > brackets. This leads to Bigdata storing 
+	 * invalid type definitions like ^^<xsd:decimal> (a URI enclosed by brackets
+	 * means a complete, non-namespaced URI). 
+	 * XSPARQL does not allow full URIs as type definition by using brackets.
+	 * For now, the repairInvalidTypeURIs function replaces all type definitions
+	 * (expecting them all to be namespaced) and removing the brackets.
+	 */	
+	public static String repairInvalidTypeURIs(String turtle) {
+		return turtle.replaceAll("\\^\\^<(.*)>", "^^$1");	
+	}
+	
+	
 }
