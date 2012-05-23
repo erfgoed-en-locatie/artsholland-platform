@@ -81,9 +81,10 @@ public class UitbaseParser extends XMLParser {
           context.getSAXParser().parse(
                   new CloseShieldInputStream(stream),
                   new OfflineContentHandler(wrappedHandler));
+          logger.info("OUTPUT: "+wrappedHandler.toString());
       } catch (SAXException e) {
           tagged.throwIfCauseOf(e);
-          throw new TikaException("XML parse error", e);
+//          throw new TikaException("XML parse error", e);
       }
 	}	
 

@@ -60,5 +60,10 @@
       <artifactId>geonames</artifactId>
       <version>1.6</version>
     </dependency>
+    <dependency>
+      <groupId>com.tinkerpop</groupId>
+      <artifactId>pipes</artifactId>
+      <version>1.0</version>
+    </dependency>    
   </dependencies>
 </project>

@@ -7,8 +7,8 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.JobConf;
 import org.waag.ah.ImportMetadata;
-import org.waag.ah.bixo.CrawlConfig;
 import org.waag.ah.cascading.ImportJobWorkflow;
+import org.waag.ah.cascading.bixo.CrawlConfig;
 
 import bixo.config.FetcherPolicy;
 import bixo.config.FetcherPolicy.FetcherMode;
@@ -30,8 +30,9 @@ public class WorkFlowTest {
 	public static void main(String[] args) throws IOException, InterruptedException {
         
 		List<URL> resources = new ArrayList<URL>();
-		resources.add(new URL("http://ps4.uitburo.nl/api/search?key=505642b12881b9a60688411a333bc78b&resolve=true&rows=500&start=0&createdto=2012-04-29T13:44:00.007Z"));
+		resources.add(new URL("http://ps4.uitburo.nl/api/search?key=505642b12881b9a60688411a333bc78b&resolve=true&rows=23&start=0&createdto=2012-04-29T13:44:00.007Z"));
 //		resources.add(new URL("http://ps4.uitburo.nl/api/search?key=505642b12881b9a60688411a333bc78b&resolve=true&rows=500&start=500&createdto=2012-04-29T13:44:00.007Z"));
+//		resources.add(new URL("http://ps4.uitburo.nl/api/search?key=505642b12881b9a60688411a333bc78b&resolve=true&rows=1&start=22&createdto=2012-04-29T13:44:00.007Z"));
 		
 		ImportMetadata metadata = new ImportMetadata();
 		metadata.setJobIdentifier("1234");
@@ -50,7 +51,7 @@ public class WorkFlowTest {
         UserAgent userAgent = new UserAgent("TestAgent", "test@waxworks.nl", "http://waxworks.nl");
 
         FetcherPolicy fetcherPolicy = new FetcherPolicy();
-        fetcherPolicy.setCrawlDelay(CrawlConfig.DEFAULT_CRAWL_DELAY);
+        fetcherPolicy.setCrawlDelay(CrawlConfig.DEFAULT_CRAWL_DELAY*10000);
 //        fetcherPolicy.setMaxContentSize(CrawlConfig.MAX_CONTENT_SIZE);
         fetcherPolicy.setFetcherMode(FetcherMode.EFFICIENT);  
         

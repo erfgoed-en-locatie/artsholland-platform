@@ -6,8 +6,10 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Stack;
 
 import javax.xml.transform.stream.StreamSource;
@@ -54,6 +56,8 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	private ContentHandler handler;
 	private Matcher matcher;
 	private Stack<String> stack;
+	
+	private long row = 0;
 
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata,
 			ParseContext context, InputStream xquery) throws ParserException {
@@ -114,7 +118,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 
 	@Override
 	public void endDocument() throws SAXException {
-		super.endElement(RDF.NAMESPACE, "RDF", "rdf:RDF");
+		this.handler.endElement(RDF.NAMESPACE, "RDF", "rdf:RDF");
 		super.endDocument();
 	}
 
@@ -165,9 +169,19 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				evaluator.setSource(new StreamSource(new StringReader(xmlString)));
 				StringBuilder combined = new StringBuilder();
 				
-				for (XdmItem item : evaluator) {
-					combined.append(item);
-				}
+				Iterator<XdmItem> iterator = evaluator.iterator();
+				String namespaces = iterator.next().toString();
+				String content = iterator.next().toString();
+				
+				combined.append(namespaces);
+				combined.append(content);
+				
+//				for (XdmItem item : evaluator) {
+//					combined.append(item);
+//				}
+				
+				logger.info("ROW: "+row+combined.toString());
+				row++;
 				
 				Metadata mdata = new Metadata();
 				mdata.set(Metadata.CONTENT_TYPE, "text/turtle");
@@ -179,7 +193,8 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 						new ByteArrayInputStream(turtleString.getBytes()), 
 						new MatchingContentHandler(
 						new EmbeddedContentHandler(this.handler), matcher), mdata, context);
-				
+			} catch (NoSuchElementException e) {
+				logger.error("Not enough data to proceed");
 			} catch (Exception e) {
 				throw new SAXException(e.getMessage(), e);
 			} finally {

@@ -6,7 +6,7 @@ import java.net.UnknownHostException;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.log4j.Logger;
 import org.hsqldb.Server;
-import org.waag.ah.bixo.CrawlDbDatum;
+import org.waag.ah.cascading.bixo.CrawlDbDatum;
 
 import cascading.jdbc.JDBCScheme;
 import cascading.jdbc.JDBCTap;

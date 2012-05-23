@@ -9,8 +9,8 @@ import java.util.Map;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.mapred.JobConf;
-import org.waag.ah.bixo.CrawlConfig;
-import org.waag.ah.bixo.CrawlDbDatum;
+import org.waag.ah.cascading.bixo.CrawlConfig;
+import org.waag.ah.cascading.bixo.CrawlDbDatum;
 
 import bixo.config.FetcherPolicy;
 import bixo.config.ParserPolicy;
