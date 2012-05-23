@@ -4,9 +4,9 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.waag.ah.PlatformConfig;
 import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.service.MongoConnectionService;
 
@@ -21,7 +21,7 @@ public class MongoConnectionServiceImpl implements MongoConnectionService {
 			.getLogger(MongoConnectionServiceImpl.class);
 
 	private Mongo mongo;
-	private PropertiesConfiguration config;
+	private PlatformConfig config;
 
 	@PostConstruct
 	public void connect() {

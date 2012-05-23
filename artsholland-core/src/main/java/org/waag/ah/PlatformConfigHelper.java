@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  *  
  * @author Raoul Wissink <raoul@raoul.net>
  */
-public class PlatformConfigHelper extends PropertiesConfiguration {
+public class PlatformConfigHelper { //extends PropertiesConfiguration {
 	final static Logger logger = LoggerFactory.getLogger(PlatformConfigHelper.class);
 	private static PlatformConfig platformConfig;
 	
@@ -52,11 +52,5 @@ public class PlatformConfigHelper extends PropertiesConfiguration {
 					config.getProperty(config.getString(property)));
 		}
 		return properties;
-	}
-	
-	public static class PlatformConfig extends PropertiesConfiguration {
-		public PlatformConfig(String fileName) throws ConfigurationException {
-			super(fileName);
-		}
 	}
 }
