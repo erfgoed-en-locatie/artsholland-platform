@@ -21,12 +21,12 @@ public class UitbaseURLGenerator {
 	
 	private static final int ROWS = 500;
 	
-//	public static final String[] RESOURCES = { 
-//		"events", 
-//		"locations", 
-//		"productions",
-//		"groups" 
-//	};
+	public static final String[] RESOURCES = { 
+		"events", 
+		"locations", 
+		"productions",
+		"groups" 
+	};
 	
 	public UitbaseURLGenerator(String endpoint, String apiKey) {
 		BASE_URL = endpoint + "/search";
@@ -45,25 +45,29 @@ public class UitbaseURLGenerator {
 		String dtToParam = dtTo != null ? "&createdto="+fmt.withZone(DateTimeZone.UTC).print(dtTo) : "";
 		String dtFromParam = dtFrom != null ? "&createdfrom="+fmt.withZone(DateTimeZone.UTC).print(dtFrom) : "";
 		
-//		for (String resource : RESOURCES) {
-		int count = 0;
-		try {
-			String content = readURL(getCountURL(dtFromParam+dtToParam));
-			count = 1000; //getCount(content);	
-		} catch (IOException e) {			
-			e.printStackTrace();
-		}
-
-		int i = 0;
-		while (i < count) {
-			// TODO: use something like URLBuilder 
-			String url = addAPIKey(BASE_URL) + 
-					"&resolve=true" +
-					"&rows=" + ROWS + 
-					"&start=" + i + 
-					dtFromParam+dtToParam;
-			urls.add(new URL(url));
-			i += ROWS;
+		for (String resource : RESOURCES) {
+			String resourceFilterParam = "&filter=resource:" + resource;
+			
+			int count = 0;
+			try {
+				String content = readURL(getCountURL(dtFromParam + dtToParam + resourceFilterParam));
+				count = getCount(content);	
+			} catch (IOException e) {			
+				e.printStackTrace();
+			}
+	
+			int i = 0;
+			while (i < count) {
+				// TODO: use something like URLBuilder 
+				String url = addAPIKey(BASE_URL) + 
+						"&resolve=true" +
+						"&rows=" + ROWS + 
+						"&start=" + i + 
+						dtFromParam + dtToParam +
+						resourceFilterParam;
+				urls.add(new URL(url));
+				i += ROWS;
+			}
 		}
 		return urls;
 	}
@@ -84,7 +88,7 @@ public class UitbaseURLGenerator {
 	}
 
 	private String getCountURL(String filter) {
-		return addAPIKey(BASE_URL) + "&rows=0"+filter;
+		return addAPIKey(BASE_URL) + "&rows=0" + filter;
 	}
 
 	private String addAPIKey(String url) {
