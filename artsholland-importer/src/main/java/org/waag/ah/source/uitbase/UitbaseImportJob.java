@@ -11,8 +11,8 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.ImportMetadata;
+import org.waag.ah.PlatformConfig;
 import org.waag.ah.PlatformConfigHelper;
-import org.waag.ah.PlatformConfigHelper.PlatformConfig;
 import org.waag.ah.importer.AbstractImportJob;
 
 @DisallowConcurrentExecution
