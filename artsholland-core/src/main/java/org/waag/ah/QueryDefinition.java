@@ -7,4 +7,5 @@ public interface QueryDefinition {
 	String getCountQuery();
 	QueryLanguage getQueryLanguage();
 	WriterConfig getWriterConfig();
+	boolean isSingle();
 }

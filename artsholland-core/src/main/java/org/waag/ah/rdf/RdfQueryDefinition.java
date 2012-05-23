@@ -7,6 +7,7 @@ public class RdfQueryDefinition implements QueryDefinition {
 	private final QueryLanguage queryLang;
 	private final String query;
 	private final String countQuery;
+	private boolean single = false;
 	private RDFWriterConfig writerConfig = null;
 	
 	public RdfQueryDefinition(QueryLanguage queryLang, String query) {
@@ -17,6 +18,13 @@ public class RdfQueryDefinition implements QueryDefinition {
 		this.queryLang = queryLang;
 		this.query = query;
 		this.countQuery = countQuery;
+	}
+	
+	public RdfQueryDefinition(QueryLanguage queryLang, String query, String countQuery, boolean single) {
+		this.queryLang = queryLang;
+		this.query = query;
+		this.countQuery = countQuery;
+		this.single = single;
 	}
 
 	@Override
@@ -32,6 +40,11 @@ public class RdfQueryDefinition implements QueryDefinition {
 	@Override
 	public String getCountQuery() {
 		return countQuery;
+	}
+	
+	@Override
+	public boolean isSingle() {
+		return single;
 	}
 	
 	public void setWriterConfig(RDFWriterConfig config) {

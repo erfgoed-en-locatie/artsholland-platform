@@ -9,7 +9,6 @@ import java.util.Map;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.rest.model.AHRDFNamespaces;
 
