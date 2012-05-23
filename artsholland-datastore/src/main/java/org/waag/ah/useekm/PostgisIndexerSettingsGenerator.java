@@ -6,7 +6,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.waag.ah.rest.model.AHRDFNamespaces;
 
 import com.useekm.indexing.postgis.PostgisIndexMatcher;
@@ -16,12 +18,15 @@ public class PostgisIndexerSettingsGenerator {
 	
 	private static final Map<String, Boolean> PREDICATES = createMap();
 
+	@Autowired
+	static PropertiesConfiguration platformConfig;
+	
 	private static Map<String, Boolean> createMap() {
 		Map<String, Boolean> result = new LinkedHashMap<String, Boolean>();
 		
 		result.put("ah:geometry", false);
-		result.put("ah:shortDescription", true);
 		result.put("dc:description", true);
+		result.put("dc:title", true);
 		
 		return Collections.unmodifiableMap(result);	
 	}
@@ -31,9 +36,12 @@ public class PostgisIndexerSettingsGenerator {
 		// Initialize the datasource to be used for connections to Postgres:
 		BasicDataSource pgDatasource = new BasicDataSource();
 		pgDatasource.setDriverClassName("org.postgresql.Driver");
-		pgDatasource.setUrl("jdbc:postgresql://localhost:5432/useekm");
-		pgDatasource.setUsername("artsholland");
-		pgDatasource.setPassword("artsholland");
+		
+		// TODO: complete jdbc url in artsholland.properties?
+		pgDatasource.setUrl("jdbc:postgresql://localhost:5432/" + platformConfig.getString("useekm.database"));
+		
+		pgDatasource.setUsername(platformConfig.getString("postgres.user"));
+		pgDatasource.setPassword(platformConfig.getString("postgres.password"));
 
 		// Initialize the settings for the Postgis Indexer:
 		PostgisIndexerSettings settings = new PostgisIndexerSettings();
