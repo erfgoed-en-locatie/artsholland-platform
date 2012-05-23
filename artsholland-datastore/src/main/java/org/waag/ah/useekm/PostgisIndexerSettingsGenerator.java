@@ -6,9 +6,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.rest.model.AHRDFNamespaces;
 
 import com.useekm.indexing.postgis.PostgisIndexMatcher;
@@ -17,9 +19,6 @@ import com.useekm.indexing.postgis.PostgisIndexerSettings;
 public class PostgisIndexerSettingsGenerator {
 	
 	private static final Map<String, Boolean> PREDICATES = createMap();
-
-	@Autowired
-	static PropertiesConfiguration platformConfig;
 	
 	private static Map<String, Boolean> createMap() {
 		Map<String, Boolean> result = new LinkedHashMap<String, Boolean>();
@@ -31,7 +30,9 @@ public class PostgisIndexerSettingsGenerator {
 		return Collections.unmodifiableMap(result);	
 	}
 
-	public static PostgisIndexerSettings generateSettings() {
+	public static PostgisIndexerSettings generateSettings() throws ConfigurationException {
+		
+		PropertiesConfiguration platformConfig = PlatformConfigHelper.getConfig(); 
 		
 		// Initialize the datasource to be used for connections to Postgres:
 		BasicDataSource pgDatasource = new BasicDataSource();
