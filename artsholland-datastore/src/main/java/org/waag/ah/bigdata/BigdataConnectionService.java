@@ -75,19 +75,25 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 	@Override
 	public Sail getIndexingSail() throws ConnectionException {
 		Sail sail = new BigdataSail(bigdataRepo);		
-		PostgisIndexerSettings settings = PostgisIndexerSettingsGenerator.generateSettings();
-		IndexingSail idxSail = new IndexingSail(sail, settings);
+		
 		try {
+			PostgisIndexerSettings settings = PostgisIndexerSettingsGenerator.generateSettings();
+			IndexingSail idxSail = new IndexingSail(sail, settings);
+			
 			IndexingSailConnection idxConn = idxSail.getConnection();
 			idxConn.reindex();
 			idxConn.commit();
 			idxConn.close();
+			
+			return idxSail;
 		} catch (IndexException e) {
 			logger.error(e.getMessage(), e);
 		} catch (SailException e) {
 			throw new ConnectionException(e.getMessage(), e);
+		} catch (ConfigurationException e) {
+			logger.error(e.getMessage(), e);
 		}
-		return idxSail;		
+		return null;
 	}
 	
 	/**
