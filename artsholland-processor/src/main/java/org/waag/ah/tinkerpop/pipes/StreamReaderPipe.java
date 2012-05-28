@@ -20,7 +20,7 @@ public class StreamReaderPipe extends AbstractPipe<InputStream, String> {
 			in.close();
 			return writer.toString();
 		} catch (IOException e) {
-			throw new RuntimeException(e.getMessage(), e);
+			throw new NoSuchElementException(e.getMessage());
 		}
 	}
 }

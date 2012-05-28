@@ -7,11 +7,10 @@ import java.util.NoSuchElementException;
 import com.gc.iotools.stream.is.InputStreamFromOutputStream;
 import com.tinkerpop.pipes.AbstractPipe;
 
-public abstract class AbstractStreamingPipe extends
-		AbstractPipe<InputStream, InputStream> {
+public abstract class AbstractStreamingPipe<T> extends
+		AbstractPipe<T, InputStream> {
 
-	protected abstract void processStream(InputStream in, OutputStream out)
-			throws Exception;
+	protected abstract void process(T in, OutputStream out) throws Exception;
 
 	@Override
 	public final InputStream processNextStart() throws NoSuchElementException {
@@ -19,7 +18,7 @@ public abstract class AbstractStreamingPipe extends
 			@Override
 			public String produce(final OutputStream outStream)
 					throws Exception {
-				processStream(starts.next(), outStream);
+				process(starts.next(), outStream);
 				return "OK";
 			}
 		};

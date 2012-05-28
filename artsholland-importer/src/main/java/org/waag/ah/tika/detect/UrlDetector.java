@@ -9,6 +9,7 @@ import org.apache.tika.mime.MediaType;
 import org.apache.tika.mime.MimeTypeException;
 import org.apache.tika.mime.MimeTypes;
 import org.apache.tika.mime.MimeTypesFactory;
+import org.springframework.util.Assert;
 
 public class UrlDetector implements Detector {
 	private static final long serialVersionUID = -9161276980425137542L;
@@ -22,6 +23,7 @@ public class UrlDetector implements Detector {
 	public MediaType detect(InputStream input, Metadata metadata)
 			throws IOException {
 		String url = metadata.get(Metadata.RESOURCE_NAME_KEY);
+		Assert.notNull(url, "Resource name cannot be empty");
 		return types.getMimeType(url).getType();
 	}
 }

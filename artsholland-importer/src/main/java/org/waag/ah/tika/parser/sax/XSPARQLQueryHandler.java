@@ -57,7 +57,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	private Matcher matcher;
 	private Stack<String> stack;
 	
-	private long row = 0;
+//	private long row = 0;
 
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata,
 			ParseContext context, InputStream xquery) throws ParserException {
@@ -180,8 +180,8 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 //					combined.append(item);
 //				}
 				
-				logger.info("ROW: "+row+combined.toString());
-				row++;
+//				logger.info("ROW: "+row+combined.toString());
+//				row++;
 				
 				Metadata mdata = new Metadata();
 				mdata.set(Metadata.CONTENT_TYPE, "text/turtle");
@@ -195,7 +195,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 						new MatchingContentHandler(
 						new EmbeddedContentHandler(this.handler), matcher), mdata, context);
 			} catch (NoSuchElementException e) {
-				logger.error("Not enough data to proceed");
+				logger.warn("Not enough data to proceed: "+xmlString);
 			} catch (Exception e) {
 				throw new SAXException(e.getMessage(), e);
 			} finally {
