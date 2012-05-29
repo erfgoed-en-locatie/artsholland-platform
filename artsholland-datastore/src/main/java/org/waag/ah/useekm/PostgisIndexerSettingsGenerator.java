@@ -40,7 +40,7 @@ public class PostgisIndexerSettingsGenerator {
 		// TODO: complete jdbc url in artsholland.properties?
 		pgDatasource.setUrl("jdbc:postgresql://localhost:5432/" + platformConfig.getString("useekm.database"));
 		
-		pgDatasource.setUsername(platformConfig.getString("postgres.user"));
+		pgDatasource.setUsername(platformConfig.getString("postgres.username"));
 		pgDatasource.setPassword(platformConfig.getString("postgres.password"));
 
 		// Initialize the settings for the Postgis Indexer:
