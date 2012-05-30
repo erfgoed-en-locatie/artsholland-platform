@@ -9,6 +9,8 @@ import java.util.Map;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.dbcp.BasicDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.rest.model.AHRDFNamespaces;
 
@@ -16,6 +18,7 @@ import com.useekm.indexing.postgis.PostgisIndexMatcher;
 import com.useekm.indexing.postgis.PostgisIndexerSettings;
 
 public class PostgisIndexerSettingsGenerator {
+	final static Logger logger = LoggerFactory.getLogger(PostgisIndexerSettingsGenerator.class);
 	
 	private static final Map<String, Boolean> PREDICATES = createMap();
 	

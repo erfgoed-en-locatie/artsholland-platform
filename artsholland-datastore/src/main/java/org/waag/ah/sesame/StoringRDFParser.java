@@ -29,42 +29,22 @@ public class StoringRDFParser {
 	private URI source;
 	private CustomRDFXMLParser parser;
 	
-	public StoringRDFParser(RepositoryConnection conn) {
-		this.conn = conn;
+	public StoringRDFParser() {
 		this.source = new URIImpl("http://purl.org/artsholland/1.0/metadata/source");
 		this.parser = new CustomRDFXMLParser();
 		this.parser.setRDFHandler(new CustomRDFHandler());
 	}
 	
-	public void parse(InputStream in, ImportMetadata metadata)
+	public void parse(RepositoryConnection conn, InputStream in, ImportMetadata metadata)
 			throws RDFParseException, RDFHandlerException, IOException,
 			RepositoryException {
-		//		try {
-		Assert.notNull(conn, "Connection to triple stote not initialized");
-		Assert.isTrue(conn.isOpen(), "Not connected to triple store");
 		Assert.notNull(metadata.getBaseURI(), "RDF parser needs a base URI");
 		Assert.notNull(metadata.getJobIdentifier(), "RDF parser needs a base URI");
+		this.conn = conn;
 		vf = conn.getValueFactory();
 		jobId = vf.createLiteral(metadata.getJobIdentifier());
 		parser.parse(in, metadata.getBaseURI());
-//		} catch (RepositoryException e) {
-//			logger.error(e.getMessage());
-//		}
     }
-
-	public void commit() throws RepositoryException {
-		Assert.notNull(conn, "Null connection");
-		conn.commit();
-	}
-	
-	public void rollback() {
-		try {
-			logger.info("ROLLBACK REQUESTED!");
-			conn.rollback();
-		} catch (RepositoryException e) {
-			logger.warn("Error rolling back transaction: "+e.getMessage());
-		}
-	}
 	
 	private class CustomRDFXMLParser extends RDFXMLParser {
 		@Override
@@ -107,11 +87,7 @@ public class StoringRDFParser {
 					logger.debug("ADDING "+counter+" STATEMENTS (CTX: "+statement.getContext()+")");
 				}
 			} catch (RepositoryException e) {
-				try {
-					conn.rollback();
-				} catch (RepositoryException e1) {
-					throw new RDFHandlerException(e);
-				}
+				throw new RDFHandlerException(e);
 			}
 		}
 		

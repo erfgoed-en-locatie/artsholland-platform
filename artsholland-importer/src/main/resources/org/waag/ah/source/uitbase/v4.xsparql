@@ -12,7 +12,8 @@ declare namespace osgeo = "http://rdf.opensahara.com/type/geo/";
 declare namespace nub="http://resources.uitburo.nl/";
 declare namespace ah = "http://purl.org/artsholland/1.0/";
 
-import module namespace waag = "http://waag.org" at "http://localhost:8080/static/xquery/waag.xquery.jsp";
+(: TODO: Import URL should be "dynamic" :) 
+import module namespace waag = "http://waag.org" at "http://api.artsholland.com/static/xquery/waag.xquery.jsp";
 
 let $baseuri := {"http://data.artsholland.com/"}
 let $baseuriUitburo := {"http://resources.uitburo.nl/"}
