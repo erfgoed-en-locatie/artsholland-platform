@@ -9,7 +9,8 @@ import java.util.Map;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.dbcp.BasicDataSource;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.rest.model.AHRDFNamespaces;
 
@@ -17,6 +18,7 @@ import com.useekm.indexing.postgis.PostgisIndexMatcher;
 import com.useekm.indexing.postgis.PostgisIndexerSettings;
 
 public class PostgisIndexerSettingsGenerator {
+	final static Logger logger = LoggerFactory.getLogger(PostgisIndexerSettingsGenerator.class);
 	
 	private static final Map<String, Boolean> PREDICATES = createMap();
 	
@@ -41,7 +43,7 @@ public class PostgisIndexerSettingsGenerator {
 		// TODO: complete jdbc url in artsholland.properties?
 		pgDatasource.setUrl("jdbc:postgresql://localhost:5432/" + platformConfig.getString("useekm.database"));
 		
-		pgDatasource.setUsername(platformConfig.getString("postgres.user"));
+		pgDatasource.setUsername(platformConfig.getString("postgres.username"));
 		pgDatasource.setPassword(platformConfig.getString("postgres.password"));
 
 		// Initialize the settings for the Postgis Indexer:

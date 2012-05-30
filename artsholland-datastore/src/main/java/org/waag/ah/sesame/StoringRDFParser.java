@@ -10,6 +10,7 @@ import org.openrdf.model.URI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.URIImpl;
+import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.RDFHandlerException;
@@ -23,48 +24,23 @@ import org.waag.ah.ImportMetadata;
 
 public class StoringRDFParser {
 	final static Logger logger = LoggerFactory.getLogger(StoringRDFParser.class);
-	private RepositoryConnection conn;
 	private ValueFactory vf;
-	private Literal jobId;
 	private URI source;
-	private CustomRDFXMLParser parser;
 	
-	public StoringRDFParser(RepositoryConnection conn) {
-		this.conn = conn;
+	public StoringRDFParser() {
+		this.vf = ValueFactoryImpl.getInstance();
 		this.source = new URIImpl("http://purl.org/artsholland/1.0/metadata/source");
-		this.parser = new CustomRDFXMLParser();
-		this.parser.setRDFHandler(new CustomRDFHandler());
 	}
 	
-	public void parse(InputStream in, ImportMetadata metadata)
+	public void parse(RepositoryConnection conn, InputStream in, ImportMetadata metadata)
 			throws RDFParseException, RDFHandlerException, IOException,
 			RepositoryException {
-		//		try {
-		Assert.notNull(conn, "Connection to triple stote not initialized");
-		Assert.isTrue(conn.isOpen(), "Not connected to triple store");
 		Assert.notNull(metadata.getBaseURI(), "RDF parser needs a base URI");
 		Assert.notNull(metadata.getJobIdentifier(), "RDF parser needs a base URI");
-		vf = conn.getValueFactory();
-		jobId = vf.createLiteral(metadata.getJobIdentifier());
+		CustomRDFXMLParser parser = new CustomRDFXMLParser();
+		parser.setRDFHandler(new CustomRDFHandler(conn, metadata.getJobIdentifier()));		
 		parser.parse(in, metadata.getBaseURI());
-//		} catch (RepositoryException e) {
-//			logger.error(e.getMessage());
-//		}
     }
-
-	public void commit() throws RepositoryException {
-		Assert.notNull(conn, "Null connection");
-		conn.commit();
-	}
-	
-	public void rollback() {
-		try {
-			logger.info("ROLLBACK REQUESTED!");
-			conn.rollback();
-		} catch (RepositoryException e) {
-			logger.warn("Error rolling back transaction: "+e.getMessage());
-		}
-	}
 	
 	private class CustomRDFXMLParser extends RDFXMLParser {
 		@Override
@@ -89,11 +65,12 @@ public class StoringRDFParser {
 	}
 	
 	private class CustomRDFHandler extends RDFHandlerBase {
-		private int counter = 0;
+		private RepositoryConnection conn;
+		private Literal jobId;
 		
-		@Override
-		public void startRDF() throws RDFHandlerException {
-			counter = 0;
+		public CustomRDFHandler(RepositoryConnection conn, String identifier) {
+			this.conn = conn;
+			this.jobId = vf.createLiteral(identifier);
 		}
 		
 		@Override
@@ -102,16 +79,8 @@ public class StoringRDFParser {
 				Statement statement = getContextStatement(st);
 				conn.add(statement);
 				conn.add(statement.getContext(), source, jobId);
-				counter++;
-				if (counter % 1024 == 0) {
-					logger.debug("ADDING "+counter+" STATEMENTS (CTX: "+statement.getContext()+")");
-				}
 			} catch (RepositoryException e) {
-				try {
-					conn.rollback();
-				} catch (RepositoryException e1) {
-					throw new RDFHandlerException(e);
-				}
+				throw new RDFHandlerException(e);
 			}
 		}
 		

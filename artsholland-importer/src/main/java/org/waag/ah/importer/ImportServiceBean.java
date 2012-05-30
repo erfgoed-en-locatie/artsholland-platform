@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.ejb.EJB;
 import javax.ejb.Stateful;
 
@@ -19,6 +17,7 @@ import org.waag.ah.ImportMetadata;
 import org.waag.ah.ImportResource;
 import org.waag.ah.ImportService;
 import org.waag.ah.RepositoryConnectionFactory;
+import org.waag.ah.exception.ImportException;
 import org.waag.ah.sesame.StoringRDFParser;
 
 @Stateful
@@ -26,63 +25,96 @@ public class ImportServiceBean implements ImportService {
 	private static final Logger logger = LoggerFactory.getLogger(ImportServiceBean.class);
 	private RepositoryConnection conn;
 
+	private final int RETRY_MAX_COUNT = 3;
+	private final long RETRY_TIMEOUT = 5000;
+
 	@EJB(mappedName="java:app/datastore/BigdataConnectionService")
 	private RepositoryConnectionFactory cf;
 	
-	@PostConstruct
-	public void init() {
-		Assert.isNull(conn, "Connection already initialized");
+//	@PostConstruct
+//	public void init() {
+//		Assert.isNull(conn, "Connection already initialized");
+//		connect();
+//	}
+	
+	private void connect() {
 		try {
-			conn = cf.getConnection();
+			if (conn == null || !conn.isOpen()) {
+				conn = cf.getConnection();
+			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
 	}
 	
-	@PreDestroy
-	public void destroy() {
+	private void disconnect() {
 		try {
-			conn.close();
+			if (conn != null && conn.isOpen()) {
+				conn.close();
+			}
 		} catch (RepositoryException e) {
-			logger.error(e.getMessage());
+			logger.warn("Error closing connection: "+e.getMessage(), e);
 		}
 	}
 	
+//	@PreDestroy
+//	public void destroy() {
+//		try {
+//			conn.close();
+//		} catch (RepositoryException e) {
+//			logger.error(e.getMessage());
+//		}
+//	}
+	
 	public void importResource(List<ImportResource> resources,
 			ImportMetadata metadata) throws Exception {
-		Assert.notNull(conn, "Connection not initialized");
 		Assert.notEmpty(resources, "No resources provided for import");
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("Processing importing job: "+metadata.getJobIdentifier());
 		}
 		
+		StoringRDFParser parser = new StoringRDFParser();		
 		ImportResource curResource = null;
-		StoringRDFParser parser = new StoringRDFParser(conn);
-		
 		try {
+			connect();
 			int pos = 1;
 			long oldsize = conn.size();
+			int retryCount = 0;
+			
 			Iterator<ImportResource> it = resources.iterator();
 			while (it.hasNext()) {
-				curResource = it.next();
+				if (retryCount == 0) {
+					curResource = it.next();
+				}
 				InputStream stream = null;
 				try {
 					logger.info("Importing "+pos+"/"+resources.size()+": "+curResource);
 					stream = curResource.parse();
-					parser.parse(stream, metadata);
+					parser.parse(conn, stream, metadata);
 					pos++;
+					retryCount = 0;
+				} catch (Exception e) {
+					retryCount++;
+					if (retryCount > RETRY_MAX_COUNT) {
+						throw new ImportException("Maximum number of retries reached, aborting...");
+					} else {
+						logger.warn("Error during import: "+e.getMessage()+" [retrying in "+(RETRY_TIMEOUT/1000)+" seconds...]");
+						Thread.sleep(RETRY_TIMEOUT);
+					}
 				} finally {
 					stream.close();
 				}
 			}
 			logger.info("Committing import...");
-			parser.commit();
+			conn.commit();
 			logger.info("Import comitted, "+(conn.size()-oldsize)+" added");
 		} catch (Exception e) {
 			logger.error("Error importimg url <"+curResource+">: "+e);
-			parser.rollback();
+			conn.rollback();
 			throw e;
+		} finally {
+			disconnect();
 		}
 	}
 	

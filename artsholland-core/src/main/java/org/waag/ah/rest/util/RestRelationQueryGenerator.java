@@ -98,7 +98,7 @@ public class RestRelationQueryGenerator {
 		String count = calculateCount ? query.generateCount(relation, params, bindings, true) : null;
 			
 		return new RdfQueryDefinition(
-				QueryLanguage.SPARQL,	construct, count);
+				QueryLanguage.SPARQL,	construct, count, quantity == RelationQuantity.SINGLE);
 	}
 	
 }

@@ -140,9 +140,11 @@ public class RestService implements InitializingBean {
 		RDFWriterConfig config = getDefaultWriterConfig(params);
 		query.setWriterConfig(config);
 
-		config.setMetaData("page", String.valueOf(params.getPage()));
-		config.setMetaData("per_page", String.valueOf(params.getPerPage()));
-
+		if (!query.isSingle()) {
+			config.setMetaData("page", String.valueOf(params.getPage()));
+			config.setMetaData("per_page", String.valueOf(params.getPerPage()));
+		}
+		
 		config.setWrapResults(true);
 		logger.info("RETURN PAGED QUERY");
 		return query;
