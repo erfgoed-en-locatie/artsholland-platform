@@ -45,8 +45,9 @@ function Snorql() {
         //this.setBrowserBase(document.location.href.replace(/\?.*/, '') );
         
         if (!queryString || queryString == apiKeyUrl) {
-            document.getElementById('querytext').value = 'SELECT DISTINCT * WHERE {\n  ?s ?p ?o\n}\nLIMIT 10';
+            document.getElementById('querytext').value = 'SELECT DISTINCT * WHERE {\n\t?s ?p ?o\n}\nLIMIT 10';
             this._updateGraph(null, false);
+            this.createCodeMirror();
             return;
         }
         var graph = queryString.match(/graph=([^&]*)/);
@@ -156,14 +157,7 @@ function Snorql() {
             }
         });
         
-        
-        this._codeMirror = CodeMirror.fromTextArea(document.getElementById("querytext"), { 
-            //lineNumbers: true, 
-            matchBrackets: true,            
-            indentUnit: 4, 
-            indentWithTabs: true, 
-            //theme: "eclipse"
-        }); 
+        this.createCodeMirror();
         
     };
 
@@ -173,6 +167,16 @@ function Snorql() {
     
     this.setApiKey = function(apiKey) {
         this._apiKey = apiKey;
+    };
+    
+    this.createCodeMirror = function() {
+        this._codeMirror = CodeMirror.fromTextArea(document.getElementById("querytext"), { 
+            //lineNumbers: true, 
+            matchBrackets: true,            
+            indentUnit: 4, 
+            indentWithTabs: true, 
+            //theme: "eclipse"
+        }); 
     };
 
     this._displayEndpointURL = function() {
