@@ -1,4 +1,4 @@
-package org.waag.ah.tinkerpop.pipes;
+package org.waag.ah.tinkerpop.pipe;
 
 import java.io.IOException;
 import java.io.InputStream;

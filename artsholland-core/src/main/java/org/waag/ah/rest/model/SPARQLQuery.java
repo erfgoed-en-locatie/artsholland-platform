@@ -172,7 +172,7 @@ public class SPARQLQuery {
 		return query.replace(PAGING_PLACEMARK, "LIMIT " + perPage + " OFFSET " + oldPerPage * (page - 1));
 	}
 	
-	private String addFilters(String query, ArrayList<String> filters) {
+	public String addFilters(String query, ArrayList<String> filters) {
 		return addFilters(query, FILTER_PLACEMARK, filters);
 	}
 	

@@ -43,6 +43,7 @@
     <module>artsholland-datastore</module>
     <module>artsholland-importer</module>
     <module>artsholland-platform</module>
+    <module>artsholland-processor</module>
     <module>artsholland-scheduler</module>
   </modules>
                   
@@ -91,7 +92,7 @@
     <ejb.version>3.1</ejb.version>
     <bigdata.version>1.2.0</bigdata.version>
     <mongo.version>2.7.2</mongo.version>
-    <quartz.version>2.1.0</quartz.version>
+    <quartz.version>2.1.3</quartz.version>
     <spring.version>3.1.0.RELEASE</spring.version>
     <sesame.version>2.6.3</sesame.version>
     <alibaba.version>2.0-rc1</alibaba.version>

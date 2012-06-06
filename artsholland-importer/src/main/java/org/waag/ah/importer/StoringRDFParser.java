@@ -1,4 +1,4 @@
-package org.waag.ah.sesame;
+package org.waag.ah.importer;
 
 import java.io.IOException;
 import java.io.InputStream;

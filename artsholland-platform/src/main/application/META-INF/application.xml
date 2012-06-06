@@ -18,6 +18,9 @@
     <ejb>importer.jar</ejb>
   </module>
   <module>
+    <ejb>processor.jar</ejb>
+  </module>
+  <module>
     <ejb>scheduler.jar</ejb>
   </module>
 </application>

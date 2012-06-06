@@ -18,8 +18,8 @@ public class EnricherFactory {
 
 		// Add object filter.
 		pipeline.addPipe(new FilterFunctionPipe<NamedGraph>(
-				new GraphFilterPipeFunction(config.getSubjectUri(), config
-						.getPropertyUris())));
+				new GraphFilterPipeFunction(config.getObjectUri(), config
+						.getIncludeUris())));
 
 		// Add enricher function.
 		try {

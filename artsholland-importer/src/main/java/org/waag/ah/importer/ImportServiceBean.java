@@ -18,7 +18,6 @@ import org.waag.ah.ImportResource;
 import org.waag.ah.ImportService;
 import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.exception.ImportException;
-import org.waag.ah.sesame.StoringRDFParser;
 
 @Stateful
 public class ImportServiceBean implements ImportService {

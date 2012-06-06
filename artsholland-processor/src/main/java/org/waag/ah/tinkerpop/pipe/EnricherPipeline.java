@@ -1,4 +1,4 @@
-package org.waag.ah.tinkerpop;
+package org.waag.ah.tinkerpop.pipe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +10,8 @@ import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.waag.ah.rdf.EnricherConfig;
 import org.waag.ah.rdf.NamedGraph;
+import org.waag.ah.tinkerpop.EnricherFactory;
 import org.waag.ah.tinkerpop.function.BuildNamedGraphPipeFunction;
-import org.waag.ah.tinkerpop.pipes.StatementKeyFunction;
-import org.waag.ah.tinkerpop.pipes.StatementValueFunction;
 
 import com.tinkerpop.pipes.Pipe;
 import com.tinkerpop.pipes.branch.CopySplitPipe;
@@ -26,7 +25,7 @@ import com.tinkerpop.pipes.util.Pipeline;
 public class EnricherPipeline extends Pipeline<Statement, Statement> {
 	
 	@SuppressWarnings("rawtypes")
-	public EnricherPipeline() {
+	public EnricherPipeline(EnricherConfig... configs) {
 		super();
 		
 		// Create Graph objects from individual statements.
@@ -42,20 +41,24 @@ public class EnricherPipeline extends Pipeline<Statement, Statement> {
 		this.addPipe(groupingPipeline);
 		
 		List<Pipe> enrichers = new ArrayList<Pipe>();
+//		enrichers.add(new IdentityPipe());
+		for (EnricherConfig config : configs) {
+			enrichers.add(EnricherFactory.getInstance(config));
+		}
 		
-		// Add Geonames enricher.
-		EnricherConfig geoNamesConfig = new EnricherConfig();
-		geoNamesConfig.setSubjectUri("http://purl.org/artsholland/1.0/Venue");
-		geoNamesConfig.addPropertyUri(
-				"http://www.w3.org/2003/01/geo/wgs84_pos#lat",
-				"http://www.w3.org/2003/01/geo/wgs84_pos#long");
-		geoNamesConfig.setEnricher(GeoNamesEnricher.class);
-		enrichers.add(EnricherFactory.getInstance(geoNamesConfig));
+//		EnricherConfig geoNamesConfig = new EnricherConfig();
+//		geoNamesConfig.setObjectUri("http://purl.org/artsholland/1.0/Venue");
+//		geoNamesConfig.addIncludeUri(
+//				"http://www.w3.org/2003/01/geo/wgs84_pos#lat",
+//				"http://www.w3.org/2003/01/geo/wgs84_pos#long");
+//		geoNamesConfig.setEnricher(GeoNamesEnricher.class);
+//		enrichers.add(EnricherFactory.getInstance(geoNamesConfig));
 		
 		// Send incoming data through all enricher instances.
 		CopySplitPipe<NamedGraph> enricherPipe = new CopySplitPipe<NamedGraph>(enrichers);
 		FairMergePipe<List<Statement>> mergerPipe = new FairMergePipe<List<Statement>>(enricherPipe.getPipes());
 		this.addPipe(enricherPipe);
 		this.addPipe(mergerPipe);
+		this.addPipe(new ScatterPipe<List<Statement>, Statement>());
 	}
 }

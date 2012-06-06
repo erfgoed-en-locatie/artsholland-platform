@@ -41,6 +41,12 @@
       <type>ejb</type>
     </dependency>
     <dependency>
+      <groupId>org.waag.artsholland</groupId>
+      <artifactId>artsholland-datastore</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <type>ejb</type>
+    </dependency>
+    <dependency>
       <groupId>cascading</groupId>
       <artifactId>cascading-11-jdbc</artifactId>
       <version>0.0.4</version>

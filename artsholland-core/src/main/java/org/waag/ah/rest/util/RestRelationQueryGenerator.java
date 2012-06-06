@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryLanguage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.waag.ah.rdf.RdfQueryDefinition;
 import org.waag.ah.rest.RestParameters;
 import org.waag.ah.rest.model.RestRelation;
@@ -14,7 +16,7 @@ import org.waag.ah.rest.model.RestRelation.RelationType;
 import org.waag.ah.rest.model.SPARQLQuery;
 
 public class RestRelationQueryGenerator {
-	
+	final static Logger logger = LoggerFactory.getLogger(RestRelationQueryGenerator.class);
 	/*
 	 * Check with http://localhost:8080/rest/venues/bf23f0c6-5c54-4d18-a0e5-35d1dc140508
 	 * (Paradiso Amsterdam)
@@ -96,7 +98,9 @@ public class RestRelationQueryGenerator {
 					
 		String construct = query.generateContruct(relation, params, bindings, true);
 		String count = calculateCount ? query.generateCount(relation, params, bindings, true) : null;
-			
+		
+		logger.info(construct);
+		
 		return new RdfQueryDefinition(
 				QueryLanguage.SPARQL,	construct, count, quantity == RelationQuantity.SINGLE);
 	}
