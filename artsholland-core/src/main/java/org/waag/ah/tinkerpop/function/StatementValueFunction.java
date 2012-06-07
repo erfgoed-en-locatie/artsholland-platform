@@ -1,4 +1,4 @@
-package org.waag.ah.tinkerpop.pipe;
+package org.waag.ah.tinkerpop.function;
 
 import org.openrdf.model.Statement;
 

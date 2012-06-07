@@ -18,10 +18,9 @@
   <schedule>
     
 		<job>
-      <name>Uitbase</name>
-      <group>WebResourceImport</group>
-      <description>Import data from NUB Uitbase</description>
-      <job-class>org.waag.ah.source.uitbase.UitbaseImportJob</job-class>
+      <name>ImportUrl</name>
+      <description>Import online resource by URL</description>
+      <job-class>org.waag.ah.importer.UrlImportJob</job-class>
       <durability>true</durability>
       <recover>false</recover>
     </job>
@@ -65,16 +64,19 @@
       <cron>
         <name>UitbaseFullImportTrigger</name>
         <group>ImporterService</group>
-        <job-name>Uitbase</job-name>
-        <job-group>WebResourceImport</job-group>
+        <job-name>ImportUrl</job-name>
         <job-data-map>
           <entry>
+            <key>urlGeneratorClass</key>
+            <value>org.waag.ah.source.uitbase.UitbaseURLGenerator</value>
+          </entry>        
+          <entry>
             <key>strategy</key>
-            <value>full</value>
+            <value>INCREMENTAL</value>
           </entry>
         </job-data-map>
         <misfire-instruction>MISFIRE_INSTRUCTION_DO_NOTHING</misfire-instruction>
-       	<cron-expression>0 0/5 * * * ?</cron-expression>
+       	<cron-expression>0 0/1 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger> 
@@ -118,7 +120,7 @@
           </entry>
         </job-data-map>
         <misfire-instruction>MISFIRE_INSTRUCTION_DO_NOTHING</misfire-instruction>
-        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <cron-expression>0 0/5 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>

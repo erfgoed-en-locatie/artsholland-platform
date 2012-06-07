@@ -12,6 +12,7 @@ import org.waag.ah.rdf.EnricherConfig;
 import org.waag.ah.rdf.NamedGraph;
 import org.waag.ah.tinkerpop.EnricherFactory;
 import org.waag.ah.tinkerpop.function.BuildNamedGraphPipeFunction;
+import org.waag.ah.tinkerpop.function.StatementValueFunction;
 
 import com.tinkerpop.pipes.Pipe;
 import com.tinkerpop.pipes.branch.CopySplitPipe;

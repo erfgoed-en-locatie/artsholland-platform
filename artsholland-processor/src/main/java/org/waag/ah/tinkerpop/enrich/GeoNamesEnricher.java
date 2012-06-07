@@ -3,6 +3,7 @@ package org.waag.ah.tinkerpop.enrich;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.geonames.FeatureClass;
 import org.geonames.Style;
 import org.geonames.Toponym;
@@ -10,15 +11,19 @@ import org.geonames.WebService;
 import org.openrdf.model.Statement;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.util.GraphUtil;
+import org.waag.ah.PlatformConfig;
+import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.rdf.EnricherConfig;
 import org.waag.ah.rdf.NamedGraph;
 import org.waag.ah.tinkerpop.AbstractEnricher;
 
 public class GeoNamesEnricher extends AbstractEnricher { 
+	private PlatformConfig config;
 
-	public GeoNamesEnricher(EnricherConfig config) {
-		super(config);
-		WebService.setUserName("artsholland");
+	public GeoNamesEnricher(EnricherConfig enricherConfig) throws ConfigurationException {
+		super(enricherConfig);
+		this.config = PlatformConfigHelper.getConfig();
+		WebService.setUserName(config.getString("geonames.api.username"));
 		WebService.setDefaultStyle(Style.FULL);
 	}
 

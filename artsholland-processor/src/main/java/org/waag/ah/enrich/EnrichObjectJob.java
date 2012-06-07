@@ -62,7 +62,7 @@ public class EnrichObjectJob implements Job {
 			}
 //			logger.info(statements.toString());
 			
-			Pipeline<Statement, Statement> pipeline = new EnricherPipeline();
+			Pipeline<Statement, Statement> pipeline = new EnricherPipeline(config);
 			pipeline.setStarts(statements);
 			
 			while(pipeline.hasNext()) {
