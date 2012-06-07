@@ -10,7 +10,6 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.repository.sail.SailRepositoryConnection;
 import org.openrdf.sail.Sail;
-import org.openrdf.sail.SailException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.PlatformConfigHelper;
@@ -22,7 +21,6 @@ import com.bigdata.journal.Options;
 import com.bigdata.rdf.sail.BigdataSailRepository;
 import com.useekm.bigdata.BigdataSail;
 import com.useekm.indexing.IndexingSail;
-import com.useekm.indexing.IndexingSailConnection;
 import com.useekm.indexing.exception.IndexException;
 import com.useekm.indexing.postgis.PostgisIndexerSettings;
 
