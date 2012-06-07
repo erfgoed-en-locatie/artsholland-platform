@@ -80,16 +80,16 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 			PostgisIndexerSettings settings = PostgisIndexerSettingsGenerator.generateSettings();
 			IndexingSail idxSail = new IndexingSail(sail, settings);
 			
-			IndexingSailConnection idxConn = idxSail.getConnection();
+			/*IndexingSailConnection idxConn = idxSail.getConnection();
 			idxConn.reindex();
 			idxConn.commit();
-			idxConn.close();
+			idxConn.close();*/
 			
 			return idxSail;
 		} catch (IndexException e) {
 			logger.error(e.getMessage(), e);
-		} catch (SailException e) {
-			throw new ConnectionException(e.getMessage(), e);
+		//} catch (SailException e) {
+		//	throw new ConnectionException(e.getMessage(), e);
 		} catch (ConfigurationException e) {
 			logger.error(e.getMessage(), e);
 		}
