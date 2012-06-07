@@ -302,6 +302,9 @@ return
 			
 			let $typeKey := {$production/type/@key}
 			let $typeClass := {if (waag:empty($typeKey)) then () else concat("ah:productionType", waag:capitalize-first-only(data($typeKey)))}
+			
+			let $language := {waag:get-language-tag($production/language)}
+			let $subtitles :=	{waag:get-language-tag($production/subtitles)}
 				
 			construct {
 			
@@ -339,16 +342,16 @@ return
 					}
 				}.
 				
-				{ for $language in $production/languages//language
+				{ for $languageBlock in $production/languages//language
 				
-					let $locale := {$language/@locale}
+					let $locale := {$languageBlock/@locale}
 					let $language-tag := {waag:get-language-tag($locale)}
 					
-					let $title := {waag:replace-characters($language/sortname)}					
-					let $description := {waag:replace-characters($language/description)}
-					let $shortDescription := {waag:replace-characters($language/short-description)}					
-					let $party := {waag:replace-characters($language/party)}
-					let $people := {waag:replace-characters($language/people)}
+					let $title := {waag:replace-characters($languageBlock/sortname)}					
+					let $description := {waag:replace-characters($languageBlock/description)}
+					let $shortDescription := {waag:replace-characters($languageBlock/short-description)}					
+					let $party := {waag:replace-characters($languageBlock/party)}
+					let $people := {waag:replace-characters($languageBlock/people)}
 					
 					construct {				
 						
@@ -377,10 +380,10 @@ return
 	
 				#	TODO:
 				#	notes
-				#	<country>NL</country>							
+				#	<country>NL</country>		
 				
-				$puri dc:language {waag:string(waag:get-language-tag($production/language))}.			
-				$puri ah:subtitleLanguage {waag:string(waag:get-language-tag($production/subtitles))}			
+				$puri dc:language {if ($language eq "") then () else $language}^^xsd:string .							
+				$puri ah:subtitleLanguage {if ($subtitles eq "") then () else $subtitles}^^xsd:string .	
 								
 			}
 		}
