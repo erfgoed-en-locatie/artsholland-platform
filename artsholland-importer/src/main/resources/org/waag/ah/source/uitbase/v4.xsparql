@@ -379,9 +379,8 @@ return
 				#	notes
 				#	<country>NL</country>							
 				
-				#TODO : if not empty
-				$puri dc:language {waag:get-language-tag($production/language)}.			
-				$puri ah:subtitleLanguage {waag:get-language-tag($production/subtitles)}			
+				$puri dc:language {waag:string(waag:get-language-tag($production/language))}.			
+				$puri ah:subtitleLanguage {waag:string(waag:get-language-tag($production/subtitles))}			
 								
 			}
 		}
