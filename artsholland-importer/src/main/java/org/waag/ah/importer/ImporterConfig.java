@@ -3,10 +3,19 @@ package org.waag.ah.importer;
 import org.joda.time.DateTime;
 
 public class ImporterConfig {
+	private String id;
 	private ImportStrategy strategy;
 	private DateTime importFrom;
 	private DateTime importUntil;
 
+	public void setId(String id) {
+		this.id = id;
+	}
+	
+	public String getId() {
+		return this.id;
+	}
+	
 	public void setStrategy(ImportStrategy strategy) {
 		this.strategy = strategy;
 	}

@@ -12,14 +12,19 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.ToXMLContentHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 public class TikaParserPipe extends AbstractStreamingPipe<URL> {
+	private static final Logger logger = LoggerFactory.getLogger(TikaParserPipe.class);
 
 	@Override
 	protected void process(URL url, OutputStream out)
 			throws IOException, SAXException, TikaException {
+		logger.info("Importing URL: "+url.toExternalForm());
+		
 		URLConnection conn = url.openConnection();
 		InputStream in = conn.getInputStream();		
 		

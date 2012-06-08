@@ -17,13 +17,37 @@
 
   <schedule>
     
+    <!-- UITBASE IMPORT -->
 		<job>
-      <name>ImportUrl</name>
-      <description>Import online resource by URL</description>
+      <name>ImportUitbase</name>
+      <!-- <group>ImporterService</group> -->
+      <description>Import Uitbase data</description>
       <job-class>org.waag.ah.importer.UrlImportJob</job-class>
       <durability>true</durability>
       <recover>false</recover>
+      <job-data-map>
+        <entry>
+          <key>urlGeneratorClass</key>
+          <value>org.waag.ah.source.uitbase.UitbaseURLGenerator</value>
+        </entry>        
+      </job-data-map>
     </job>
+    <trigger>
+      <cron>
+        <name>UitbaseFullImportTrigger</name>
+        <job-name>ImportUitbase</job-name>
+        <!-- <job-group>ImporterService</job-group> -->
+        <job-data-map>
+          <entry>
+            <key>strategy</key>
+            <value>FULL</value>
+          </entry>
+        </job-data-map>
+        <misfire-instruction>MISFIRE_INSTRUCTION_DO_NOTHING</misfire-instruction>
+        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <time-zone>Europe/Amsterdam</time-zone>
+      </cron>
+    </trigger> 
     
     <job>
       <name>DOSA</name>
@@ -59,27 +83,6 @@
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger> --> 
-		
-    <trigger>
-      <cron>
-        <name>UitbaseFullImportTrigger</name>
-        <group>ImporterService</group>
-        <job-name>ImportUrl</job-name>
-        <job-data-map>
-          <entry>
-            <key>urlGeneratorClass</key>
-            <value>org.waag.ah.source.uitbase.UitbaseURLGenerator</value>
-          </entry>        
-          <entry>
-            <key>strategy</key>
-            <value>INCREMENTAL</value>
-          </entry>
-        </job-data-map>
-        <misfire-instruction>MISFIRE_INSTRUCTION_DO_NOTHING</misfire-instruction>
-       	<cron-expression>0 0/1 * * * ?</cron-expression>
-        <time-zone>Europe/Amsterdam</time-zone>
-      </cron>
-    </trigger> 
     
 <!--     <trigger>
       <cron>
