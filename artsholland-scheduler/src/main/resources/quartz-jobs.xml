@@ -20,7 +20,7 @@
     <!-- UITBASE IMPORT -->
 		<job>
       <name>ImportUitbase</name>
-      <!-- <group>ImporterService</group> -->
+      <group>ImporterService</group>
       <description>Import Uitbase data</description>
       <job-class>org.waag.ah.importer.UrlImportJob</job-class>
       <durability>true</durability>
@@ -32,59 +32,78 @@
         </entry>        
       </job-data-map>
     </job>
+    
     <trigger>
       <cron>
         <name>UitbaseFullImportTrigger</name>
         <job-name>ImportUitbase</job-name>
-        <!-- <job-group>ImporterService</job-group> -->
+        <job-group>ImporterService</job-group>
         <job-data-map>
           <entry>
             <key>strategy</key>
             <value>FULL</value>
           </entry>
         </job-data-map>
-        <misfire-instruction>MISFIRE_INSTRUCTION_DO_NOTHING</misfire-instruction>
+        <!-- <misfire-instruction>MISFIRE_INSTRUCTION_DO_NOTHING</misfire-instruction> -->
         <cron-expression>0 0/1 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger> 
     
+    <!-- GEONAMES ENRICHER -->
+    <job>
+      <name>GeonamesEnricher</name>
+      <group>EnricherService</group>
+      <description>Enrich objects in triplestore</description>
+      <job-class>org.waag.ah.enrich.EnrichObjectJob</job-class>
+      <durability>false</durability>
+      <recover>false</recover>
+      <job-data-map>
+        <entry>
+          <key>enricherClass</key>
+          <value>org.waag.ah.tinkerpop.enrich.GeoNamesEnricher</value>
+        </entry>
+        <entry>
+          <key>objectUri</key>
+          <value>http://purl.org/artsholland/1.0/Venue</value>
+        </entry>
+        <entry>
+          <key>includeProperties</key>
+          <value>
+            http://www.w3.org/2003/01/geo/wgs84_pos#lat,
+            http://www.w3.org/2003/01/geo/wgs84_pos#long
+          </value>
+        </entry>
+        <entry>
+          <key>excludeProperties</key>
+          <value>http://www.geonames.org/ontology#Feature</value>
+        </entry>
+      </job-data-map>
+    </job>
+    
+    <trigger>
+      <cron>
+        <name>GeoNamesEnricherTrigger</name>
+        <job-name>GeonamesEnricher</job-name>
+        <job-group>EnricherService</job-group>
+        <!-- <misfire-instruction>MISFIRE_INSTRUCTION_DO_NOTHING</misfire-instruction> -->
+        <cron-expression>0 0/5 * * * ?</cron-expression>
+        <time-zone>Europe/Amsterdam</time-zone>
+      </cron>
+    </trigger>
+
+    <!-- DOSA IMPORTER -->
+<!--         
     <job>
       <name>DOSA</name>
-      <group>WebResourceImport</group>
+      <group>ImporterService</group>
       <description>Import data from DOSA</description>
       <job-class>org.waag.ah.source.dosa.DOSAImportJob</job-class>
       <durability>true</durability>
       <recover>false</recover>
     </job>
     
-    <job>
-      <name>EnrichObjects</name>
-      <description>Enrich objects in triplestore</description>
-      <job-class>org.waag.ah.enrich.EnrichObjectJob</job-class>
-      <durability>false</durability>
-      <recover>false</recover>
-    </job>
-		
-<!--      <trigger>
-      <cron>
-        <name>UitbaseIncrementalImportTrigger</name>
-        <group>ImporterService</group>
-        <job-name>Uitbase</job-name>
-        <job-group>WebResourceImport</job-group>
-        <job-data-map>
-          <entry>
-            <key>strategy</key>
-            <value>incremental</value>
-          </entry>
-        </job-data-map>
-        <misfire-instruction>MISFIRE_INSTRUCTION_DO_NOTHING</misfire-instruction>
-       	<cron-expression>0 0/5 * * * ?</cron-expression>
-        <time-zone>Europe/Amsterdam</time-zone>
-      </cron>
-    </trigger> --> 
-    
-<!--     <trigger>
+    <trigger>
       <cron>
         <name>DOSAImportTrigger</name>
         <group>Import</group>
@@ -94,39 +113,8 @@
         <cron-expression>0 0/1 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
-    </trigger> -->
+    </trigger> 
+-->
     
-    <trigger>
-      <cron>
-        <name>GeoNamesEnricherTrigger</name>
-        <group>EnricherService</group>        
-        <job-name>EnrichObjects</job-name>
-        <job-data-map>
-          <entry>
-            <key>enricherClass</key>
-            <value>org.waag.ah.tinkerpop.enrich.GeoNamesEnricher</value>
-          </entry>
-          <entry>
-            <key>objectUri</key>
-            <value>http://purl.org/artsholland/1.0/Venue</value>
-          </entry>
-          <entry>
-            <key>includeProperties</key>
-            <value>
-              http://www.w3.org/2003/01/geo/wgs84_pos#lat,
-              http://www.w3.org/2003/01/geo/wgs84_pos#long
-            </value>
-          </entry>
-          <entry>
-            <key>excludeProperties</key>
-            <value>http://www.geonames.org/ontology#Feature</value>
-          </entry>
-        </job-data-map>
-        <misfire-instruction>MISFIRE_INSTRUCTION_DO_NOTHING</misfire-instruction>
-        <cron-expression>0 0/5 * * * ?</cron-expression>
-        <time-zone>Europe/Amsterdam</time-zone>
-      </cron>
-    </trigger>
-		
   </schedule>
 </job-scheduling-data>

@@ -1,19 +1,41 @@
 package org.waag.ah.tinkerpop.pipe;
 
 import java.net.URL;
+import java.util.List;
 
 import org.openrdf.model.Statement;
-import org.openrdf.repository.RepositoryConnection;
-import org.waag.ah.importer.ImporterConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.waag.ah.importer.ImportConfig;
 
+import com.tinkerpop.pipes.transform.IdentityPipe;
 import com.tinkerpop.pipes.util.Pipeline;
 
 public class ImporterPipeline extends Pipeline<URL, Statement> {
+	final static Logger logger = LoggerFactory.getLogger(ImporterPipeline.class);
+	
+	private long count = 0;
+	private long pos = 0;
 
-	public ImporterPipeline(ImporterConfig config, RepositoryConnection conn) {
+	public ImporterPipeline(ImportConfig config) {
 		super();
+		this.addPipe(new ProgressPipe());
 		this.addPipe(new ParserPipeline());
 		this.addPipe(new ProcessorPipeline());
-		this.addPipe(new PersistDataPipe(config, conn));
+	}
+
+	public void setStarts(Iterable<URL> starts) {
+		this.count = ((List<URL>) starts).size();
+		super.setStarts(starts);
+	}
+	
+	private class ProgressPipe extends IdentityPipe<URL> {
+		@Override
+		protected URL processNextStart() {
+			pos++;
+			URL url = super.processNextStart();
+			logger.info("Importing "+pos+"/"+count+": "+url);
+			return url;
+		}
 	}
 }

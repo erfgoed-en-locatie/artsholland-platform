@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.waag.ah.PlatformConfig;
 import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.importer.ImportStrategy;
-import org.waag.ah.importer.ImporterConfig;
+import org.waag.ah.importer.ImportConfig;
 import org.waag.ah.importer.UrlGenerator;
 
 public class UitbaseURLGenerator implements UrlGenerator {
@@ -42,7 +42,7 @@ public class UitbaseURLGenerator implements UrlGenerator {
 	}	
 
 	@Override
-	public List<URL> getUrls(ImporterConfig config) {
+	public List<URL> getUrls(ImportConfig config) {
 		List<URL> urls = new ArrayList<URL>();
 		
 		DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
