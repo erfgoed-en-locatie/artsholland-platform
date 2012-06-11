@@ -74,11 +74,11 @@ public class RestService implements InitializingBean {
 		eventAttachmentRelation.addRelation("id", "Attachment",	RelationQuantity.SINGLE, RelationType.SELF, true);
 		
   	// TODO: ?this instead of ?object  ???
-  	//SPARQLFilter venuesLocalityFilter = new SPARQLFilter("locality", "?object vcard:locality ?locality.", "fn:lower-case(?locality) = fn:lower-case(\"?parameter\")");
-  	SPARQLFilter venuesLocalityFilter = new SPARQLFilter("locality", "?object vcard:locality ?locality.", "lcase(?locality) = lcase(\"?parameter\")");
+
+		SPARQLFilter venuesLocalityFilter = new SPARQLFilter("locality", "?object vcard:locality ?locality.", "lcase(?locality) = lcase(\"?parameter\")");
   	venuesRelation.addFilter(venuesLocalityFilter);
 
-  	SPARQLFilter eventsLocalityFilter = new SPARQLFilter("locality", "?object <http://purl.org/artsholland/1.0/venue> ?venue . ?venue vcard:locality ?locality .", "fn:lower-case(?locality) = fn:lower-case(\"?parameter\")");
+  	SPARQLFilter eventsLocalityFilter = new SPARQLFilter("locality", "?object <http://purl.org/artsholland/1.0/venue> ?venue . ?venue vcard:locality ?locality .", "lcase(?locality) = lcase(\"?parameter\")");
   	SPARQLFilter eventsBeforeFilter = new SPARQLFilter("before", "?object time:hasBeginning ?hasBeginning.", "?hasBeginning < \"?parameter\"^^xsd:dateTime");
   	SPARQLFilter eventsAfterFilter = new SPARQLFilter("after", "?object time:hasBeginning ?hasBeginning.", "?hasBeginning > \"?parameter\"^^xsd:dateTime");
   	eventsRelation.addFilter(eventsLocalityFilter);
@@ -106,10 +106,37 @@ public class RestService implements InitializingBean {
   			);    	
   	venuesRelation.addFilter(venueTypeFilter);  	
   	
+  	/*
+  	 * Price
+  	 */
+  	
+  	/*
+		SELECT DISTINCT ?event ?highPrice
+		WHERE {
+			?event a ah:Event .
+			?event ah:ticket ?ticket .
+			?ticket ah:highPrice ?highPrice .
+			?ticket ah:lowPrice ?lowPrice .
+			FILTER (?highPrice < 10) .
+		}
+	 */
+	
+  	
+  	SPARQLFilter maxPriceFilter = new SPARQLFilter("max_price", "?object ah:ticket ?ticket . ?ticket ah:lowPrice ?lowPrice .", "?lowPrice <= ?parameter");    	
+  	eventsRelation.addFilter(maxPriceFilter);  
+  	
+  	SPARQLFilter minPriceFilter = new SPARQLFilter("min_price", "?object ah:ticket ?ticket . ?ticket ah:highPrice ?highPrice .", "?highPrice >= ?parameter");
+  	eventsRelation.addFilter(minPriceFilter);  	
+  	
+  	/*
+  	 * Free text
+  	 */
+  	
   	SPARQLFilter searchFilter = new SPARQLFilter("search", "?object dc:description ?desc .", "search:text(?desc, \"?parameter\")");   
   	eventsRelation.addFilter(searchFilter);
   	productionsRelation.addFilter(searchFilter);
   	venuesRelation.addFilter(searchFilter);
+  	
   	
   	
   	
