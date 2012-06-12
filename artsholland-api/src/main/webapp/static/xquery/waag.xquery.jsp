@@ -24,8 +24,8 @@ declare function waag:make-uri($arg as xs:string?) as xs:string {
 	encode-for-uri(lower-case(translate($arg, " ", "-")))
 };
 
-declare function waag:get-language-tag($arg as xs:string?) as xs:string {
-	if (waag:empty($arg)) then () else substring($arg, 1, 2)	
+declare function waag:get-language-tag($arg as xs:string?) {
+	substring($arg, 1, 2)	
 };
 
 declare function waag:empty($arg as xs:string?) as xs:boolean {
