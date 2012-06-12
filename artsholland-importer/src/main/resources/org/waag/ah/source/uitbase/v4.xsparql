@@ -5,15 +5,17 @@ declare namespace xsd="http://www.w3.org/2001/XMLSchema#";
 declare namespace owl="http://www.w3.org/2002/07/owl#";
 declare namespace time="http://www.w3.org/2006/time#"; 
 declare namespace foaf="http://xmlns.com/foaf/0.1/";
-declare namespace geo = "http://www.w3.org/2003/01/geo/wgs84_pos#";
-declare namespace vcard = "http://www.w3.org/2006/vcard/ns#";
-declare namespace osgeo = "http://rdf.opensahara.com/type/geo/";
+declare namespace geo="http://www.w3.org/2003/01/geo/wgs84_pos#";
+declare namespace vcard="http://www.w3.org/2006/vcard/ns#";
+declare namespace osgeo="http://rdf.opensahara.com/type/geo/";
 												
 declare namespace nub="http://resources.uitburo.nl/";
 declare namespace ah = "http://purl.org/artsholland/1.0/";
 
 (: TODO: Import URL should be "dynamic" :) 
+#declare variable $platformUri external; 
 import module namespace waag = "http://waag.org" at "http://api.artsholland.com/static/xquery/waag.xquery.jsp";
+#import module namespace waag = "http://waag.org" at "http://localhost:8080/static/xquery/waag.xquery.jsp";
 
 let $baseuri := {"http://data.artsholland.com/"}
 let $baseuriUitburo := {"http://resources.uitburo.nl/"}
@@ -151,7 +153,7 @@ return
 					 	
 			}
 		}
-			
+
 ##############################################################################################################################
 ##################   Venue   #################################################################################################
 ##############################################################################################################################
@@ -303,8 +305,8 @@ return
 			let $typeKey := {$production/type/@key}
 			let $typeClass := {if (waag:empty($typeKey)) then () else concat("ah:productionType", waag:capitalize-first-only(data($typeKey)))}
 			
-			let $language := {waag:get-language-tag($production/language)}
-			let $subtitles :=	{waag:get-language-tag($production/subtitles)}
+			let $language := {if (waag:empty($production/language)) then () else waag:get-language-tag($production/language)}
+			let $subtitles :=	{if (waag:empty($production/subtitles)) then () else waag:get-language-tag($production/subtitles)}
 				
 			construct {
 			
@@ -407,7 +409,7 @@ return
 				$guri ah:cidn {$cidn}^^xsd:string.
 					
 			}
-	:)
+	:)		
 
 ##############################################################################################################################
 ##############################################################################################################################
