@@ -13,9 +13,13 @@ import javax.xml.transform.stream.StreamSource;
 import net.sf.saxon.Configuration;
 import net.sf.saxon.om.NamePool;
 import net.sf.saxon.s9api.Processor;
+import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XQueryCompiler;
 import net.sf.saxon.s9api.XQueryEvaluator;
+import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XdmItem;
+import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.s9api.XdmValue;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.tika.metadata.Metadata;
@@ -69,7 +73,11 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			config.setNamePool(namepool);
 			Processor processor = new Processor(config);
 			XQueryCompiler compiler = processor.newXQueryCompiler();			
-			evaluator = compiler.compile(q).load();	
+			evaluator = compiler.compile(q).load();
+			
+			/*evaluator.setExternalVariable(new QName("platformUri"), platformUri);*/
+
+			
 		} catch (Exception e) {
 			throw new ParserException(e.getMessage());
 		}			
