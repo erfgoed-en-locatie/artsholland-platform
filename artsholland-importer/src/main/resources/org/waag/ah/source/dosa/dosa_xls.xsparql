@@ -1,0 +1,110 @@
+declare namespace dc="http://purl.org/dc/elements/1.1/";
+declare namespace do="http://dbpedia.org/ontology/";
+declare namespace dp="http://dbpedia.org/property/";
+declare namespace foaf="http://xmlns.com/foaf/0.1/";
+declare namespace geo="http://www.w3.org/2003/01/geo/wgs84_pos#";
+declare namespace owl="http://www.w3.org/2002/07/owl#";
+declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+declare namespace rdfs="http://www.w3.org/2000/01/rdf-schema#";
+declare namespace scovo="http://purl.org/NET/scovo#";
+declare namespace skos="http://www.w3.org/2004/02/skos/core#";
+declare namespace xsd="http://www.w3.org/2001/XMLSchema#";
+declare namespace qb="http://purl.org/linked-data/cube#";
+
+declare namespace begrip="http://linkeddata.few.vu.nl/os-amsterdam/begrip/";
+declare namespace os="http://linkeddata.few.vu.nl/os-amsterdam/schema/";
+declare namespace osr="http://linkeddata.few.vu.nl/os/resource/";
+declare namespace plaats="http://linkeddata.few.vu.nl/os-amsterdam/plaats/";
+
+declare namespace waag="http://waag.org";
+declare namespace dosa="http://data.os.amsterdam.nl/";
+
+# declare namespace xhtml="http://www.w3.org/1999/xhtml";
+declare default element namespace "http://www.w3.org/1999/xhtml";
+
+declare function waag:if-empty($arg, $value) {
+  if (string($arg) != "")
+  then data($arg)
+  else $value
+};
+
+declare function waag:capitalize-first($arg as xs:string) as xs:string {
+   concat(upper-case(substring($arg,1,1)), substring($arg,2))
+};
+
+declare function waag:abs-uri($arg as xs:string, $context) as xs:string {
+  let $parent := resolve-QName($arg, $context)
+  return concat(namespace-uri-from-QName($parent), local-name-from-QName($parent))
+};
+
+declare function waag:make-uri($arg as xs:string) as xs:string {
+	encode-for-uri(lower-case(translate($arg, " ", "-")))
+};
+
+declare variable $config external; 
+
+let $baseuri := {"http://www.os.amsterdam.nl/test/"}
+
+let $sheets := //body/*[@class="page"]
+
+for $sheet in $sheets
+
+	# meting	2010 hele jaar
+	# kenmerk	slachtofferschap
+	# type	percentage
+	# titel	Slachtofferschap totaal
+	# label	% één of meer keren slachtoffer in eigen buurt
+	# kop	Overig
+	# bron	Monitor Leefbaarheid en Veiligheid
+	# kaart 	wia2010
+	# SD	8.5
+	# tekst	Het percentage bewoners dat een of meer keren slachtoffer van een delict in de eigen buurt is geweest.
+	# decimalen	0
+
+  let $name := data($sheet/h1)  
+  
+  let $meting    := $sheet//tr[ 1]/td[2]
+  let $kenmerk   := $sheet//tr[ 2]/td[2]
+  let $type      := $sheet//tr[ 3]/td[2]
+  let $titel     := $sheet//tr[ 4]/td[2]
+  let $label     := $sheet//tr[ 5]/td[2]
+  let $kop       := $sheet//tr[ 6]/td[2]
+  let $bron      := $sheet//tr[ 7]/td[2]
+  let $kaart     := $sheet//tr[ 8]/td[2]
+  let $sd        := $sheet//tr[ 9]/td[2]
+  let $tekst     := $sheet//tr[10]/td[2]
+  let $decimalen := $sheet//tr[11]/td[2] 
+
+  let $dimensie := {concat($baseuri, "dataset/", waag:make-uri($kenmerk))}
+  let $dataset := {concat($dimensie, "/", waag:make-uri($meting))}
+   
+  let $rows := $sheet//tr[position() > 31 and td[1]!=""] 
+
+  construct {
+  
+ 		$dataset a qb:DataSet ;
+ 		dc:title {$titel} ;
+    rdfs:label {$label} ;
+    dc:description {$tekst} .
+
+    #rdfs:comment {$sheet//tr[1]/td[1]};
+     
+    { for $row in (1 to count($rows))
+    
+    	let $code  := { data($rows[$row]/td[1]) }
+    	let $naam  := { data($rows[$row]/td[2]) }
+    	let $value := { data($rows[$row]/td[3]) }
+      
+      construct {
+      	
+      	_:b a scovo:Item ;
+      		rdf:value $value ;
+      		
+      		os:dimensie $dimensie ;
+      		os:locatie plaats:{$code} ;
+      		#event:time os:jaar-2009 ;
+      		scovo:dataset $dataset .
+
+      }
+    }  
+  }
