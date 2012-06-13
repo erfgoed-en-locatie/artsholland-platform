@@ -12,6 +12,8 @@ declare namespace osgeo="http://rdf.opensahara.com/type/geo/";
 declare namespace nub="http://resources.uitburo.nl/";
 declare namespace ah = "http://purl.org/artsholland/1.0/";
 
+declare namespace eg="http://example.com/saxon-extension";
+
 (: TODO: Import URL should be "dynamic" :) 
 #declare variable $platformUri external; 
 import module namespace waag = "http://waag.org" at "http://api.artsholland.com/static/xquery/waag.xquery.jsp";
@@ -72,6 +74,8 @@ return
 				
 				$euri dc:title {if ($title eq "") then () else $title}^^xsd:string.
 				$euri dc:description {if ($description eq "") then () else $description}^^xsd:string.
+				
+				$euri ah:vis {eg:shift-left(2, 4)} .
 							
 				$euri ah:eventType $typeClass.
 				$typeClass a ah:EventType.			
