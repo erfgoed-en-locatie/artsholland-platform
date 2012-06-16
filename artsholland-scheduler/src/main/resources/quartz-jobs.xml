@@ -16,58 +16,78 @@
   </processing-directives>
 
   <schedule>
-    
-		<job>
+
+    <job>
       <name>Uitbase</name>
       <group>WebResourceImport</group>
       <description>Import data from NUB Uitbase</description>
       <job-class>org.waag.ah.source.uitbase.UitbaseImportJob</job-class>
-      <durability>false</durability>
+      <durability>true</durability>
       <recover>false</recover>
     </job>
-    
-    <!-- <job>
+
+    <job>
       <name>DOSA</name>
       <group>WebResourceImport</group>
       <description>Import data from DOSA</description>
       <job-class>org.waag.ah.source.dosa.DOSAImportJob</job-class>
-      <durability>false</durability>
+      <durability>true</durability>
       <recover>false</recover>
-    </job> -->
-		
-     <trigger>
+    </job>
+
+    <!-- NBTC -->
+
+    <job>
+      <name>NBTC</name>
+      <group>WebResourceImport</group>
+      <description>Import POI data from NBTC</description>
+      <job-class>org.waag.ah.source.nbtc.NBTCImportJob</job-class>
+      <durability>true</durability>
+      <recover>false</recover>
+    </job>
+
+    <trigger>
+      <cron>
+        <name>NBTCImportTrigger</name>
+        <job-name>NBTC</job-name>
+        <job-group>WebResourceImport</job-group>
+        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <time-zone>Europe/Amsterdam</time-zone>
+      </cron>
+    </trigger>
+    
+<!-- 
+    <trigger>
       <cron>
         <name>UitbaseIncrementalImportTrigger</name>
         <group>IncrementalImport</group>
         <job-name>Uitbase</job-name>
         <job-group>WebResourceImport</job-group>
         <job-data-map>
-          <!-- <entry>
-            <key>resource</key>
-            <value>http://accept.ps4.uitburo.nl/api/productions</value>
-          </entry> -->
+          <entry> <key>resource</key> <value>http://accept.ps4.uitburo.nl/api/productions</value> 
+            </entry>
           <entry>
             <key>strategy</key>
             <value>incremental</value>
           </entry>
         </job-data-map>
-        <misfire-instruction>MISFIRE_INSTRUCTION_DO_NOTHING</misfire-instruction>
-       	<cron-expression>0 0/5 * * * ?</cron-expression>
+        <cron-expression>0 0/5 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
-    </trigger> 
-    
-    <!-- <trigger>
+    </trigger>
+ -->    
+<!--  
+    <trigger>
       <cron>
         <name>DOSAImportTrigger</name>
         <group>Import</group>
         <job-name>DOSA</job-name>
-        <job-group>WebResourceImport</job-group>        
+        <job-group>WebResourceImport</job-group>
         <misfire-instruction>MISFIRE_INSTRUCTION_DO_NOTHING</misfire-instruction>
         <cron-expression>0 0/1 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
-    </trigger> -->
-		
+    </trigger>
+ -->
   </schedule>
 </job-scheduling-data>

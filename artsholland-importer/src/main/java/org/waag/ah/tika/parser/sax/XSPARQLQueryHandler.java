@@ -1,9 +1,11 @@
 package org.waag.ah.tika.parser.sax;
 
-import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.net.URI;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Stack;
@@ -11,43 +13,31 @@ import java.util.Stack;
 import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.Configuration;
-import net.sf.saxon.expr.XPathContext;
-import net.sf.saxon.lib.ExtensionFunctionCall;
-import net.sf.saxon.lib.ExtensionFunctionDefinition;
 import net.sf.saxon.om.NamePool;
-import net.sf.saxon.om.SequenceIterator;
-import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
-import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XQueryCompiler;
 import net.sf.saxon.s9api.XQueryEvaluator;
-import net.sf.saxon.s9api.XQueryExecutable;
-import net.sf.saxon.s9api.XdmAtomicValue;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
-import net.sf.saxon.s9api.XdmValue;
-import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.value.Int64Value;
-import net.sf.saxon.value.SequenceType;
-import net.sf.saxon.value.StringValue;
-import net.sf.saxon.value.Value;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.ContentHandlerDecorator;
-import org.apache.tika.sax.EmbeddedContentHandler;
 import org.apache.tika.sax.ToXMLContentHandler;
 import org.apache.tika.sax.xpath.Matcher;
-import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
 import org.deri.xsparql.XSPARQLProcessor;
 import org.openrdf.model.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.exception.ParserException;
+import org.waag.ah.saxon.DebugValue;
+import org.waag.ah.saxon.ObjectUri;
+import org.waag.ah.saxon.ParseLocale;
+import org.waag.ah.saxon.ParseString;
 import org.waag.ah.tika.parser.rdf.TurtleParser;
 import org.waag.ah.tika.util.XSPARQLCharacterEncoder;
 import org.xml.sax.Attributes;
@@ -67,41 +57,46 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	private Matcher matcher;
 	private Stack<String> stack;
 
-	private static class ShiftLeft extends ExtensionFunctionDefinition {
-		private static final long serialVersionUID = 1L;
+//	private static class ShiftLeft extends ExtensionFunctionDefinition {
+//		private static final long serialVersionUID = 1L;
+//
+//		@Override
+//		public StructuredQName getFunctionQName() {
+//			return new StructuredQName("eg", "http://example.com/saxon-extension",
+//					"shift-left");
+//		}
+//
+//		@Override
+//		public SequenceType[] getArgumentTypes() {
+//			return new SequenceType[] { SequenceType.SINGLE_INTEGER,
+//					SequenceType.SINGLE_INTEGER };
+//		}
+//
+//		@Override
+//		public ExtensionFunctionCall makeCallExpression() {
+//			return new ExtensionFunctionCall() {
+//
+//				private static final long serialVersionUID = 1L;
+//				@Override
+//				public SequenceIterator call(SequenceIterator[] arg0, XPathContext arg1) throws XPathException {					
+//						return Value.asIterator(StringValue.makeStringValue("Grote vis"));				
+//				}
+//			};
+//		}
+//
+//		@Override
+//		public SequenceType getResultType(SequenceType[] arg0) {
+//			return SequenceType.SINGLE_STRING;
+//		}
+//	}
 
-		@Override
-		public StructuredQName getFunctionQName() {
-			return new StructuredQName("eg", "http://example.com/saxon-extension",
-					"shift-left");
-		}
-
-		@Override
-		public SequenceType[] getArgumentTypes() {
-			return new SequenceType[] { SequenceType.SINGLE_INTEGER,
-					SequenceType.SINGLE_INTEGER };
-		}
-
-		@Override
-		public ExtensionFunctionCall makeCallExpression() {
-			return new ExtensionFunctionCall() {
-
-				private static final long serialVersionUID = 1L;
-				@Override
-				public SequenceIterator call(SequenceIterator[] arg0, XPathContext arg1) throws XPathException {					
-						return Value.asIterator(StringValue.makeStringValue("Grote vis"));				
-				}
-			};
-		}
-
-		@Override
-		public SequenceType getResultType(SequenceType[] arg0) {
-			return SequenceType.SINGLE_STRING;
-		}
+	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata,
+			ParseContext context, InputStream xquery) throws ParserException {
+		this(handler, metadata, context, xquery, null);
 	}
 
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata,
-			ParseContext context, InputStream xquery)
+			ParseContext context, InputStream xquery, Map<String, URI> includes)
 			throws ParserException {
 		this.matcher = new XPathParser("rdf", RDF.NAMESPACE).parse("/rdf:RDF/descendant::node()");
 		this.handler = handler;
@@ -118,28 +113,43 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			Configuration config = new Configuration();
 			
 			config.setNamePool(namepool);
-			config.registerExtensionFunction(new ShiftLeft());
+			config.registerExtensionFunction(new DebugValue());
+			config.registerExtensionFunction(new ObjectUri());
+			config.registerExtensionFunction(new ParseLocale());
+			config.registerExtensionFunction(new ParseString());
 			
 			Processor processor = new Processor(config);
 			XQueryCompiler compiler = processor.newXQueryCompiler();			
-			evaluator = compiler.compile(q).load();			
+			evaluator = compiler.compile(q).load();	
 			
+			if (includes != null) {
+				DocumentBuilder docBuilder = processor.newDocumentBuilder();
+				for (Entry<String, URI> item : includes.entrySet()) {
+					XdmNode document = docBuilder.build(new File(item.getValue()));
+					evaluator.setExternalVariable(new QName(item.getKey()), document);				
+				}
+			}
 		} catch (Exception e) {
 			throw new ParserException(e.getMessage());
-		}			
+		}		
 	}
 
 	private boolean processing() {
 		return stack.size() > 0;
 	}
-
+	
+	@Override
+	public void startPrefixMapping(String prefix, String uri)
+			throws SAXException {
+//		xmlCollector.startPrefixMapping(prefix, uri);
+		namepool.allocateNamespaceCode(prefix, uri);
+	}
+	
 	@Override
 	public void startDocument() throws SAXException {
 		this.handler.startDocument();
 		AttributesImpl atts = new AttributesImpl();
-		for (Entry<String, String> mapping : namepool.getMappings().entrySet()) {
-			this.handler.startPrefixMapping(mapping.getKey(), mapping.getValue());
-		}
+		applyNamespaces(handler);
 		this.handler.startElement(RDF.NAMESPACE, "RDF", "rdf:RDF", atts);
 	}
 
@@ -154,12 +164,17 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			Attributes attributes) throws SAXException {
 		if (!processing()) {
 			xmlCollector = new ToXMLContentHandler();
+			applyNamespaces(xmlCollector);
 		}
 		// Make sure element attribute values don't contain unwanted HTML chars.
 		for (int idx = 0; idx < attributes.getLength(); idx++) {
 			if (attributes.getType(idx).equals("CDATA")) {
-				((AttributesImpl) attributes).setValue(idx,
-						StringEscapeUtils.escapeHtml(attributes.getValue(idx)));
+				try {
+					((AttributesImpl) attributes).setValue(idx,
+							StringEscapeUtils.escapeHtml(attributes.getValue(idx)));
+				} catch (RuntimeException e) {
+					continue;
+				}
 			}
 		}
 		stack.push(localName);
@@ -193,24 +208,31 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 
 				evaluator.setSource(new StreamSource(new StringReader(xmlString)));
 				StringBuilder combined = new StringBuilder();
+				Iterator<XdmItem> output = evaluator.iterator();
+				
+				String namespaces = output.next().toString();
+				String statements = output.next().toString();
+				
+//				logger.info(output.next());
+//				for (XdmItem item : evaluator) {
+//					combined.append(item);
+//				}
+				
+				logger.info("\n"+statements);
 
-				for (XdmItem item : evaluator) {
-					combined.append(item);
-				}
-
-				Metadata mdata = new Metadata();
-				mdata.set(Metadata.CONTENT_TYPE, "text/turtle");
-				mdata.set(Metadata.RESOURCE_NAME_KEY,
-						metadata.get(Metadata.RESOURCE_NAME_KEY));
-
-				turtleString = XSPARQLCharacterEncoder.decode(combined.toString());
-				turtleString = XSPARQLCharacterEncoder
-						.repairInvalidTypeURIs(turtleString);
-
-				turtleParser.parse(new ByteArrayInputStream(turtleString.getBytes()),
-						new MatchingContentHandler(
-								new EmbeddedContentHandler(this.handler), matcher), mdata,
-						context);
+//				Metadata mdata = new Metadata();
+//				mdata.set(Metadata.CONTENT_TYPE, "text/turtle");
+//				mdata.set(Metadata.RESOURCE_NAME_KEY,
+//						metadata.get(Metadata.RESOURCE_NAME_KEY));
+//
+//				turtleString = XSPARQLCharacterEncoder.decode(combined.toString());
+//				turtleString = XSPARQLCharacterEncoder
+//						.repairInvalidTypeURIs(turtleString);
+//
+//				turtleParser.parse(new ByteArrayInputStream(turtleString.getBytes()),
+//						new MatchingContentHandler(
+//								new EmbeddedContentHandler(this.handler), matcher), mdata,
+//						context);
 
 			} catch (Exception e) {
 				throw new SAXException(e.getMessage(), e);
@@ -219,7 +241,13 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			}
 		}
 	}
-
+	
+	private void applyNamespaces(ContentHandler handler) throws SAXException {
+		for (Entry<String, String> mapping : namepool.getMappings().entrySet()) {
+			handler.startPrefixMapping(mapping.getKey(), mapping.getValue());
+		}		
+	}
+	
 	private static class NamespaceCollector extends NamePool {
 		private static final long serialVersionUID = -2352244560755994347L;
 		private Map<String, String> mappings = new HashMap<String, String>();

@@ -1,0 +1,115 @@
+declare namespace dc="http://purl.org/dc/terms/";
+declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+declare namespace rdfs="http://www.w3.org/2000/01/rdf-schema#";
+declare namespace xsd="http://www.w3.org/2001/XMLSchema#";
+declare namespace owl="http://www.w3.org/2002/07/owl#";
+declare namespace time="http://www.w3.org/2006/time#"; 
+declare namespace foaf="http://xmlns.com/foaf/0.1/";
+declare namespace geo="http://www.w3.org/2003/01/geo/wgs84_pos#";
+declare namespace vcard="http://www.w3.org/2006/vcard/ns#";
+declare namespace osgeo="http://rdf.opensahara.com/type/geo/";
+declare namespace ah="http://purl.org/artsholland/1.0/";
+declare namespace waag="http://waag.org/saxon-extension";
+
+declare function waag:get-poi-category($arg as xs:string) as xs:string {
+  if (compare($arg, "MU") = 0) then fn:data("ah:poiCategoryMuseum")
+  else if (compare($arg, "RE") = 0) then fn:data("ah:poiCategoryRestaurant")
+  else if (compare($arg, "HO") = 0) then fn:data("ah:poiCategoryHotel")
+  else if (compare($arg, "UI") = 0) then fn:data("ah:poiCategoryGoingOut")
+  else if (compare($arg, "CO") = 0) then fn:data("ah:poiCategoryCongressAccomodation")
+  else if (compare($arg, "AT") = 0) then fn:data("ah:poiCategoryAttraction")
+  else if (compare($arg, "CA") = 0) then fn:data("ah:poiCategoryCamping")
+  else if (compare($arg, "BB") = 0) then fn:data("ah:poiCategoryBB")
+  else if (compare($arg, "BU") = 0) then fn:data("ah:poiCategoryBungalowPark")
+  else if (compare($arg, "GR") = 0) then fn:data("ah:poiCategoryGroupAccomodation")
+  else if (compare($arg, "VA") = 0) then fn:data("ah:poiCategoryHolidayRental")
+  else if (compare($arg, "AP") = 0) then fn:data("ah:poiCategoryAppartment")
+  else if (compare($arg, "VV") = 0) then fn:data("ah:poiCategoryTouristOffice")
+  else if (compare($arg, "HT") = 0) then fn:data("ah:poiCategoryHostel")
+  else if (compare($arg, "GO") = 0) then fn:data("ah:poiCategoryGolfClub")
+  else if (compare($arg, "EV") = 0) then fn:data("ah:poiCategoryEvent")
+  else fn:data("ah:poiCategoryUnknown")
+};
+  
+declare function waag:get-poi-attribute($arg as xs:string) as xs:string {
+  if (compare($arg, "pr_actyp") = 0) then fn:data("ah:POI_AttributeAcType")
+  else if (compare($arg, "pr_ambia") = 0) then fn:data("ah:POI_AttributeAmbiance")
+  else if (compare($arg, "pr_colle") = 0) then fn:data("ah:POI_AttributeCollection")
+  else if (compare($arg, "pr_attyp") = 0) then fn:data("ah:POI_AttributeAtrType")
+  else if (compare($arg, "pr_butyp") = 0) then fn:data("ah:POI_AttributeBuType")
+  else if (compare($arg, "pr_campg") = 0) then fn:data("ah:POI_AttributeCampagne")
+  else if (compare($arg, "pr_colle") = 0) then fn:data("ah:POI_AttributeCollection")
+  else if (compare($arg, "pr_condi") = 0) then fn:data("ah:POI_AttributeCondition")
+  else if (compare($arg, "pr_evtyp") = 0) then fn:data("ah:POI_AttributeEvType")
+  else if (compare($arg, "pr_facdi") = 0) then fn:data("ah:POI_AttributeDisabled")
+  else if (compare($arg, "pr_facgn") = 0) then fn:data("ah:POI_AttributeFacGen")
+  else if (compare($arg, "pr_facpu") = 0) then fn:data("ah:POI_AttributeFac")
+  else if (compare($arg, "pr_facre") = 0) then fn:data("ah:POI_AttributeRecreation")
+  else if (compare($arg, "pr_facsa") = 0) then fn:data("ah:POI_AttributeSanitary")
+  else if (compare($arg, "pr_impor") = 0) then fn:data("ah:POI_AttributeInterest")
+  else if (compare($arg, "pr_kitch") = 0) then fn:data("ah:POI_AttributeCuisine")
+  else if (compare($arg, "pr_locat") = 0) then fn:data("ah:POI_AttributeSituation")
+  else if (compare($arg, "pr_music") = 0) then fn:data("ah:POI_AttributeMusicType")
+  else if (compare($arg, "pr_servi") = 0) then fn:data("ah:POI_AttributeServices")
+  else if (compare($arg, "pr_speci") = 0) then fn:data("ah:POI_AttributeSpecialities")
+  else if (compare($arg, "pr_targg") = 0) then fn:data("ah:POI_AttributeTargetGroup")
+  else fn:data("ah:POI_AttributeUnknown")
+};
+
+let $pois := //Poi
+
+return
+
+################################################################################
+##################   POI   #####################################################
+################################################################################
+
+	if ($pois) then {
+		for $poi in $pois	
+		
+      let $pid := {$poi/operation/id}
+      let $puri := {waag:object-uri("poi", "nbtc", $pid)}
+			let $lang := {waag:parse-locale($poi/operation/locale)}
+
+			let $locationAddress := {$poi/object/locationAddress}
+			let $luri := {waag:object-uri("address", concat($locationAddress/zipcode, $locationAddress/housenumber))}
+			let $contactAddress := {$poi/object/contactAddress}
+      let $curi := {waag:object-uri("address", concat($contactAddress/zipcode, $contactAddress/housenumber))}
+			
+			construct {
+              
+        $puri a ah:POI ;
+              dc:title {$poi/object/poiName}@{$lang} ;
+              ah:poiCategory {waag:get-poi-category($poi/operation/poiCategory)} ;
+              foaf:homepage {$poi/object/poiUrl} ;
+              ah:poiLocationAddress $luri ;
+              ah:poiContactAddress $curi ;
+              geo:long {$poi/positionList/position/longitude}^^xsd:decimal ;
+              geo:lat {$poi/positionList/position/latitude}^^xsd:decimal .
+                
+        $luri a ah:Address ;
+              vcard:street-address {concat($locationAddress/street, " ", $locationAddress/housenumber)} ;
+              vcard:locality {waag:parse-string($locationAddress/city)} ;
+              vcard:postal-code {waag:parse-string($locationAddress/zipcode)} .
+        
+        $curi a ah:Address ;
+              vcard:street-address {concat($contactAddress/street, " ", $contactAddress/housenumber)} ;
+              vcard:locality {waag:parse-string($contactAddress/city)} ;
+              vcard:postal-code {waag:parse-string($contactAddress/zipcode)} ;
+              vcard:email {waag:parse-string($contactAddress/email)} ;
+              ah:telephone {waag:parse-string($contactAddress/phoneGeneral)} ;
+              ah:fax {waag:parse-string($contactAddress/faxGeneral)} .      
+              
+        { for $attr at $pos in $poi/object/attributeList/*
+          let $auri := {concat($puri, "/attribute/", string($pos))}
+          construct {
+            $puri ah:poiAttribute $auri .
+            $auri rdf:type {if (fn:empty($attr/@meta)) then () else {waag:get-poi-attribute($attr/@meta)}} .
+            $auri rdf:label {if (fn:empty($attr/@meta)) then () else {$attr}}@{$lang} .
+          }        
+        }
+    }
+	}
+
+	else ()
+	
