@@ -26,10 +26,8 @@ public class UitbaseController {
 	public void proxy(final HttpServletRequest request,
 			final HttpServletResponse response) throws IOException  {
 		
-		/*
-		 * Proxies the the whole path after '/uitbase/' to the Uitbase server.
-		 */
-		String path = request.getServletPath().substring(MAPPING.length());
+		// Proxies the the whole path after '/uitbase/' to the Uitbase server.
+		String path = "/"+request.getServletPath().substring(MAPPING.length());
 		uitbaseService.proxyQuery(request, response, path);
 	}
 }

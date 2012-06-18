@@ -1,12 +1,6 @@
 package org.waag.ah.spring.service;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.WritableByteChannel;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -17,11 +11,14 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.net.io.Util;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
+
 
 @Service("proxyService")
 abstract class ProxyService {
-	// private Logger logger = Logger.getLogger(ProxyService.class);
+	 private Logger logger = Logger.getLogger(ProxyService.class);
 
 	private String baseUrl;
 	private HttpMethod method;
@@ -34,22 +31,16 @@ abstract class ProxyService {
 
 	public void proxyQuery(HttpServletRequest request,
 			HttpServletResponse response, String path) throws IOException {
-		ServletOutputStream output = response.getOutputStream();
-
 		HttpClient client = new HttpClient();
-
 		String url = getUrl(path);
+		
+		logger.info("Proxying request: "+url);
 
 		if (request.getMethod().equals("GET")) {
-
 			method = new GetMethod(url);
-
 		} else if (request.getMethod().equals("POST")) {
-
 			method = new PostMethod(url);
-
 		} else {
-
 			throw new NotImplementedException(
 					"This proxy only supports GET and POST methods.");
 		}
@@ -60,101 +51,41 @@ abstract class ProxyService {
 		client.executeMethod(method);
 
 		afterProxyRequest(request, response, method);
-
-		// response.setContentLength(getContentLength());
-		stream(method.getResponseBodyAsStream(), response.getOutputStream());
-
-		// /////////////////////////// /////////////////////////////
-		// /////////////////////////// /////////////////////////////
-		// InputStream input = method.getResponseBodyAsStream();
-		// OutputStream output2 = response.getOutputStream();
-		// //response.setContentLength(getContentLength());
-		// byte[] buffer = new byte[10240];
-		//
-		// try {
-		// for (int length = 0; (length = input.read(buffer)) > 0;) {
-		// output2.write(buffer, 0, length);
-		// }
-		// }
-		// finally {
-		// try { output2.close(); } catch (IOException ignore) {}
-		// try { input.close(); } catch (IOException ignore) {}
-		// }
-		// /////////////////////////// /////////////////////////////
-		// /////////////////////////// /////////////////////////////
-
-		// output.write(method.getResponseBody());
-		// output.flush();
-		// output.close();
-	}
-
-	/*
-	 * TODO: move to utility class?
-	 */
-	public static long stream(InputStream input, OutputStream output)
-			throws IOException {
-		ReadableByteChannel inputChannel = null;
-		WritableByteChannel outputChannel = null;
-
-		try {
-			inputChannel = Channels.newChannel(input);
-			outputChannel = Channels.newChannel(output);
-			ByteBuffer buffer = ByteBuffer.allocate(10240);
-			long size = 0;
-
-			while (inputChannel.read(buffer) != -1) {
-				buffer.flip();
-				size += outputChannel.write(buffer);
-				buffer.clear();
-			}
-
-			return size;
-		} finally {
-			if (outputChannel != null)
-				try {
-					outputChannel.close();
-				} catch (IOException ignore) { /**/
-				}
-			if (inputChannel != null)
-				try {
-					inputChannel.close();
-				} catch (IOException ignore) { /**/
-				}
-		}
-	}
-
-	public void proxyQuery(HttpServletRequest request,
-			HttpServletResponse response) throws IOException {
 
 		ServletOutputStream output = response.getOutputStream();
-
-		HttpClient client = new HttpClient();
-
-		if (request.getMethod().equals("GET")) {
-
-			method = new GetMethod(baseUrl);
-
-		} else if (request.getMethod().equals("POST")) {
-
-			method = new PostMethod(baseUrl);
-
-		} else {
-
-			throw new NotImplementedException(
-					"This proxy only supports GET and POST methods.");
-		}
-
-		beforeProxyRequest(request, response, method);
-
-		// Execute the method
-		client.executeMethod(method);
-
-		afterProxyRequest(request, response, method);
-
-		output.write(method.getResponseBody());
+		Util.copyStream(method.getResponseBodyAsStream(), output);
+		
 		output.flush();
-		output.close();
+//		output.close();
 	}
+
+//	public void proxyQuery(HttpServletRequest request,
+//			HttpServletResponse response) throws IOException {
+//		HttpClient client = new HttpClient();
+//
+//		if (request.getMethod().equals("GET")) {
+//			method = new GetMethod(baseUrl);
+//		} else if (request.getMethod().equals("POST")) {
+//			method = new PostMethod(baseUrl);
+//		} else {
+//			throw new NotImplementedException(
+//					"This proxy only supports GET and POST methods.");
+//		}
+//
+//		logger.info("Proxying request: "+request.getRequestURI());
+//		beforeProxyRequest(request, response, method);
+//
+//		// Execute the method
+//		client.executeMethod(method);
+//
+//		afterProxyRequest(request, response, method);
+//		
+//		ServletOutputStream output = response.getOutputStream();
+//		Util.copyStream(method.getResponseBodyAsStream(), output);
+//        
+//		output.flush();
+////		output.close();
+//	}
 
 	public String getBaseUrl() {
 		return baseUrl;
