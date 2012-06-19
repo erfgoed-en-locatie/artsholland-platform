@@ -25,23 +25,17 @@
     <owl:imports rdf:resource="http://purl.org/dc/terms/"/>
     <owl:imports rdf:resource="http://purl.org/dc/elements/1.1/"/>
   </owl:Ontology>
-  <owl:Class rdf:about="http://purl.org/artsholland/1.0/Venue">
-    <rdfs:comment xml:lang="nl">Locatie of ruimte waar culturele uitingen plaatsvinden.</rdfs:comment>
-    <rdfs:subClassOf rdf:resource="http://www.w3.org/2006/vcard/ns#VCard"/>
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >Venue</rdfs:label>
-    <rdfs:comment xml:lang="en">Place or locality where cultural events take place.</rdfs:comment>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeSanitary">
+    <rdfs:label xml:lang="en">POI Attribute Sanitary</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
+    </rdfs:subClassOf>
   </owl:Class>
-  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Category">
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >POI Category</rdfs:label>
-    <rdfs:comment xml:lang="nl">Soort Point of Interest</rdfs:comment>
-    <rdfs:comment xml:lang="en">Categoty of Point of Insterest</rdfs:comment>
-  </owl:Class>
-  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Cuisine">
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >POI Cuisine</rdfs:label>
-    <rdfs:comment xml:lang="en">Type of cuisine when POI is a restaurant</rdfs:comment>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeServices">
+    <rdfs:label xml:lang="en">POI Attribute Services</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
+    </rdfs:subClassOf>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Genre">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -53,11 +47,11 @@
     <rdfs:comment xml:lang="nl">Type van de voorstelling; één van 'normaal', 'première' of 'try-out'.</rdfs:comment>
     <rdfs:comment xml:lang="en">Event type; one of 'normal', 'premiere' or 'try-out'.</rdfs:comment>
   </owl:Class>
-  <owl:Class rdf:about="http://purl.org/artsholland/1.0/EventStatus">
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >Event status</rdfs:label>
-    <rdfs:comment xml:lang="nl">Status van de voorstelling; één van 'normaal', 'uitverkocht', 'geannuleerd' of 'uitgesteld'.</rdfs:comment>
-    <rdfs:comment xml:lang="en">Event status; one of 'normal', 'sold out', 'cancelled' or 'postponed'.</rdfs:comment>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeSituation">
+    <rdfs:label xml:lang="en">POI Attribute Situation</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
+    </rdfs:subClassOf>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Room">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -66,17 +60,45 @@
     <rdfs:comment xml:lang="en">A room or hall as part of a bigger venue or space.</rdfs:comment>
     <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
   </owl:Class>
-  <owl:Class rdf:about="http://purl.org/artsholland/1.0/Event">
-    <rdfs:comment xml:lang="en">A cultural production at a specific location and time.</rdfs:comment>
-    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >Event</rdfs:label>
-    <rdfs:comment xml:lang="nl">Een culturele uiting op een bepaalde plaats en een bepaald tijdstip.</rdfs:comment>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeMusicType">
+    <rdfs:label xml:lang="en">POI Attribute Music Type</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
+    </rdfs:subClassOf>
   </owl:Class>
-  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Collection">
-    <rdfs:comment xml:lang="en">Type of collection when POI is a museum</rdfs:comment>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeEvType">
+    <rdfs:label xml:lang="en">POI Attribute Event Type</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeCuisine">
+    <rdfs:label xml:lang="en">POI Attribute Cuisine</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/AttachmentType">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >POI Collection</rdfs:label>
+    >Attachment type</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeAmbiance">
+    <rdfs:label xml:lang="en">POI Attribute Ambiance</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeCampagne">
+    <rdfs:label xml:lang="en">POI Attribute Campagne</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeFac">
+    <rdfs:label xml:lang="en">POI Attribute Facilities</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
+    </rdfs:subClassOf>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Party">
     <rdfs:comment xml:lang="en">A group, person or organization that perfroms in or organizes a cultural event.</rdfs:comment>
@@ -85,11 +107,111 @@
     <rdfs:comment xml:lang="nl">Een groep, persoon of entiteit welke participeert in een culturele uiting.</rdfs:comment>
     <rdfs:subClassOf rdf:resource="http://www.w3.org/2006/vcard/ns#Organization"/>
   </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeFacGen">
+    <rdfs:label xml:lang="en">POI Attribute General Facilities</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
+    </rdfs:subClassOf>
+  </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/VenueType">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Venue type</rdfs:label>
     <rdfs:comment xml:lang="en">The type of venue; i.e. a cinema, theater etc.</rdfs:comment>
     <rdfs:comment xml:lang="nl">Het type locatie; i.e. een bioscoop, theater etc.</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/Address">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Address</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeCollection">
+    <rdfs:label xml:lang="en">POI Attribute Collection</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI">
+    <rdfs:comment xml:lang="nl">Algemene POI</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >POI</rdfs:label>
+    <rdfs:comment xml:lang="en">General Point of Interest</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeAccessability">
+    <rdfs:label xml:lang="en">POI Attribute Accessability</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeAcType">
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
+    </rdfs:subClassOf>
+    <rdfs:label xml:lang="en">POI Attribute Accomodation Type</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeAtrType">
+    <rdfs:label xml:lang="en">POI Attribute Attraction Type</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeCondition">
+    <rdfs:label xml:lang="en">POI Attribute Condition</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/Venue">
+    <rdfs:comment xml:lang="nl">Locatie of ruimte waar culturele uitingen plaatsvinden.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2006/vcard/ns#VCard"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Venue</rdfs:label>
+    <rdfs:comment xml:lang="en">Place or locality where cultural events take place.</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeBuType">
+    <rdfs:label xml:lang="en">POI Attribute Business Type</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Category">
+    <rdfs:comment xml:lang="en">Category of Point of Insterest</rdfs:comment>
+    <rdfs:comment xml:lang="nl">Soort Point of Interest</rdfs:comment>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >POI Category</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/EventStatus">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Event status</rdfs:label>
+    <rdfs:comment xml:lang="nl">Status van de voorstelling; één van 'normaal', 'uitverkocht', 'geannuleerd' of 'uitgesteld'.</rdfs:comment>
+    <rdfs:comment xml:lang="en">Event status; one of 'normal', 'sold out', 'cancelled' or 'postponed'.</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/Event">
+    <rdfs:comment xml:lang="en">A cultural production at a specific location and time.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Event</rdfs:label>
+    <rdfs:comment xml:lang="nl">Een culturele uiting op een bepaalde plaats en een bepaald tijdstip.</rdfs:comment>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeInterest">
+    <rdfs:label xml:lang="en">POI Attribute Interest</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeRecreation">
+    <rdfs:label xml:lang="en">POI Attribute Recreation</rdfs:label>
+    <rdfs:subClassOf>
+      <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute">
+    <dc:description xml:lang="en">General class for POI attributes</dc:description>
+    <dc:description xml:lang="nl">Algemene classe voor eigenschappen van POI's</dc:description>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >POI Attribute</rdfs:label>
+  </owl:Class>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeTargetGroup">
+    <rdfs:label xml:lang="en">POI Attribute Target Group</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/artsholland/1.0/POI_Attribute"/>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Attachment">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -97,10 +219,9 @@
     <rdfs:comment xml:lang="nl">Media, in digitale vorm, behorend tot een event, productie of locatie.</rdfs:comment>
     <rdfs:comment xml:lang="en">Digital media, illustrating an event, production or venue.</rdfs:comment>
   </owl:Class>
-  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI">
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >POI</rdfs:label>
-    <rdfs:comment xml:lang="en">General Point of Interest</rdfs:comment>
+  <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeSpecialities">
+    <rdfs:label xml:lang="en">POI Attribute Specialities</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/artsholland/1.0/POI_Attribute"/>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Production">
     <rdfs:comment xml:lang="nl">Een specifieke productie van een cultureel stuk.</rdfs:comment>
@@ -109,6 +230,13 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Production</rdfs:label>
   </owl:Class>
+  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/performedByParty">
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Party"/>
+    <rdfs:comment xml:lang="nl">De relatie tussen een bepaalde culturele productie en de uitvoerende artiest(en).</rdfs:comment>
+    <rdfs:label xml:lang="en">performed by party</rdfs:label>
+    <rdfs:comment xml:lang="en">The relation between a particular cultural production and the party it is performed by.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Production"/>
+  </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/room">
     <rdfs:domain>
       <owl:Class>
@@ -125,12 +253,11 @@
       <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/belongsToVenue"/>
     </owl:inverseOf>
   </owl:ObjectProperty>
-  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/performedByParty">
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Party"/>
-    <rdfs:comment xml:lang="nl">De relatie tussen een bepaalde culturele productie en de uitvoerende artiest(en).</rdfs:comment>
-    <rdfs:label xml:lang="en">performed by party</rdfs:label>
-    <rdfs:comment xml:lang="en">The relation between a particular cultural production and the party it is performed by.</rdfs:comment>
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Production"/>
+  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/poiContactAddress">
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Address"/>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/POI"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >poi contact address</rdfs:label>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/atLocation">
     <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
@@ -139,6 +266,12 @@
     >at location</rdfs:label>
     <rdfs:comment xml:lang="nl">De lokatie waar een event plaatsvind.</rdfs:comment>
     <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Event"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/poiLocationAddress">
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Address"/>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/POI"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >poi location address</rdfs:label>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/venueType">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -164,6 +297,13 @@
     <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Room"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >belongs to venue</rdfs:label>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/poiAttribute">
+    <dc:description xml:lang="en">links an attribute to a POI</dc:description>
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/POI_Attribute"/>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/POI"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >poi attribute</rdfs:label>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/ticket">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -203,16 +343,17 @@
     >event status</rdfs:label>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/attachment">
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Attachment"/>
     <rdfs:domain>
       <owl:Class>
         <owl:unionOf rdf:parseType="Collection">
           <owl:Class rdf:about="http://purl.org/artsholland/1.0/Event"/>
           <owl:Class rdf:about="http://purl.org/artsholland/1.0/Production"/>
           <owl:Class rdf:about="http://purl.org/artsholland/1.0/Venue"/>
+          <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI"/>
         </owl:unionOf>
       </owl:Class>
     </rdfs:domain>
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Attachment"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >attachment</rdfs:label>
   </owl:ObjectProperty>
@@ -248,10 +389,10 @@
     <rdfs:comment xml:lang="nl">Algemene kortingsopties voor voorstellingen in deze locatie.</rdfs:comment>
   </owl:DatatypeProperty>
   <owl:DatatypeProperty rdf:about="http://purl.org/artsholland/1.0/accessabilityInfo">
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
+    <rdfs:label xml:lang="nl">toegankelijkheid minder validen</rdfs:label>
     <rdfs:label xml:lang="en">accessability info</rdfs:label>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:label xml:lang="nl">toegankelijkheid invaliden</rdfs:label>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
   </owl:DatatypeProperty>
   <owl:DatatypeProperty rdf:about="http://purl.org/artsholland/1.0/cidn">
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
@@ -282,22 +423,18 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Klassieke muziek</rdfs:label>
   </ah:Genre>
-  <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreRondrit">
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >Rondrit</rdfs:label>
-  </ah:Genre>
   <ah:VenueType rdf:about="http://purl.org/artsholland/1.0/venueTypeOutdoor">
     <rdfs:label xml:lang="nl">Buitenlocatie</rdfs:label>
     <rdfs:label xml:lang="en">Outdoor location</rdfs:label>
   </ah:VenueType>
+  <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreRondrit">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Rondrit</rdfs:label>
+  </ah:Genre>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreOverigen">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Overigen</rdfs:label>
   </ah:Genre>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineCajun">
-    <rdfs:label xml:lang="en">Cajun cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Cajun keuken</rdfs:label>
-  </ah:POI_Cuisine>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreDebat">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Debat</rdfs:label>
@@ -306,13 +443,13 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Speelfilm</rdfs:label>
   </ah:Genre>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineIrish">
-    <rdfs:label xml:lang="en">Irish cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Ierse keuken</rdfs:label>
-  </ah:POI_Cuisine>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreDance">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Dance</rdfs:label>
+  </ah:Genre>
+  <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreRondleiding">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Rondleiding</rdfs:label>
   </ah:Genre>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreMarkt">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -322,18 +459,10 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Optocht</rdfs:label>
   </ah:Genre>
-  <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreRondleiding">
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >Rondleiding</rdfs:label>
-  </ah:Genre>
   <ah:EventStatus rdf:about="http://purl.org/artsholland/1.0/eventStatusNormal">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >normal event</rdfs:label>
   </ah:EventStatus>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineAsian">
-    <rdfs:label xml:lang="en">Asian cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Aziatische keuken</rdfs:label>
-  </ah:POI_Cuisine>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreShow">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Show</rdfs:label>
@@ -346,14 +475,6 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Circus</rdfs:label>
   </ah:Genre>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineFrench">
-    <rdfs:label xml:lang="en">French cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Franse keuken</rdfs:label>
-  </ah:POI_Cuisine>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineSouthAmerican">
-    <rdfs:label xml:lang="en">South American cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Zuidamerikaanse keuken</rdfs:label>
-  </ah:POI_Cuisine>
   <ah:EventType rdf:about="http://purl.org/artsholland/1.0/eventTypePremiere">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >event type premiere</rdfs:label>
@@ -362,26 +483,10 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >poi category hostel</rdfs:label>
   </ah:POI_Category>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineSurinam">
-    <rdfs:label xml:lang="en">Surinam cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Surinaamse keuken</rdfs:label>
-  </ah:POI_Cuisine>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineGreek">
-    <rdfs:label xml:lang="en">Greek cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Griekse keuken</rdfs:label>
-  </ah:POI_Cuisine>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreJeugd">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Jeugd</rdfs:label>
   </ah:Genre>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineTurkish">
-    <rdfs:label xml:lang="en">Turkish cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Turkse keuken</rdfs:label>
-  </ah:POI_Cuisine>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineThai">
-    <rdfs:label xml:lang="en">Thai cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Thaaise keuken</rdfs:label>
-  </ah:POI_Cuisine>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreMusical">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Musical</rdfs:label>
@@ -390,26 +495,10 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Jazz</rdfs:label>
   </ah:Genre>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineIndonesian">
-    <rdfs:label xml:lang="en">Indonesian cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Indonesische keuken</rdfs:label>
-  </ah:POI_Cuisine>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineAfrican">
-    <rdfs:label xml:lang="en">Afrikaans cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Afrikaanse keuken</rdfs:label>
-  </ah:POI_Cuisine>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineAmerican">
-    <rdfs:label xml:lang="en">American cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Amerikaanse keuken</rdfs:label>
-  </ah:POI_Cuisine>
   <ah:POI_Category rdf:about="http://purl.org/artsholland/1.0/poiCategoryHolidayRental">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >poi category holiday rental</rdfs:label>
   </ah:POI_Category>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineCantonese">
-    <rdfs:label xml:lang="en">Cantonese cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Cantonese keuken</rdfs:label>
-  </ah:POI_Cuisine>
   <ah:POI_Category rdf:about="http://purl.org/artsholland/1.0/poiCategoryBB">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >poi category bed &amp; breakfast and pension</rdfs:label>
@@ -442,341 +531,10 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >poi category appartment</rdfs:label>
   </ah:POI_Category>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionPotteryCeramics">
-    <rdfs:label xml:lang="nl">aardewerk en keramiek</rdfs:label>
-    <rdfs:label xml:lang="en">pottery and ceramics</rdfs:label>
-  </ah:POI_Collection>
-
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionCrafts">
-    <rdfs:label xml:lang="nl">ambacht</rdfs:label>
-    <rdfs:label xml:lang="en">crafts</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionArcheology">
-    <rdfs:label xml:lang="nl">archeologie</rdfs:label>
-    <rdfs:label xml:lang="en">Archeology</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionArchitecture">
-    <rdfs:label xml:lang="nl">architectuur</rdfs:label>
-    <rdfs:label xml:lang="en">architecture</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionAstronomy">
-    <rdfs:label xml:lang="nl">astronomie</rdfs:label>
-    <rdfs:label xml:lang="en">astronomy</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionCars">
-    <rdfs:label xml:lang="nl">auto's</rdfs:label>
-    <rdfs:label xml:lang="en">cars</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionSculpture">
-    <rdfs:label xml:lang="nl">beeldhouwkunst</rdfs:label>
-    <rdfs:label xml:lang="en">sculpture</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionBookPrinting">
-    <rdfs:label xml:lang="nl">boekdrukkunst</rdfs:label>
-    <rdfs:label xml:lang="en">book printing</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionCartography">
-    <rdfs:label xml:lang="nl">cartografie</rdfs:label>
-    <rdfs:label xml:lang="en">cartography</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionCommunication">
-    <rdfs:label xml:lang="nl">communicatie</rdfs:label>
-    <rdfs:label xml:lang="en">communication</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionBicyclesMopeds">
-    <rdfs:label xml:lang="nl">fietsen en bromfietsen</rdfs:label>
-    <rdfs:label xml:lang="en">Bicycles and mopeds</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionFilmVideo">
-    <rdfs:label xml:lang="nl">film en video</rdfs:label>
-    <rdfs:label xml:lang="en">film and video</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionFloraFauna">
-    <rdfs:label xml:lang="nl">flora en fauna</rdfs:label>
-    <rdfs:label xml:lang="en">flora and fauna</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionFolklore">
-    <rdfs:label xml:lang="nl">folklore</rdfs:label>
-    <rdfs:label xml:lang="en">folklore</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionPhotography">
-    <rdfs:label xml:lang="nl">fotografie</rdfs:label>
-    <rdfs:label xml:lang="en">photography</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionMedicineAnatomy">
-    <rdfs:label xml:lang="nl">geneeskunde en anatomie</rdfs:label>
-    <rdfs:label xml:lang="en">medicine and anatomy</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionStimulants">
-    <rdfs:label xml:lang="nl">genotmiddelen</rdfs:label>
-    <rdfs:label xml:lang="en">stimulants</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionGeographyTopography">
-    <rdfs:label xml:lang="nl">geografie en topografie</rdfs:label>
-    <rdfs:label xml:lang="en">Geography and topography</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionGeologyMinerals">
-    <rdfs:label xml:lang="nl">geologie en delfstoffen</rdfs:label>
-    <rdfs:label xml:lang="en">Geology and minerals</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionToolsMeasuringInstruments">
-    <rdfs:label xml:lang="nl">gereedschap en meetinstrumenten</rdfs:label>
-    <rdfs:label xml:lang="en">tools and measuring instruments</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionGlass">
-    <rdfs:label xml:lang="nl">glaskunst</rdfs:label>
-    <rdfs:label xml:lang="en">Glass</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionGraphicArts">
-    <rdfs:label xml:lang="nl">grafische kunst</rdfs:label>
-    <rdfs:label xml:lang="en">Graphic Arts</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionIndustrialDevelopment">
-    <rdfs:label xml:lang="nl">industriële ontwikkeling</rdfs:label>
-    <rdfs:label xml:lang="en">industrial development</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionHunting">
-    <rdfs:label xml:lang="nl">jacht</rdfs:label>
-    <rdfs:label xml:lang="en">hunting</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionStovesFireplaces">
-    <rdfs:label xml:lang="nl">kachels en haarden</rdfs:label>
-    <rdfs:label xml:lang="en">stoves and fireplaces</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionEcclesiasticalArtReligion">
-    <rdfs:label xml:lang="nl">kerkelijke kunst en religie</rdfs:label>
-    <rdfs:label xml:lang="en">ecclesiastical art and religion</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionFairs">
-    <rdfs:label xml:lang="nl">kermis</rdfs:label>
-    <rdfs:label xml:lang="en">fairs</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionCostumes">
-    <rdfs:label xml:lang="nl">klederdrachten</rdfs:label>
-    <rdfs:label xml:lang="en">costumes</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionClothingTextiles">
-    <rdfs:label xml:lang="nl">kleding en textiel</rdfs:label>
-    <rdfs:label xml:lang="en">clothing and textiles</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionArtsCrafts">
-    <rdfs:label xml:lang="nl">kunstnijverheid</rdfs:label>
-    <rdfs:label xml:lang="en">Arts and Crafts</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionAgricultureHorticulture">
-    <rdfs:label xml:lang="nl">land- en tuinbouw</rdfs:label>
-    <rdfs:label xml:lang="en">agriculture and horticulture</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionLiterature">
-    <rdfs:label xml:lang="nl">letterkunde</rdfs:label>
-    <rdfs:label xml:lang="en">Literature</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionAviation">
-    <rdfs:label xml:lang="nl">luchtvaart</rdfs:label>
-    <rdfs:label xml:lang="en">Aviation</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionMeteorology">
-    <rdfs:label xml:lang="nl">meteorologie</rdfs:label>
-    <rdfs:label xml:lang="en">meteorology</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionMill">
-    <rdfs:label xml:lang="nl">molen</rdfs:label>
-    <rdfs:label xml:lang="en">mill</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionMotorcyclesScooters">
-    <rdfs:label xml:lang="nl">motoren en scooters</rdfs:label>
-    <rdfs:label xml:lang="en">motorcycles and scooters</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionCoinsmedals">
-    <rdfs:label xml:lang="nl">munten en penningen</rdfs:label>
-    <rdfs:label xml:lang="en">coins and medals</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionMusicPerformingArts">
-    <rdfs:label xml:lang="nl">muziek en podiumkunsten</rdfs:label>
-    <rdfs:label xml:lang="en">music and performing arts</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionMusicalInstruments">
-    <rdfs:label xml:lang="nl">muziekinstrumenten</rdfs:label>
-    <rdfs:label xml:lang="en">musical instruments</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionNatureEnvironment">
-    <rdfs:label xml:lang="nl">natuur en milieu</rdfs:label>
-    <rdfs:label xml:lang="en">nature and environment</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionPhysics">
-    <rdfs:label xml:lang="nl">natuurkunde</rdfs:label>
-    <rdfs:label xml:lang="en">Physics</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionEducationTraining">
-    <rdfs:label xml:lang="nl">onderwijs en opvoeding</rdfs:label>
-    <rdfs:label xml:lang="en">education and training</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionWarWeapons">
-    <rdfs:label xml:lang="nl">oorlog en wapens</rdfs:label>
-    <rdfs:label xml:lang="en">war and weapons</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionOptics">
-    <rdfs:label xml:lang="nl">optiek</rdfs:label>
-    <rdfs:label xml:lang="en">optics</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionAntiquityRoom">
-    <rdfs:label xml:lang="nl">oudheidkamer</rdfs:label>
-    <rdfs:label xml:lang="en">antiquity room</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionGovernment">
-    <rdfs:label xml:lang="nl">overheid</rdfs:label>
-    <rdfs:label xml:lang="en">government</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionDollhouses">
-    <rdfs:label xml:lang="nl">poppenhuizen</rdfs:label>
-    <rdfs:label xml:lang="en">dollhouses</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionPrehistory">
-    <rdfs:label xml:lang="nl">prehistorie</rdfs:label>
-    <rdfs:label xml:lang="en">prehistory</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionCarriagesWagons">
-    <rdfs:label xml:lang="nl">rijtuigen en wagens</rdfs:label>
-    <rdfs:label xml:lang="en">carriages and wagons</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionSpace">
-    <rdfs:label xml:lang="nl">ruimtevaart</rdfs:label>
-    <rdfs:label xml:lang="en">Space</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionShippingShipbuilding">
-    <rdfs:label xml:lang="nl">scheepvaart en scheepsbouw</rdfs:label>
-    <rdfs:label xml:lang="en">shipping and shipbuilding</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionPainting1600to1850)">
-    <rdfs:label xml:lang="nl">schilderkunst (1600 - 1850)</rdfs:label>
-    <rdfs:label xml:lang="en">Painting (1600 - 1850)</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionPaintingPost1850">
-    <rdfs:label xml:lang="nl">schilderkunst (na 1850)</rdfs:label>
-    <rdfs:label xml:lang="en">painting (after 1850)</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionPaintingPre1600">
-    <rdfs:label xml:lang="nl">schilderkunst (voor 1600)</rdfs:label>
-    <rdfs:label xml:lang="en">painting (for 1600)</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionScooters">
-    <rdfs:label xml:lang="nl">scooters</rdfs:label>
-    <rdfs:label xml:lang="en">scooters</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionJewelry">
-    <rdfs:label xml:lang="nl">sieraden</rdfs:label>
-    <rdfs:label xml:lang="en">jewelry</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionToys">
-    <rdfs:label xml:lang="nl">speelgoed</rdfs:label>
-    <rdfs:label xml:lang="en">toys</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionRailTram">
-    <rdfs:label xml:lang="nl">spoor- en tramwegen</rdfs:label>
-    <rdfs:label xml:lang="en">rail and tram routes</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionSportsGames">
-    <rdfs:label xml:lang="nl">sport en spel</rdfs:label>
-    <rdfs:label xml:lang="en">sports and games</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionUrbanRegionalHistory">
-    <rdfs:label xml:lang="nl">stads- en streekhistorie</rdfs:label>
-    <rdfs:label xml:lang="en">urban and regional history</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionStyleroomsInteriors">
-    <rdfs:label xml:lang="nl">stijlkamers en interieurs</rdfs:label>
-    <rdfs:label xml:lang="en">style rooms and interiors</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionPunishmentTorture">
-    <rdfs:label xml:lang="nl">straf- en folterwerktuigen</rdfs:label>
-    <rdfs:label xml:lang="en">punishment and torture</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionCarpetArt">
-    <rdfs:label xml:lang="nl">tapijtkunst</rdfs:label>
-    <rdfs:label xml:lang="en">carpet art</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionTiles">
-    <rdfs:label xml:lang="nl">tegels</rdfs:label>
-    <rdfs:label xml:lang="en">tiles</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionDrawing">
-    <rdfs:label xml:lang="nl">tekenkunst</rdfs:label>
-    <rdfs:label xml:lang="en">drawing</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionTextile">
-    <rdfs:label xml:lang="nl">textiel</rdfs:label>
-    <rdfs:label xml:lang="en">textile</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionUniformsMilitaria">
-    <rdfs:label xml:lang="nl">uniformen en militaria</rdfs:label>
-    <rdfs:label xml:lang="en">uniforms and militaria</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionWatches">
-    <rdfs:label xml:lang="nl">uurwerken</rdfs:label>
-    <rdfs:label xml:lang="en">watches</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionLivestockProducts">
-    <rdfs:label xml:lang="nl">veeteelt en producten</rdfs:label>
-    <rdfs:label xml:lang="en">livestock and products</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionAssociationHistory">
-    <rdfs:label xml:lang="nl">verenigingshistorie</rdfs:label>
-    <rdfs:label xml:lang="en">Association history</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionFishing">
-    <rdfs:label xml:lang="nl">visserij</rdfs:label>
-    <rdfs:label xml:lang="en">fishing</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionFoodDrink">
-    <rdfs:label xml:lang="nl">voeding en drank</rdfs:label>
-    <rdfs:label xml:lang="en">Food and drink</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionEuropeanEthnology">
-    <rdfs:label xml:lang="nl">volkenkunde (Europees)</rdfs:label>
-    <rdfs:label xml:lang="en">ethnology (European)</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionNonEuropeanEthnology">
-    <rdfs:label xml:lang="nl">volkenkunde (niet-Europees)</rdfs:label>
-    <rdfs:label xml:lang="en">ethnology (non-European)</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionWaxWorks">
-    <rdfs:label xml:lang="nl">wassen beelden</rdfs:label>
-    <rdfs:label xml:lang="en">waxworks</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionEngineering">
-    <rdfs:label xml:lang="nl">waterbouw(kunde)</rdfs:label>
-    <rdfs:label xml:lang="en">engineering (science)</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionWorkshop">
-    <rdfs:label xml:lang="nl">werkplaats</rdfs:label>
-    <rdfs:label xml:lang="en">workshop</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionTools">
-    <rdfs:label xml:lang="nl">werktuigen</rdfs:label>
-    <rdfs:label xml:lang="en">tools</rdfs:label>
-  </ah:POI_Collection>
-  <ah:POI_Collection rdf:about="http://purl.org/artsholland/1.0/poiCollectionShop">
-    <rdfs:label xml:lang="nl">winkel</rdfs:label>
-    <rdfs:label xml:lang="en">Shop</rdfs:label>
-  </ah:POI_Collection>
-
-
-
-
-
-  
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineIndian">
-    <rdfs:label xml:lang="en">Indian cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Indiaase keuken</rdfs:label>
-  </ah:POI_Cuisine>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreKermis">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Kermis</rdfs:label>
   </ah:Genre>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineVietnamese">
-    <rdfs:label xml:lang="en">Vietnamese cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Vietnamese keuken</rdfs:label>
-  </ah:POI_Cuisine>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreBeurs">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Beurs</rdfs:label>
@@ -789,30 +547,14 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Niet-westerse dans</rdfs:label>
   </ah:Genre>
-  <ah:EventType rdf:about="http://purl.org/artsholland/1.0/evenTypeTryout">
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >even type tryout</rdfs:label>
-  </ah:EventType>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreWereldmuziek">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Wereldmuziek</rdfs:label>
   </ah:Genre>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineSinoIndian">
-    <rdfs:label xml:lang="en">Sino-Indian cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Chinees-Indische keuken</rdfs:label>
-  </ah:POI_Cuisine>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineSzechuan">
-    <rdfs:label xml:lang="en">Szechuan cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Szechuan keuken</rdfs:label>
-  </ah:POI_Cuisine>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineChinese">
-    <rdfs:label xml:lang="en">Chinese cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Chinese keuken</rdfs:label>
-  </ah:POI_Cuisine>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineEuropean">
-    <rdfs:label xml:lang="en">European cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Europese keuken</rdfs:label>
-  </ah:POI_Cuisine>
+  <ah:EventType rdf:about="http://purl.org/artsholland/1.0/evenTypeTryout">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >even type tryout</rdfs:label>
+  </ah:EventType>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genrePopmuziek">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Popmuziek</rdfs:label>
@@ -821,66 +563,26 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Boottocht</rdfs:label>
   </ah:Genre>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineJapanese">
-    <rdfs:label xml:lang="en">Japanese cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Japanse keuken</rdfs:label>
-  </ah:POI_Cuisine>
+  <ah:AttachmentType rdf:about="http://purl.org/artsholland/1.0/attachmentTypeVideo">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >attachment type video</rdfs:label>
+  </ah:AttachmentType>
   <ah:EventStatus rdf:about="http://purl.org/artsholland/1.0/eventStatusCancelled">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >event is cancelled</rdfs:label>
   </ah:EventStatus>
-  <ah:POI_Category rdf:about="http://purl.org/artsholland/1.0/poiCategoryBungalowPark">
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >poi category bungalow park</rdfs:label>
-  </ah:POI_Category>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreSport">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Sport</rdfs:label>
   </ah:Genre>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineHungarian">
-    <rdfs:label xml:lang="en">Hungarian cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Hongaarse keuken</rdfs:label>
-  </ah:POI_Cuisine>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineCaribbean">
-    <rdfs:label xml:lang="en">Caribbean cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Caribische keuken</rdfs:label>
-  </ah:POI_Cuisine>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisinePersian">
-    <rdfs:label xml:lang="en">Persian cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Iraanse keuken</rdfs:label>
-  </ah:POI_Cuisine>
+  <ah:POI_Category rdf:about="http://purl.org/artsholland/1.0/poiCategoryBungalowPark">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >poi category bungalow park</rdfs:label>
+  </ah:POI_Category>
   <ah:POI_Category rdf:about="http://purl.org/artsholland/1.0/poiCategoryHotel">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >poi category hotel</rdfs:label>
   </ah:POI_Category>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineInternational">
-    <rdfs:label xml:lang="en">International cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Internationale keuken</rdfs:label>
-  </ah:POI_Cuisine>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineOriental">
-    <rdfs:label xml:lang="en">Oriental cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Oriëntaalse keuken</rdfs:label>
-  </ah:POI_Cuisine>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineSpanish">
-    <rdfs:label xml:lang="en">Spanish cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Spaanse keuken</rdfs:label>
-  </ah:POI_Cuisine>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisinePortuguese">
-    <rdfs:label xml:lang="en">Portuguese cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Portugese keuken</rdfs:label>
-  </ah:POI_Cuisine>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineEasternEuropean">
-    <rdfs:label xml:lang="en">Eastern European cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Oost Europeaanse keuken</rdfs:label>
-  </ah:POI_Cuisine>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineMoroccan">
-    <rdfs:label xml:lang="en">Moroccan cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Marokkaanse keuken</rdfs:label>
-  </ah:POI_Cuisine>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineBalkan">
-    <rdfs:label xml:lang="en">Balkan cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Balkan keuken</rdfs:label>
-  </ah:POI_Cuisine>
   <ah:VenueType rdf:about="http://purl.org/artsholland/1.0/venueTypeTheater">
     <rdfs:label xml:lang="nl">Theater</rdfs:label>
     <rdfs:label xml:lang="en">Theater</rdfs:label>
@@ -901,10 +603,6 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Opera</rdfs:label>
   </ah:Genre>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineTunisian">
-    <rdfs:label xml:lang="en">Tunisian cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Tunesische keuken</rdfs:label>
-  </ah:POI_Cuisine>
   <ah:POI_Category rdf:about="http://purl.org/artsholland/1.0/poiCategoryCongressAccomodation">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >poi category congress accomodation</rdfs:label>
@@ -929,30 +627,18 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Documentaire</rdfs:label>
   </ah:Genre>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineArgentinian">
-    <rdfs:label xml:lang="en">Argentinian cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Argentijnse keuken</rdfs:label>
-  </ah:POI_Cuisine>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineScandinavian">
-    <rdfs:label xml:lang="en">Scandinavian cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Scandinavische keuken</rdfs:label>
-  </ah:POI_Cuisine>
+  <ah:AttachmentType rdf:about="http://purl.org/artsholland/1.0/attachmentTypeAfbeelding">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >attachment type afbeelding</rdfs:label>
+  </ah:AttachmentType>
   <ah:POI_Category rdf:about="http://purl.org/artsholland/1.0/poiCategoryCamping">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >poi category camping</rdfs:label>
   </ah:POI_Category>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineGerman">
-    <rdfs:label xml:lang="en">German cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Duitse keuken</rdfs:label>
-  </ah:POI_Cuisine>
   <ah:VenueType rdf:about="http://purl.org/artsholland/1.0/venueTypeMuseum">
     <rdfs:label xml:lang="en">Museum</rdfs:label>
     <rdfs:label xml:lang="nl">Museum</rdfs:label>
   </ah:VenueType>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineDutch">
-    <rdfs:label xml:lang="en">Dutch cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Nederlandse keuken</rdfs:label>
-  </ah:POI_Cuisine>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreOpenDag">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Open dag</rdfs:label>
@@ -969,18 +655,6 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Poppentheater</rdfs:label>
   </ah:Genre>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineFlemish">
-    <rdfs:label xml:lang="en">Flemish cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Vlaamse keuken</rdfs:label>
-  </ah:POI_Cuisine>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineMediterranean">
-    <rdfs:label xml:lang="en">Mediterranean cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Mediterraanse keuken</rdfs:label>
-  </ah:POI_Cuisine>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineKorean">
-    <rdfs:label xml:lang="en">Korean cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Koreaanse keuken</rdfs:label>
-  </ah:POI_Cuisine>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreModerneDans">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Moderne dans</rdfs:label>
@@ -1009,19 +683,11 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Galerie</rdfs:label>
   </ah:Genre>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineItalian">
-    <rdfs:label xml:lang="en">Italian cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Italiaanse keuken</rdfs:label>
-  </ah:POI_Cuisine>
   <owl:AnnotationProperty rdf:about="http://purl.org/artsholland/1.0/shortDescription">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >short description</rdfs:label>
     <rdfs:subPropertyOf rdf:resource="http://purl.org/dc/elements/1.1/description"/>
   </owl:AnnotationProperty>
-  <ah:POI_Cuisine rdf:about="http://purl.org/artsholland/1.0/poiCuisineMexican">
-    <rdfs:label xml:lang="en">Mexican cuisine</rdfs:label>
-    <rdfs:label xml:lang="nl">Mexicaanse keuken</rdfs:label>
-  </ah:POI_Cuisine>
   <ah:POI_Category rdf:about="http://purl.org/artsholland/1.0/poiCategoryMuseum">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >poi category museum</rdfs:label>
@@ -1038,14 +704,14 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Ballet</rdfs:label>
   </ah:Genre>
-  <ah:EventType rdf:about="http://purl.org/artsholland/1.0/eventTypeNormal">
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >event type normal</rdfs:label>
-  </ah:EventType>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreMime">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Mime</rdfs:label>
   </ah:Genre>
+  <ah:EventType rdf:about="http://purl.org/artsholland/1.0/eventTypeNormal">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >event type normal</rdfs:label>
+  </ah:EventType>
 </rdf:RDF>
 
 <!-- Created with TopBraid -->
