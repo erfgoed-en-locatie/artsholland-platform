@@ -174,19 +174,17 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 					combined.append(item);
 				}
 				
-				logger.info("OUT: "+combined.toString());
+				Metadata mdata = new Metadata();
+				mdata.set(Metadata.CONTENT_TYPE, "text/turtle");
+				mdata.set(Metadata.RESOURCE_NAME_KEY, metadata.get(Metadata.RESOURCE_NAME_KEY));
+       				
+				turtleString = XSPARQLCharacterEncoder.decode(combined.toString());
+				turtleString = XSPARQLCharacterEncoder.repairInvalidTypeURIs(turtleString);
 				
-//				Metadata mdata = new Metadata();
-//				mdata.set(Metadata.CONTENT_TYPE, "text/turtle");
-//				mdata.set(Metadata.RESOURCE_NAME_KEY, metadata.get(Metadata.RESOURCE_NAME_KEY));
-//       				
-//				turtleString = XSPARQLCharacterEncoder.decode(combined.toString());
-//				turtleString = XSPARQLCharacterEncoder.repairInvalidTypeURIs(turtleString);
-//				
-//				turtleParser.parse(
-//						new ByteArrayInputStream(turtleString.getBytes()), 
-//						new MatchingContentHandler(
-//						new EmbeddedContentHandler(this.handler), matcher), mdata, context);
+				turtleParser.parse(
+						new ByteArrayInputStream(turtleString.getBytes()), 
+						new MatchingContentHandler(
+						new EmbeddedContentHandler(this.handler), matcher), mdata, context);
 			} catch (Exception e) {
 				throw new SAXException(e.getMessage(), e);
 			} catch (Throwable e) {

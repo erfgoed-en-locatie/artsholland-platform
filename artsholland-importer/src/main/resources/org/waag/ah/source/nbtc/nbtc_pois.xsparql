@@ -7,7 +7,7 @@ declare namespace time="http://www.w3.org/2006/time#";
 declare namespace foaf="http://xmlns.com/foaf/0.1/";
 declare namespace geo="http://www.w3.org/2003/01/geo/wgs84_pos#";
 declare namespace vcard="http://www.w3.org/2006/vcard/ns#";
-declare namespace osgeo="http://rdf.opensahara.com/type/geo/";
+declare namespace gr="http://purl.org/goodrelations/v1#";
 declare namespace ah="http://purl.org/artsholland/1.0/";
 declare namespace waag="http://waag.org/saxon-extension";
 
@@ -127,11 +127,49 @@ return
             $ouri rdf:type gr:OpeningHoursSpecification ;
                   gr:validFrom {$open/startDate}^^xsd:dateTime ;
                   gr:validThrough {$open/endDate}^^xsd:dateTime ;
-                  gr:hasOpeningHoursDayOfWeek {if (compare($open/monday, "true") = 0) then gr:Monday else ()} ;
-                  gr:hasOpeningHoursDayOfWeek {if (compare($open/tuesday, "true") = 0) then gr:Tuesday else ()} .
+                  gr:hasOpeningHoursDayOfWeek {if (compare($open/monday, "true") = 0) then "gr:Monday" else ()} ;
+                  gr:hasOpeningHoursDayOfWeek {if (compare($open/tuesday, "true") = 0) then "gr:Tuesday" else ()} ;
+                  gr:hasOpeningHoursDayOfWeek {if (compare($open/wednesday, "true") = 0) then "gr:Wednesday" else ()} ;
+                  gr:hasOpeningHoursDayOfWeek {if (compare($open/thursday, "true") = 0) then "gr:Thursday" else ()} ;
+                  gr:hasOpeningHoursDayOfWeek {if (compare($open/friday, "true") = 0) then "gr:Friday" else ()} ;
+                  gr:hasOpeningHoursDayOfWeek {if (compare($open/saturday, "true") = 0) then "gr:Saturday" else ()} ;
+                  gr:hasOpeningHoursDayOfWeek {if (compare($open/sunday, "true") = 0) then "gr:Sunday" else ()} .
+                  
+            { for $time at $pos in $open/openTimeList/*
+              construct {
+                $ouri gr:opens {$time/timeStart}^^xsd:time ;
+                      gr:closes {$time/timeEnd}^^xsd:time .
+              }
+            }
           }        
-        }        
+        } .
+              
+        { for $medium at $pos in $poi/object/mediaList/*
+          let $muri := {concat($puri, "/attachment/", string($pos))}
+          construct {
+            $puri ah:attachment $muri .
+            $muri rdf:type ah:Attachment ;
+                  ah:attachmentType ah:attachmentTypeAfbeelding ;
+                  ah:url {$medium/mediaUrl} ;
+                  dc:description {waag:parse-string($medium/mediaAltType)}@{$lang} .
+          }        
+        } .
         
+        { for $price at $pos in $poi/object/priceList/*
+          let $ofuri := {concat($puri, "/offering/", string($pos))}
+          let $opuri := {concat($puri, "/price/", string($pos))}
+          construct {
+            $puri gr:offers $ofuri .
+            $ofuri rdf:type gr:Offering ;
+                   gr:description {$price/priceType}@{$lang} ;
+                   gr:validFrom {concat("1-1-", $price/year)}^^xsd:date ;
+                   gr:validThrough {concat("31-12-", $price/year)}^^xsd:date ;
+                   gr:hasPriceSpecification $opuri .
+            $opuri rdf:type gr:PriceSpecification ;
+                   gr:hasCurrency {"EUR"} ;
+                   gr:hasCurrencyValue {$price/amount}^^xsd:decimal .
+          }        
+        }             
     }
 	}
 
