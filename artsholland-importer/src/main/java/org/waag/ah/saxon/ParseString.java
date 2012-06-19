@@ -20,16 +20,6 @@ public class ParseString extends ExtensionFunctionDefinition {
 		return new SequenceType[] {SequenceType.OPTIONAL_STRING};
 	}
 
-//	@Override
-//	public int getMinimumNumberOfArguments() {
-//		return 0;
-//	}
-	
-//	@Override
-//	public int getMaximumNumberOfArguments() {
-//		return 1;
-//	}
-
 	@Override
 	public StructuredQName getFunctionQName() {
 		return new StructuredQName("waag", "http://waag.org/saxon-extension", "parse-string");
@@ -47,6 +37,7 @@ public class ParseString extends ExtensionFunctionDefinition {
             	String text = "";
             	try {
 	            	text = ((StringValue)arguments[0].next()).getStringValue();
+	            	text = text.replaceAll("\"", "&quot;");
 	            	text = XSPARQLCharacterEncoder.encode(text);
             	} catch (NullPointerException e) {}
             	return Value.asIterator(StringValue.makeStringValue(text));

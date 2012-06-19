@@ -48,6 +48,9 @@ public class StoringRDFParser {
 				throws IOException, RDFParseException, RDFHandlerException {
 			logger.debug("USING BASE URI: "+baseURI);
 			super.parse(in, baseURI);
+//			StringWriter writer = new StringWriter();
+//			IOUtils.copy(in, writer, "UTF-8");
+//			logger.info(writer.toString());			
 		}
 		
 		@Override
@@ -77,6 +80,7 @@ public class StoringRDFParser {
 		public void handleStatement(Statement st) throws RDFHandlerException {
 			try {
 				Statement statement = getContextStatement(st);
+//				logger.info(st.toString());
 				conn.add(statement);
 				conn.add(statement.getContext(), source, jobId);
 			} catch (RepositoryException e) {

@@ -47,16 +47,16 @@
     </job>
 
     <trigger>
-      <cron>
+      <simple>
         <name>NBTCImportTrigger</name>
         <job-name>NBTC</job-name>
         <job-group>WebResourceImport</job-group>
-        <cron-expression>0 0/1 * * * ?</cron-expression>
-        <time-zone>Europe/Amsterdam</time-zone>
-      </cron>
+        <start-time-seconds-in-future>30</start-time-seconds-in-future>
+        <repeat-count>1</repeat-count>
+        <repeat-interval>1</repeat-interval>
+      </simple>
     </trigger>
-    
-<!-- 
+<!--     
     <trigger>
       <cron>
         <name>UitbaseIncrementalImportTrigger</name>
@@ -64,8 +64,6 @@
         <job-name>Uitbase</job-name>
         <job-group>WebResourceImport</job-group>
         <job-data-map>
-          <entry> <key>resource</key> <value>http://accept.ps4.uitburo.nl/api/productions</value> 
-            </entry>
           <entry>
             <key>strategy</key>
             <value>incremental</value>
@@ -75,8 +73,8 @@
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
- -->    
-<!--  
+ 
+ --> <!--  
     <trigger>
       <cron>
         <name>DOSAImportTrigger</name>

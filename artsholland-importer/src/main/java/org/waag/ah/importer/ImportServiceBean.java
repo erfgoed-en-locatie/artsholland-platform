@@ -99,7 +99,7 @@ public class ImportServiceBean implements ImportService {
 					if (retryCount > RETRY_MAX_COUNT) {
 						throw new ImportException("Maximum number of retries reached, aborting...");
 					} else {
-						logger.warn("Error during import: "+e.getMessage()+" [retrying in "+(RETRY_TIMEOUT/1000)+" seconds...]");
+						logger.error("Error during import: "+e.getMessage()+" [retrying in "+(RETRY_TIMEOUT/1000)+" seconds...]", e);
 						Thread.sleep(RETRY_TIMEOUT);
 					}
 				} finally {

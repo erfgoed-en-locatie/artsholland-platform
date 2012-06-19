@@ -1,11 +1,11 @@
 package org.waag.ah.tika.parser.sax;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URI;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Stack;
@@ -26,8 +26,10 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.ContentHandlerDecorator;
+import org.apache.tika.sax.EmbeddedContentHandler;
 import org.apache.tika.sax.ToXMLContentHandler;
 import org.apache.tika.sax.xpath.Matcher;
+import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
 import org.deri.xsparql.XSPARQLProcessor;
 import org.openrdf.model.vocabulary.RDF;
@@ -56,45 +58,13 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	private ContentHandler handler;
 	private Matcher matcher;
 	private Stack<String> stack;
-
-//	private static class ShiftLeft extends ExtensionFunctionDefinition {
-//		private static final long serialVersionUID = 1L;
-//
-//		@Override
-//		public StructuredQName getFunctionQName() {
-//			return new StructuredQName("eg", "http://example.com/saxon-extension",
-//					"shift-left");
-//		}
-//
-//		@Override
-//		public SequenceType[] getArgumentTypes() {
-//			return new SequenceType[] { SequenceType.SINGLE_INTEGER,
-//					SequenceType.SINGLE_INTEGER };
-//		}
-//
-//		@Override
-//		public ExtensionFunctionCall makeCallExpression() {
-//			return new ExtensionFunctionCall() {
-//
-//				private static final long serialVersionUID = 1L;
-//				@Override
-//				public SequenceIterator call(SequenceIterator[] arg0, XPathContext arg1) throws XPathException {					
-//						return Value.asIterator(StringValue.makeStringValue("Grote vis"));				
-//				}
-//			};
-//		}
-//
-//		@Override
-//		public SequenceType getResultType(SequenceType[] arg0) {
-//			return SequenceType.SINGLE_STRING;
-//		}
-//	}
-
+	private boolean parsingTurtle;
+	
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata,
 			ParseContext context, InputStream xquery) throws ParserException {
 		this(handler, metadata, context, xquery, null);
 	}
-
+	
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata,
 			ParseContext context, InputStream xquery, Map<String, URI> includes)
 			throws ParserException {
@@ -110,17 +80,18 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		try {
 			XSPARQLProcessor xp = new XSPARQLProcessor();			
 			String q = xp.process(xquery);//.process(new StringReader(query));
+
 			Configuration config = new Configuration();
-			
 			config.setNamePool(namepool);
+			
 			config.registerExtensionFunction(new DebugValue());
 			config.registerExtensionFunction(new ObjectUri());
 			config.registerExtensionFunction(new ParseLocale());
-			config.registerExtensionFunction(new ParseString());
+			config.registerExtensionFunction(new ParseString());			
 			
 			Processor processor = new Processor(config);
 			XQueryCompiler compiler = processor.newXQueryCompiler();			
-			evaluator = compiler.compile(q).load();	
+			evaluator = compiler.compile(q).load();
 			
 			if (includes != null) {
 				DocumentBuilder docBuilder = processor.newDocumentBuilder();
@@ -129,65 +100,55 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 					evaluator.setExternalVariable(new QName(item.getKey()), document);				
 				}
 			}
+			
+			/*evaluator.setExternalVariable(new QName("platformUri"), platformUri);*/
 		} catch (Exception e) {
 			throw new ParserException(e.getMessage());
-		}		
+		}			
 	}
 
 	private boolean processing() {
 		return stack.size() > 0;
 	}
-	
-	@Override
-	public void startPrefixMapping(String prefix, String uri)
-			throws SAXException {
-//		xmlCollector.startPrefixMapping(prefix, uri);
-		namepool.allocateNamespaceCode(prefix, uri);
-	}
-	
-	@Override
-	public void startDocument() throws SAXException {
-		this.handler.startDocument();
-		AttributesImpl atts = new AttributesImpl();
-		applyNamespaces(handler);
-		this.handler.startElement(RDF.NAMESPACE, "RDF", "rdf:RDF", atts);
-	}
 
 	@Override
-	public void endDocument() throws SAXException {
-		super.endElement(RDF.NAMESPACE, "RDF", "rdf:RDF");
-		super.endDocument();
+	public void startDocument() throws SAXException {
+		for (Entry<String, String> mapping : namepool.getMappings().entrySet()) {
+			super.startPrefixMapping(mapping.getKey(), mapping.getValue());
+		}
+		super.startDocument();
 	}
 
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
+		if (parsingTurtle == true) {
+			logger.info("PARSING TURTLE: parsingTurtle = "+localName);
+		}
 		if (!processing()) {
 			xmlCollector = new ToXMLContentHandler();
-			applyNamespaces(xmlCollector);
 		}
 		// Make sure element attribute values don't contain unwanted HTML chars.
-		for (int idx = 0; idx < attributes.getLength(); idx++) {
-			if (attributes.getType(idx).equals("CDATA")) {
-				try {
-					((AttributesImpl) attributes).setValue(idx,
-							StringEscapeUtils.escapeHtml(attributes.getValue(idx)));
-				} catch (RuntimeException e) {
-					continue;
-				}
+		for (int idx=0; idx<attributes.getLength(); idx++) {
+			try {
+				((AttributesImpl) attributes).setValue(idx,
+						StringEscapeUtils.escapeHtml(attributes.getValue(idx)));
+			} catch (RuntimeException e) {
+				continue;
 			}
 		}
 		stack.push(localName);
-		xmlCollector.startElement(uri, localName, qName, attributes);
+		xmlCollector.startElement(uri, localName, qName, attributes);			
 	}
-
+    
 	@Override
-	public void characters(char[] ch, int start, int length) throws SAXException {
+	public void characters(char[] ch, int start, int length)
+			throws SAXException {
 		if (processing()) {
 			StringBuffer chars = new StringBuffer().append(ch, start, length);
 			String encoded = XSPARQLCharacterEncoder.encode(chars.toString());
 			xmlCollector.characters(encoded.toCharArray(), 0, encoded.length());
-		}
+		}			
 	}
 
 	@Override
@@ -195,63 +156,51 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			throws SAXException {
 		xmlCollector.endElement(uri, localName, qName);
 		stack.pop();
-
+		
 		if (!processing()) {
 			String xmlString = "";
 			String turtleString = "";
 			try {
 				xmlString = xmlCollector.toString();
-
+				
 				if (logger.isDebugEnabled()) {
-					logger.debug("Importing XML: " + xmlString);
+					logger.debug("Importing XML: "+xmlString);
 				}
-
+				
 				evaluator.setSource(new StreamSource(new StringReader(xmlString)));
 				StringBuilder combined = new StringBuilder();
-				Iterator<XdmItem> output = evaluator.iterator();
 				
-				String namespaces = output.next().toString();
-				String statements = output.next().toString();
+				for (XdmItem item : evaluator) {
+					combined.append(item);
+				}
 				
-//				logger.info(output.next());
-//				for (XdmItem item : evaluator) {
-//					combined.append(item);
-//				}
+				logger.info("OUT: "+combined.toString());
 				
-				logger.info("\n"+statements);
-
 //				Metadata mdata = new Metadata();
 //				mdata.set(Metadata.CONTENT_TYPE, "text/turtle");
-//				mdata.set(Metadata.RESOURCE_NAME_KEY,
-//						metadata.get(Metadata.RESOURCE_NAME_KEY));
-//
+//				mdata.set(Metadata.RESOURCE_NAME_KEY, metadata.get(Metadata.RESOURCE_NAME_KEY));
+//       				
 //				turtleString = XSPARQLCharacterEncoder.decode(combined.toString());
-//				turtleString = XSPARQLCharacterEncoder
-//						.repairInvalidTypeURIs(turtleString);
-//
-//				turtleParser.parse(new ByteArrayInputStream(turtleString.getBytes()),
+//				turtleString = XSPARQLCharacterEncoder.repairInvalidTypeURIs(turtleString);
+//				
+//				turtleParser.parse(
+//						new ByteArrayInputStream(turtleString.getBytes()), 
 //						new MatchingContentHandler(
-//								new EmbeddedContentHandler(this.handler), matcher), mdata,
-//						context);
-
+//						new EmbeddedContentHandler(this.handler), matcher), mdata, context);
 			} catch (Exception e) {
 				throw new SAXException(e.getMessage(), e);
+			} catch (Throwable e) {
+				logger.error(e.getMessage(), e);
 			} finally {
 				xmlCollector = null;
 			}
 		}
 	}
 	
-	private void applyNamespaces(ContentHandler handler) throws SAXException {
-		for (Entry<String, String> mapping : namepool.getMappings().entrySet()) {
-			handler.startPrefixMapping(mapping.getKey(), mapping.getValue());
-		}		
-	}
-	
 	private static class NamespaceCollector extends NamePool {
 		private static final long serialVersionUID = -2352244560755994347L;
 		private Map<String, String> mappings = new HashMap<String, String>();
-
+		
 		@Override
 		public synchronized int allocateNamespaceCode(String prefix, String uri) {
 			if (!prefix.startsWith("_")) {
@@ -259,7 +208,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			}
 			return super.allocateNamespaceCode(prefix, uri);
 		}
-
+		
 		public Map<String, String> getMappings() {
 			return mappings;
 		}

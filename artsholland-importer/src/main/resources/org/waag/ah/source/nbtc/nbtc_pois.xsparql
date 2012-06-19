@@ -41,7 +41,7 @@ declare function waag:get-poi-attribute($arg as xs:string) as xs:string {
   else if (compare($arg, "pr_colle") = 0) then fn:data("ah:POI_AttributeCollection")
   else if (compare($arg, "pr_condi") = 0) then fn:data("ah:POI_AttributeCondition")
   else if (compare($arg, "pr_evtyp") = 0) then fn:data("ah:POI_AttributeEvType")
-  else if (compare($arg, "pr_facdi") = 0) then fn:data("ah:POI_AttributeDisabled")
+  else if (compare($arg, "pr_facdi") = 0) then fn:data("ah:POI_AttributeAccessability")
   else if (compare($arg, "pr_facgn") = 0) then fn:data("ah:POI_AttributeFacGen")
   else if (compare($arg, "pr_facpu") = 0) then fn:data("ah:POI_AttributeFac")
   else if (compare($arg, "pr_facre") = 0) then fn:data("ah:POI_AttributeRecreation")
@@ -79,7 +79,7 @@ return
 			construct {
               
         $puri a ah:POI ;
-              dc:title {$poi/object/poiName}@{$lang} ;
+              dc:title {waag:parse-string($poi/object/poiName)}@{$lang} ;
               ah:poiCategory {waag:get-poi-category($poi/operation/poiCategory)} ;
               foaf:homepage {$poi/object/poiUrl} ;
               ah:poiLocationAddress $luri ;
@@ -99,15 +99,39 @@ return
               vcard:email {waag:parse-string($contactAddress/email)} ;
               ah:telephone {waag:parse-string($contactAddress/phoneGeneral)} ;
               ah:fax {waag:parse-string($contactAddress/faxGeneral)} .      
-              
+                        
         { for $attr at $pos in $poi/object/attributeList/*
           let $auri := {concat($puri, "/attribute/", string($pos))}
           construct {
             $puri ah:poiAttribute $auri .
-            $auri rdf:type {if (fn:empty($attr/@meta)) then () else {waag:get-poi-attribute($attr/@meta)}} .
-            $auri rdf:label {if (fn:empty($attr/@meta)) then () else {$attr}}@{$lang} .
+            $auri rdf:type {if (fn:empty($attr/@meta)) then () else {waag:get-poi-attribute($attr/@meta)}} ;
+                  rdf:label {if (fn:empty($attr/@meta)) then () else {$attr}}@{$lang} .
           }        
-        }
+        } .
+        
+        { for $clas at $pos in $poi/object/classificationList/*
+          let $curi := {concat($puri, "/classification/", string($pos))}
+          construct {
+            $puri ah:poiClassification $curi .
+            $curi rdf:type ah:Classification ;
+                  rdf:title {waag:parse-string($clas/classificationOrganisation)} ;
+                  rdf:description {waag:parse-string($clas/classificationSymbol)} ;
+                  xsd:positiveInteger {$clas/classificationAmount} .
+          }        
+        } .
+        
+        { for $open at $pos in $poi/object/openingPeriodList/*
+          let $ouri := {concat($puri, "/ohspec/", string($pos))}
+          construct {
+            $puri gr:hasOpeningHoursSpecification $ouri .
+            $ouri rdf:type gr:OpeningHoursSpecification ;
+                  gr:validFrom {$open/startDate}^^xsd:dateTime ;
+                  gr:validThrough {$open/endDate}^^xsd:dateTime ;
+                  gr:hasOpeningHoursDayOfWeek {if (compare($open/monday, "true") = 0) then gr:Monday else ()} ;
+                  gr:hasOpeningHoursDayOfWeek {if (compare($open/tuesday, "true") = 0) then gr:Tuesday else ()} .
+          }        
+        }        
+        
     }
 	}
 

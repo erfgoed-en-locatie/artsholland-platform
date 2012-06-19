@@ -105,12 +105,12 @@ public class RestParametersArgumentResolver implements
 	 * @author	Raoul Wissink <raoul@raoul.net>
 	 * @since	Apr 7, 2012
 	 */
-	private String getStringValue(Map<String, String[]> paramMap, String key) {
-		if (paramMap.containsKey(key) && paramMap.get(key).length == 1) {
-			return paramMap.get(key)[0];
-		}
-		return null;
-	}
+//	private String getStringValue(Map<String, String[]> paramMap, String key) {
+//		if (paramMap.containsKey(key) && paramMap.get(key).length == 1) {
+//			return paramMap.get(key)[0];
+//		}
+//		return null;
+//	}
 	
 	/**
 	 * Return requested value from map as string.

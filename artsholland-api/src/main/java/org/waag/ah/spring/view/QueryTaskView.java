@@ -55,7 +55,7 @@ public class QueryTaskView extends AbstractView {
 
 		RDFWriterConfig config = query.getWriterConfig();
 		config.setFormat(mimeType);
-		response.setContentType(mimeType);
+		response.setContentType(mimeType+"; charset=UTF-8");
 		
 		try {
 			QueryTask queryTask = queryService.getQueryTask(query,

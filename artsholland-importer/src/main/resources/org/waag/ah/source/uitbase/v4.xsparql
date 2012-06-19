@@ -75,8 +75,6 @@ return
 				$euri dc:title {if ($title eq "") then () else $title}^^xsd:string.
 				$euri dc:description {if ($description eq "") then () else $description}^^xsd:string.
 				
-				$euri ah:vis {eg:shift-left(2, 4)} .
-							
 				$euri ah:eventType $typeClass.
 				$typeClass a ah:EventType.			
 				$typeClass rdfs:label {if (waag:empty($typeKey)) then () else $typeKey}^^xsd:string.
