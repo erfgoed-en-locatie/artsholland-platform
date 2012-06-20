@@ -19,6 +19,7 @@ import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XQueryCompiler;
 import net.sf.saxon.s9api.XQueryEvaluator;
+import net.sf.saxon.s9api.XQueryExecutable;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 
@@ -36,8 +37,8 @@ import org.openrdf.model.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.exception.ParserException;
-import org.waag.ah.saxon.DebugValue;
 import org.waag.ah.saxon.ObjectUri;
+import org.waag.ah.saxon.ParseDateTime;
 import org.waag.ah.saxon.ParseLocale;
 import org.waag.ah.saxon.ParseString;
 import org.waag.ah.tika.parser.rdf.TurtleParser;
@@ -84,7 +85,8 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			Configuration config = new Configuration();
 			config.setNamePool(namepool);
 			
-			config.registerExtensionFunction(new DebugValue());
+//			config.registerExtensionFunction(new DebugValue());
+			config.registerExtensionFunction(new ParseDateTime());
 			config.registerExtensionFunction(new ObjectUri());
 			config.registerExtensionFunction(new ParseLocale());
 			config.registerExtensionFunction(new ParseString());			
@@ -92,6 +94,9 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			Processor processor = new Processor(config);
 			XQueryCompiler compiler = processor.newXQueryCompiler();			
 			evaluator = compiler.compile(q).load();
+			
+//			XQueryExecutable blaat = compiler.compile(q);
+//			logger.info(blaat.toString());
 			
 			if (includes != null) {
 				DocumentBuilder docBuilder = processor.newDocumentBuilder();
@@ -147,6 +152,9 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		if (processing()) {
 			StringBuffer chars = new StringBuffer().append(ch, start, length);
 			String encoded = XSPARQLCharacterEncoder.encode(chars.toString());
+//			if (chars.toString().contains("http://www.buitenzorg.nl")) {
+//				logger.info(encoded);
+//			}
 			xmlCollector.characters(encoded.toCharArray(), 0, encoded.length());
 		}			
 	}
@@ -180,23 +188,26 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
        				
 				turtleString = XSPARQLCharacterEncoder.decode(combined.toString());
 				turtleString = XSPARQLCharacterEncoder.repairInvalidTypeURIs(turtleString);
+//				logger.info(turtleString);
 				
 				turtleParser.parse(
 						new ByteArrayInputStream(turtleString.getBytes()), 
 						new MatchingContentHandler(
 						new EmbeddedContentHandler(this.handler), matcher), mdata, context);
+				
 			} catch (Exception e) {
+				logger.error(e.getMessage());
+				logger.info(xmlString);
+				logger.info(turtleString);
 				throw new SAXException(e.getMessage(), e);
-			} catch (Throwable e) {
-				logger.error(e.getMessage(), e);
 			} finally {
 				xmlCollector = null;
 			}
 		}
 	}
 	
+	@SuppressWarnings("serial")
 	private static class NamespaceCollector extends NamePool {
-		private static final long serialVersionUID = -2352244560755994347L;
 		private Map<String, String> mappings = new HashMap<String, String>();
 		
 		@Override

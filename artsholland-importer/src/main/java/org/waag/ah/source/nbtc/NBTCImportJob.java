@@ -18,16 +18,16 @@ public class NBTCImportJob extends AbstractImportJob {
 	private Logger logger = LoggerFactory.getLogger(NBTCImportJob.class);
 	
 	public static final String[] RESOURCES = { 
-		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-test.xml",
-//		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-da_DK.xml",
-//		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-de_DE.xml",
-//		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-en_GB.xml",
-//		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-es_ES.xml",
-//		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-fr_FR.xml",
-//		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-it_IT.xml",
-//		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-nl_NL.xml",
-//		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-ru_RU.xml",
-//		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-sv_SE.xml",
+//		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-test.xml",
+		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-da_DK.xml",
+		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-de_DE.xml",
+		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-en_GB.xml",
+		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-es_ES.xml",
+		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-fr_FR.xml",
+		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-it_IT.xml",
+		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-nl_NL.xml",
+		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-ru_RU.xml",
+		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-sv_SE.xml",
 	};	
 
 	@Override

@@ -26,11 +26,11 @@ public class XSPARQLCharacterEncoder {
 		Map<String, String> result = new HashMap<String, String>();
 
 //		result.put("\"", completeEncoding("quote_double"));
-		result.put(":", completeEncoding("colon"));
+//		result.put("http:", completeEncoding("http_prefix"));
 		result.put("<", completeEncoding("less_than"));
 		result.put(">", completeEncoding("greater_than"));
 		result.put("\\", completeEncoding("backslash"));
-		result.put("/", completeEncoding("slash"));
+//		result.put("/", completeEncoding("slash"));
 		result.put("https", completeEncoding("http"));
 
 		return Collections.unmodifiableMap(result);

@@ -56,8 +56,8 @@
         <repeat-interval>1</repeat-interval>
       </simple>
     </trigger>
-<!--     
-    <trigger>
+    
+<!--     <trigger>
       <cron>
         <name>UitbaseIncrementalImportTrigger</name>
         <group>IncrementalImport</group>
@@ -73,8 +73,8 @@
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
- 
- --> <!--  
+  -->
+ <!--  
     <trigger>
       <cron>
         <name>DOSAImportTrigger</name>

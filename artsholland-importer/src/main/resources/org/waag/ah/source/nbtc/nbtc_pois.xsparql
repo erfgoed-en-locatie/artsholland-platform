@@ -125,8 +125,8 @@ return
           construct {
             $puri gr:hasOpeningHoursSpecification $ouri .
             $ouri rdf:type gr:OpeningHoursSpecification ;
-                  gr:validFrom {$open/startDate}^^xsd:dateTime ;
-                  gr:validThrough {$open/endDate}^^xsd:dateTime ;
+                  gr:validFrom {waag:parse-datetime($open/startDate, "yyyy-MM-ddZ")}^^xsd:dateTime ;
+                  gr:validThrough {waag:parse-datetime($open/endDate, "yyyy-MM-ddZ")}^^xsd:dateTime ;
                   gr:hasOpeningHoursDayOfWeek {if (compare($open/monday, "true") = 0) then "gr:Monday" else ()} ;
                   gr:hasOpeningHoursDayOfWeek {if (compare($open/tuesday, "true") = 0) then "gr:Tuesday" else ()} ;
                   gr:hasOpeningHoursDayOfWeek {if (compare($open/wednesday, "true") = 0) then "gr:Wednesday" else ()} ;
@@ -137,8 +137,8 @@ return
                   
             { for $time at $pos in $open/openTimeList/*
               construct {
-                $ouri gr:opens {$time/timeStart}^^xsd:time ;
-                      gr:closes {$time/timeEnd}^^xsd:time .
+                $ouri gr:opens {concat($time/timeStart, ":00")}^^xsd:time ;
+                      gr:closes {concat($time/timeEnd, ":00")}^^xsd:time .
               }
             }
           }        
@@ -162,8 +162,8 @@ return
             $puri gr:offers $ofuri .
             $ofuri rdf:type gr:Offering ;
                    gr:description {$price/priceType}@{$lang} ;
-                   gr:validFrom {concat("1-1-", $price/year)}^^xsd:date ;
-                   gr:validThrough {concat("31-12-", $price/year)}^^xsd:date ;
+                   gr:validFrom {concat($price/year, "-01-01")}^^xsd:date ;
+                   gr:validThrough {concat($price/year, "-12-31")}^^xsd:date ;
                    gr:hasPriceSpecification $opuri .
             $opuri rdf:type gr:PriceSpecification ;
                    gr:hasCurrency {"EUR"} ;
