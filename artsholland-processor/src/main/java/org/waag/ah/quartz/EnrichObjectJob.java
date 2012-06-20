@@ -1,4 +1,4 @@
-package org.waag.ah.enrich;
+package org.waag.ah.quartz;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,12 +11,16 @@ import junit.framework.Assert;
 
 import org.openrdf.model.Statement;
 import org.openrdf.query.GraphQueryResult;
+import org.openrdf.repository.RepositoryConnection;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.QueryService;
+import org.waag.ah.RepositoryConnectionFactory;
+import org.waag.ah.enrich.EnrichUtils;
+import org.waag.ah.exception.ConnectionException;
 import org.waag.ah.rdf.EnricherConfig;
 import org.waag.ah.rdf.GraphEnricher;
 import org.waag.ah.tinkerpop.pipe.EnricherPipeline;
@@ -27,16 +31,22 @@ public class EnrichObjectJob implements Job {
 	final static Logger logger = LoggerFactory.getLogger(EnrichObjectJob.class);
 
 	private QueryService queryService;
-
+	private RepositoryConnection conn;
+	
 	private Class<? extends GraphEnricher> enricher;
 	private String objectUri;
 	private List<String> includeUris = new ArrayList<String>();
 	private List<String> excludeUris = new ArrayList<String>();
-	
-	public EnrichObjectJob() throws NamingException {
+
+	public EnrichObjectJob() throws NamingException, ConnectionException {
 		InitialContext ic = new InitialContext();
+		
 		queryService = (QueryService) ic
 				.lookup("java:global/artsholland-platform/datastore/BigdataQueryService");
+		
+		RepositoryConnectionFactory cf = (RepositoryConnectionFactory) ic
+				.lookup("java:global/artsholland-platform/datastore/BigdataConnectionService");
+		this.conn = cf.getConnection();		
 	}
 
 	@Override
@@ -66,10 +76,10 @@ public class EnrichObjectJob implements Job {
 			pipeline.setStarts(statements);
 			
 			while(pipeline.hasNext()) {
-				System.out.println("OUT: "+pipeline.next());
-			}			
-		} catch (IndexOutOfBoundsException e) {
-			return;
+				conn.add(pipeline.next());
+			}
+			
+			conn.commit();
 		} catch (Exception e) {
 			throw new JobExecutionException(e.getMessage(), e);
 		}

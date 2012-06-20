@@ -6,8 +6,8 @@
   version="2.0">
 
   <pre-processing-commands>
-    <delete-jobs-in-group>*</delete-jobs-in-group>  <!-- clear all jobs in scheduler -->
-    <delete-triggers-in-group>*</delete-triggers-in-group> <!-- clear all triggers in scheduler -->
+    <delete-jobs-in-group>*</delete-jobs-in-group>
+    <delete-triggers-in-group>*</delete-triggers-in-group>
   </pre-processing-commands>
 
   <processing-directives>
@@ -22,7 +22,7 @@
       <name>ImportUitbase</name>
       <group>ImporterService</group>
       <description>Import Uitbase data</description>
-      <job-class>org.waag.ah.importer.UrlImportJob</job-class>
+      <job-class>org.waag.ah.quartz.UrlImportJob</job-class>
       <durability>true</durability>
       <recover>false</recover>
       <job-data-map>
@@ -44,7 +44,6 @@
             <value>FULL</value>
           </entry>
         </job-data-map>
-        <!-- <misfire-instruction>MISFIRE_INSTRUCTION_DO_NOTHING</misfire-instruction> -->
         <cron-expression>0 0/1 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
@@ -55,7 +54,7 @@
       <name>GeonamesEnricher</name>
       <group>EnricherService</group>
       <description>Enrich objects in triplestore</description>
-      <job-class>org.waag.ah.enrich.EnrichObjectJob</job-class>
+      <job-class>org.waag.ah.quartz.EnrichObjectJob</job-class>
       <durability>false</durability>
       <recover>false</recover>
       <job-data-map>
@@ -86,7 +85,6 @@
         <name>GeoNamesEnricherTrigger</name>
         <job-name>GeonamesEnricher</job-name>
         <job-group>EnricherService</job-group>
-        <!-- <misfire-instruction>MISFIRE_INSTRUCTION_DO_NOTHING</misfire-instruction> -->
         <cron-expression>0 0/5 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
@@ -109,7 +107,6 @@
         <group>Import</group>
         <job-name>DOSA</job-name>
         <job-group>WebResourceImport</job-group>        
-        <misfire-instruction>MISFIRE_INSTRUCTION_DO_NOTHING</misfire-instruction>
         <cron-expression>0 0/1 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
