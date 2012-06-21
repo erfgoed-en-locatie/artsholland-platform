@@ -15,7 +15,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 @SuppressWarnings("serial")
-public class ParseDateTime extends ExtensionFunctionDefinition {
+public class ParseDateTimeFunction extends ExtensionFunctionDefinition {
 
 	@Override
 	public int getMinimumNumberOfArguments() {

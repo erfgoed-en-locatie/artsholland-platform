@@ -3,6 +3,8 @@ package org.waag.ah.tika.parser.sax;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringReader;
 import java.net.URI;
 import java.util.HashMap;
@@ -31,15 +33,22 @@ import org.apache.tika.sax.ToXMLContentHandler;
 import org.apache.tika.sax.xpath.Matcher;
 import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
-import org.deri.xsparql.XSPARQLProcessor;
+import org.deri.xquery.saxon.createScopedDatasetExtFunction;
+import org.deri.xquery.saxon.deleteScopedDatasetExtFunction;
+import org.deri.xquery.saxon.jsonDocExtFunction;
+import org.deri.xquery.saxon.scopedDatasetPopResultsExtFunction;
+import org.deri.xquery.saxon.sparqlQueryExtFunction;
+import org.deri.xquery.saxon.sparqlScopedDatasetExtFunction;
+import org.deri.xquery.saxon.turtleGraphToURIExtFunction;
+import org.deri.xsparql.rewriter.XSPARQLProcessor;
 import org.openrdf.model.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.exception.ParserException;
-import org.waag.ah.saxon.ObjectUri;
-import org.waag.ah.saxon.ParseDateTime;
-import org.waag.ah.saxon.ParseLocale;
-import org.waag.ah.saxon.ParseString;
+import org.waag.ah.saxon.ObjectUriFunction;
+import org.waag.ah.saxon.ParseDateTimeFunction;
+import org.waag.ah.saxon.ParseLocaleFunction;
+import org.waag.ah.saxon.ParseStringFunction;
 import org.waag.ah.tika.parser.rdf.TurtleParser;
 import org.waag.ah.tika.util.XSPARQLCharacterEncoder;
 import org.xml.sax.Attributes;
@@ -65,8 +74,23 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		this(handler, metadata, context, xquery, null);
 	}
 	
+	/**
+	 * @param handler
+	 * @param metadata
+	 * @param context
+	 * @param xquery
+	 * @param includes
+	 * @throws ParserException
+	 * @deprecated
+	 */
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata,
 			ParseContext context, InputStream xquery, Map<String, URI> includes)
+					throws ParserException {
+		this(handler, metadata, context, new InputStreamReader(xquery), includes);
+	}
+	
+	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata,
+			ParseContext context, Reader xquery, Map<String, URI> includes)
 			throws ParserException {
 		this.matcher = new XPathParser("rdf", RDF.NAMESPACE).parse("/rdf:RDF/descendant::node()");
 		this.handler = handler;
@@ -79,16 +103,25 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		
 		try {
 			XSPARQLProcessor xp = new XSPARQLProcessor();			
-			String q = xp.process(xquery);//.process(new StringReader(query));
+			String q = xp.process(xquery);
 
 			Configuration config = new Configuration();
 			config.setNamePool(namepool);
 			
-//			config.registerExtensionFunction(new DebugValue());
-			config.registerExtensionFunction(new ParseDateTime());
-			config.registerExtensionFunction(new ObjectUri());
-			config.registerExtensionFunction(new ParseLocale());
-			config.registerExtensionFunction(new ParseString());			
+			// XSPARQL specific functions.
+		    config.registerExtensionFunction(new sparqlQueryExtFunction());
+		    config.registerExtensionFunction(new turtleGraphToURIExtFunction());
+		    config.registerExtensionFunction(new createScopedDatasetExtFunction());
+		    config.registerExtensionFunction(new sparqlScopedDatasetExtFunction());
+		    config.registerExtensionFunction(new deleteScopedDatasetExtFunction());
+		    config.registerExtensionFunction(new scopedDatasetPopResultsExtFunction());
+		    config.registerExtensionFunction(new jsonDocExtFunction());
+		    
+			// Custom XSPARQL functions.
+			config.registerExtensionFunction(new ParseDateTimeFunction());
+			config.registerExtensionFunction(new ObjectUriFunction());
+			config.registerExtensionFunction(new ParseLocaleFunction());
+			config.registerExtensionFunction(new ParseStringFunction());			
 			
 			Processor processor = new Processor(config);
 			XQueryCompiler compiler = processor.newXQueryCompiler();			
@@ -168,7 +201,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				xmlString = xmlCollector.toString();
 				
 				// TODO: Hope this is fixed in XSPARQL 0.4
-				xmlString = xmlString.replace("https://", "http://");
+//				xmlString = xmlString.replace("https://", "http://");
 				
 				if (logger.isDebugEnabled()) {
 					logger.debug("Importing XML: "+xmlString);

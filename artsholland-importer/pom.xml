@@ -58,10 +58,22 @@
       <artifactId>saxon</artifactId>
       <version>9.3</version>
     </dependency>
+<!--     
     <dependency>
       <groupId>org.waag.xsparql</groupId>
       <artifactId>xsparql</artifactId>
       <version>0.2.1</version>
+    </dependency> 
+-->
+    <dependency>
+      <groupId>org.deri.xsparql</groupId>
+      <artifactId>rewriter</artifactId>
+      <version>0.4-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.deri.xsparql</groupId>
+      <artifactId>evaluator</artifactId>
+      <version>0.4-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.openrdf.sesame</groupId>

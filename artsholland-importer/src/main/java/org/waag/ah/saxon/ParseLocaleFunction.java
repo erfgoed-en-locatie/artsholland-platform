@@ -7,35 +7,33 @@ import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.SequenceType;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import net.sf.saxon.value.StringValue;
+import net.sf.saxon.value.Value;
 
 @SuppressWarnings("serial")
-public class DebugValue extends ExtensionFunctionDefinition {
-	private Logger logger = LoggerFactory.getLogger(DebugValue.class);
-	
+public class ParseLocaleFunction extends ExtensionFunctionDefinition {
+
 	@Override
 	public SequenceType[] getArgumentTypes() {
-		return new SequenceType[] {SequenceType.ANY_SEQUENCE};
+		return new SequenceType[] {SequenceType.SINGLE_STRING};
 	}
 
 	@Override
 	public StructuredQName getFunctionQName() {
-		return new StructuredQName("waag", "http://waag.org/saxon-extension", "debug");
+		return new StructuredQName("waag", "http://waag.org/saxon-extension", "parse-locale");
 	}
 
 	@Override
 	public SequenceType getResultType(SequenceType[] suppliedArgumentTypes) {
-		return SequenceType.EMPTY_SEQUENCE;
+		return SequenceType.SINGLE_STRING;
 	}
 
 	@Override
 	public ExtensionFunctionCall makeCallExpression() {
         return new ExtensionFunctionCall() {
             public SequenceIterator call(SequenceIterator[] arguments, XPathContext context) throws XPathException {
-            	logger.info(arguments[0].next().getStringValue());
-            	return null;
+            	String lang = ((StringValue)arguments[0].next()).getStringValue().replaceFirst("([a-z]+)_.*", "$1");
+            	return Value.asIterator(StringValue.makeStringValue(lang));
             }
         };
 	}

@@ -10,13 +10,11 @@ import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.Value;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.waag.ah.tika.util.XSPARQLCharacterEncoder;
 
 @SuppressWarnings("serial")
-public class ParseString extends ExtensionFunctionDefinition {
-	private Logger logger = LoggerFactory.getLogger(ParseString.class);
+public class ParseStringFunction extends ExtensionFunctionDefinition {
+//	private Logger logger = LoggerFactory.getLogger(ParseStringFunction.class);
 	
 	@Override
 	public SequenceType[] getArgumentTypes() {
@@ -44,9 +42,9 @@ public class ParseString extends ExtensionFunctionDefinition {
 	            	text = XSPARQLCharacterEncoder.encode(text);
 	            	
 	            	// Temporary fix, see: https://sourceforge.net/mailarchive/message.php?msg_id=29432380
-		            if (text.matches("^([a-zA-Z]*):(.+)$")) {
-		            	text = text.replaceFirst(":", " :");
-		            }
+//		            if (text.matches("^([a-zA-Z]*):(.+)$")) {
+//		            	text = text.replaceFirst(":", " :");
+//		            }
             	} catch (NullPointerException e) {}
             	return Value.asIterator(StringValue.makeStringValue(text));
             }
