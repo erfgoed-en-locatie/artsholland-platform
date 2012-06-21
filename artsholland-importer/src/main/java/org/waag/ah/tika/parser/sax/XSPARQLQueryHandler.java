@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Stack;
@@ -68,7 +67,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	private org.apache.tika.sax.xpath.Matcher matcher;
 	private Stack<String> stack;
 	private boolean parsingTurtle;
-	private HashMap<String, String> namespaces;
+//	private HashMap<String, String> namespaces;
 	
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata,
 			ParseContext context, InputStream xquery) throws ParserException {
@@ -100,7 +99,6 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		this.metadata = metadata; 
 		this.turtleParser = new TurtleParser();
 		this.stack = new Stack<String>();
-		this.namespaces = new HashMap<String, String>();
 		
 		try {
 			XSPARQLProcessor xp = new XSPARQLProcessor();			
@@ -109,7 +107,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			// TODO: This is nasty, but we need the namespaces from our XSPARQL query.
 			Matcher matcher = Pattern.compile("PREFIX ([a-zA-Z]+): <(.*)>").matcher(q);
 			while (matcher.find()) {
-				namespaces.put(matcher.group(1), matcher.group(2));
+				super.startPrefixMapping(matcher.group(1), matcher.group(2));
 			}
 
 			Configuration config = new Configuration();
@@ -148,14 +146,6 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 
 	private boolean processing() {
 		return stack.size() > 0;
-	}
-
-	@Override
-	public void startDocument() throws SAXException {
-		for (Entry<String, String> mapping : namespaces.entrySet()) {
-			super.startPrefixMapping(mapping.getKey(), mapping.getValue());
-		}
-		super.startDocument();
 	}
 
 	@Override
@@ -202,9 +192,6 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			try {
 				xmlString = xmlCollector.toString();
 				
-				// TODO: Hope this is fixed in XSPARQL 0.4
-//				xmlString = xmlString.replace("https://", "http://");
-				
 				if (logger.isDebugEnabled()) {
 					logger.debug("Importing XML: "+xmlString);
 				}
@@ -231,8 +218,8 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				
 			} catch (Exception e) {
 				logger.error(e.getMessage());
-				logger.info("XML: \n"+xmlString);
-				logger.info("TURTLE: \n"+turtleString);
+				logger.info(xmlString);
+				logger.info(turtleString);
 				throw new SAXException(e.getMessage(), e);
 			} finally {
 				xmlCollector = null;
