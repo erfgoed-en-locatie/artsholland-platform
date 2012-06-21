@@ -113,6 +113,7 @@ public class ToRDFContentHandler extends ToTextContentHandler {
 
     public void startDocument() throws SAXException {
         if (stack.size() == 0) {
+        	startPrefixMapping("rdf", RDF.NAMESPACE);
     		startElement(RDF.NAMESPACE, "RDF", "rdf:RDF", new AttributesImpl());
         }
     }

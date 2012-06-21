@@ -11,16 +11,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.Configuration;
-import net.sf.saxon.om.NamePool;
 import net.sf.saxon.s9api.DocumentBuilder;
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XQueryCompiler;
 import net.sf.saxon.s9api.XQueryEvaluator;
+import net.sf.saxon.s9api.XQueryExecutable;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 
@@ -30,7 +32,6 @@ import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.ContentHandlerDecorator;
 import org.apache.tika.sax.EmbeddedContentHandler;
 import org.apache.tika.sax.ToXMLContentHandler;
-import org.apache.tika.sax.xpath.Matcher;
 import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
 import org.deri.xquery.saxon.createScopedDatasetExtFunction;
@@ -63,11 +64,11 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	private TurtleParser turtleParser;
 	private ParseContext context;
 	private Metadata metadata;
-	private NamespaceCollector namepool;
 	private ContentHandler handler;
-	private Matcher matcher;
+	private org.apache.tika.sax.xpath.Matcher matcher;
 	private Stack<String> stack;
 	private boolean parsingTurtle;
+	private HashMap<String, String> namespaces;
 	
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata,
 			ParseContext context, InputStream xquery) throws ParserException {
@@ -98,15 +99,21 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		this.context = context;
 		this.metadata = metadata; 
 		this.turtleParser = new TurtleParser();
-		this.namepool = new NamespaceCollector();
 		this.stack = new Stack<String>();
+		this.namespaces = new HashMap<String, String>();
 		
 		try {
 			XSPARQLProcessor xp = new XSPARQLProcessor();			
 			String q = xp.process(xquery);
+			
+			// TODO: This is nasty, but we need the namespaces from our XSPARQL query.
+			namespaces.put("xml", "http://www.w3.org/XML/1998/namespace");
+			Matcher matcher = Pattern.compile("PREFIX ([a-zA-Z]+): <(.*)>").matcher(q);
+			while (matcher.find()) {
+				namespaces.put(matcher.group(1), matcher.group(2));
+			}
 
 			Configuration config = new Configuration();
-			config.setNamePool(namepool);
 			
 			// XSPARQL specific functions (see: https://sourceforge.net/mailarchive/message.php?msg_id=29435521).
 		    config.registerExtensionFunction(new sparqlQueryExtFunction());
@@ -124,8 +131,9 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			config.registerExtensionFunction(new ParseStringFunction());			
 			
 			Processor processor = new Processor(config);
-			XQueryCompiler compiler = processor.newXQueryCompiler();			
-			evaluator = compiler.compile(q).load();
+			XQueryCompiler compiler = processor.newXQueryCompiler();	
+			XQueryExecutable compiled = compiler.compile(q);
+			evaluator = compiled.load();
 			
 			if (includes != null) {
 				DocumentBuilder docBuilder = processor.newDocumentBuilder();
@@ -145,7 +153,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 
 	@Override
 	public void startDocument() throws SAXException {
-		for (Entry<String, String> mapping : namepool.getMappings().entrySet()) {
+		for (Entry<String, String> mapping : namespaces.entrySet()) {
 			super.startPrefixMapping(mapping.getKey(), mapping.getValue());
 		}
 		super.startDocument();
@@ -224,29 +232,12 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				
 			} catch (Exception e) {
 				logger.error(e.getMessage());
-				logger.info(xmlString);
-				logger.info(turtleString);
+				logger.info("XML: \n"+xmlString);
+				logger.info("TURTLE: \n"+turtleString);
 				throw new SAXException(e.getMessage(), e);
 			} finally {
 				xmlCollector = null;
 			}
-		}
-	}
-	
-	@SuppressWarnings("serial")
-	private static class NamespaceCollector extends NamePool {
-		private Map<String, String> mappings = new HashMap<String, String>();
-		
-		@Override
-		public synchronized int allocateNamespaceCode(String prefix, String uri) {
-			if (!prefix.startsWith("_")) {
-				mappings.put(prefix, uri);
-			}
-			return super.allocateNamespaceCode(prefix, uri);
-		}
-		
-		public Map<String, String> getMappings() {
-			return mappings;
 		}
 	}
 }
