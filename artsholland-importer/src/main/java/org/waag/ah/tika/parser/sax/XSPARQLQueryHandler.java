@@ -107,7 +107,6 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			String q = xp.process(xquery);
 			
 			// TODO: This is nasty, but we need the namespaces from our XSPARQL query.
-			namespaces.put("xml", "http://www.w3.org/XML/1998/namespace");
 			Matcher matcher = Pattern.compile("PREFIX ([a-zA-Z]+): <(.*)>").matcher(q);
 			while (matcher.find()) {
 				namespaces.put(matcher.group(1), matcher.group(2));
