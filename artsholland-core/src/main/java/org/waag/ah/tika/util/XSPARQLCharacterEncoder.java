@@ -25,7 +25,7 @@ public class XSPARQLCharacterEncoder {
 	private static Map<String, String> createMap() {
 		Map<String, String> result = new HashMap<String, String>();
 
-//		result.put("\"", completeEncoding("quote_double"));
+//		result.put("\"", completeEncoding("quote_double")); // DO NOT ENABLE THIS: QUOTES ARE HANDLED BY org.waag.ah.saxon.ParseString
 //		result.put("http:", completeEncoding("http_prefix"));
 		result.put("<", completeEncoding("less_than"));
 		result.put(">", completeEncoding("greater_than"));

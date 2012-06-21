@@ -5,6 +5,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ejb.EJBTransactionRolledbackException;
+
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -42,6 +44,8 @@ public class NBTCImportJob extends AbstractImportJob {
 			logger.info(urls.toString());
 			
 			doImport(urls, metadata);
+		} catch(EJBTransactionRolledbackException e) {
+			logger.warn(e.getMessage());
 		} catch (Exception e) {
 			throw new JobExecutionException(e);
 		}

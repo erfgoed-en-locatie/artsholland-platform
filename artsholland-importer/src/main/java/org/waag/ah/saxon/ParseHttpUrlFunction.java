@@ -11,10 +11,8 @@ import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.Value;
 
-import org.waag.ah.tika.util.XSPARQLCharacterEncoder;
-
 @SuppressWarnings("serial")
-public class ParseString extends ExtensionFunctionDefinition {
+public class ParseHttpUrlFunction extends ExtensionFunctionDefinition {
 	
 	@Override
 	public SequenceType[] getArgumentTypes() {
@@ -23,7 +21,7 @@ public class ParseString extends ExtensionFunctionDefinition {
 
 	@Override
 	public StructuredQName getFunctionQName() {
-		return new StructuredQName("waag", "http://waag.org/saxon-extension", "parse-string");
+		return new StructuredQName("waag", "http://waag.org/saxon-extension", "parse-http-url");
 	}
 
 	@Override
@@ -37,15 +35,10 @@ public class ParseString extends ExtensionFunctionDefinition {
 			public SequenceIterator call(SequenceIterator[] arguments,
 					XPathContext context) throws XPathException {
 				String text = "";
-				try {
-					text = ((StringValue) arguments[0].next()).getStringValue();
-					text = text.replaceAll("\"", "&quot;");
-					text = XSPARQLCharacterEncoder.encode(text);
-
-					// Temporary fix, see:
-					// https://sourceforge.net/mailarchive/message.php?msg_id=29432380
-					if (text.matches("^([a-zA-Z]*):(.+)$")) {
-						text = text.replaceFirst(":", " :");
+				try {					
+					text = ((StringValue) arguments[0].next()).getStringValue().replace(" ", "%20");
+					if (!(text.startsWith("http://") || text.startsWith("https://"))) {
+						text = "http://" + text;
 					}
 				} catch (NullPointerException e) {					
 				}

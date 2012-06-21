@@ -19,10 +19,10 @@ import org.waag.ah.PlatformConfig;
 import org.waag.ah.PlatformConfigHelper;
 
 @SuppressWarnings("serial")
-public class ObjectUri extends ExtensionFunctionDefinition {
+public class ObjectUriFunction extends ExtensionFunctionDefinition {
 	private final PlatformConfig config;
 
-	public ObjectUri() throws ConfigurationException {
+	public ObjectUriFunction() throws ConfigurationException {
 		config = PlatformConfigHelper.getConfig();
 	}
 

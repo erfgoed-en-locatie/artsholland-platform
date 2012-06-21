@@ -3,6 +3,8 @@ package org.waag.ah.tika.parser.sax;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringReader;
 import java.net.URI;
 import java.util.HashMap;
@@ -31,19 +33,26 @@ import org.apache.tika.sax.ToXMLContentHandler;
 import org.apache.tika.sax.xpath.Matcher;
 import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
-import org.deri.xsparql.XSPARQLProcessor;
+import org.deri.xquery.saxon.createScopedDatasetExtFunction;
+import org.deri.xquery.saxon.deleteScopedDatasetExtFunction;
+import org.deri.xquery.saxon.jsonDocExtFunction;
+import org.deri.xquery.saxon.scopedDatasetPopResultsExtFunction;
+import org.deri.xquery.saxon.sparqlQueryExtFunction;
+import org.deri.xquery.saxon.sparqlScopedDatasetExtFunction;
+import org.deri.xquery.saxon.turtleGraphToURIExtFunction;
+import org.deri.xsparql.rewriter.XSPARQLProcessor;
 import org.openrdf.model.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.exception.ParserException;
-import org.waag.ah.saxon.ClassName;
-import org.waag.ah.saxon.ObjectUri;
-import org.waag.ah.saxon.ParseDateTime;
-import org.waag.ah.saxon.ParseHttpUrl;
-import org.waag.ah.saxon.ParseLocale;
+import org.waag.ah.saxon.ClassNameFunction;
+import org.waag.ah.saxon.ObjectUriFunction;
+import org.waag.ah.saxon.ParseDateTimeFunction;
+import org.waag.ah.saxon.ParseHttpUrlFunction;
+import org.waag.ah.saxon.ParseLocaleFunction;
 import org.waag.ah.saxon.ParseNonZeroNumber;
-import org.waag.ah.saxon.ParseString;
-import org.waag.ah.saxon.UpperCaseFirst;
+import org.waag.ah.saxon.ParseStringFunction;
+import org.waag.ah.saxon.UpperCaseFirstFunction;
 import org.waag.ah.tika.parser.rdf.TurtleParser;
 import org.waag.ah.tika.util.XSPARQLCharacterEncoder;
 import org.xml.sax.Attributes;
@@ -69,8 +78,23 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		this(handler, metadata, context, xquery, null);
 	}
 	
+	/**
+	 * @param handler
+	 * @param metadata
+	 * @param context
+	 * @param xquery
+	 * @param includes
+	 * @throws ParserException
+	 * @deprecated
+	 */
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata,
 			ParseContext context, InputStream xquery, Map<String, URI> includes)
+					throws ParserException {
+		this(handler, metadata, context, new InputStreamReader(xquery), includes);
+	}
+	
+	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata,
+			ParseContext context, Reader xquery, Map<String, URI> includes)
 			throws ParserException {
 		this.matcher = new XPathParser("rdf", RDF.NAMESPACE).parse("/rdf:RDF/descendant::node()");
 		this.handler = handler;
@@ -83,27 +107,33 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		
 		try {
 			XSPARQLProcessor xp = new XSPARQLProcessor();			
-			String q = xp.process(xquery);//.process(new StringReader(query));
+			String q = xp.process(xquery);
 
 			Configuration config = new Configuration();
 			config.setNamePool(namepool);
 			
-//			config.registerExtensionFunction(new DebugValue());
-			config.registerExtensionFunction(new ParseDateTime());
-			config.registerExtensionFunction(new ObjectUri());
-			config.registerExtensionFunction(new ParseLocale());
-			config.registerExtensionFunction(new ParseString());
-			config.registerExtensionFunction(new ParseHttpUrl());
+			// XSPARQL specific functions (see: https://sourceforge.net/mailarchive/message.php?msg_id=29435521).
+		    config.registerExtensionFunction(new sparqlQueryExtFunction());
+		    config.registerExtensionFunction(new turtleGraphToURIExtFunction());
+		    config.registerExtensionFunction(new createScopedDatasetExtFunction());
+		    config.registerExtensionFunction(new sparqlScopedDatasetExtFunction());
+		    config.registerExtensionFunction(new deleteScopedDatasetExtFunction());
+		    config.registerExtensionFunction(new scopedDatasetPopResultsExtFunction());
+		    config.registerExtensionFunction(new jsonDocExtFunction());
+		    
+			// Custom XSPARQL functions.
+			config.registerExtensionFunction(new ParseDateTimeFunction());
+			config.registerExtensionFunction(new ObjectUriFunction());
+			config.registerExtensionFunction(new ParseLocaleFunction());
+			config.registerExtensionFunction(new ParseStringFunction());			
+			config.registerExtensionFunction(new ParseHttpUrlFunction());
 			config.registerExtensionFunction(new ParseNonZeroNumber());
-			config.registerExtensionFunction(new UpperCaseFirst());
-			config.registerExtensionFunction(new ClassName());
+			config.registerExtensionFunction(new UpperCaseFirstFunction());
+			config.registerExtensionFunction(new ClassNameFunction());
 			
 			Processor processor = new Processor(config);
 			XQueryCompiler compiler = processor.newXQueryCompiler();			
 			evaluator = compiler.compile(q).load();
-			
-//			XQueryExecutable blaat = compiler.compile(q);
-//			logger.info(blaat.toString());
 			
 			if (includes != null) {
 				DocumentBuilder docBuilder = processor.newDocumentBuilder();
@@ -112,8 +142,6 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 					evaluator.setExternalVariable(new QName(item.getKey()), document);				
 				}
 			}
-			
-			/*evaluator.setExternalVariable(new QName("platformUri"), platformUri);*/
 		} catch (Exception e) {
 			throw new ParserException(e.getMessage());
 		}			
@@ -157,12 +185,9 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
 		if (processing()) {
-			StringBuffer chars = new StringBuffer().append(ch, start, length);
-			String encoded = XSPARQLCharacterEncoder.encode(chars.toString());
-//			if (chars.toString().contains("http://www.buitenzorg.nl")) {
-//				logger.info(encoded);
-//			}
-			xmlCollector.characters(encoded.toCharArray(), 0, encoded.length());
+			String data = new StringBuffer().append(ch, start, length).toString();
+			data = XSPARQLCharacterEncoder.encode(data);
+			xmlCollector.characters(data.toCharArray(), 0, data.length());
 		}			
 	}
 
@@ -177,6 +202,9 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			String turtleString = "";
 			try {
 				xmlString = xmlCollector.toString();
+				
+				// TODO: Hope this is fixed in XSPARQL 0.4
+//				xmlString = xmlString.replace("https://", "http://");
 				
 				if (logger.isDebugEnabled()) {
 					logger.debug("Importing XML: "+xmlString);
