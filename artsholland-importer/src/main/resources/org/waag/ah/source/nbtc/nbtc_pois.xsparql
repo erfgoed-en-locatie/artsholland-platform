@@ -161,7 +161,7 @@ return
           construct {
             $puri gr:offers $ofuri .
             $ofuri rdf:type gr:Offering ;
-                   gr:description {$price/priceType}@{$lang} ;
+                   gr:description {waag:parse-string($price/priceType)}@{$lang} ;
                    gr:validFrom {concat($price/year, "-01-01")}^^xsd:date ;
                    gr:validThrough {concat($price/year, "-12-31")}^^xsd:date ;
                    gr:hasPriceSpecification $opuri .

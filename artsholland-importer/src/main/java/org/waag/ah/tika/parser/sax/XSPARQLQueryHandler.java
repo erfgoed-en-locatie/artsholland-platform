@@ -19,7 +19,6 @@ import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XQueryCompiler;
 import net.sf.saxon.s9api.XQueryEvaluator;
-import net.sf.saxon.s9api.XQueryExecutable;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 
@@ -150,12 +149,9 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	public void characters(char[] ch, int start, int length)
 			throws SAXException {
 		if (processing()) {
-			StringBuffer chars = new StringBuffer().append(ch, start, length);
-			String encoded = XSPARQLCharacterEncoder.encode(chars.toString());
-//			if (chars.toString().contains("http://www.buitenzorg.nl")) {
-//				logger.info(encoded);
-//			}
-			xmlCollector.characters(encoded.toCharArray(), 0, encoded.length());
+			String data = new StringBuffer().append(ch, start, length).toString();
+			data = XSPARQLCharacterEncoder.encode(data);
+			xmlCollector.characters(data.toCharArray(), 0, data.length());
 		}			
 	}
 
@@ -170,6 +166,9 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			String turtleString = "";
 			try {
 				xmlString = xmlCollector.toString();
+				
+				// TODO: Hope this is fixed in XSPARQL 0.4
+				xmlString = xmlString.replace("https://", "http://");
 				
 				if (logger.isDebugEnabled()) {
 					logger.debug("Importing XML: "+xmlString);
