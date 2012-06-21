@@ -108,7 +108,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			Configuration config = new Configuration();
 			config.setNamePool(namepool);
 			
-			// XSPARQL specific functions.
+			// XSPARQL specific functions (see: https://sourceforge.net/mailarchive/message.php?msg_id=29435521).
 		    config.registerExtensionFunction(new sparqlQueryExtFunction());
 		    config.registerExtensionFunction(new turtleGraphToURIExtFunction());
 		    config.registerExtensionFunction(new createScopedDatasetExtFunction());
@@ -127,9 +127,6 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			XQueryCompiler compiler = processor.newXQueryCompiler();			
 			evaluator = compiler.compile(q).load();
 			
-//			XQueryExecutable blaat = compiler.compile(q);
-//			logger.info(blaat.toString());
-			
 			if (includes != null) {
 				DocumentBuilder docBuilder = processor.newDocumentBuilder();
 				for (Entry<String, URI> item : includes.entrySet()) {
@@ -137,8 +134,6 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 					evaluator.setExternalVariable(new QName(item.getKey()), document);				
 				}
 			}
-			
-			/*evaluator.setExternalVariable(new QName("platformUri"), platformUri);*/
 		} catch (Exception e) {
 			throw new ParserException(e.getMessage());
 		}			
