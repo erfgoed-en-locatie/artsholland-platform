@@ -82,10 +82,18 @@ return
               dc:title {waag:parse-string($poi/object/poiName)}@{$lang} ;
               ah:poiCategory {waag:get-poi-category($poi/operation/poiCategory)} ;
               foaf:homepage {$poi/object/poiUrl} ;
+              
+              # TODO: other predicate names?
               ah:poiLocationAddress $luri ;
               ah:poiContactAddress $curi ;
+              
               geo:long {$poi/positionList/position/longitude}^^xsd:decimal ;
-              geo:lat {$poi/positionList/position/latitude}^^xsd:decimal .
+              geo:lat {$poi/positionList/position/latitude}^^xsd:decimal ;
+              # TODO: add WKT
+              
+			        vcard:email {waag:parse-string($contactAddress/email)} ;
+              ah:telephone {waag:parse-string($contactAddress/phoneGeneral)} ;
+              ah:fax {waag:parse-string($contactAddress/faxGeneral)} . 
                 
         $luri a ah:Address ;
               vcard:street-address {concat($locationAddress/street, " ", $locationAddress/housenumber)} ;
@@ -95,10 +103,7 @@ return
         $curi a ah:Address ;
               vcard:street-address {concat($contactAddress/street, " ", $contactAddress/housenumber)} ;
               vcard:locality {waag:parse-string($contactAddress/city)} ;
-              vcard:postal-code {waag:parse-string($contactAddress/zipcode)} ;
-              vcard:email {waag:parse-string($contactAddress/email)} ;
-              ah:telephone {waag:parse-string($contactAddress/phoneGeneral)} ;
-              ah:fax {waag:parse-string($contactAddress/faxGeneral)} .      
+              vcard:postal-code {waag:parse-string($contactAddress/zipcode)} .    
                         
         { for $attr at $pos in $poi/object/attributeList/*
           let $auri := {concat($puri, "/attribute/", string($pos))}

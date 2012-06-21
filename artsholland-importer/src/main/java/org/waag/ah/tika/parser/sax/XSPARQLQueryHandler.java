@@ -19,7 +19,6 @@ import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XQueryCompiler;
 import net.sf.saxon.s9api.XQueryEvaluator;
-import net.sf.saxon.s9api.XQueryExecutable;
 import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 
@@ -37,10 +36,14 @@ import org.openrdf.model.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.exception.ParserException;
+import org.waag.ah.saxon.ClassName;
 import org.waag.ah.saxon.ObjectUri;
 import org.waag.ah.saxon.ParseDateTime;
+import org.waag.ah.saxon.ParseHttpUrl;
 import org.waag.ah.saxon.ParseLocale;
+import org.waag.ah.saxon.ParseNonZeroNumber;
 import org.waag.ah.saxon.ParseString;
+import org.waag.ah.saxon.UpperCaseFirst;
 import org.waag.ah.tika.parser.rdf.TurtleParser;
 import org.waag.ah.tika.util.XSPARQLCharacterEncoder;
 import org.xml.sax.Attributes;
@@ -89,7 +92,11 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			config.registerExtensionFunction(new ParseDateTime());
 			config.registerExtensionFunction(new ObjectUri());
 			config.registerExtensionFunction(new ParseLocale());
-			config.registerExtensionFunction(new ParseString());			
+			config.registerExtensionFunction(new ParseString());
+			config.registerExtensionFunction(new ParseHttpUrl());
+			config.registerExtensionFunction(new ParseNonZeroNumber());
+			config.registerExtensionFunction(new UpperCaseFirst());
+			config.registerExtensionFunction(new ClassName());
 			
 			Processor processor = new Processor(config);
 			XQueryCompiler compiler = processor.newXQueryCompiler();			

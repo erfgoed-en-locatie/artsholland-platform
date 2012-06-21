@@ -45,6 +45,8 @@ public class UitbaseURLGenerator {
 		String dtToParam = dtTo != null ? "&createdto="+fmt.withZone(DateTimeZone.UTC).print(dtTo) : "";
 		String dtFromParam = dtFrom != null ? "&createdfrom="+fmt.withZone(DateTimeZone.UTC).print(dtFrom) : "";
 		
+		dtFromParam = "&createdfrom=2012-06-19T14:41:59.998Z";
+		
 		for (String resource : RESOURCES) {
 			String resourceFilterParam = "&filter=resource:" + resource;
 			
