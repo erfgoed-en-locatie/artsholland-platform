@@ -100,7 +100,6 @@ public class ToRDFContentHandler extends ToTextContentHandler {
     public ToRDFContentHandler(OutputStream stream, String encoding)
             throws UnsupportedEncodingException {
         super(stream, encoding);
-//        this.encoding = encoding;
     }
 
     public ToRDFContentHandler(String encoding) {
@@ -113,6 +112,7 @@ public class ToRDFContentHandler extends ToTextContentHandler {
 
     public void startDocument() throws SAXException {
         if (stack.size() == 0) {
+        	startPrefixMapping("xml", "http://www.w3.org/XML/1998/namespace");
         	startPrefixMapping("rdf", RDF.NAMESPACE);
     		startElement(RDF.NAMESPACE, "RDF", "rdf:RDF", new AttributesImpl());
         }
