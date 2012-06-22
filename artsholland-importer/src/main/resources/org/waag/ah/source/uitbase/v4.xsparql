@@ -162,7 +162,7 @@ return
 			let $vuri := {waag:object-uri("venue", $cidn)}
 			let $vuriUitburo := {concat($baseuriUitburo, "locations/", $cidn)}
 			
-			let $venueType := {concat("venueType", waag:upper-case-first($venue/type/@key))}
+			let $venueType := {waag:object-uri(waag:class-name("venueType", waag:upper-case-first($venue/type/@key)))}
 				
 			let $lat := { waag:parse-non-zero-number($venue/geocode/latitude) }
 			let $long := { waag:parse-non-zero-number($venue/geocode/longitude) }
@@ -306,7 +306,7 @@ return
 		
 			#let $title := {waag:parse-string($production/title)}
 			
-			let $typeKey := {$production/type/@key}
+			let $typeKey := {waag:parse-string($production/type/@key)}
 			let $typeClass := {waag:object-uri(waag:class-name("productionType", waag:upper-case-first($typeKey)))}
 			
 			let $language := {waag:parse-locale($production/language)}
@@ -335,7 +335,7 @@ return
 				
 				{ for $genre in $production/genres//genre
 					
-					let $genreKey := {$genre/@key}
+					let $genreKey := {waag:parse-string($genre/@key)}
 					let $genreClass := {waag:object-uri(waag:class-name("genre", waag:upper-case-first($genreKey)))}
 					
 					construct {				
