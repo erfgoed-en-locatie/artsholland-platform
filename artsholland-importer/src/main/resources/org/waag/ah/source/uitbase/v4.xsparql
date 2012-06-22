@@ -61,11 +61,11 @@ return
 					ah:venue $vuri ;	
 					ah:production $puri ;
 				
-					dc:created {$event/@date-created}^^xsd:dateTime ;
-					dc:modified {$event/@date-modified}^^xsd:dateTime ;
+					dc:created {waag:parse-string($event/@date-created)}^^xsd:dateTime ;
+					dc:modified {waag:parse-string($event/@date-modified)}^^xsd:dateTime ;
 				
-					dc:title {waag:parse-string($event/title)} ;
-					dc:description {waag:parse-string($event/description)} ;
+					dc:title {waag:parse-string($event/title)}^^xsd:string ;
+					dc:description {waag:parse-string($event/description)}^^xsd:string ;
 				
 					ah:eventType $typeClass ;
 					ah:eventStatus $statusClass ;
@@ -185,21 +185,21 @@ return
 	
 					ah:geometry {$point}^^osgeo:wkt ;
 				
-					dc:created {$venue/@date-created}^^xsd:dateTime ;
-					dc:modified {$venue/@date-modified}^^xsd:dateTime ;
+					dc:created {waag:parse-string($venue/@date-created)}^^xsd:dateTime ;
+					dc:modified {waag:parse-string($venue/@date-modified)}^^xsd:dateTime ;
 					
 					ah:poiLocationAddress $auri ;
 					
-					vcard:email {waag:parse-string($venue/email)} ;
+					vcard:email {waag:parse-string($venue/email)}^^xsd:string ;
 					
 					# TODO: ah???
-					ah:telephone {waag:parse-string($venue/telephone)} ;
-					ah:fax {waag:parse-string($venue/fax)} ;
+					ah:telephone {waag:parse-string($venue/telephone)}^^xsd:string ;
+					ah:fax {waag:parse-string($venue/fax)}^^xsd:string ;
 					
 					ah:venueType $venueType .
 					
 				$venueType a ah:VenueType ;	
-					rdfs:label {waag:parse-string($venue/type)} .
+					rdfs:label {waag:parse-string($venue/type)}^^xsd:string .
 				
 				
 			  $auri a ah:Address ;
@@ -214,7 +214,7 @@ return
 					construct {
 					
 						$ruri a ah:Room ;
-							rdfs:label {waag:parse-string($room)} .
+							rdfs:label {waag:parse-string($room)}^^xsd:string .
 							
 						$vuri ah:room $ruri .
 						
@@ -263,7 +263,7 @@ return
 					
 					construct {	
 						
-						$vuri ah:tag {waag:parse-string($tag)} .
+						$vuri ah:tag {waag:parse-string($tag)}^^xsd:string .
 						
 					}
 				} .
@@ -319,8 +319,8 @@ return
 				
 					ah:cidn {$cidn}^^xsd:string ;	
 					
-					dc:created {$production/@date-created}^^xsd:dateTime ;
-					dc:modified {$production/@date-modified}^^xsd:dateTime ;	
+					dc:created {waag:parse-string($production/@date-created)}^^xsd:dateTime ;
+					dc:modified {waag:parse-string($production/@date-modified)}^^xsd:dateTime ;	
 					
 					ah:ageLimitLower {$production/age/lower}^^xsd:integer ;
 					ah:ageLimitUpper {$production/age/upper}^^xsd:integer ;
