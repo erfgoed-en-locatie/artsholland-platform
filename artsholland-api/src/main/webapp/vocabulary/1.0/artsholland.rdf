@@ -26,236 +26,230 @@
     <owl:imports rdf:resource="http://purl.org/dc/elements/1.1/"/>
   </owl:Ontology>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeSanitary">
+    <rdfs:label xml:lang="en">POI Attribute Sanitary</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
     </rdfs:subClassOf>
-    <rdfs:label xml:lang="en">POI Attribute Sanitary</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Classification">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Classification</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeServices">
+    <rdfs:label xml:lang="en">POI Attribute Services</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
     </rdfs:subClassOf>
-    <rdfs:label xml:lang="en">POI Attribute Services</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Genre">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Genre</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/EventType">
-    <rdfs:comment xml:lang="en">Event type; one of 'normal', 'premiere' or 'try-out'.</rdfs:comment>
-    <rdfs:comment xml:lang="nl">Type van de voorstelling; één van 'normaal', 'première' of 'try-out'.</rdfs:comment>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Event type</rdfs:label>
+    <rdfs:comment xml:lang="nl">Type van de voorstelling; één van 'normaal', 'première' of 'try-out'.</rdfs:comment>
+    <rdfs:comment xml:lang="en">Event type; one of 'normal', 'premiere' or 'try-out'.</rdfs:comment>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeSituation">
+    <rdfs:label xml:lang="en">POI Attribute Situation</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
     </rdfs:subClassOf>
-    <rdfs:label xml:lang="en">POI Attribute Situation</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Room">
-    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-    <rdfs:comment xml:lang="en">A room or hall as part of a bigger venue or space.</rdfs:comment>
-    <rdfs:comment xml:lang="nl">Een kamer of zaal in een grotere publieke ruimte of theater.</rdfs:comment>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Room</rdfs:label>
+    <rdfs:comment xml:lang="nl">Een kamer of zaal in een grotere publieke ruimte of theater.</rdfs:comment>
+    <rdfs:comment xml:lang="en">A room or hall as part of a bigger venue or space.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeMusicType">
+    <rdfs:label xml:lang="en">POI Attribute Music Type</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
     </rdfs:subClassOf>
-    <rdfs:label xml:lang="en">POI Attribute Music Type</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeEvType">
+    <rdfs:label xml:lang="en">POI Attribute Event Type</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
     </rdfs:subClassOf>
-    <rdfs:label xml:lang="en">POI Attribute Event Type</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeCuisine">
+    <rdfs:label xml:lang="en">POI Attribute Cuisine</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
     </rdfs:subClassOf>
-    <rdfs:label xml:lang="en">POI Attribute Cuisine</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/AttachmentType">
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >Attachment type</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.org/artsholland/1.0/Event"/>
     </rdfs:subClassOf>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >Attachment type</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeAmbiance">
+    <rdfs:label xml:lang="en">POI Attribute Ambiance</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
     </rdfs:subClassOf>
-    <rdfs:label xml:lang="en">POI Attribute Ambiance</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeCampagne">
+    <rdfs:label xml:lang="en">POI Attribute Campagne</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
     </rdfs:subClassOf>
-    <rdfs:label xml:lang="en">POI Attribute Campagne</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeFac">
+    <rdfs:label xml:lang="en">POI Attribute Facilities</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
     </rdfs:subClassOf>
-    <rdfs:label xml:lang="en">POI Attribute Facilities</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Party">
-    <rdfs:subClassOf rdf:resource="http://www.w3.org/2006/vcard/ns#Organization"/>
-    <rdfs:comment xml:lang="nl">Een groep, persoon of entiteit welke participeert in een culturele uiting.</rdfs:comment>
+    <rdfs:comment xml:lang="en">A group, person or organization that perfroms in or organizes a cultural event.</rdfs:comment>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Party</rdfs:label>
-    <rdfs:comment xml:lang="en">A group, person or organization that perfroms in or organizes a cultural event.</rdfs:comment>
+    <rdfs:comment xml:lang="nl">Een groep, persoon of entiteit welke participeert in een culturele uiting.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2006/vcard/ns#Organization"/>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeFacGen">
+    <rdfs:label xml:lang="en">POI Attribute General Facilities</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
     </rdfs:subClassOf>
-    <rdfs:label xml:lang="en">POI Attribute General Facilities</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/VenueType">
-    <rdfs:comment xml:lang="nl">Het type locatie; i.e. een bioscoop, theater etc.</rdfs:comment>
-    <rdfs:comment xml:lang="en">The type of venue; i.e. a cinema, theater etc.</rdfs:comment>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Venue type</rdfs:label>
+    <rdfs:comment xml:lang="en">The type of venue; i.e. a cinema, theater etc.</rdfs:comment>
+    <rdfs:comment xml:lang="nl">Het type locatie; i.e. een bioscoop, theater etc.</rdfs:comment>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Address">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Address</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeCollection">
+    <rdfs:label xml:lang="en">POI Attribute Collection</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
     </rdfs:subClassOf>
-    <rdfs:label xml:lang="en">POI Attribute Collection</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeAccessability">
+    <rdfs:label xml:lang="en">POI Attribute Accessability</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
     </rdfs:subClassOf>
-    <rdfs:label xml:lang="en">POI Attribute Accessability</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI">
-    <rdfs:comment xml:lang="en">General Point of Interest</rdfs:comment>
+    <rdfs:comment xml:lang="nl">Algemene POI</rdfs:comment>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >POI</rdfs:label>
-    <rdfs:comment xml:lang="nl">Algemene POI</rdfs:comment>
+    <rdfs:comment xml:lang="en">General Point of Interest</rdfs:comment>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeAcType">
-    <rdfs:label xml:lang="en">POI Attribute Accomodation Type</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
     </rdfs:subClassOf>
+    <rdfs:label xml:lang="en">POI Attribute Accomodation Type</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeAtrType">
+    <rdfs:label xml:lang="en">POI Attribute Attraction Type</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
     </rdfs:subClassOf>
-    <rdfs:label xml:lang="en">POI Attribute Attraction Type</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeCondition">
+    <rdfs:label xml:lang="en">POI Attribute Condition</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
     </rdfs:subClassOf>
-    <rdfs:label xml:lang="en">POI Attribute Condition</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Venue">
-    <rdfs:comment xml:lang="en">Place or locality where cultural events take place.</rdfs:comment>
+    <rdfs:comment xml:lang="nl">Locatie of ruimte waar culturele uitingen plaatsvinden.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2006/vcard/ns#VCard"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Venue</rdfs:label>
-    <rdfs:subClassOf rdf:resource="http://www.w3.org/2006/vcard/ns#VCard"/>
-    <rdfs:comment xml:lang="nl">Locatie of ruimte waar culturele uitingen plaatsvinden.</rdfs:comment>
+    <rdfs:comment xml:lang="en">Place or locality where cultural events take place.</rdfs:comment>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeBuType">
+    <rdfs:label xml:lang="en">POI Attribute Business Type</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
     </rdfs:subClassOf>
-    <rdfs:label xml:lang="en">POI Attribute Business Type</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Category">
+    <rdfs:comment xml:lang="en">Category of Point of Insterest</rdfs:comment>
+    <rdfs:comment xml:lang="nl">Soort Point of Interest</rdfs:comment>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >POI Category</rdfs:label>
-    <rdfs:comment xml:lang="nl">Soort Point of Interest</rdfs:comment>
-    <rdfs:comment xml:lang="en">Category of Point of Insterest</rdfs:comment>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/EventStatus">
-    <rdfs:comment xml:lang="en">Event status; one of 'normal', 'sold out', 'cancelled' or 'postponed'.</rdfs:comment>
-    <rdfs:comment xml:lang="nl">Status van de voorstelling; één van 'normaal', 'uitverkocht', 'geannuleerd' of 'uitgesteld'.</rdfs:comment>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Event status</rdfs:label>
+    <rdfs:comment xml:lang="nl">Status van de voorstelling; één van 'normaal', 'uitverkocht', 'geannuleerd' of 'uitgesteld'.</rdfs:comment>
+    <rdfs:comment xml:lang="en">Event status; one of 'normal', 'sold out', 'cancelled' or 'postponed'.</rdfs:comment>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Event">
-    <rdfs:comment xml:lang="nl">Een culturele uiting op een bepaalde plaats en een bepaald tijdstip.</rdfs:comment>
+    <rdfs:comment xml:lang="en">A cultural production at a specific location and time.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Event</rdfs:label>
-    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-    <rdfs:comment xml:lang="en">A cultural production at a specific location and time.</rdfs:comment>
+    <rdfs:comment xml:lang="nl">Een culturele uiting op een bepaalde plaats en een bepaald tijdstip.</rdfs:comment>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeInterest">
+    <rdfs:label xml:lang="en">POI Attribute Interest</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
     </rdfs:subClassOf>
-    <rdfs:label xml:lang="en">POI Attribute Interest</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeRecreation">
+    <rdfs:label xml:lang="en">POI Attribute Recreation</rdfs:label>
     <rdfs:subClassOf>
       <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute"/>
     </rdfs:subClassOf>
-    <rdfs:label xml:lang="en">POI Attribute Recreation</rdfs:label>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_Attribute">
+    <dc:description xml:lang="en">General class for POI attributes</dc:description>
+    <dc:description xml:lang="nl">Algemene classe voor eigenschappen van POI's</dc:description>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >POI Attribute</rdfs:label>
-    <dc:description xml:lang="nl">Algemene classe voor eigenschappen van POI's</dc:description>
-    <dc:description xml:lang="en">General class for POI attributes</dc:description>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeTargetGroup">
-    <rdfs:subClassOf rdf:resource="http://purl.org/artsholland/1.0/POI_Attribute"/>
     <rdfs:label xml:lang="en">POI Attribute Target Group</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/artsholland/1.0/POI_Attribute"/>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Attachment">
-    <rdfs:comment xml:lang="en">Digital media, illustrating an event, production or venue.</rdfs:comment>
-    <rdfs:comment xml:lang="nl">Media, in digitale vorm, behorend tot een event, productie of locatie.</rdfs:comment>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Attachment</rdfs:label>
+    <rdfs:comment xml:lang="nl">Media, in digitale vorm, behorend tot een event, productie of locatie.</rdfs:comment>
+    <rdfs:comment xml:lang="en">Digital media, illustrating an event, production or venue.</rdfs:comment>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeSpecialities">
-    <rdfs:subClassOf rdf:resource="http://purl.org/artsholland/1.0/POI_Attribute"/>
     <rdfs:label xml:lang="en">POI Attribute Specialities</rdfs:label>
+    <rdfs:subClassOf rdf:resource="http://purl.org/artsholland/1.0/POI_Attribute"/>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Production">
+    <rdfs:comment xml:lang="nl">Een specifieke productie van een cultureel stuk.</rdfs:comment>
+    <rdfs:comment xml:lang="en">A specific prodcution of a cultural piece.</rdfs:comment>
+    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Production</rdfs:label>
-    <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-    <rdfs:comment xml:lang="en">A specific prodcution of a cultural piece.</rdfs:comment>
-    <rdfs:comment xml:lang="nl">Een specifieke productie van een cultureel stuk.</rdfs:comment>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI_AttributeUnknown">
+    <rdfs:subClassOf rdf:resource="http://purl.org/artsholland/1.0/POI_Attribute"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >POI Attribute unknown</rdfs:label>
-    <rdfs:subClassOf rdf:resource="http://purl.org/artsholland/1.0/POI_Attribute"/>
   </owl:Class>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/performedByParty">
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Production"/>
-    <rdfs:comment xml:lang="en">The relation between a particular cultural production and the party it is performed by.</rdfs:comment>
-    <rdfs:label xml:lang="en">performed by party</rdfs:label>
-    <rdfs:comment xml:lang="nl">De relatie tussen een bepaalde culturele productie en de uitvoerende artiest(en).</rdfs:comment>
     <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Party"/>
+    <rdfs:comment xml:lang="nl">De relatie tussen een bepaalde culturele productie en de uitvoerende artiest(en).</rdfs:comment>
+    <rdfs:label xml:lang="en">performed by party</rdfs:label>
+    <rdfs:comment xml:lang="en">The relation between a particular cultural production and the party it is performed by.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Production"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/room">
-    <owl:inverseOf>
-      <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/belongsToVenue"/>
-    </owl:inverseOf>
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Room"/>
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >has room</rdfs:label>
     <rdfs:domain>
       <owl:Class>
         <owl:unionOf rdf:parseType="Collection">
@@ -264,69 +258,86 @@
         </owl:unionOf>
       </owl:Class>
     </rdfs:domain>
-  </owl:ObjectProperty>
-  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/poiContactAddress">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >poi contact address</rdfs:label>
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/POI"/>
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Address"/>
+    >has room</rdfs:label>
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Room"/>
+    <owl:inverseOf>
+      <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/belongsToVenue"/>
+    </owl:inverseOf>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/atLocation">
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Event"/>
-    <rdfs:comment xml:lang="nl">De lokatie waar een event plaatsvind.</rdfs:comment>
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
+    <rdfs:comment xml:lang="en">The venue an event is held at.</rdfs:comment>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >at location</rdfs:label>
-    <rdfs:comment xml:lang="en">The venue an event is held at.</rdfs:comment>
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
-  </owl:ObjectProperty>
-  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/poiLocationAddress">
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >poi location address</rdfs:label>
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/POI"/>
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Address"/>
+    <rdfs:comment xml:lang="nl">De lokatie waar een event plaatsvind.</rdfs:comment>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Event"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/venueType">
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/VenueType"/>
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >venue type</rdfs:label>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/VenueType"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/contactAddress">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >contact address</rdfs:label>
+    <rdfs:domain>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI"/>
+          <owl:Class rdf:about="http://purl.org/artsholland/1.0/Venue"/>
+        </owl:unionOf>
+      </owl:Class>
+    </rdfs:domain>
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Address"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/eventType">
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/EventType"/>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Event"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >event type</rdfs:label>
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Event"/>
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/EventType"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://www.w3.org/2000/01/rdf-schema#category">
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/POI_Category"/>
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/POI"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >category</rdfs:label>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/POI"/>
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/POI_Category"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/belongsToVenue">
+    <owl:inverseOf rdf:resource="http://purl.org/artsholland/1.0/room"/>
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Room"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >belongs to venue</rdfs:label>
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Room"/>
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
-    <owl:inverseOf rdf:resource="http://purl.org/artsholland/1.0/room"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/poiAttribute">
+    <dc:description xml:lang="en">links an attribute to a POI</dc:description>
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/POI_Attribute"/>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/POI"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >poi attribute</rdfs:label>
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/POI"/>
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/POI_Attribute"/>
-    <dc:description xml:lang="en">links an attribute to a POI</dc:description>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/ticket">
-    <rdfs:range rdf:resource="http://purl.org/goodrelations/v1#Offering"/>
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Event"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >has ticket</rdfs:label>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Event"/>
+    <rdfs:range rdf:resource="http://purl.org/goodrelations/v1#Offering"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/locationAddress">
+    <rdfs:domain>
+      <owl:Class>
+        <owl:unionOf rdf:parseType="Collection">
+          <owl:Class rdf:about="http://purl.org/artsholland/1.0/POI"/>
+          <owl:Class rdf:about="http://purl.org/artsholland/1.0/Venue"/>
+        </owl:unionOf>
+      </owl:Class>
+    </rdfs:domain>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >poi location address</rdfs:label>
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Address"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/genre">
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Genre"/>
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >has genre</rdfs:label>
     <rdfs:domain>
       <owl:Class>
         <owl:unionOf rdf:parseType="Collection">
@@ -335,23 +346,23 @@
         </owl:unionOf>
       </owl:Class>
     </rdfs:domain>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >has genre</rdfs:label>
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Genre"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/memberOf">
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Party"/>
+    <rdfs:domain rdf:resource="http://www.w3.org/2006/vcard/ns#VCard"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >member of</rdfs:label>
-    <rdfs:domain rdf:resource="http://www.w3.org/2006/vcard/ns#VCard"/>
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Party"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/production">
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Production"/>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Event"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >production</rdfs:label>
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Event"/>
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Production"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/attachment">
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >attachment</rdfs:label>
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Attachment"/>
     <rdfs:domain>
       <owl:Class>
         <owl:unionOf rdf:parseType="Collection">
@@ -362,59 +373,61 @@
         </owl:unionOf>
       </owl:Class>
     </rdfs:domain>
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Attachment"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >attachment</rdfs:label>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/eventStatus">
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/EventStatus"/>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Event"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >event status</rdfs:label>
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Event"/>
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/EventStatus"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/classification">
-    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Classification"/>
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/POI"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >classification</rdfs:label>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/POI"/>
+    <rdfs:range rdf:resource="http://purl.org/artsholland/1.0/Classification"/>
   </owl:ObjectProperty>
   <owl:ObjectProperty rdf:about="http://purl.org/artsholland/1.0/startsAt">
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Event"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2006/time#DateTimeDescription"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >starts at</rdfs:label>
-    <rdfs:range rdf:resource="http://www.w3.org/2006/time#DateTimeDescription"/>
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Event"/>
   </owl:ObjectProperty>
   <owl:DatatypeProperty rdf:about="http://purl.org/artsholland/1.0/venueGeneralTicketInfo">
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >venue general ticket info</rdfs:label>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
   </owl:DatatypeProperty>
   <owl:DatatypeProperty rdf:about="http://purl.org/artsholland/1.0/ageLimitUpper">
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Production"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >age limit upper</rdfs:label>
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Production"/>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
   </owl:DatatypeProperty>
   <owl:DatatypeProperty rdf:about="http://purl.org/artsholland/1.0/venueBoxofficeInfo">
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >venue boxoffice info</rdfs:label>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
   </owl:DatatypeProperty>
   <owl:DatatypeProperty rdf:about="http://purl.org/artsholland/1.0/venueGeneralDiscountInfo">
-    <rdfs:comment xml:lang="nl">Algemene kortingsopties voor voorstellingen in deze locatie.</rdfs:comment>
-    <rdfs:comment xml:lang="en">Information on general discount options for the venue.</rdfs:comment>
-    <rdfs:label xml:lang="en">venue general discount info</rdfs:label>
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
+    <rdfs:label xml:lang="en">venue general discount info</rdfs:label>
+    <rdfs:comment xml:lang="en">Information on general discount options for the venue.</rdfs:comment>
+    <rdfs:comment xml:lang="nl">Algemene kortingsopties voor voorstellingen in deze locatie.</rdfs:comment>
   </owl:DatatypeProperty>
   <owl:DatatypeProperty rdf:about="http://purl.org/artsholland/1.0/accessabilityInfo">
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-    <rdfs:label xml:lang="en">accessability info</rdfs:label>
     <rdfs:label xml:lang="nl">toegankelijkheid minder validen</rdfs:label>
+    <rdfs:label xml:lang="en">accessability info</rdfs:label>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
   </owl:DatatypeProperty>
   <owl:DatatypeProperty rdf:about="http://purl.org/artsholland/1.0/cidn">
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >cidn</rdfs:label>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     <rdfs:domain>
       <owl:Class>
         <owl:unionOf rdf:parseType="Collection">
@@ -424,18 +437,19 @@
         </owl:unionOf>
       </owl:Class>
     </rdfs:domain>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >cidn</rdfs:label>
   </owl:DatatypeProperty>
   <owl:DatatypeProperty rdf:about="http://purl.org/artsholland/1.0/publicTransportInfo">
-    <rdfs:label xml:lang="en">venue public transport info</rdfs:label>
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Venue"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:label xml:lang="en">venue public transport info</rdfs:label>
   </owl:DatatypeProperty>
   <owl:DatatypeProperty rdf:about="http://purl.org/artsholland/1.0/ageLimitLower">
-    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
-    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Production"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >lower age limit</rdfs:label>
+    <rdfs:domain rdf:resource="http://purl.org/artsholland/1.0/Production"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
   </owl:DatatypeProperty>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreKlassiekeMuziek">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -446,8 +460,8 @@
     >Rondrit</rdfs:label>
   </ah:Genre>
   <ah:VenueType rdf:about="http://purl.org/artsholland/1.0/venueTypeOutdoor">
-    <rdfs:label xml:lang="en">Outdoor location</rdfs:label>
     <rdfs:label xml:lang="nl">Buitenlocatie</rdfs:label>
+    <rdfs:label xml:lang="en">Outdoor location</rdfs:label>
   </ah:VenueType>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreOverigen">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -581,14 +595,14 @@
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Boottocht</rdfs:label>
   </ah:Genre>
-  <ah:AttachmentType rdf:about="http://purl.org/artsholland/1.0/attachmentTypeVideo">
-    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
-    >attachment type video</rdfs:label>
-  </ah:AttachmentType>
   <ah:EventStatus rdf:about="http://purl.org/artsholland/1.0/eventStatusCancelled">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >event is cancelled</rdfs:label>
   </ah:EventStatus>
+  <ah:AttachmentType rdf:about="http://purl.org/artsholland/1.0/attachmentTypeVideo">
+    <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
+    >attachment type video</rdfs:label>
+  </ah:AttachmentType>
   <ah:POI_Category rdf:about="http://purl.org/artsholland/1.0/poiCategoryBungalowPark">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >poi category bungalow park</rdfs:label>
@@ -602,8 +616,8 @@
     >poi category hotel</rdfs:label>
   </ah:POI_Category>
   <ah:VenueType rdf:about="http://purl.org/artsholland/1.0/venueTypeTheater">
-    <rdfs:label xml:lang="en">Theater</rdfs:label>
     <rdfs:label xml:lang="nl">Theater</rdfs:label>
+    <rdfs:label xml:lang="en">Theater</rdfs:label>
   </ah:VenueType>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreBuitenExpositie">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -658,8 +672,8 @@
     >attachment type afbeelding</rdfs:label>
   </ah:AttachmentType>
   <ah:VenueType rdf:about="http://purl.org/artsholland/1.0/venueTypeMuseum">
-    <rdfs:label xml:lang="nl">Museum</rdfs:label>
     <rdfs:label xml:lang="en">Museum</rdfs:label>
+    <rdfs:label xml:lang="nl">Museum</rdfs:label>
   </ah:VenueType>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreOpenDag">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -706,9 +720,9 @@
     >Galerie</rdfs:label>
   </ah:Genre>
   <owl:AnnotationProperty rdf:about="http://purl.org/artsholland/1.0/shortDescription">
-    <rdfs:subPropertyOf rdf:resource="http://purl.org/dc/elements/1.1/description"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >short description</rdfs:label>
+    <rdfs:subPropertyOf rdf:resource="http://purl.org/dc/elements/1.1/description"/>
   </owl:AnnotationProperty>
   <ah:POI_Category rdf:about="http://purl.org/artsholland/1.0/poiCategoryMuseum">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
@@ -719,8 +733,8 @@
     >poi category group accomodation</rdfs:label>
   </ah:POI_Category>
   <ah:VenueType rdf:about="http://purl.org/artsholland/1.0/venueTypeCinema">
-    <rdfs:label xml:lang="en">Cinema</rdfs:label>
     <rdfs:label xml:lang="nl">Bioscoop</rdfs:label>
+    <rdfs:label xml:lang="en">Cinema</rdfs:label>
   </ah:VenueType>
   <ah:Genre rdf:about="http://purl.org/artsholland/1.0/genreBallet">
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
