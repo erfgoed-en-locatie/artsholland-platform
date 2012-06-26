@@ -31,7 +31,7 @@ public class XSPARQLCharacterEncoder {
 		result.put(">", completeEncoding("greater_than"));
 		result.put("\\", completeEncoding("backslash"));
 //		result.put("/", completeEncoding("slash"));
-		result.put("https", completeEncoding("http"));
+//		result.put("https", completeEncoding("http"));
 
 		return Collections.unmodifiableMap(result);
 	}

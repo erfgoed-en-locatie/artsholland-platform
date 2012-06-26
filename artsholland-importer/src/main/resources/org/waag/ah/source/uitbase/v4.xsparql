@@ -43,10 +43,10 @@ return
 			let $vuri := {waag:object-uri("venue", $pcidn)}
 					
 			let $typeKey := {waag:parse-string($event/type/@key)}
-			let $typeClass := {waag:object-uri(waag:class-name("eventType", waag:upper-case-first($typeKey)))}
+			let $typeClass := {waag:class-uri("eventType", waag:upper-case-first($typeKey))}
 			
 			let $statusKey := {waag:parse-string($event/status/@key)}
-			let $statusClass := {waag:object-uri(waag:class-name("eventStatus", waag:upper-case-first($statusKey)))}
+			let $statusClass := {waag:class-uri("eventStatus", waag:upper-case-first($statusKey))}
 				
 			let $room := {waag:parse-string($event/room)}
 			let $ruri := {waag:object-uri("venue", $vcidn, "room", $room)}			
@@ -93,23 +93,43 @@ return
 		
 					# TODO: Als er events zijn met pricetags met zelfde type: gebruik $pos in uri
 					let $turi := {waag:object-uri("event", $cidn, "ticket", waag:parse-string($pricetag/type))}					
-					#let $puri := {waag:object-uri("event", $cidn, "ticket", waag:parse-string($pricetag/type), "price")}
+					
+					let $ofuri := {waag:object-uri("event", $cidn, "offering", waag:parse-string($pricetag/type))}					
+					let $opuri := {waag:object-uri("event", $cidn, "offering", waag:parse-string($pricetag/type), "price")}
 					
 					construct {
 					
-						$euri ah:ticket $turi .
+						#$euri ah:ticket $turi .
+						#
+						#$turi a ah:Ticket ;						
+						#	dc:title {waag:parse-string($pricetag/type)}^^xsd:string ;
+						#	dc:description {waag:parse-string($pricetag/description)}^^xsd:string ;
+						#	
+						#	ah:ticketSalesInformation {waag:parse-string($pricetag/ticketsalesinformation)}^^xsd:string ;
+						#	ah:ticketSalesTelephone {waag:parse-string($pricetag/ticketsalesphone)}^^xsd:string ;
+						#	ah:ticketSalesUrl {waag:parse-http-url($pricetag/ticketsalesurl)} ;				
+						#
+						#	ah:lowPrice {$pricetag/lowest}^^xsd:decimal ;			
+						#	ah:highPrice {$pricetag/highest}^^xsd:decimal ;
+						#	ah:priceCurrency "EUR"^^xsd:string .
+														
+						$euri gr:offers $ofuri .
 						
-						$turi a ah:Ticket ;						
-							dc:title {waag:parse-string($pricetag/type)}^^xsd:string ;
-							dc:description {waag:parse-string($pricetag/description)}^^xsd:string ;
+						$ofuri a gr:Offering ;
+							gr:name {waag:parse-string($pricetag/type)}^^xsd:string ;
+							gr:description {waag:parse-string($pricetag/description)}^^xsd:string ;
 						
 							ah:ticketSalesInformation {waag:parse-string($pricetag/ticketsalesinformation)}^^xsd:string ;
 							ah:ticketSalesTelephone {waag:parse-string($pricetag/ticketsalesphone)}^^xsd:string ;
-							ah:ticketSalesUrl {waag:parse-string($pricetag/ticketsalesurl)}^^xsd:string ;				
+							ah:ticketSalesUrl {waag:parse-http-url($pricetag/ticketsalesurl)} ;
+							
+							gr:hasPriceSpecification $opuri .				
 				
-							ah:lowPrice {$pricetag/lowest}^^xsd:decimal ;			
-							ah:highPrice {$pricetag/highest}^^xsd:decimal ;
-							ah:priceCurrency "EUR"^^xsd:string .
+						$opuri a gr:PriceSpecification ;
+							gr:hasMinCurrencyValue {$pricetag/lowest}^^xsd:decimal ;			
+							gr:hasMaxCurrencyValue {$pricetag/highest}^^xsd:decimal ;
+							
+							gr:hasCurrency "EUR"^^xsd:string .					
 									
 					}
 				} .
@@ -120,7 +140,7 @@ return
 					let $muri := {waag:object-uri("event", $cidn, "attachment", xs:string($pos))}
 								
 					let $typeKey := {waag:parse-string($medium/type)}
-					let $typeClass := {waag:object-uri(waag:class-name("attachmentType", waag:upper-case-first($typeKey)))}
+					let $typeClass := {waag:class-uri("attachmentType", waag:upper-case-first($typeKey))}
 					
 					construct {
 					
@@ -162,14 +182,12 @@ return
 			let $vuri := {waag:object-uri("venue", $cidn)}
 			let $vuriUitburo := {concat($baseuriUitburo, "locations/", $cidn)}
 			
-			let $venueType := {waag:object-uri(waag:class-name("venueType", waag:upper-case-first($venue/type/@key)))}
+			let $venueType := {waag:class-uri("venueType", waag:upper-case-first($venue/type/@key))}
 				
 			let $lat := { waag:parse-non-zero-number($venue/geocode/latitude) }
-			let $long := { waag:parse-non-zero-number($venue/geocode/longitude) }
-
-			let $point := { if ( fn:empty($lat) or fn:empty($long) ) then () else concat( 'POINT(', $long, ' ', $lat, ')' ) }
+			let $long := { waag:parse-non-zero-number($venue/geocode/longitude) }			
 			
-			let $auri := {waag:object-uri("address", waag:class-name($venue/postal-code, $venue/street/number, $venue/street/addition))}
+			let $auri := {waag:object-uri("address", waag:address-uri($venue/postal-code, $venue/street/number, $venue/street/addition))}
 						
 			construct {
 			
@@ -180,15 +198,15 @@ return
 							
 					dc:title {waag:parse-string($venue/name)}^^xsd:string ;
 	
-					geo:lat {$lat}^^xsd:decimal ;
-					geo:long {$long}^^xsd:decimal ;
+					geo:lat {$lat}^^xsd:float ;
+					geo:long {$long}^^xsd:float ;
 	
-					ah:geometry {$point}^^osgeo:wkt ;
+					ah:wktGeometry {waag:wkt-geometry($lat, $long)}^^osgeo:wkt ;
 				
 					dc:created {waag:parse-string($venue/@date-created)}^^xsd:dateTime ;
 					dc:modified {waag:parse-string($venue/@date-modified)}^^xsd:dateTime ;
 					
-					ah:poiLocationAddress $auri ;
+					ah:locationAddress $auri ;
 					
 					vcard:email {waag:parse-string($venue/email)}^^xsd:string ;
 					
@@ -235,7 +253,7 @@ return
 					let $muri := {waag:object-uri("venue", $cidn, "attachment", xs:string($pos))}
 										
 					let $typeKey := {waag:parse-string($medium/type)}
-					let $typeClass := {waag:object-uri(waag:class-name("attachmentType", waag:upper-case-first($typeKey)))}
+					let $typeClass := {waag:class-uri("attachmentType", waag:upper-case-first($typeKey))}
 					
 					construct {
 					
@@ -307,7 +325,7 @@ return
 			#let $title := {waag:parse-string($production/title)}
 			
 			let $typeKey := {waag:parse-string($production/type/@key)}
-			let $typeClass := {waag:object-uri(waag:class-name("productionType", waag:upper-case-first($typeKey)))}
+			let $typeClass := {waag:class-uri("productionType", waag:upper-case-first($typeKey))}
 			
 			let $language := {waag:parse-locale($production/language)}
 			let $subtitles :=	{waag:parse-locale($production/subtitles)}
@@ -336,7 +354,7 @@ return
 				{ for $genre in $production/genres//genre
 					
 					let $genreKey := {waag:parse-string($genre/@key)}
-					let $genreClass := {waag:object-uri(waag:class-name("genre", waag:upper-case-first($genreKey)))}
+					let $genreClass := {waag:class-uri("genre", waag:upper-case-first($genreKey))}
 					
 					construct {				
 						
@@ -351,7 +369,7 @@ return
 				{ for $url in $production/urls//url			
 					construct {				
 						
-						$puri foaf:homepage {waag:parse-http-url($url)}^^xsd:string.
+						$puri foaf:homepage {waag:parse-http-url($url)}.
 						
 					}
 				}.

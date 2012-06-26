@@ -19,10 +19,10 @@ import org.waag.ah.PlatformConfig;
 import org.waag.ah.PlatformConfigHelper;
 
 @SuppressWarnings("serial")
-public class ObjectUriFunction extends ExtensionFunctionDefinition {
+public class ClassUriFunction extends ExtensionFunctionDefinition {
 	private final PlatformConfig config;
 
-	public ObjectUriFunction() throws ConfigurationException {
+	public ClassUriFunction() throws ConfigurationException {
 		config = PlatformConfigHelper.getConfig();
 	}
 
@@ -39,7 +39,7 @@ public class ObjectUriFunction extends ExtensionFunctionDefinition {
 	@Override
 	public StructuredQName getFunctionQName() {
 		return new StructuredQName("waag", "http://waag.org/saxon-extension",
-				"object-uri");
+				"class-uri");
 	}
 
 	@Override
@@ -52,27 +52,15 @@ public class ObjectUriFunction extends ExtensionFunctionDefinition {
 		return new ExtensionFunctionCall() {
 			public SequenceIterator call(SequenceIterator[] arguments,
 					XPathContext context) throws XPathException {
-				String uri = config.getString("platform.objectUri");
-				boolean first = true;
+				String uri = config.getString("platform.classUri");
 				for (SequenceIterator arg : arguments) {
-					try {						
-						String s = "";
-						
-						if (!first) {
-							/*
-							 * Do not add slash as URI seperator the first time;
-							 * baseUri end with /: "http://purl.org/artsholland/1.0/"
-							 */
-							s = "/";
-						}
-						
-						s += ((StringValue) arg.next()).getStringValue();
-						uri += s.replaceAll("\\/+", "/").replaceAll(" ", "-").toLowerCase();
+					try {
+						String s = ((StringValue) arg.next()).getStringValue();						
+						uri += s.replaceAll("\\/+", "/").replaceAll(" ", "");
 						
 					} catch (NullPointerException e) {
 						return Value.asIterator(EmptySequence.getInstance());
-					}
-					first = false;
+					}					
 				}
 				try {
 					return Value.asIterator(StringValue.makeStringValue(new URL(uri)

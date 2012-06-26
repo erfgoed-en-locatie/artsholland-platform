@@ -10,6 +10,7 @@ import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.EmptySequence;
+import net.sf.saxon.value.FloatValue;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.Value;
@@ -19,15 +20,15 @@ import org.waag.ah.PlatformConfig;
 import org.waag.ah.PlatformConfigHelper;
 
 @SuppressWarnings("serial")
-public class ObjectUriFunction extends ExtensionFunctionDefinition {
+public class WKTGeometryFunction extends ExtensionFunctionDefinition {
 	private final PlatformConfig config;
 
-	public ObjectUriFunction() throws ConfigurationException {
+	public WKTGeometryFunction() throws ConfigurationException {
 		config = PlatformConfigHelper.getConfig();
 	}
 
 	@Override
-	public SequenceType[] getArgumentTypes() {
+	public SequenceType[] getArgumentTypes() {		
 		return new SequenceType[] { SequenceType.OPTIONAL_STRING };
 	}
 
@@ -38,8 +39,7 @@ public class ObjectUriFunction extends ExtensionFunctionDefinition {
 
 	@Override
 	public StructuredQName getFunctionQName() {
-		return new StructuredQName("waag", "http://waag.org/saxon-extension",
-				"object-uri");
+		return new StructuredQName("waag", "http://waag.org/saxon-extension",	"wkt-geometry");
 	}
 
 	@Override
@@ -52,33 +52,22 @@ public class ObjectUriFunction extends ExtensionFunctionDefinition {
 		return new ExtensionFunctionCall() {
 			public SequenceIterator call(SequenceIterator[] arguments,
 					XPathContext context) throws XPathException {
-				String uri = config.getString("platform.objectUri");
-				boolean first = true;
-				for (SequenceIterator arg : arguments) {
-					try {						
-						String s = "";
-						
-						if (!first) {
-							/*
-							 * Do not add slash as URI seperator the first time;
-							 * baseUri end with /: "http://purl.org/artsholland/1.0/"
-							 */
-							s = "/";
-						}
-						
-						s += ((StringValue) arg.next()).getStringValue();
-						uri += s.replaceAll("\\/+", "/").replaceAll(" ", "-").toLowerCase();
-						
-					} catch (NullPointerException e) {
-						return Value.asIterator(EmptySequence.getInstance());
-					}
-					first = false;
-				}
-				try {
-					return Value.asIterator(StringValue.makeStringValue(new URL(uri)
-							.toExternalForm()));
-				} catch (MalformedURLException e) {
-					throw new XPathException(e.getMessage(), e);
+				String point = "";
+				try {						
+					
+					String lat = ((StringValue) arguments[0].next()).getStringValue();
+					String lon = ((StringValue) arguments[1].next()).getStringValue();
+					
+					// WKT POINT specification: first lon, then lat.
+					//if ( fn:empty($lat) or fn:empty($long) ) then () else concat( 'POINT(', $long, ' ', $lat, ')' )
+					point = "POINT(" + lon + " " + lat + ")";
+					
+				} catch (NullPointerException e) {
+				}				
+				if (point.length() > 0) {
+					return Value.asIterator(StringValue.makeStringValue(point));
+				} else {
+					return Value.asIterator(EmptySequence.getInstance());
 				}
 			}
 		};

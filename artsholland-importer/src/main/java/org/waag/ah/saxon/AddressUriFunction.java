@@ -12,21 +12,21 @@ import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.Value;
 
 @SuppressWarnings("serial")
-public class ClassNameFunction extends ExtensionFunctionDefinition {
+public class AddressUriFunction extends ExtensionFunctionDefinition {
 
 	@Override
 	public SequenceType[] getArgumentTypes() {
 		return new SequenceType[] { SequenceType.OPTIONAL_STRING };
 	}
-
+	
 	@Override
 	public int getMaximumNumberOfArguments() {
-		return 100;
+		return 3;
 	}
 
 	@Override
 	public StructuredQName getFunctionQName() {
-		return new StructuredQName("waag", "http://waag.org/saxon-extension", "class-name");
+		return new StructuredQName("waag", "http://waag.org/saxon-extension", "address-uri");
 	}
 
 	@Override
@@ -38,17 +38,24 @@ public class ClassNameFunction extends ExtensionFunctionDefinition {
 	public ExtensionFunctionCall makeCallExpression() {
 		return new ExtensionFunctionCall() {
 			public SequenceIterator call(SequenceIterator[] arguments,
-					XPathContext context) throws XPathException {
-				String className = "";
-				for (SequenceIterator arg : arguments) {
-					try {
-						className += ((StringValue) arg.next()).getStringValue().replace(" ", "");						
-					} catch (NullPointerException e) {
-						return Value.asIterator(EmptySequence.getInstance());
-					}
+					XPathContext context) throws XPathException {				
+				String zipcode = "";
+				String number = "";
+				String addition = "";				
+				try {					
+					zipcode = ((StringValue) arguments[0].next()).getStringValue();
+					number = ((StringValue) arguments[1].next()).getStringValue();
+					addition = ((StringValue) arguments[2].next()).getStringValue();					
+				} catch (Exception e) {
+				}				
+				if (zipcode.length() > 0 && number.length() > 0) {
+					//addition may be empty sequence					
+					String address = zipcode + number + addition;					
+					address = address.replace(" ", "");						
+					return Value.asIterator(StringValue.makeStringValue(address));
+				} else {
+					return Value.asIterator(EmptySequence.getInstance());
 				}
-				return Value.asIterator(StringValue.makeStringValue(className));
-				 
 			}
 		};
 	}
