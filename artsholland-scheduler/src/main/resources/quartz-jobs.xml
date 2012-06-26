@@ -41,7 +41,7 @@
         <job-data-map>
           <entry>
             <key>strategy</key>
-            <value>FULL</value>
+            <value>INCREMENTAL</value>
           </entry>
         </job-data-map>
         <cron-expression>0 0/1 * * * ?</cron-expression>
@@ -77,6 +77,46 @@
           <key>excludeProperties</key>
           <value>http://www.geonames.org/ontology#Feature</value>
         </entry>
+      </job-data-map>
+    </job>
+    
+    <trigger>
+      <cron>
+        <name>GeoNamesEnricherTrigger</name>
+        <job-name>GeonamesEnricher</job-name>
+        <job-group>EnricherService</job-group>
+        <cron-expression>0 0/5 * * * ?</cron-expression>
+        <time-zone>Europe/Amsterdam</time-zone>
+      </cron>
+    </trigger>
+    
+    <!-- DBPEDIA ENRICHER -->
+    <job>
+      <name>DBpediaEnricher</name>
+      <group>EnricherService</group>
+      <description>Enrich objects in triplestore</description>
+      <job-class>org.waag.ah.quartz.EnrichObjectJob</job-class>
+      <durability>false</durability>
+      <recover>false</recover>
+      <job-data-map>
+        <entry>
+          <key>enricherClass</key>
+          <value>org.waag.ah.tinkerpop.enrich.DBpediaEnricher</value>
+        </entry>
+        <entry>
+          <key>objectUri</key>
+          <value>http://purl.org/artsholland/1.0/Venue</value>
+        </entry>
+        <entry>
+          <key>includeProperties</key>
+          <value>
+            http://xmlns.com/foaf/0.1/homepage            
+          </value>
+        </entry><!-- 
+        <entry>
+          <key>excludeProperties</key>
+          <value>http://www.geonames.org/ontology#Feature</value>
+        </entry> -->
       </job-data-map>
     </job>
     

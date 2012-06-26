@@ -9,7 +9,7 @@ CodeMirror.defineMode("sparql", function(config) {
                         "isblank", "isliteral", "union", "a"]);
   var keywords = wordRegexp(["base", "prefix", "select", "distinct", "reduced", "construct", "describe",
                              "ask", "from", "named", "where", "order", "limit", "offset", "filter", "optional",
-                             "graph", "by", "asc", "desc", "group", "as"]);
+                             "graph", "by", "asc", "desc", "group", "as", "service"]);
   var operatorChars = /[*+\-<>=&|]/;
 
   function tokenBase(stream, state) {
