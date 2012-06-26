@@ -5,8 +5,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,6 +33,8 @@ public class SPARQLService {
 	
 	@EJB(mappedName="java:app/datastore/BigdataQueryService")
 	private QueryService context;
+
+	private ExecutorService executor;
 
 	public static final transient String
 		MIME_TEXT_PLAIN 			= "text/plain",
@@ -53,7 +60,12 @@ public class SPARQLService {
 		mappedFormats.put(MIME_APPLICATION_XML, MIME_SPARQL_RESULTS_XML);
 		mappedFormats.put(MIME_APPLICATION_RDF_XML, MIME_SPARQL_RESULTS_XML);
 	}
-
+	
+	@PostConstruct
+	public void init() {
+		this.executor = Executors.newCachedThreadPool();
+	}
+	
 	public void query(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String mimeType = MIMEParse.bestMatch(allowedFormats, request.getHeader("Accept"));
         
@@ -76,21 +88,25 @@ public class SPARQLService {
         	
 			final QueryTask queryTask = context.getQueryTask(query, config,
 					response.getOutputStream());
-
-            if (logger.isTraceEnabled()) {
-                logger.trace("Will run query: " + query);
-            }
-
-            FutureTask<Void> ft = new FutureTask<Void>(queryTask);//context.executeQueryTask(queryTask);
             response.setStatus(HttpServletResponse.SC_OK);
-            ft.run();
-            ft.get();
-		} catch (MalformedQueryException ex) {
+
+            Future<Void> ft = executor.submit(queryTask);
+            
+            try {
+            	ft.get(30, TimeUnit.SECONDS);
+            } catch (TimeoutException e) {
+            	logger.error("Query execution timeout: "+query.getQuery());
+            	ft.cancel(true);
+    			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT,
+    					e.getMessage());	
+    		}
+        } catch (MalformedQueryException ex) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST,
 					ex.getLocalizedMessage());
 		} catch (Exception e) {
+//			e.getCause().printStackTrace();
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-					e.getLocalizedMessage());
+					e.getCause().getMessage());
 		}
 	}
 }

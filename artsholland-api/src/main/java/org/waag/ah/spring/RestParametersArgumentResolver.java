@@ -59,7 +59,7 @@ public class RestParametersArgumentResolver implements
 			params.setPretty(getBooleanValue(paramMap, "pretty"));
 			params.setCountTotals(getBooleanValue(paramMap, "count"));
 			
-			logger.info("PRETTY: " + params.getPretty());
+//			logger.info("PRETTY: " + params.getPretty());
 			
 			return params;
 		}
