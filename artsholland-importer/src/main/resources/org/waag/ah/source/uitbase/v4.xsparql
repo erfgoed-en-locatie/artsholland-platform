@@ -201,7 +201,7 @@ return
 					geo:lat {$lat}^^xsd:float ;
 					geo:long {$long}^^xsd:float ;
 	
-					ah:wktGeometry {waag:wkt-geometry($lat, $long)}^^osgeo:wkt ;
+					geo:geometry{waag:wkt-geometry($lat, $long)}^^osgeo:wkt ;
 				
 					dc:created {waag:parse-string($venue/@date-created)}^^xsd:dateTime ;
 					dc:modified {waag:parse-string($venue/@date-modified)}^^xsd:dateTime ;
