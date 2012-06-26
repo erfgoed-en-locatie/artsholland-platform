@@ -11,20 +11,18 @@ import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.Value;
 
-import org.waag.ah.tika.util.XSPARQLCharacterEncoder;
-
 @SuppressWarnings("serial")
-public class ParseStringFunction extends ExtensionFunctionDefinition {
-//	private Logger logger = LoggerFactory.getLogger(ParseStringFunction.class);
-	
+public class UpperCaseFirstFunction extends ExtensionFunctionDefinition {
+
 	@Override
 	public SequenceType[] getArgumentTypes() {
-		return new SequenceType[] {SequenceType.OPTIONAL_STRING};
+		return new SequenceType[] { SequenceType.OPTIONAL_STRING };
 	}
 
 	@Override
 	public StructuredQName getFunctionQName() {
-		return new StructuredQName("waag", "http://waag.org/saxon-extension", "parse-string");
+		return new StructuredQName("waag", "http://waag.org/saxon-extension",
+				"upper-case-first");
 	}
 
 	@Override
@@ -40,22 +38,15 @@ public class ParseStringFunction extends ExtensionFunctionDefinition {
 				String text = "";
 				try {
 					text = ((StringValue) arguments[0].next()).getStringValue();
-					text = text.replaceAll("\"", "&quot;");
-					text = XSPARQLCharacterEncoder.encode(text);
-
-					// Temporary fix, see:
-					// https://sourceforge.net/mailarchive/message.php?msg_id=29432380
-					if (text.matches("^([a-zA-Z]*):(.+)$")) {
-						text = text.replaceFirst(":", " :");
-					}
-				} catch (NullPointerException e) {					
-				}
-				
-				if (text.length() == 0) {
+					if (text.length() == 1) {
+						text = text.toUpperCase();
+					} else {
+						text = text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase();
+					}															
+				} catch (Exception e) {
 					return Value.asIterator(EmptySequence.getInstance());
-				} else {
-					return Value.asIterator(StringValue.makeStringValue(text));
-				}
+				}				
+				return Value.asIterator(StringValue.makeStringValue(text));
 			}
 		};
 	}

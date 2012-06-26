@@ -1,5 +1,6 @@
 var D2R_namespacePrefixes = {
 	ah: "http://purl.org/artsholland/1.0/",
+	data: "http://data.artsholland.com/",
 	nub: "http://resources.uitburo.nl/",	    
     rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
@@ -13,5 +14,6 @@ var D2R_namespacePrefixes = {
     osgeo: "http://rdf.opensahara.com/type/geo/",
 	search: "http://rdf.opensahara.com/search#",
 	fn: "http://www.w3.org/2005/xpath-functions#", 
+	gr: "http://purl.org/goodrelations/v1#"
 };
 

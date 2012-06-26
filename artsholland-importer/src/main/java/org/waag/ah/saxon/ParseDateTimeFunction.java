@@ -28,24 +28,23 @@ public class ParseDateTimeFunction extends ExtensionFunctionDefinition {
 	}
 
 	/**
-	 * Arguments:
-	 * 	1: Date/time value
-	 *  2: Input format pattern (leave empty for autodetect)
-	 *  3: Output format pattern (leave empty for full ISO 8601)
-	 *  
-	 *  @see http://docs.oracle.com/javase/1.4.2/docs/api/java/text/SimpleDateFormat.html
+	 * Arguments: 1: Date/time value 2: Input format pattern (leave empty for
+	 * autodetect) 3: Output format pattern (leave empty for full ISO 8601)
+	 * 
+	 * @see http
+	 *      ://docs.oracle.com/javase/1.4.2/docs/api/java/text/SimpleDateFormat
+	 *      .html
 	 */
 	@Override
 	public SequenceType[] getArgumentTypes() {
-		return new SequenceType[] {
-				SequenceType.OPTIONAL_STRING, 
-				SequenceType.OPTIONAL_STRING,
-				SequenceType.OPTIONAL_STRING };
+		return new SequenceType[] { SequenceType.OPTIONAL_STRING,
+				SequenceType.OPTIONAL_STRING, SequenceType.OPTIONAL_STRING };
 	}
 
 	@Override
 	public StructuredQName getFunctionQName() {
-		return new StructuredQName("waag", "http://waag.org/saxon-extension", "parse-datetime");
+		return new StructuredQName("waag", "http://waag.org/saxon-extension",
+				"parse-datetime");
 	}
 
 	@Override
@@ -55,25 +54,28 @@ public class ParseDateTimeFunction extends ExtensionFunctionDefinition {
 
 	@Override
 	public ExtensionFunctionCall makeCallExpression() {
-        return new ExtensionFunctionCall() {
-            public SequenceIterator call(SequenceIterator[] arguments, XPathContext context) throws XPathException {
-            	try {
-            		DateTime dt = null;
-	            	String value = ((StringValue)arguments[0].next()).getStringValue();
-	            	String fmtInput = ((StringValue)arguments[1].next()).getStringValue();
-//	            	String fmtOutput = ((StringValue)arguments[2].next()).getStringValue();
-	            	if (!fmtInput.isEmpty()) {
-	            		DateTimeFormatter fmt = DateTimeFormat.forPattern(fmtInput);
-	            		dt = fmt.parseDateTime(value);	            		
-	            	} else {
-	            		dt = new DateTime(value);
-	            	}
-//	            	return Value.asIterator(DateTimeValue.fromJavaDate(dt.toDate()));
-	            	return Value.asIterator(StringValue.makeStringValue(dt.toString()));
-            	} catch (Exception e) {
-            		throw new XPathException(e.getMessage(), e);
-            	}
-            }
-        };
+		return new ExtensionFunctionCall() {
+			public SequenceIterator call(SequenceIterator[] arguments,
+					XPathContext context) throws XPathException {
+				try {
+					DateTime dt = null;
+					String value = ((StringValue) arguments[0].next()).getStringValue();
+					String fmtInput = ((StringValue) arguments[1].next())
+							.getStringValue();
+					// String fmtOutput =
+					// ((StringValue)arguments[2].next()).getStringValue();
+					if (!fmtInput.isEmpty()) {
+						DateTimeFormatter fmt = DateTimeFormat.forPattern(fmtInput);
+						dt = fmt.parseDateTime(value);
+					} else {
+						dt = new DateTime(value);
+					}
+					// return Value.asIterator(DateTimeValue.fromJavaDate(dt.toDate()));
+					return Value.asIterator(StringValue.makeStringValue(dt.toString()));
+				} catch (Exception e) {
+					throw new XPathException(e.getMessage(), e);
+				}
+			}
+		};
 	}
 }

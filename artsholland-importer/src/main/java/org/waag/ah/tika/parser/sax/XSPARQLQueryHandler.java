@@ -45,10 +45,16 @@ import org.openrdf.model.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.exception.ParserException;
+import org.waag.ah.saxon.AddressUriFunction;
+import org.waag.ah.saxon.ClassUriFunction;
 import org.waag.ah.saxon.ObjectUriFunction;
 import org.waag.ah.saxon.ParseDateTimeFunction;
+import org.waag.ah.saxon.ParseHttpUrlFunction;
 import org.waag.ah.saxon.ParseLocaleFunction;
+import org.waag.ah.saxon.ParseNonZeroNumber;
 import org.waag.ah.saxon.ParseStringFunction;
+import org.waag.ah.saxon.UpperCaseFirstFunction;
+import org.waag.ah.saxon.WKTGeometryFunction;
 import org.waag.ah.tika.parser.rdf.TurtleParser;
 import org.waag.ah.tika.util.XSPARQLCharacterEncoder;
 import org.xml.sax.Attributes;
@@ -124,8 +130,14 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			// Custom XSPARQL functions.
 			config.registerExtensionFunction(new ParseDateTimeFunction());
 			config.registerExtensionFunction(new ObjectUriFunction());
+			config.registerExtensionFunction(new ClassUriFunction());
+			config.registerExtensionFunction(new AddressUriFunction());
 			config.registerExtensionFunction(new ParseLocaleFunction());
 			config.registerExtensionFunction(new ParseStringFunction());			
+			config.registerExtensionFunction(new ParseHttpUrlFunction());
+			config.registerExtensionFunction(new ParseNonZeroNumber());
+			config.registerExtensionFunction(new UpperCaseFirstFunction());
+			config.registerExtensionFunction(new WKTGeometryFunction());
 			
 			Processor processor = new Processor(config);
 			XQueryCompiler compiler = processor.newXQueryCompiler();	
