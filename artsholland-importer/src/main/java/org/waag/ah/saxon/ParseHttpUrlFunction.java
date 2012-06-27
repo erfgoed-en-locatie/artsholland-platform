@@ -36,9 +36,12 @@ public class ParseHttpUrlFunction extends ExtensionFunctionDefinition {
 					XPathContext context) throws XPathException {
 				String text = "";
 				try {					
-					text = ((StringValue) arguments[0].next()).getStringValue().replace(" ", "%20");
-					if (!(text.startsWith("http://") || text.startsWith("https://"))) {
-						text = "http://" + text;
+					text = ((StringValue) arguments[0].next()).getStringValue();
+					if (text.length() > 0) {
+						text = text.replace(" ", "%20");
+						if (!(text.startsWith("http://") || text.startsWith("https://"))) {
+							text = "http://" + text;
+						}
 					}
 				} catch (NullPointerException e) {					
 				}
