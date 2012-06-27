@@ -1,6 +1,5 @@
 var D2R_namespacePrefixes = {
 	ah: "http://purl.org/artsholland/1.0/",
-	nub: "http://resources.uitburo.nl/",	    
 		
     rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
