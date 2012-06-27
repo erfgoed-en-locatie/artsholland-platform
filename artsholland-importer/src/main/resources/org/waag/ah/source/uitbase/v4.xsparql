@@ -40,7 +40,7 @@ return
 			let $puri := {waag:object-uri("production", $pcidn)}
 			
 			let $vcidn := {$event/link[@type="location"]/@cidn}
-			let $vuri := {waag:object-uri("venue", $pcidn)}
+			let $vuri := {waag:object-uri("venue", $vcidn)}
 					
 			let $typeKey := {waag:parse-string($event/type/@key)}
 			let $typeClass := {waag:class-uri("eventType", waag:upper-case-first($typeKey))}
