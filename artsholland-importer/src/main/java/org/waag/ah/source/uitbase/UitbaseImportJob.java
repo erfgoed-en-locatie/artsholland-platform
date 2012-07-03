@@ -3,6 +3,8 @@ package org.waag.ah.source.uitbase;
 import java.net.URL;
 import java.util.List;
 
+import javax.ejb.EJBTransactionRolledbackException;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.joda.time.DateTime;
 import org.quartz.DisallowConcurrentExecution;
@@ -63,6 +65,8 @@ public class UitbaseImportJob extends AbstractImportJob {
 			}
 			
 			doImport(urls, metadata);
+		} catch (EJBTransactionRolledbackException e) {
+			logger.warn(e.getMessage());
 		} catch (Exception e) {
 			throw new JobExecutionException(e);
 		}

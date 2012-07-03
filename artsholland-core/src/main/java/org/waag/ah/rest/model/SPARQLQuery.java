@@ -29,9 +29,9 @@ public class SPARQLQuery {
 		+ "    {"
 		+ "      [[statements]]"
 		+ "      [[filter]]"
-		+ "    } ORDER BY ?object [[paging]]"
+		+ "    } [[paging]]" //ORDER BY ?object 
 		+ "  } [[language]]"
-		+ "} ORDER BY ?object ?p";
+		+ "}"; // ORDER BY ?object ?p
 		
 		private static final String SPARQL_COUNT =	
 				"SELECT (COUNT(?o) AS ?count)"
@@ -42,7 +42,7 @@ public class SPARQLQuery {
 			+ "    {"
 			+ "      [[statements]]"
 			+ "      [[filter]]"
-			+ "    } ORDER BY ?object"
+			+ "    }" // ORDER BY ?object
 			+ "  }"
 			+ "} GROUP BY ?o";
 

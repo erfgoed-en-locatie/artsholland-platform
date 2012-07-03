@@ -2,7 +2,12 @@ package org.waag.ah.spring.view;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +32,7 @@ public class QueryTaskView extends AbstractView {
 	public static final String DEFAULT_TYPE = "json";
 
 	private QueryService queryService;
+	private ExecutorService executor;
 
 	private static Map<String, String> supportedFormats = new HashMap<String, String>();
 	static {
@@ -38,6 +44,7 @@ public class QueryTaskView extends AbstractView {
 	
 	public QueryTaskView(QueryService queryService) {
 		this.queryService = queryService;
+		this.executor = Executors.newCachedThreadPool();
 	}
 	
 	@Override
@@ -55,7 +62,7 @@ public class QueryTaskView extends AbstractView {
 
 		RDFWriterConfig config = query.getWriterConfig();
 		config.setFormat(mimeType);
-		response.setContentType(mimeType);
+		response.setContentType(mimeType+"; charset=UTF-8");
 		
 		try {
 			QueryTask queryTask = queryService.getQueryTask(query,
@@ -64,9 +71,17 @@ public class QueryTaskView extends AbstractView {
 				config.setMetaData("count", queryTask.getCount());
 			}
 			response.setStatus(HttpServletResponse.SC_OK);
-			FutureTask<Void> ft = new FutureTask<Void>(queryTask);//queryService.executeQueryTask(queryTask);
-			ft.run();
-			ft.get();
+			
+            Future<Void> ft = executor.submit(queryTask);
+			
+            try {
+            	ft.get(30, TimeUnit.SECONDS);
+            } catch (TimeoutException e) {
+            	logger.error("Query execution timeout: "+query.getQuery());
+            	ft.cancel(true);
+    			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT,
+    					e.getMessage());	
+    		}
 		} catch (MalformedQueryException e) {
 			logger.error("BAD QUERY: "+query.getQuery());
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST,
@@ -74,7 +89,7 @@ public class QueryTaskView extends AbstractView {
 		} catch (Exception e) {
 			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-					e.getMessage());
+					e.getCause().getMessage());
 		}	
 	}
 	

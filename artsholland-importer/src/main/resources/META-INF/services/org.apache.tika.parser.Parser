@@ -1,3 +1,4 @@
 org.waag.ah.tika.parser.rdf.TurtleParser
 org.waag.ah.source.dosa.DOSAParser
 org.waag.ah.source.uitbase.UitbaseParser
+org.waag.ah.source.nbtc.NBTCParser
