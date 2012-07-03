@@ -7,6 +7,7 @@ import java.util.Set;
 import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.ValueFactoryImpl;
+import org.openrdf.repository.RepositoryConnection;
 
 public class EnricherConfig {
 	private Class<? extends GraphEnricher> enricherClass;
@@ -14,6 +15,7 @@ public class EnricherConfig {
 	private Set<URI> includeUris = new HashSet<URI>();
 	private Set<URI> excludeUris = new HashSet<URI>();
 	private ValueFactory vf;
+	private RepositoryConnection conn;
 	
 	public EnricherConfig() {
 		this.vf = ValueFactoryImpl.getInstance();
@@ -81,6 +83,14 @@ public class EnricherConfig {
 		for (String uri : uris) {
 			this.addExcludeUri(vf.createURI(uri));
 		}
+	}
+
+	public void setConnection(RepositoryConnection conn) {
+		this.conn = conn;		
+	}
+	
+	public RepositoryConnection getConnection() {
+		return conn;	
 	}
 	
 //	public boolean removePropertyUri(URI uri) {

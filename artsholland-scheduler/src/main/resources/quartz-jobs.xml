@@ -125,7 +125,7 @@
         <name>DBpediaEnricherTrigger</name>
         <job-name>DBpediaEnricher</job-name>
         <job-group>EnricherService</job-group>
-        <cron-expression>0 0/5 * * * ?</cron-expression>
+        <cron-expression>0 0/1 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>

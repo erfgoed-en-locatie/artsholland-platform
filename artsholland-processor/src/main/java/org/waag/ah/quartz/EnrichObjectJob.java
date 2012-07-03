@@ -62,6 +62,7 @@ public class EnrichObjectJob implements Job {
 			config.setObjectUri(this.objectUri);
 			config.addIncludeUri(this.includeUris);
 			config.addExcludeUri(this.excludeUris);
+			config.setConnection(this.conn);
 
 			String queryString = EnrichUtils.getObjectQuery(config, 10);
 			GraphQueryResult result = queryService.executeQuery(queryString);
