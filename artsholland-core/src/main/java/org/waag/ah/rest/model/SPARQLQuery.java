@@ -2,6 +2,7 @@ package org.waag.ah.rest.model;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.waag.ah.rest.RestParameters;
@@ -110,8 +111,24 @@ public class SPARQLQuery {
 	*/
 	
 	private String addBindings(Map<String, String> bindings, String query) {
+		Map<String, String> namespaces = AHRDFNamespaces.getNamespaces();
 		for (Map.Entry<String, String> entry : bindings.entrySet()) {
-			query = query.replace("?" + entry.getKey(), "<" + entry.getValue() + ">");
+			String value = entry.getValue();
+			boolean addBrackets = true; 
+			if (value.contains(":")) {
+				for (Entry<String, String> namespace : namespaces.entrySet()) {
+					if (value.startsWith(namespace.getKey())) {
+						addBrackets = false;						
+						break;
+					}
+				}
+			}
+			
+			if (addBrackets) {
+				value = "<" + value + ">";
+			}
+			
+			query = query.replace("?" + entry.getKey(), value);
 		}
 		return query;
 	}
