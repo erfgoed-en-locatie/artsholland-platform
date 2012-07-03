@@ -32,7 +32,7 @@ public class SPARQLQuery {
 		+ "      [[filter]]"
 		+ "    } [[paging]]" //ORDER BY ?object 
 		+ "  } [[language]]"
-		+ "}"; // ORDER BY ?object ?p
+		+ "} ORDER BY ?object ?p";
 		
 		private static final String SPARQL_COUNT =	
 				"SELECT (COUNT(?o) AS ?count)"
