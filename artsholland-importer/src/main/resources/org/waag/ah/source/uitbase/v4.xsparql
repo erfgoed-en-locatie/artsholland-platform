@@ -1,21 +1,20 @@
-declare namespace dc="http://purl.org/dc/elements/1.1/";
+declare namespace dc="http://purl.org/dc/terms/";
 declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
 declare namespace rdfs="http://www.w3.org/2000/01/rdf-schema#";
 declare namespace xsd="http://www.w3.org/2001/XMLSchema#";
 declare namespace owl="http://www.w3.org/2002/07/owl#";
 declare namespace time="http://www.w3.org/2006/time#"; 
 declare namespace foaf="http://xmlns.com/foaf/0.1/";
-declare namespace geo = "http://www.w3.org/2003/01/geo/wgs84_pos#";
-declare namespace vcard = "http://www.w3.org/2006/vcard/ns#";
-declare namespace osgeo = "http://rdf.opensahara.com/type/geo/";
-												
+declare namespace geo="http://www.w3.org/2003/01/geo/wgs84_pos#";
+declare namespace vcard="http://www.w3.org/2006/vcard/ns#";
+declare namespace gr="http://purl.org/goodrelations/v1#";
+declare namespace osgeo="http://rdf.opensahara.com/type/geo/";
+
 declare namespace nub="http://resources.uitburo.nl/";
-declare namespace ah = "http://purl.org/artsholland/1.0/";
+declare namespace ah="http://purl.org/artsholland/1.0/";
 
-(: TODO: Import URL should be "dynamic" :) 
-import module namespace waag = "http://waag.org" at "http://api.artsholland.com/static/xquery/waag.xquery.jsp";
+declare namespace waag="http://waag.org/saxon-extension";
 
-let $baseuri := {"http://data.artsholland.com/"}
 let $baseuriUitburo := {"http://resources.uitburo.nl/"}
 
 let $events := //event
@@ -33,125 +32,144 @@ return
 		for $event in $events	
 		
 			let $cidn := {$event/cidn}
-			let $euri := {concat($baseuri, "event/", $cidn)}
+						
+			let $euri := {waag:object-uri("event", $cidn)}
 			let $euriUitburo := {concat($baseuriUitburo, "events/", $cidn)}
 				
-			# TODO: if valid
-			let $puri := {concat($baseuri, "production/", $event/link[@type="production"]/@cidn)}
-			let $vuri := {concat($baseuri, "venue/", $event/link[@type="location"]/@cidn)}
-					
-			let $typeKey := {$event/type/@key}
-			let $typeClass := {if (waag:empty($typeKey)) then () else concat("ah:eventType", waag:capitalize-first-only(data($typeKey)))}
+			let $pcidn := {$event/link[@type="production"]/@cidn}
+			let $puri := {waag:object-uri("production", $pcidn)}
 			
-			let $statusKey := {$event/status/@key}
-			let $statusClass := {if (waag:empty($statusKey)) then () else concat("ah:eventStatus", waag:capitalize-first-only(data($statusKey)))}
-				
-			let $room := {$event/room}
-			let $ruri := {if ($room eq "") then () else concat($vuri, "/room/", waag:make-uri($room))}
+			let $vcidn := {$event/link[@type="location"]/@cidn}
+			let $vuri := {waag:object-uri("venue", $vcidn)}
 					
-			let $title := {waag:replace-characters($event/title)}
-			let $description := {waag:replace-characters($event/description)}
+			let $typeKey := {waag:parse-string($event/type/@key)}
+			let $typeClass := {waag:class-uri("eventType", waag:upper-case-first($typeKey))}
+			
+			let $statusKey := {waag:parse-string($event/status/@key)}
+			let $statusClass := {waag:class-uri("eventStatus", waag:upper-case-first($statusKey))}
+				
+			let $room := {waag:parse-string($event/room)}
+			let $ruri := {waag:object-uri("venue", $vcidn, "room", $room)}			
 			
 			construct { 
-			
-				$euri a ah:Event.
-				$euri owl:sameAs $euriUitburo.
-				
-				$euri ah:cidn {$cidn}^^xsd:string.
-				
-				$vuri a ah:Venue.
-				$euri ah:venue $vuri.
-				
-				$puri a ah:Production.
-				$euri ah:production $puri.
-				
-				$euri dc:created {$event/@date-created}^^xsd:string.
-				$euri dc:modified {$event/@date-changed}^^xsd:string.
-				
-				$euri dc:title {if ($title eq "") then () else $title}^^xsd:string.
-				$euri dc:description {if ($description eq "") then () else $description}^^xsd:string.
 							
-				$euri ah:eventType $typeClass.
-				$typeClass a ah:EventType.			
-				$typeClass rdfs:label {if (waag:empty($typeKey)) then () else $typeKey}^^xsd:string.
+				$euri a ah:Event ;
+					owl:sameAs $euriUitburo;
 				
-				$euri ah:eventStatus $statusClass.
-				$statusClass a ah:EventStatus.			
-				$statusClass rdfs:label {if (waag:empty($statusKey)) then () else $statusKey}^^xsd:string.
+					ah:cidn {$cidn}^^xsd:string ;			
+				
+					ah:venue $vuri ;	
+					ah:production $puri ;
+				
+					dc:created {waag:parse-string($event/@date-created)}^^xsd:dateTime ;
+					dc:modified {waag:parse-string($event/@date-modified)}^^xsd:dateTime ;
+				
+					dc:title {waag:parse-string($event/title)}^^xsd:string ;
+					dc:description {waag:parse-string($event/description)}^^xsd:string ;
+				
+					ah:eventType $typeClass ;
+					ah:eventStatus $statusClass ;
+					
+					ah:room $ruri ;
+
+					time:hasBeginning {$event/datetime-start}^^xsd:dateTime ;
+					time:hasEnd {$event/datetime-end}^^xsd:dateTime .		
+				
+				$vuri a ah:Venue ;
+					ah:room $ruri .
+					
+				$puri a ah:Production .
+				
+				$ruri a ah:Room ;
+					rdfs:label {$room} .
+				
+				$typeClass a ah:EventType ;			
+					rdfs:label {$typeKey}^^xsd:string .				
+				
+				$statusClass a ah:EventStatus ;
+					rdfs:label {$statusKey}^^xsd:string .
 				
 				{ for $pricetag in $event/pricetags//pricetag
 		
-					# Als er events zijn met pricetags met zelfde type: gebruik $pos in uri
-					let $turi := {concat($euri, "/ticket/", waag:make-uri($pricetag/type))}
-					let $puri := {concat($turi, "/price")}
+					# TODO: Als er events zijn met pricetags met zelfde type: gebruik $pos in uri
+					let $turi := {waag:object-uri("event", $cidn, "ticket", waag:parse-string($pricetag/type))}					
 					
-					let $name := {waag:replace-characters($pricetag/type)}
-					let $description := {waag:replace-characters($pricetag/description)}		
-					
-					let $salesInformation := {waag:replace-characters($pricetag/ticketsalesinformation)}
-					let $salesPhone := {waag:replace-characters($pricetag/ticketsalesphone)}
-					let $salesUrl := {waag:replace-characters($pricetag/ticketsalesurl)}	
+					let $ofuri := {waag:object-uri("event", $cidn, "offering", waag:parse-string($pricetag/type))}					
+					let $opuri := {waag:object-uri("event", $cidn, "offering", waag:parse-string($pricetag/type), "price")}
 					
 					construct {
 					
-						$euri ah:ticket $turi .
-						$turi a ah:Ticket .
+						#$euri ah:ticket $turi .
+						#
+						#$turi a ah:Ticket ;						
+						#	dc:title {waag:parse-string($pricetag/type)}^^xsd:string ;
+						#	dc:description {waag:parse-string($pricetag/description)}^^xsd:string ;
+						#	
+						#	ah:ticketSalesInformation {waag:parse-string($pricetag/ticketsalesinformation)}^^xsd:string ;
+						#	ah:ticketSalesTelephone {waag:parse-string($pricetag/ticketsalesphone)}^^xsd:string ;
+						#	ah:ticketSalesUrl {waag:parse-http-url($pricetag/ticketsalesurl)} ;				
+						#
+						#	ah:lowPrice {$pricetag/lowest}^^xsd:decimal ;			
+						#	ah:highPrice {$pricetag/highest}^^xsd:decimal ;
+						#	ah:priceCurrency "EUR"^^xsd:string .
+														
+						$euri gr:offers $ofuri .
 						
-						$turi dc:title {if ($name eq "") then () else $name}^^xsd:string .
-						$turi dc:description {if ($description eq "") then () else $description}^^xsd:string .
+						$ofuri a gr:Offering ;
+							gr:name {waag:parse-string($pricetag/type)}^^xsd:string ;
+							gr:description {waag:parse-string($pricetag/description)}^^xsd:string ;
 						
-						$turi ah:ticketSalesInformation {if ($salesInformation eq "") then () else $salesInformation}^^xsd:string .
-						$turi ah:ticketSalesTelephone {if ($salesPhone eq "") then () else $salesPhone}^^xsd:string .
-						$turi ah:ticketSalesUrl {if ($salesUrl eq "") then () else $salesUrl}^^xsd:string .				
+							ah:ticketSalesInformation {waag:parse-string($pricetag/ticketsalesinformation)}^^xsd:string ;
+							ah:ticketSalesTelephone {waag:parse-string($pricetag/ticketsalesphone)}^^xsd:string ;
+							ah:ticketSalesUrl {waag:parse-http-url($pricetag/ticketsalesurl)} ;
+							
+							gr:hasPriceSpecification $opuri .				
 				
-						$turi ah:lowPrice {$pricetag/lowest}^^xsd:decimal .			
-						$turi ah:highPrice {$pricetag/highest}^^xsd:decimal .
-						$turi ah:priceCurrency "EUR"^^xsd:string.
+						$opuri a gr:PriceSpecification ;
+							gr:hasMinCurrencyValue {$pricetag/lowest}^^xsd:decimal ;			
+							gr:hasMaxCurrencyValue {$pricetag/highest}^^xsd:decimal ;
+							
+							gr:hasCurrency "EUR"^^xsd:string .					
 									
 					}
-				}.
+				} .
 				
 				# $pos is counter (http://stackoverflow.com/questions/5652397/xquery-counters-inside-a-for)
-				{ for $medium at $pos in $event/media//medium				
+				{ for $medium at $pos in $event/media//medium						
 					
-					let $muri := {concat($euri, "/attachment/", $pos)}	
-					let $description := {waag:replace-characters($medium/description)}
-					let $title := {waag:replace-characters($medium/title)}
+					let $muri := {waag:object-uri("event", $cidn, "attachment", xs:string($pos))}
 								
-					let $typeKey := {waag:replace-characters($medium/type)}
-					let $typeClass := {if ($typeKey eq "") then () else concat("ah:attachmentType", waag:capitalize-first-only(data($typeKey)))}
+					let $typeKey := {waag:parse-string($medium/type)}
+					let $typeClass := {waag:class-uri("attachmentType", waag:upper-case-first($typeKey))}
 					
 					construct {
 					
-					 	$euri ah:attachment $muri.
-					 	$muri a ah:Attachment.
-						$muri dc:title {if ($title eq "") then () else $title}^^xsd:string.
-						$muri dc:description {if ($description eq "") then () else $description}^^xsd:string.
+					 	$euri ah:attachment $muri .
+					 	
+					 	$muri a ah:Attachment ;
+							dc:title {waag:parse-string($medium/title)}^^xsd:string ;
+							dc:description {waag:parse-string($medium/description)}^^xsd:string ;
 						
-						# TODO: string?
-						$muri ah:url {$medium/ref}^^xsd:string.
+							# TODO: string?
+							#ah:url {$medium/ref}^^xsd:string ;
+							ah:url {waag:parse-http-url($medium/ref)} ;
 		
-						# TODO:
-						#	<alt>A family again</alt>
+							# TODO:
+							#	<alt>A family again</alt>
 						
-						$muri ah:attachmentType $typeClass.				
-						$typeClass a ah:AttachmentType.			
-						$typeClass rdfs:label {if ($typeKey eq "") then () else $typeKey}^^xsd:string.				
+							ah:attachmentType $typeClass .
+											
+						$typeClass a ah:AttachmentType ;			
+							rdfs:label {$typeKey}^^xsd:string .				
 						
 					}
-				}.
-				
-				$ruri a ah:Room.
-				$ruri rdfs:label {if ($room eq "") then () else $room}.
-				$euri ah:room $ruri.
-				$vuri ah:room $ruri.
-				
-				$euri time:hasBeginning {$event/datetime-start}^^xsd:dateTime.
-				$euri time:hasEnd {$event/datetime-end}^^xsd:dateTime.
-					 	
+					
+				}				
+
 			}
-		}
 			
+		}
+
 ##############################################################################################################################
 ##################   Venue   #################################################################################################
 ##############################################################################################################################
@@ -160,124 +178,129 @@ return
 		for $venue in $venues
 			
 			let $cidn := {$venue/cidn}
-			let $vuri := {concat($baseuri, "venue/", $cidn)}
-			let $vuriUitburo := {concat($baseuriUitburo, "locations/", $cidn)}
-			let $venueType := {concat("ah:venueType", waag:capitalize-first-only($venue/type/@key))}
-				
-			let $lat := { $venue/geocode/latitude }
-			let $long := { $venue/geocode/longitude }
-						
-			let $latData := { if ( fn:empty(number($lat)) or number($lat) eq 0 ) then () else data($lat) }
-			let $longData := { if ( fn:empty(number($long)) or number($long) eq 0 ) then () else data($long) }
 			
-			# Apparently, 'or' statements have to be grouped in tuples:
-			let $point := { if ( fn:empty($latData) or fn:empty($longData) ) then () else concat( 'POINT(', $longData, ' ', $latData, ')' ) }
+			let $vuri := {waag:object-uri("venue", $cidn)}
+			let $vuriUitburo := {concat($baseuriUitburo, "locations/", $cidn)}
+			
+			let $venueType := {waag:class-uri("venueType", waag:upper-case-first($venue/type/@key))}
+				
+			let $lat := { waag:parse-non-zero-number($venue/geocode/latitude) }
+			let $long := { waag:parse-non-zero-number($venue/geocode/longitude) }			
+			
+			let $auri := {waag:object-uri("address", waag:address-uri($venue/postal-code, $venue/street/number, $venue/street/addition))}
 						
 			construct {
-				$vuri a ah:Venue.			
-				$vuri owl:sameAs $vuriUitburo.
+			
+				$vuri a ah:Venue ;		
+					owl:sameAs $vuriUitburo ;
 				
-				$vuri ah:cidn {$cidn}^^xsd:string.
+					ah:cidn {$cidn}^^xsd:string ;
 							
-				$vuri dc:title {if ($venue/name eq "") then () else waag:replace-characters($venue/name)}^^xsd:string.
+					dc:title {waag:parse-string($venue/name)}^^xsd:string ;
 	
-				$vuri geo:lat {if ( fn:empty($latData) ) then () else $latData }^^xsd:decimal.
-				$vuri geo:long {if ( fn:empty($longData) ) then () else $longData }^^xsd:decimal.
+					geo:lat {$lat}^^xsd:float ;
+					geo:long {$long}^^xsd:float ;
 	
-				$vuri ah:geometry {if ( fn:empty($point) ) then () else $point }^^osgeo:wkt.
+					geo:geometry{waag:wkt-geometry($lat, $long)}^^osgeo:wkt ;
 				
-				$vuri dc:created {$venue/@date-created}^^xsd:string.
-				$vuri dc:modified {$venue/@date-changed}^^xsd:string.
+					dc:created {waag:parse-string($venue/@date-created)}^^xsd:dateTime ;
+					dc:modified {waag:parse-string($venue/@date-modified)}^^xsd:dateTime ;
+					
+					ah:locationAddress $auri ;
+					
+					vcard:email {waag:parse-string($venue/email)}^^xsd:string ;
+					
+					# TODO: ah???
+					ah:telephone {waag:parse-string($venue/telephone)}^^xsd:string ;
+					ah:fax {waag:parse-string($venue/fax)}^^xsd:string ;
+					
+					ah:venueType $venueType .
+					
+				$venueType a ah:VenueType ;	
+					rdfs:label {waag:parse-string($venue/type)}^^xsd:string .
+				
+				
+			  $auri a ah:Address ;
+        	vcard:street-address {concat($venue/street/name, " ", $venue/street/number, $venue/street/addition)} ;
+					vcard:locality {waag:parse-string($venue/city)} ;
+					vcard:postal-code {waag:parse-string($venue/postal-code)} .
 				
 				{ for $room in $venue/rooms//room
-					let $ruri := {concat($vuri, "/room/", waag:make-uri($room))}
+					
+					let $ruri := {waag:object-uri("venue", $cidn, "room", $room)}					
+					
 					construct {
-						$ruri a ah:Room.
-						$ruri rdfs:label {waag:replace-characters($room)}.
-						$vuri ah:room $ruri.
+					
+						$ruri a ah:Room ;
+							rdfs:label {waag:parse-string($room)}^^xsd:string .
+							
+						$vuri ah:room $ruri .
+						
 					}
-				}.
+				} .
 				
 				{ for $url in $venue/urls//url
 					construct {					
 						
-						$vuri foaf:homepage {if ($url eq "") then () else waag:replace-characters(waag:correct-url($url))}^^xsd:string.
+						$vuri foaf:homepage {waag:parse-http-url($url)} ;
 						
 					}
-				}.
-				
-				$vuri ah:venueType $venueType.
-				$venueType a ah:VenueType.	
-				$venueType rdfs:label {waag:replace-characters($venue/type)}.
+				} .				
 	
 				# $pos is counter (http://stackoverflow.com/questions/5652397/xquery-counters-inside-a-for)
 				{ for $medium at $pos in $venue/media//medium				
 					
-					let $muri := {concat($vuri, "/attachment/", $pos)}
+					let $muri := {waag:object-uri("venue", $cidn, "attachment", xs:string($pos))}
 										
-					let $typeKey := {waag:replace-characters($medium/type)}
-					let $typeClass := {if ($typeKey eq "") then () else concat("ah:attachmentType", waag:capitalize-first-only(data($typeKey)))}
+					let $typeKey := {waag:parse-string($medium/type)}
+					let $typeClass := {waag:class-uri("attachmentType", waag:upper-case-first($typeKey))}
 					
 					construct {
 					
 						$vuri ah:attachment $muri .
-						$muri a ah:Attachment .
-						$muri dc:title {waag:string($medium/title)}^^xsd:string .
-						$muri dc:description {waag:string($medium/description)}^^xsd:string .
 						
-						# TODO: string?
-						$muri ah:url {$medium/ref}^^xsd:string .
+						$muri a ah:Attachment ;
+							dc:title {waag:parse-string($medium/title)}^^xsd:string ;
+							dc:description {waag:parse-string($medium/description)}^^xsd:string ;
+						
+							# TODO: string?
+							ah:url {waag:parse-http-url($medium/ref)} ;
 											
-						# TODO:
-						#	<alt>A family again</alt>	
+							# TODO:
+							#	<alt>A family again</alt>	
 						
-						$muri ah:attachmentType $typeClass .
-						$typeClass a ah:AttachmentType .
-						$typeClass rdfs:label {if ($typeKey eq "") then () else $typeKey}^^xsd:string .
+							ah:attachmentType $typeClass .
+							
+						$typeClass a ah:AttachmentType ;
+							rdfs:label {$typeKey}^^xsd:string .
 										
 					}
-				} .
-				
-				$vuri vcard:street-address {concat($venue/street/name, " ", $venue/street/number, $venue/street/addition)} .
-				$vuri vcard:locality {waag:string($venue/place)} .
-				$vuri vcard:postal-code {waag:string($venue/postal-code)} .
-				$vuri vcard:email {waag:string($venue/email)} .
-				$vuri ah:telephone {waag:string($venue/telephone)} .
-				$vuri ah:fax {waag:string($venue/fax)} .
+				} .				
 					
 				{ for $tag in $venue/tags//tag
 					
 					construct {	
 						
-						$vuri ah:tag {waag:string($tag)} .
+						$vuri ah:tag {waag:parse-string($tag)}^^xsd:string .
 						
 					}
 				} .
 				
 				{ for $language in $venue/languages//language
 				
-					let $locale := {$language/@locale}
-					let $language-tag := {waag:get-language-tag($locale)}
-					
-					let $title := {waag:replace-characters($language/sortname)}
-					let $description := {waag:replace-characters($language/description)}
-					let $shortDescription := {waag:replace-characters($language/short-description)}					
-					let $openingHours := {waag:replace-characters($language/opening-hours)}
-					let $publicTransportInformation := {waag:replace-characters($language/ov-info)}
-					let $disabilityInformation := {waag:replace-characters($language/handicapped-info)}
-					let $pricingInformation := {waag:replace-characters($language/pricing-information)}
+					let $language-tag := {waag:parse-locale($language/@locale)}
 					
 					construct {
 										 
-						$vuri dc:title {if ($title eq "") then () else $title}@{$language-tag}.
+						$vuri dc:title {waag:parse-string($language/sortname)}@{$language-tag}.
 						
-						$vuri dc:description {if ($description eq "") then () else $description}@{$language-tag}.
-						$vuri ah:shortDescription {if ($shortDescription eq "") then () else $shortDescription}@{$language-tag}.
+						$vuri dc:description {waag:parse-string($language/description)}@{$language-tag}.
+						$vuri ah:shortDescription {waag:parse-string($language/short-description)}@{$language-tag}.
 						
-						$vuri ah:openingHours {if ($openingHours eq "") then () else $openingHours}@{$language-tag}.
-						$vuri ah:publicTransportInformation {if ($publicTransportInformation eq "") then () else $publicTransportInformation}@{$language-tag}.		
-						$vuri ah:disabilityInformation {if ($disabilityInformation eq "") then () else $disabilityInformation}@{$language-tag}.					
-						$vuri ah:pricingInformation {if ($pricingInformation eq "") then () else $pricingInformation}@{$language-tag}.
+						$vuri ah:openingHours {waag:parse-string($language/opening-hours)}@{$language-tag}.
+						$vuri ah:publicTransportInformation {waag:parse-string($language/ov-info)}@{$language-tag}.		
+						$vuri ah:disabilityInformation {waag:parse-string($language/handicapped-info)}@{$language-tag}.					
+						$vuri ah:pricingInformation {waag:parse-string($language/pricing-information)}@{$language-tag}.
 	
 					}
 				}
@@ -295,38 +318,50 @@ return
 		for $production in $productions
 				
 			let $cidn := {$production/cidn}
-			let $puri := {concat($baseuri, "production/", $cidn)}
+			
+			let $puri := {waag:object-uri("production", $cidn)}
 			let $puriUitburo := {concat($baseuriUitburo, "productions/", $cidn)}
 		
-			let $title := {waag:replace-characters($production/title)}
+			#let $title := {waag:parse-string($production/title)}
 			
-			let $typeKey := {$production/type/@key}
-			let $typeClass := {if (waag:empty($typeKey)) then () else concat("ah:productionType", waag:capitalize-first-only(data($typeKey)))}
+			let $typeKey := {waag:parse-string($production/type/@key)}
+			let $typeClass := {waag:class-uri("productionType", waag:upper-case-first($typeKey))}
+			
+			let $language := {waag:parse-locale($production/language)}
+			let $subtitles :=	{waag:parse-locale($production/subtitles)}
 				
 			construct {
 			
-				$puri a ah:Production.			
-				$puri owl:sameAs $puriUitburo.
+				$puri a ah:Production ;			
+					owl:sameAs $puriUitburo ;
 				
-				$puri ah:cidn {$cidn}^^xsd:string.
-				
-				#$puri dc:title {if ($title eq "") then () else $title}.
-				#$puri dc:title {if ($title eq "") then () else $title}^^xsd:string.
+					ah:cidn {$cidn}^^xsd:string ;	
 					
-				$puri ah:productionType $typeClass.
-				$typeClass a ah:ProductionType.			
-				$typeClass rdfs:label {if ($typeKey eq "") then () else $typeKey}^^xsd:string.
+					dc:created {waag:parse-string($production/@date-created)}^^xsd:dateTime ;
+					dc:modified {waag:parse-string($production/@date-modified)}^^xsd:dateTime ;	
+					
+					ah:ageLimitLower {$production/age/lower}^^xsd:integer ;
+					ah:ageLimitUpper {$production/age/upper}^^xsd:integer ;
+				
+					dc:language {$language}^^xsd:string ;						
+					ah:subtitleLanguage {$subtitles}^^xsd:string ;
+					
+					ah:productionType $typeClass .
+				
+				$typeClass a ah:ProductionType ;			
+					 rdfs:label {$typeKey}^^xsd:string .
 				
 				{ for $genre in $production/genres//genre
 					
-					let $genreKey := {$genre/@key}
-					let $genreClass := {if (waag:empty($genreKey)) then () else concat("ah:genre", waag:capitalize-first-only(data($genreKey)))}
+					let $genreKey := {waag:parse-string($genre/@key)}
+					let $genreClass := {waag:class-uri("genre", waag:upper-case-first($genreKey))}
 					
 					construct {				
 						
-						$puri ah:genre $genreClass.
-						$genreClass a ah:Genre.			
-						$genreClass rdfs:label {if ($genre eq "") then () else $genre}^^xsd:string.
+						$puri ah:genre $genreClass .
+						
+						$genreClass a ah:Genre ;			
+							rdfs:label {$genre}^^xsd:string .
 						
 					}
 				}.
@@ -334,57 +369,43 @@ return
 				{ for $url in $production/urls//url			
 					construct {				
 						
-						$puri foaf:homepage {if ($url eq "") then () else waag:replace-characters(waag:correct-url($url))}^^xsd:string.
+						$puri foaf:homepage {waag:parse-http-url($url)}.
 						
 					}
 				}.
 				
-				{ for $language in $production/languages//language
-				
-					let $locale := {$language/@locale}
-					let $language-tag := {waag:get-language-tag($locale)}
+				{ for $languageBlock in $production/languages//language				
 					
-					let $title := {waag:replace-characters($language/sortname)}					
-					let $description := {waag:replace-characters($language/description)}
-					let $shortDescription := {waag:replace-characters($language/short-description)}					
-					let $party := {waag:replace-characters($language/party)}
-					let $people := {waag:replace-characters($language/people)}
+					let $language-tag := {waag:parse-locale($languageBlock/@locale)}					
 					
 					construct {				
 						
-						$puri dc:title {if ($title eq "") then () else $title}@{$language-tag}.
+						$puri dc:title {waag:parse-string($languageBlock/sortname)}@{$language-tag} ;						
+							dc:description {waag:parse-string($languageBlock/description)}@{$language-tag} ;
+							ah:shortDescription {waag:parse-string($languageBlock/short-description)}@{$language-tag} ;
 						
-						$puri dc:description {if ($description eq "") then () else $description}@{$language-tag}.
-						$puri ah:shortDescription {if ($shortDescription eq "") then () else $shortDescription}@{$language-tag}.
-						
-						$puri ah:party {if ($party eq "") then () else $party}@{$language-tag}.
-						$puri ah:people {if ($people eq "") then () else $people}@{$language-tag}.								
+							ah:party {waag:parse-string($languageBlock/party)}@{$language-tag} ;
+							ah:people {waag:parse-string($languageBlock/people)}@{$language-tag} .								
 	
 					}
-				}.
-				
-				$puri ah:ageLimitLower {$production/age/lower}^^xsd:integer.
-				$puri ah:ageLimitUpper {$production/age/upper}^^xsd:integer.
+				} .
 				
 				{ for $tag in $production/tags//tag
 				
 					construct {
 											
-						$puri ah:tag {if ($tag eq "") then () else waag:replace-characters($tag)}^^xsd:string.					
+						$puri ah:tag {waag:parse-string($tag)}^^xsd:string.					
 						
 					}
-				}.
+				} 
 	
 				#	TODO:
 				#	notes
-				#	<country>NL</country>							
-				
-				$puri dc:language {waag:string(waag:get-language-tag($production/language))}.			
-				$puri ah:subtitleLanguage {waag:string(waag:get-language-tag($production/subtitles))}			
+				#	<country>NL</country>				
 								
 			}
 		}
-		
+	
 ##############################################################################################################################
 ##################   Group   #################################################################################################
 ##############################################################################################################################
@@ -394,17 +415,18 @@ return
 		for $group in $groups
 			
 			let $cidn := {$group/cidn}
-			let $guri := {concat($baseuri, "group/", $cidn)}
+			
+			let $guri := {waag:object-uri($baseuri, "group", $cidn)}
 			let $guriUitburo := {concat($baseuriUitburo, "groups/", $cidn)}
 				
 			construct { 
-				$guri a ah:Group.			
-				$guri owl:sameAs $guriUitburo.
+				$guri a ah:Group ;
+					owl:sameAs $guriUitburo ;
 				
-				$guri ah:cidn {$cidn}^^xsd:string.
+					ah:cidn {$cidn}^^xsd:string .
 					
 			}
-	:)
+	:)		
 
 ##############################################################################################################################
 ##############################################################################################################################

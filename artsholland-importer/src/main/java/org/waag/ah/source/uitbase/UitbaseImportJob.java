@@ -3,6 +3,8 @@
 //import java.net.URL;
 //import java.util.List;
 //
+//import javax.ejb.EJBTransactionRolledbackException;
+//
 //import org.apache.commons.configuration.ConfigurationException;
 //import org.joda.time.DateTime;
 //import org.quartz.DisallowConcurrentExecution;
@@ -13,7 +15,6 @@
 //import org.waag.ah.ImportMetadata;
 //import org.waag.ah.PlatformConfig;
 //import org.waag.ah.PlatformConfigHelper;
-//import org.waag.ah.importer.AbstractImportJob;
 //
 //@DisallowConcurrentExecution
 //public class UitbaseImportJob extends AbstractImportJob {
@@ -63,6 +64,8 @@
 //			}
 //			
 //			doImport(urls, metadata);
+//		} catch (EJBTransactionRolledbackException e) {
+//			logger.warn(e.getMessage());
 //		} catch (Exception e) {
 //			throw new JobExecutionException(e);
 //		}

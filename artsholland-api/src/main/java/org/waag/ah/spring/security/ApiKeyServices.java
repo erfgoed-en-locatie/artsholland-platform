@@ -1,4 +1,4 @@
-package org.waag.spring.security;
+package org.waag.ah.spring.security;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

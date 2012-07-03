@@ -50,14 +50,19 @@
       <version>3.1.3</version>
     </dependency>
     <dependency>
-      <groupId>org.waag.saxon</groupId>
-      <artifactId>saxon</artifactId>
-      <version>9.3</version>
+      <groupId>net.sf.jsignature.io-tools</groupId>
+      <artifactId>easystream</artifactId>
+      <version>1.2.12</version>
     </dependency>
     <dependency>
-      <groupId>org.waag.xsparql</groupId>
-      <artifactId>xsparql</artifactId>
-      <version>0.2.1</version>
+      <groupId>org.deri.xsparql</groupId>
+      <artifactId>rewriter</artifactId>
+      <version>0.4-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.deri.xsparql</groupId>
+      <artifactId>evaluator</artifactId>
+      <version>0.4-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.openrdf.sesame</groupId>

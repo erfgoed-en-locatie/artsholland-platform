@@ -56,6 +56,7 @@ public class DOSAParser extends CompositeParser {
 		
 //		Map<String, String> vars = new HashMap<String, String>();
 //		vars.put("config", UitbaseParser.getFileContents(getClass(), "META-INF/tables.xml"));
+//		vars.put("config", NBTCParser.getFileContents(getClass(), "META-INF/tables.xml"));
 //		
 		Parser parser = getParser(MediaType.application("vnd.ms-excel"));
 //		parser.parse(stream, new XQueryContentHandler(handler, getFileContents(getClass(), "dosa_xls.xsparql"),
@@ -76,11 +77,9 @@ public class DOSAParser extends CompositeParser {
 			parser.parse(stream, new XSPARQLQueryHandler(handler, metadata,
 					context, getFileContents(getClass(), "dosa_xls.xsparql"), includes),
 					metadata, context);
-		} catch (ParserException e) {
-			// TODO Auto-generated catch block
-			// e.printStackTrace();
-			throw new SAXException(e.getMessage(), e);
-		}
+	      } catch (Exception e) {
+	    	  tagged.throwIfCauseOf(e);
+	      }
 	
 /*
 		try {
@@ -119,6 +118,7 @@ public class DOSAParser extends CompositeParser {
 				// Parser parser = getParser(MediaType.application("vnd.ms-excel"));
 				// parser.parse(stream, new XQueryContentHandler(handler,
 				// UitbaseParser.getFileContents(getClass(), "META-INF/dosa_xls.xquery"),
+				// NBTCParser.getFileContents(getClass(), "META-INF/dosa_xls.xquery"),
 				// metadata, context),
 				// metadata, context);				
 				

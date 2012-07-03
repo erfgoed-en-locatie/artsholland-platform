@@ -9,23 +9,30 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.URIException;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.waag.ah.PlatformConfig;
 
 @Service("uitbaseService")
-public class UitbaseService extends ProxyService {
-//	private Logger logger = Logger.getLogger(UitbaseService.class);
-
-	// Versie 3
-	//private final String UITBASE_ENDPOINT = "http://test.publisher.uitburo.nl/agenda/search.do";
-	//private final String UITBASE_APIKEY = "a9d8fc27e5cbde7bca8402b53fe5a725";
+public class UitbaseService extends ProxyService implements InitializingBean  {
+	private Logger logger = Logger.getLogger(UitbaseService.class);
 	
-	private final String UITBASE_ENDPOINT = "http://accept.ps4.uitburo.nl/api/";
-	private final String UITBASE_APIKEY = "505642b12881b9a60688411a333bc78b";		
+	private String UITBASE_ENDPOINT;
+	private String UITBASE_APIKEY;		
 
-	public UitbaseService() {
+	@Autowired
+	PlatformConfig platformConfig;
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		UITBASE_ENDPOINT = platformConfig.getString("importer.source.uitbase.v4.endpoint");
+		UITBASE_APIKEY = platformConfig.getString("importer.source.uitbase.v4.apiKey");
 		setBaseUrl(UITBASE_ENDPOINT);
 	}
-
+	
 	@Override
 	protected void beforeProxyRequest(HttpServletRequest request, HttpServletResponse response,
 			HttpMethod method) {
@@ -38,13 +45,6 @@ public class UitbaseService extends ProxyService {
 			if (!"Host".equalsIgnoreCase(headerName)) {
 				method.setRequestHeader(headerName, request.getHeader(headerName));
 			}
-			
-			/*
-			if ("Accept".equalsIgnoreCase(headerName)) {
-				method.setRequestHeader(headerName, request.getHeader(headerName));
-			}
-			*/
-
 		}
 		
 		Enumeration<String> paramNames = request.getParameterNames();
@@ -52,11 +52,7 @@ public class UitbaseService extends ProxyService {
 		while (paramNames.hasMoreElements()) { 
 			String paramName = paramNames.nextElement();
 			
-			/*
-			 * TODO: get 'apiKey' from properties file.
-			 * 
-			 * Copy all except apiKey parameter to proxy request:
-			 */
+			// Copy all except apiKey parameter to proxy request:
 			if (!"apiKey".equalsIgnoreCase(paramName)) {				
 				params.add(new NameValuePair(paramName, request.getParameter(paramName)));				
 			}	
@@ -66,7 +62,10 @@ public class UitbaseService extends ProxyService {
 		
 		NameValuePair paramsArray[] = new NameValuePair[params.size()];		
 		method.setQueryString(params.toArray(paramsArray));	
-		
+		try {
+			logger.info("URI: "+method.getURI());
+		} catch (URIException e) {
+		}
 	}
 
 	@Override	
@@ -76,17 +75,12 @@ public class UitbaseService extends ProxyService {
 		// Set the content type, as it comes from the server
 		Header[] headers = method.getResponseHeaders();
 		for (Header header : headers) {
-			//response.setHeader(header.getName(), header.getValue());
-				
-			if (!"Host".equalsIgnoreCase(header.getName())) {
+			if (
+					!"Host".equalsIgnoreCase(header.getName()) && 
+					!"Transfer-Encoding".equalsIgnoreCase(header.getName())) {
+//				logger.info("Copying header: "+header.getName()+" : "+header.getValue());
 				response.setHeader(header.getName(), header.getValue());
-			}	
-				
-			/*
-			if ("Content-Type".equalsIgnoreCase(header.getName())) {
-				response.setContentType(header.getValue());
-			}	*/		
+			}		
 		}		
 	}
-
 }

@@ -35,7 +35,7 @@
       <beans:map>
         <beans:entry>
           <beans:key>
-            <beans:bean class="org.waag.spring.security.ApiKeyRequestMatcher"/>
+            <beans:bean class="org.waag.ah.spring.security.ApiKeyRequestMatcher"/>
           </beans:key>
           <beans:ref bean="defaultEntryPoint"/>
         </beans:entry>
@@ -50,10 +50,10 @@
       class="org.springframework.security.oauth.provider.OAuthProcessingFilterEntryPoint"/>
 
   <beans:bean id="apiKeyAuthenticationProvider" 
-      class="org.waag.spring.security.ApiKeyAuthenticationProvider"/>
+      class="org.waag.ah.spring.security.ApiKeyAuthenticationProvider"/>
   
   <beans:bean id="apiKeyAuthenticationFilter" 
-      class="org.waag.spring.security.ApiKeyAuthenticationFilter">
+      class="org.waag.ah.spring.security.ApiKeyAuthenticationFilter">
     <beans:constructor-arg ref="authenticationManager"/>
     <beans:constructor-arg ref="apiKeyService"/>
   </beans:bean>
@@ -64,7 +64,7 @@
     </beans:constructor-arg>
   </beans:bean>
 
-  <beans:bean id="apiKeyService" class="org.waag.spring.security.ApiKeyServices">
+  <beans:bean id="apiKeyService" class="org.waag.ah.spring.security.ApiKeyServices">
     <beans:constructor-arg ref="userDetailsService"/>
   </beans:bean>
    
