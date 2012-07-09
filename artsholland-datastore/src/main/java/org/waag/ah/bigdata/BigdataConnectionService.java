@@ -11,6 +11,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.repository.sail.SailRepositoryConnection;
+import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.PlatformConfigHelper;
@@ -47,6 +48,11 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 			
 			conn = repo.getConnection();
 			conn.setAutoCommit(false);
+			
+			conn.add(BigdataConnectionService.class
+					.getResourceAsStream("/artsholland.rdf"),
+					"http://purl.org/artsholland/1.0/", RDFFormat.RDFXML);
+			conn.commit();
 			
 //			IndexingSailConnection idxConn = idxSail.getConnection();
 //			idxConn.reindex();
