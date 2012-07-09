@@ -33,6 +33,8 @@ public class SocialMediaEnricher extends AbstractEnricher {
 		
 		//Foursquare (resultaat bevat ook Twitter-naam)
 		//https://developer.foursquare.com/docs/explore#req=venues/search%3Fquery%3Drijksmuseum%26ll%3D52.356,4.825+
+		//https://api.foursquare.com/v2/venues/search?ll=52.35999487589336,4.884281158447266&intent=browse&radius=100&url=http://www.rijksmuseum.nl&oauth_token=RFZKZXJEXSC2E3GPSXZTKMF0EGCPXPMBWXUTT04PZOISRYGV&v=20120703
+
 		//
 		//https://developer.foursquare.com/docs/venues/search
 		
