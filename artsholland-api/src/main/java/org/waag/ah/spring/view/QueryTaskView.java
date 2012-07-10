@@ -2,7 +2,6 @@ package org.waag.ah.spring.view;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -39,21 +38,22 @@ public class QueryTaskView extends AbstractView {
 		supportedFormats.put("json", "application/json");
 		supportedFormats.put("rdf", "application/rdf");
 		supportedFormats.put("turtle", "text/turtle");
-//		supportedFormats.put("n3", "text/n3"); // Not supported by Bigdata/Sesame
+		supportedFormats.put("csv", "text/csv");
+		// supportedFormats.put("n3", "text/n3"); // Not supported by Bigdata/Sesame
 	}
-	
+
 	public QueryTaskView(QueryService queryService) {
 		this.queryService = queryService;
 		this.executor = Executors.newCachedThreadPool();
 	}
-	
+
 	@Override
 	protected void renderMergedOutputModel(Map<String, Object> model,
 			HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		Assert.isTrue(model.containsKey(MODEL_QUERY));
 		RdfQueryDefinition query = (RdfQueryDefinition) model.get(MODEL_QUERY);
-		
+
 		String mimeType = getMediaType(request);
 		if (mimeType == null) {
 			response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE);
@@ -62,8 +62,8 @@ public class QueryTaskView extends AbstractView {
 
 		RDFWriterConfig config = query.getWriterConfig();
 		config.setFormat(mimeType);
-		response.setContentType(mimeType+"; charset=UTF-8");
-		
+		response.setContentType(mimeType + "; charset=UTF-8");
+
 		try {
 			QueryTask queryTask = queryService.getQueryTask(query,
 					query.getWriterConfig(), response.getOutputStream());
@@ -71,28 +71,28 @@ public class QueryTaskView extends AbstractView {
 				config.setMetaData("count", queryTask.getCount());
 			}
 			response.setStatus(HttpServletResponse.SC_OK);
+
+			Future<Void> ft = executor.submit(queryTask);
+
+			try {
+				ft.get(30, TimeUnit.SECONDS);
+			} catch (TimeoutException e) {
+				logger.error("Query execution timeout: " + query.getQuery());
+				ft.cancel(true);
+				response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT,
+						e.getMessage());
+			}
 			
-            Future<Void> ft = executor.submit(queryTask);
-			
-            try {
-            	ft.get(30, TimeUnit.SECONDS);
-            } catch (TimeoutException e) {
-            	logger.error("Query execution timeout: "+query.getQuery());
-            	ft.cancel(true);
-    			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT,
-    					e.getMessage());	
-    		}
 		} catch (MalformedQueryException e) {
-			logger.error("BAD QUERY: "+query.getQuery());
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST,
-					e.getMessage());
+			logger.error("BAD QUERY: " + query.getQuery());
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
 		} catch (Exception e) {
 			e.printStackTrace();
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-					e.getCause().getMessage());
-		}	
+			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e
+					.getCause().getMessage());
+		}
 	}
-	
+
 	private String getMediaType(HttpServletRequest request) {
 		String requestUri = urlPathHelper.getLookupPathForRequest(request);
 		String filename = WebUtils.extractFullFilenameFromUrlPath(requestUri);

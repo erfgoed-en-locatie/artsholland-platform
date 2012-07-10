@@ -29,7 +29,8 @@ public class RestService implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		RDFFormat.register(RDFJSONFormat.RESTAPIJSON);
+		// TODO: is this the right place?
+		RDFFormat.register(RDFJSONFormat.RESTAPIJSON);		
 
 		rootRelation = new RestRelation();
 

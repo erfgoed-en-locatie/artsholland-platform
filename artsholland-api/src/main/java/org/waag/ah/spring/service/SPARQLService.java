@@ -43,7 +43,8 @@ public class SPARQLService {
 		MIME_APPLICATION_JSON 		= "application/json",
 		MIME_APPLICATION_RDF_JSON 	= "application/rdf+json",
 		MIME_SPARQL_RESULTS_XML 	= "application/sparql-results+xml",
-		MIME_SPARQL_RESULTS_JSON 	= "application/sparql-results+json";
+		MIME_SPARQL_RESULTS_JSON 	= "application/sparql-results+json",
+		MIME_SPARQL_RESULTS_CSV = "text/csv";
 	
 	private static List<String> allowedFormats = Arrays.asList(
 			MIME_APPLICATION_XML,
@@ -51,7 +52,8 @@ public class SPARQLService {
 			MIME_APPLICATION_JSON,
 			MIME_APPLICATION_RDF_JSON,
 			MIME_SPARQL_RESULTS_JSON,
-			MIME_SPARQL_RESULTS_XML);
+			MIME_SPARQL_RESULTS_XML,
+			MIME_SPARQL_RESULTS_CSV);
 	
 	private static Map<String, String> mappedFormats = new HashMap<String, String>();
 	static {
