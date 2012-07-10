@@ -7,14 +7,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.rest.RestParameters;
 
 public class RestRelation {
-
-	// TODO: get from properties
-	public static String OBJECT_NAMESPACE ="http://data.artsholland.com/";
-	public static String CLASS_NAMESPACE = "http://purl.org/artsholland/1.0/";
-	
+		
 	public static enum RelationQuantity {
 		SINGLE, MULTIPLE
 	};
@@ -35,7 +35,10 @@ public class RestRelation {
 	
 	Map<String, SPARQLFilter> filters = new HashMap<String, SPARQLFilter>();
 	
-	private RestRelation parent = null;	
+	private RestRelation parent = null;
+	
+	private String classUri;
+	private String objectUri;
 	
 	public RestRelation() {
 		this.parameter = null;
@@ -43,6 +46,21 @@ public class RestRelation {
 		this.quantity = null;
 		this.type = null;
 		this.parameterized = false;
+		
+
+		PropertiesConfiguration config;
+		try {
+			config = PlatformConfigHelper.getConfig();
+			this.classUri = config.getString("platform.classUri");
+			this.objectUri = config.getString("platform.objectUri");
+		} catch (ConfigurationException e) {
+			// TODO: add catch code
+		} 
+
+				
+		// TODO: get from properties
+		//public static String OBJECT_NAMESPACE ="http://data.artsholland.com/";
+		//public static String CLASS_NAMESPACE = "http://purl.org/artsholland/1.0/";		
 	}
 	
 	public RestRelation(String parameter, String classURI, RelationQuantity quantity, RelationType type, boolean parameterized) {
@@ -72,7 +90,7 @@ public class RestRelation {
 
 	// TODO: include namespace parameter
 	public String getClassURI() {
-		return CLASS_NAMESPACE + classURI;
+		return /*CLASS_NAMESPACE +*/ classURI;
 	}
 
 	public void setClassURI(String classURI) {
@@ -91,10 +109,10 @@ public class RestRelation {
 				return parent.getObjectURI(parameters, i - 1) + "/" + parameter;
 			}
 		}
-		if (OBJECT_NAMESPACE.endsWith("/")) {
-			return OBJECT_NAMESPACE.substring(0, OBJECT_NAMESPACE.length() - 1);
+		if (objectUri.endsWith("/")) {
+			return objectUri.substring(0, objectUri.length() - 1);
 		}
-		return OBJECT_NAMESPACE;
+		return objectUri;
 	}
 
 	public void setObjectURI(String objectURI) {
