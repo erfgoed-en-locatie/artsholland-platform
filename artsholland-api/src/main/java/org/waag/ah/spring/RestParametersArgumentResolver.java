@@ -123,8 +123,9 @@ public class RestParametersArgumentResolver implements
 	 * @since	Apr 7, 2012
 	 */
 	private boolean getBooleanValue(Map<String, String[]> paramMap, String key) {
-		if (paramMap.containsKey(key) && paramMap.get(key).length == 1) {
-			return paramMap.get(key)[0].equals("1") ? true : false;
+		if (paramMap.containsKey(key)) {
+			String value = paramMap.get(key)[0];
+			return (value.equals("1") || value.toLowerCase().equals("true")) ? true : false;
 		}
 		return false;
 	}
