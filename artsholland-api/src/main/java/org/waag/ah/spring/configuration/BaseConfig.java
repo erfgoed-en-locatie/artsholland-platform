@@ -13,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.waag.ah.spring.RestParametersArgumentResolver;
+import org.waag.ah.spring.SPARQLParametersArgumentResolver;
 
 /**
  * API configuration class.
@@ -29,6 +30,7 @@ public class BaseConfig extends WebMvcConfigurerAdapter {
 	public void addArgumentResolvers(
 			List<HandlerMethodArgumentResolver> argumentResolvers) {
 		argumentResolvers.add(new RestParametersArgumentResolver());
+		argumentResolvers.add(new SPARQLParametersArgumentResolver());
 	}
 
 	@Override

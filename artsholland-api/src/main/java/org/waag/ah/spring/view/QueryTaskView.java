@@ -1,6 +1,5 @@
 package org.waag.ah.spring.view;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -12,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.parser.ParsedQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -21,27 +21,22 @@ import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.WebUtils;
 import org.waag.ah.QueryService;
 import org.waag.ah.QueryTask;
+import org.waag.ah.WriterContentTypeConfig;
+import org.waag.ah.rdf.RDFJSONFormat;
 import org.waag.ah.rdf.RDFWriterConfig;
 import org.waag.ah.rdf.RdfQueryDefinition;
+import org.waag.ah.rest.util.MIMEParse;
+
+import com.bigdata.rdf.sparql.ast.QueryType;
 
 public class QueryTaskView extends AbstractView {
 	final static Logger logger = LoggerFactory.getLogger(QueryTaskView.class);
 	static final UrlPathHelper urlPathHelper = new UrlPathHelper();
 	public static String MODEL_QUERY = "queryDefinition";
-	public static final String DEFAULT_TYPE = "json";
-
+	
 	private QueryService queryService;
 	private ExecutorService executor;
-
-	private static Map<String, String> supportedFormats = new HashMap<String, String>();
-	static {
-		supportedFormats.put("json", "application/json");
-		supportedFormats.put("rdf", "application/rdf");
-		supportedFormats.put("turtle", "text/turtle");
-		supportedFormats.put("csv", "text/csv");
-		// supportedFormats.put("n3", "text/n3"); // Not supported by Bigdata/Sesame
-	}
-
+	
 	public QueryTaskView(QueryService queryService) {
 		this.queryService = queryService;
 		this.executor = Executors.newCachedThreadPool();
@@ -53,20 +48,41 @@ public class QueryTaskView extends AbstractView {
 			throws Exception {
 		Assert.isTrue(model.containsKey(MODEL_QUERY));
 		RdfQueryDefinition query = (RdfQueryDefinition) model.get(MODEL_QUERY);
-
-		String mimeType = getMediaType(request);
-		if (mimeType == null) {
-			response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE);
-			return;
-		}
-
 		RDFWriterConfig config = query.getWriterConfig();
-		config.setFormat(mimeType);
-		response.setContentType(mimeType + "; charset=UTF-8");
+		WriterContentTypeConfig typeConfig = config.getContentTypeConfig();
+		
+		try {			
+			ParsedQuery parsedQuery = queryService.getParsedQuery(query, config);
+			QueryType queryType = queryService.getQueryType(parsedQuery);
+			
+			String contentType = getRequestedContentType(request, typeConfig, queryType);
 
-		try {
-			QueryTask queryTask = queryService.getQueryTask(query,
-					query.getWriterConfig(), response.getOutputStream());
+			if (contentType == null) {
+				response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE);
+				return;
+			}			
+			
+			config.setContentType(contentType);
+						
+			if (WriterContentTypeConfig.isJSON(contentType) && config.getJSONPCallback() != null && config.getJSONPCallback().length() > 1) {
+				config.setJSONP(true);
+				contentType = WriterContentTypeConfig.MIME_APPLICATION_JAVASCRIPT;
+			} else {
+				// Use text/plain when target is browser:
+				if (config.isOverrideResponseContentType()) {
+					contentType = config.getResponseContentType();	
+				} else if (config.getContentType() == RDFJSONFormat.MIMETYPE) {
+					// Or when content-type is our custom "application/x-waag-artsholland-restapi+json",
+					// change to default JSON content-type
+					contentType = WriterContentTypeConfig.MIME_APPLICATION_JSON;
+				}
+			}
+			
+			response.setContentType(contentType + "; charset=UTF-8");
+			
+			QueryTask queryTask = queryService.getQueryTask(parsedQuery, query,
+					config, response.getOutputStream());				
+				
 			if (query.getCountQuery() != null) {
 				config.setMetaData("count", queryTask.getCount());
 			}
@@ -93,13 +109,19 @@ public class QueryTaskView extends AbstractView {
 		}
 	}
 
-	private String getMediaType(HttpServletRequest request) {
+	// TODO: move to other class?
+	private String getRequestedContentType(HttpServletRequest request, WriterContentTypeConfig typeConfig, QueryType queryType) {
+		String extension = getExtension(request);		
+		String extensionType = typeConfig.mapExtension(queryType, extension);		
+		String acceptType = MIMEParse.bestMatch(typeConfig.getSupportedContentTypes(queryType), request.getHeader("Accept"));
+		
+		return typeConfig.getContentType(queryType, extensionType, acceptType);
+	}
+
+	public static String getExtension(HttpServletRequest request) {
 		String requestUri = urlPathHelper.getLookupPathForRequest(request);
 		String filename = WebUtils.extractFullFilenameFromUrlPath(requestUri);
 		String extension = StringUtils.getFilenameExtension(filename);
-		if (extension == null) {
-			extension = DEFAULT_TYPE;
-		}
-		return supportedFormats.get(extension);
+		return extension;
 	}
 }

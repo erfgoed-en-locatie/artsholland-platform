@@ -1,6 +1,7 @@
 package org.waag.ah.rdf;
 
 import java.io.OutputStream;
+import java.io.PrintStream;
 
 import org.openrdf.model.Literal;
 import org.openrdf.model.Value;
@@ -18,7 +19,7 @@ import org.waag.ah.QueryDefinition;
 import org.waag.ah.QueryTask;
 import org.waag.ah.WriterConfig;
 
-abstract class AbstractQueryTask implements QueryTask {
+public abstract class AbstractQueryTask implements QueryTask {
 	private static final Logger logger = LoggerFactory
 			.getLogger(AbstractQueryTask.class);
 	
@@ -34,7 +35,7 @@ abstract class AbstractQueryTask implements QueryTask {
 		this.config = config;
 		this.os = os;
 	}
-
+	
 	@Override
 	public long getCount() throws UnsupportedOperationException,
 			MalformedQueryException {
@@ -75,7 +76,21 @@ abstract class AbstractQueryTask implements QueryTask {
 	@Override
 	public Void call() {
 		try {
+			String jsonpCallback = null;
+			PrintStream printStream = null;
+			
+			if (config.isJSONP()) {
+				jsonpCallback = config.getJSONPCallback();				
+				
+				printStream = new PrintStream(os);
+				printStream.print(jsonpCallback + "(");
+			}
+			
 			doQuery(query, config, conn, os);
+			
+			if (config.isJSONP()) {
+				printStream.print(")");	
+			}			
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		} finally {
