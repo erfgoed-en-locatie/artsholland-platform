@@ -89,7 +89,7 @@ public abstract class AbstractQueryTask implements QueryTask {
 			doQuery(query, config, conn, os);
 			
 			if (config.isJSONP()) {
-				printStream.print(")");	
+				printStream.print(");");	
 			}			
 		} catch (Exception e) {
 			logger.error(e.getMessage());
