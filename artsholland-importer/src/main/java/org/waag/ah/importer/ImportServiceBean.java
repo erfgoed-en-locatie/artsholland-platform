@@ -9,7 +9,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateful;
 
 import org.openrdf.repository.RepositoryConnection;
-import org.openrdf.repository.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -23,7 +22,7 @@ import org.waag.ah.sesame.StoringRDFParser;
 @Stateful
 public class ImportServiceBean implements ImportService {
 	private static final Logger logger = LoggerFactory.getLogger(ImportServiceBean.class);
-	private RepositoryConnection conn;
+//	private RepositoryConnection conn;
 
 	private final int RETRY_MAX_COUNT = 3;
 	private final long RETRY_TIMEOUT = 5000;
@@ -37,25 +36,25 @@ public class ImportServiceBean implements ImportService {
 //		connect();
 //	}
 	
-	private void connect() {
-		try {
-			if (conn == null || !conn.isOpen()) {
-				conn = cf.getConnection();
-			}
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-		}
-	}
+//	private void connect() {
+//		try {
+//			if (conn == null || !conn.isOpen()) {
+//				conn = cf.getConnection();
+//			}
+//		} catch (Exception e) {
+//			logger.error(e.getMessage(), e);
+//		}
+//	}
 	
-	private void disconnect() {
-		try {
-			if (conn != null && conn.isOpen()) {
-				conn.close();
-			}
-		} catch (RepositoryException e) {
-			logger.warn("Error closing connection: "+e.getMessage(), e);
-		}
-	}
+//	private void disconnect() {
+//		try {
+//			if (conn != null && conn.isOpen()) {
+//				conn.close();
+//			}
+//		} catch (RepositoryException e) {
+//			logger.warn("Error closing connection: "+e.getMessage(), e);
+//		}
+//	}
 	
 //	@PreDestroy
 //	public void destroy() {
@@ -74,10 +73,11 @@ public class ImportServiceBean implements ImportService {
 			logger.debug("Processing importing job: "+metadata.getJobIdentifier());
 		}
 		
+		RepositoryConnection conn = cf.getConnection();
 		StoringRDFParser parser = new StoringRDFParser();		
 		ImportResource curResource = null;
 		try {
-			connect();
+//			connect();
 			int pos = 1;
 			long oldsize = conn.size();
 			int retryCount = 0;
@@ -113,8 +113,8 @@ public class ImportServiceBean implements ImportService {
 			logger.error("Error importimg url <"+curResource+">: "+e);
 			conn.rollback();
 			throw e;
-		} finally {
-			disconnect();
+//		} finally {
+//			disconnect();
 		}
 	}
 	
