@@ -58,21 +58,23 @@ function Snorql() {
         if (browse && browse[1] == 'classes') {
             var resultTitle = 'List of all classes:';
             var query = 'SELECT DISTINCT ?class\n' +
-                    'WHERE { [] a ?class }\n' +
-                    'ORDER BY ?class';
+                    'WHERE {\n' +
+                    '\t[] a ?class\n' +
+                    '} ORDER BY ?class';
         }
         if (browse && browse[1] == 'properties') {
             var resultTitle = 'List of all properties:';
             var query = 'SELECT DISTINCT ?property\n' +
-                    'WHERE { [] ?property [] }\n' +
-                    'ORDER BY ?property';
+                    'WHERE {\n' +
+                    '\t[] ?property []\n' +
+                    '} ORDER BY ?property';
         }
         if (browse && browse[1] == 'graphs') {
             var resultTitle = 'List of all named graphs:';
             var querytext = 'SELECT DISTINCT ?namedgraph ?label\n' +
                     'WHERE {\n' +
-                    '  GRAPH ?namedgraph { ?s ?p ?o }\n' +
-                    '  OPTIONAL { ?namedgraph rdfs:label ?label }\n' +
+                    '\tGRAPH ?namedgraph { ?s ?p ?o }\n' +
+                    '\tOPTIONAL { ?namedgraph rdfs:label ?label }\n' +
                     '}\n' +
                     'ORDER BY ?namedgraph';
             var query = 'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n' + querytext;
@@ -81,24 +83,26 @@ function Snorql() {
         if (match) {
             var resultTitle = 'All uses of property ' + decodeURIComponent(match[1]) + ':';
             var query = 'SELECT DISTINCT ?resource ?value\n' +
-                    'WHERE { ?resource <' + decodeURIComponent(match[1]) + '> ?value }\n' +
-                    'ORDER BY ?resource ?value';
+                    'WHERE {\n' +
+                    '\t?resource <' + decodeURIComponent(match[1]) + '> ?value\n' +
+                    '} ORDER BY ?resource ?value';
         }
         var match = queryString.match(/class=([^&]*)/);
         if (match) {
             var resultTitle = 'All instances of class ' + decodeURIComponent(match[1]) + ':';
             var query = 'SELECT DISTINCT ?instance\n' +
-                    'WHERE { ?instance a <' + decodeURIComponent(match[1]) + '> }\n' +
-                    'ORDER BY ?instance';
+                    'WHERE {\n' +
+                    '\t?instance a <' + decodeURIComponent(match[1]) + '>\n' +
+                    '} ORDER BY ?instance';
         }
         var match = queryString.match(/describe=([^&]*)/);
         if (match) {
             var resultTitle = 'Description of ' + decodeURIComponent(match[1]) + ':';
             var query = 'SELECT DISTINCT ?property ?hasValue ?isValueOf\n' +
                     'WHERE {\n' +
-                    '  { <' + decodeURIComponent(match[1]) + '> ?property ?hasValue }\n' +
-                    '  UNION\n' +
-                    '  { ?isValueOf ?property <' + decodeURIComponent(match[1]) + '> }\n' +
+                    '\t{ <' + decodeURIComponent(match[1]) + '> ?property ?hasValue }\n' +
+                    '\tUNION\n' +
+                    '\t{ ?isValueOf ?property <' + decodeURIComponent(match[1]) + '> }\n' +
                     '}\n' +
                     'ORDER BY (!BOUND(?hasValue)) ?property ?hasValue ?isValueOf';
         }
