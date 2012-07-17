@@ -45,7 +45,7 @@
 			<durability>true</durability>
 			<recover>false</recover>
 		</job>
-
+<!-- 
 		<trigger>
 			<simple>
 				<name>NBTCImportTrigger</name>
@@ -57,7 +57,7 @@
 			</simple>
 		</trigger>
 
-		<trigger>
+ -->		<trigger>
 			<cron>
 				<name>UitbaseIncrementalImportTrigger</name>
 				<group>IncrementalImport</group>
