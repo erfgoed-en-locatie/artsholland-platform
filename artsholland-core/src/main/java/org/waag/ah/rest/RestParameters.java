@@ -16,11 +16,13 @@ public class RestParameters {
 	private boolean hideMetadata = false;
 	private boolean prettyPrint = false;
 	private boolean countTotals = false;
+	private boolean plainText = false;
 
 	public static long DEFAULT_RESULT_LIMIT = 10;
 
 	private LinkedList<String> uriPathParts = new LinkedList<String>();
 	private Map<String, String[]> parameterMap;
+	private String jsonpCallback;
 		
 	public boolean isPrettyPrint() {
 		return prettyPrint;
@@ -132,6 +134,22 @@ public class RestParameters {
 
 	public void setCountTotals(boolean countTotals) {
 		this.countTotals = countTotals;
+	}
+
+	public void setJSONPCallback(String jsonpCallback) {
+		this.jsonpCallback = jsonpCallback;		
+	}
+	
+	public String getJSONPCallback() {
+		return jsonpCallback;		
+	}
+
+	public boolean isPlainText() {
+		return plainText;
+	}
+
+	public void setPlainText(boolean plainText) {
+		this.plainText = plainText;
 	}
 
 }

@@ -26,7 +26,7 @@ public class AskQueryTask extends AbstractQueryTask {
 //		final BooleanQueryResultFormat format = BooleanQueryResultFormat
 //		.forMIMEType(config.getFormat(), BooleanQueryResultFormat.SPARQL);
 		final BooleanQueryResultFormat format = BooleanQueryResultWriterRegistry
-				.getInstance().getFileFormatForMIMEType(config.getFormat());
+				.getInstance().getFileFormatForMIMEType(config.getContentType());
 		final BooleanQueryResultWriter w = BooleanQueryResultWriterRegistry
 				.getInstance().get(format).getWriter(os);
 		final boolean result = sailBooleanQuery.evaluate();

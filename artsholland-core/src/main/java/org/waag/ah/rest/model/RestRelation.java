@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.rest.RestParameters;
 
@@ -56,11 +55,6 @@ public class RestRelation {
 		} catch (ConfigurationException e) {
 			// TODO: add catch code
 		} 
-
-				
-		// TODO: get from properties
-		//public static String OBJECT_NAMESPACE ="http://data.artsholland.com/";
-		//public static String CLASS_NAMESPACE = "http://purl.org/artsholland/1.0/";		
 	}
 	
 	public RestRelation(String parameter, String classURI, RelationQuantity quantity, RelationType type, boolean parameterized) {
