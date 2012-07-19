@@ -1,4 +1,8 @@
-var D2R_namespacePrefixes = {
+/*
+ * Now dynamically loaded from
+ * /static/namespaces/namespaces.jsp
+ */
+/*var D2R_namespacePrefixes = {
 	ah: "http://purl.org/artsholland/1.0/",
     rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
@@ -11,7 +15,8 @@ var D2R_namespacePrefixes = {
     vcard: "http://www.w3.org/2006/vcard/ns#",
     osgeo: "http://rdf.opensahara.com/type/geo/",
 	search: "http://rdf.opensahara.com/search#",
+	bd: "http://www.bigdata.com/rdf/search#",
 	fn: "http://www.w3.org/2005/xpath-functions#", 
 	gr: "http://purl.org/goodrelations/v1#"
-};
+};*/
 

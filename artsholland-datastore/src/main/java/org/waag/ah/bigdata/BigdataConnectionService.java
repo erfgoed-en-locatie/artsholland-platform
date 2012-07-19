@@ -1,5 +1,7 @@
 package org.waag.ah.bigdata;
 
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Properties;
 
 import javax.annotation.PostConstruct;
@@ -14,6 +16,7 @@ import org.openrdf.repository.sail.SailRepositoryConnection;
 import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.waag.ah.PlatformConfig;
 import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.useekm.PostgisIndexerSettingsGenerator;
@@ -28,14 +31,17 @@ import com.useekm.indexing.postgis.PostgisIndexerSettings;
 public class BigdataConnectionService implements RepositoryConnectionFactory {
 	final static Logger logger = LoggerFactory.getLogger(BigdataConnectionService.class);
 
+	private PlatformConfig config; 
 	private PropertiesConfiguration properties;
 	private SailRepository repo;
-	private SailRepositoryConnection conn; 
+	private SailRepositoryConnection conn;
 
 	@PostConstruct
 	public synchronized void connect() {
 		
-		try {			
+		try {
+			config = PlatformConfigHelper.getConfig(); 
+			
 			Properties properties = ConfigurationConverter.getProperties(loadProperties());
 			PostgisIndexerSettings settings = PostgisIndexerSettingsGenerator.generateSettings();
 			
@@ -49,9 +55,12 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 			conn = repo.getConnection();
 			conn.setAutoCommit(false);
 			
-			conn.add(BigdataConnectionService.class
-					.getResourceAsStream("/artsholland.rdf"),
-					"http://purl.org/artsholland/1.0/", RDFFormat.RDFXML);
+			String uri = config.getString("platform.classUri").replaceAll("\\/$", "");
+			URLConnection con = new URL(uri).openConnection();
+			con.connect();
+//			System.out.println( "redirected url: " + con.getURL() );
+			
+			conn.add(con.getInputStream(), uri, RDFFormat.RDFXML);
 			conn.commit();
 			
 //			IndexingSailConnection idxConn = idxSail.getConnection();
@@ -85,7 +94,6 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 	 * @since Mar 8, 2012
 	 */
 	private Configuration loadProperties() throws ConfigurationException {
-		PropertiesConfiguration config = PlatformConfigHelper.getConfig(); 
 		properties = new PropertiesConfiguration("bigdata.properties");
 		properties.setProperty(Options.FILE, config.getProperty("bigdata.journal"));
 		return properties;

@@ -20,11 +20,11 @@ public class TupleQueryTask extends AbstractQueryTask {
 	@Override
 	protected void doQuery(QueryDefinition query, WriterConfig config,
 			RepositoryConnection cxn, OutputStream os) throws Exception {
-		final TupleQuery sailTupleQuery = cxn
+		final TupleQuery sailTupleQuery = cxn 
 				.prepareTupleQuery(query.getQueryLanguage(), query.getQuery(),
 						config.getBaseUri());
 		final TupleQueryResultFormat format = TupleQueryResultWriterRegistry
-				.getInstance().getFileFormatForMIMEType(config.getFormat());
+				.getInstance().getFileFormatForMIMEType(config.getContentType());
 		final TupleQueryResultWriter w = TupleQueryResultWriterRegistry
 				.getInstance().get(format).getWriter(os);
 		sailTupleQuery.evaluate(w);

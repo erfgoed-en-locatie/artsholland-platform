@@ -8,9 +8,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.waag.ah.WriterContentTypeConfig;
 import org.waag.ah.rdf.RDFJSONFormat;
 import org.waag.ah.rdf.RDFWriterConfig;
 import org.waag.ah.rdf.RdfQueryDefinition;
+import org.waag.ah.rdf.RestWriterTypeConfig;
 import org.waag.ah.rest.RestParameters;
 import org.waag.ah.rest.model.RestRelation;
 import org.waag.ah.rest.model.RestRelation.RelationQuantity;
@@ -31,8 +33,9 @@ public class RestService implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
+
+		// TODO: is this the right place?
 		RDFFormat.register(RDFJSONFormat.RESTAPIJSON);
-//		RDFFormat.register(RDFFormat.RDFXML);
 
 		rootRelation = new RestRelation();
 
@@ -81,11 +84,6 @@ public class RestService implements InitializingBean {
 		eventAttachmentRelation.addRelation("id", "ah:Attachment",	RelationQuantity.SINGLE, RelationType.SELF, true);
 		
   	// TODO: ?this instead of ?object  ???
-
-		/*
-		 * Aanpassen:
-		 * ticket
-		 */
 		
 		SPARQLFilter venuesLocalityFilter = new SPARQLFilter("locality", "?object ah:locationAddress ?address . ?address vcard:locality ?locality.", "lcase(?locality) = lcase(\"?parameter\")");
 		
@@ -158,7 +156,7 @@ public class RestService implements InitializingBean {
 		if (query == null) {
 			throw new MalformedQueryException();
 		}
-		RDFWriterConfig config = getDefaultWriterConfig(params);
+		RDFWriterConfig config = getDefaultWriterConfig(params);		
 		query.setWriterConfig(config);
 
 		if (!query.isSingle()) {
@@ -167,13 +165,20 @@ public class RestService implements InitializingBean {
 		}
 		
 		config.setWrapResults(true);
-		logger.info("RETURN PAGED QUERY");
+
+		// TODO: JSONP support!!!!
+
 		return query;
 	}
 
 	private RDFWriterConfig getDefaultWriterConfig(RestParameters params) {
 		RDFWriterConfig config = new RDFWriterConfig();
+		config.setContentTypeConfig(new RestWriterTypeConfig());
 		config.setPrettyPrint(params.getPretty());
+		config.setJSONPCallback(params.getJSONPCallback());
+		if (params.isPlainText()) {
+			config.setResponseContentType(WriterContentTypeConfig.MIME_TEXT_PLAIN);
+		}
 		config.setBaseUri(platformConfig.getString("platform.baseUri"));
 		return config;
 	}
