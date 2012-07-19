@@ -9,6 +9,6 @@ public enum ImportStrategy {
 		if (value == null || "".equals(value)) {
 			return null;
 		}
-		return valueOf(value);
+		return valueOf(value.toUpperCase());
 	}	
 }

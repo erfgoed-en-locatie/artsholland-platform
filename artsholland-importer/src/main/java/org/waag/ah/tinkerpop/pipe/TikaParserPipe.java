@@ -11,7 +11,7 @@ import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
-import org.apache.tika.sax.ToXMLContentHandler;
+import org.waag.ah.tika.parser.rdf.ToRDFContentHandler;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -25,7 +25,7 @@ public class TikaParserPipe extends AbstractStreamingPipe<URL> {
 		InputStream in = conn.getInputStream();		
 		
 		AutoDetectParser parser = new AutoDetectParser();
-		ContentHandler handler = new ToXMLContentHandler(out, "UTF-8");
+		ContentHandler handler = new ToRDFContentHandler(out, "UTF-8");
 
 		Metadata metadata = new Metadata();
 		metadata.add(Metadata.RESOURCE_NAME_KEY, url.toExternalForm());

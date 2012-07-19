@@ -15,6 +15,7 @@ import org.openrdf.rio.RDFHandlerException;
 import org.waag.ah.WriterConfig;
 import org.waag.ah.rdf.ConfigurableRDFWriter;
 import org.waag.ah.rdf.RDFGSON;
+import org.waag.ah.rdf.RDFJSON;
 import org.waag.ah.rdf.RDFJSONFormat;
 
 import com.google.gson.stream.JsonWriter;
@@ -27,6 +28,8 @@ public class RestJSONWriter extends RDFJSONWriter implements
 	private RDFGSON rdfGSON;
 	private WriterConfig config;
 
+	private RDFJSON rdfJSON;
+
 	public RestJSONWriter(final OutputStream out) {
 		this(new OutputStreamWriter(out, Charset.forName("UTF-8")));
 	}
@@ -36,7 +39,8 @@ public class RestJSONWriter extends RDFJSONWriter implements
 		this.writer = writer;
 
 		jsonWriter = new JsonWriter(writer);
-		rdfGSON = new RDFGSON(jsonWriter);		
+		rdfGSON = new RDFGSON(jsonWriter);
+
 	}
 
 	@Override

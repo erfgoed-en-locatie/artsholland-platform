@@ -42,7 +42,7 @@ public class UrlImportJob implements Job {
 	private URI source;
 
 	private UrlGenerator urlGenerator;
-	private ImportStrategy strategy;
+	private ImportStrategy strategy = ImportStrategy.FULL;
 
 	public UrlImportJob() throws NamingException, ConnectionException {
 		InitialContext ic = new InitialContext();
@@ -68,7 +68,6 @@ public class UrlImportJob implements Job {
 		result.put("jobId", context.getFireInstanceId());
 		result.put("timestamp", context.getFireTime().getTime());
 		result.put("strategy", this.strategy.toString());
-		
 		
 		try {
 			ImportConfig config = new ImportConfig();

@@ -5,9 +5,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
-import javax.ejb.EJB;
+import javax.annotation.PostConstruct;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -15,6 +20,7 @@ import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryLanguage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.waag.ah.QueryService;
 import org.waag.ah.QueryTask;
@@ -26,8 +32,14 @@ import org.waag.ah.rest.util.MIMEParse;
 public class SPARQLService {
 	private static final Logger logger = LoggerFactory.getLogger(SPARQLService.class);
 	
-	@EJB(mappedName="java:app/datastore/BigdataQueryService")
-	private QueryService context;
+//	@EJB(mappedName="java:app/datastore/BigdataConnectionService")
+//	private RepositoryConnectionFactory cf;
+	
+//	@EJB(mappedName="java:app/datastore/BigdataQueryService")
+	@Autowired
+	private QueryService queryService;
+
+	private ExecutorService executor;
 
 	public static final transient String
 		MIME_TEXT_PLAIN 			= "text/plain",
@@ -53,7 +65,12 @@ public class SPARQLService {
 		mappedFormats.put(MIME_APPLICATION_XML, MIME_SPARQL_RESULTS_XML);
 		mappedFormats.put(MIME_APPLICATION_RDF_XML, MIME_SPARQL_RESULTS_XML);
 	}
-
+	
+	@PostConstruct
+	public void init() {
+		this.executor = Executors.newCachedThreadPool();
+	}
+	
 	public void query(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String mimeType = MIMEParse.bestMatch(allowedFormats, request.getHeader("Accept"));
         
@@ -74,23 +91,53 @@ public class SPARQLService {
 			RdfQueryDefinition query = new RdfQueryDefinition(
 					QueryLanguage.SPARQL, request.getParameter("query"));
         	
-			final QueryTask queryTask = context.getQueryTask(query, config,
-					response.getOutputStream());
-
-            if (logger.isTraceEnabled()) {
-                logger.trace("Will run query: " + query);
-            }
-
-            FutureTask<Void> ft = new FutureTask<Void>(queryTask);//context.executeQueryTask(queryTask);
+			ServletOutputStream out = response.getOutputStream();
+			final QueryTask queryTask = queryService.getQueryTask(query, config, out);
             response.setStatus(HttpServletResponse.SC_OK);
-            ft.run();
-            ft.get();
-		} catch (MalformedQueryException ex) {
+
+            Future<Void> ft = executor.submit(queryTask);
+            
+            try {
+            	ft.get(30, TimeUnit.SECONDS);
+            } catch (TimeoutException e) {
+            	logger.error("Query execution timeout: "+query.getQuery());
+            	ft.cancel(true);
+    			response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT,
+    					e.getMessage());	
+    		}
+        } catch (MalformedQueryException ex) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST,
 					ex.getLocalizedMessage());
 		} catch (Exception e) {
+//			e.getCause().printStackTrace();
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-					e.getLocalizedMessage());
+					e.getCause().getMessage());
+		} finally {
+			
 		}
 	}
+	
+//	@Override
+//	public QueryTask getQueryTask(QueryDefinition query,
+//			WriterConfig config, OutputStream out)
+//			throws MalformedQueryException {
+//		QueryParser parser = new SPARQLParserFactory().getParser();
+//		ParsedQuery parsedQuery = parser.parseQuery(query.getQuery(),
+//				config.getBaseUri());
+//		try {
+//			RepositoryConnection conn = cf.getConnection();
+//			if (parsedQuery instanceof ParsedTupleQuery) {
+//				return new TupleQueryTask(conn, query, config, out);
+//			} else if (parsedQuery instanceof ParsedBooleanQuery) {
+//				return new AskQueryTask(conn, query, config, out);
+//			} else if (parsedQuery instanceof ParsedGraphQuery) {
+//				return new GraphQueryTask(conn, query, config, out);
+//			}			
+//		} catch (Exception e) {
+//			throw new RuntimeException(e.getMessage(), e);
+//		}
+//		
+//		throw new MalformedQueryException("Unknown query type: "
+//				+ ParsedQuery.class.getName());
+//	}	
 }

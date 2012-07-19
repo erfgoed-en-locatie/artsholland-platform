@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <job-scheduling-data
-  xmlns="http://www.quartz-scheduler.org/xml/JobSchedulingData"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.quartz-scheduler.org/xml/JobSchedulingData http://www.quartz-scheduler.org/xml/job_scheduling_data_2_0.xsd"
-  version="2.0">
+	xmlns="http://www.quartz-scheduler.org/xml/JobSchedulingData"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.quartz-scheduler.org/xml/JobSchedulingData http://www.quartz-scheduler.org/xml/job_scheduling_data_2_0.xsd"
+	version="2.0">
 
   <pre-processing-commands>
     <delete-jobs-in-group>*</delete-jobs-in-group>
     <delete-triggers-in-group>*</delete-triggers-in-group>
   </pre-processing-commands>
 
-  <processing-directives>
-    <overwrite-existing-data>true</overwrite-existing-data>
-    <ignore-duplicates>false</ignore-duplicates>
-  </processing-directives>
+	<processing-directives>
+		<overwrite-existing-data>true</overwrite-existing-data>
+		<ignore-duplicates>false</ignore-duplicates>
+	</processing-directives>
 
-  <schedule>
+	<schedule>
     
     <!-- UITBASE IMPORT -->
+    
 		<job>
       <name>ImportUitbase</name>
       <group>ImporterService</group>
@@ -32,24 +33,53 @@
         </entry>        
       </job-data-map>
     </job>
-    
+ 
     <trigger>
       <cron>
-        <name>UitbaseFullImportTrigger</name>
+        <name>UitbaseIncrementalImportTrigger</name>
+        <group>IncrementalImport</group>
         <job-name>ImportUitbase</job-name>
         <job-group>ImporterService</job-group>
         <job-data-map>
           <entry>
             <key>strategy</key>
-            <value>INCREMENTAL</value>
+            <value>incremental</value>
           </entry>
         </job-data-map>
         <cron-expression>0 0/1 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
-    </trigger> 
+    </trigger>
+
+    <!-- NBTC IMPORT -->
     
-    <!-- GEONAMES ENRICHER -->
+    <job>
+      <name>ImportNBTC</name>
+      <group>ImporterService</group>
+      <description>Import POI data from NBTC</description>
+      <job-class>org.waag.ah.quartz.UrlImportJob</job-class>
+      <durability>true</durability>
+      <recover>false</recover>
+      <job-data-map>
+        <entry>
+          <key>urlGeneratorClass</key>
+          <value>org.waag.ah.source.nbtc.NBTCUrlGenerator</value>
+        </entry>        
+      </job-data-map>      
+    </job>
+<!-- 
+    <trigger>
+      <simple>
+        <name>NBTCImportTrigger</name>
+        <job-name>ImportNBTC</job-name>
+        <job-group>ImporterService</job-group>
+        <start-time-seconds-in-future>30</start-time-seconds-in-future>
+        <repeat-count>1</repeat-count>
+        <repeat-interval>1</repeat-interval>
+      </simple>
+    </trigger>
+    
+ -->    <!-- GEONAMES ENRICHER -->
     <job>
       <name>GeonamesEnricher</name>
       <group>EnricherService</group>
@@ -96,7 +126,7 @@
       <group>EnricherService</group>
       <description>Enrich objects in triplestore</description>
       <job-class>org.waag.ah.quartz.EnrichObjectJob</job-class>
-      <durability>false</durability>
+      <durability>true</durability>
       <recover>false</recover>
       <job-data-map>
         <entry>
@@ -130,15 +160,22 @@
       </cron>
     </trigger>
 
+
     <!-- DOSA IMPORTER -->
 <!--         
     <job>
       <name>DOSA</name>
       <group>ImporterService</group>
       <description>Import data from DOSA</description>
-      <job-class>org.waag.ah.source.dosa.DOSAImportJob</job-class>
+      <job-class>org.waag.ah.quartz.UrlImportJob</job-class>
       <durability>true</durability>
       <recover>false</recover>
+      <job-data-map>
+        <entry>
+          <key>urlGeneratorClass</key>
+          <value>org.waag.ah.source.dosa.DOSAUrlGenerator</value>
+        </entry>        
+      </job-data-map>            
     </job>
     
     <trigger>
@@ -154,4 +191,5 @@
 -->
     
   </schedule>
+
 </job-scheduling-data>
