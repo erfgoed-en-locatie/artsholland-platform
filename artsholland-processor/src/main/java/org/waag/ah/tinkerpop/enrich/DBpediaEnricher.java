@@ -1,11 +1,12 @@
 package org.waag.ah.tinkerpop.enrich;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
+import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.util.GraphUtil;
 import org.openrdf.query.Binding;
@@ -37,7 +38,7 @@ public class DBpediaEnricher extends AbstractEnricher {
 		try {
 			
 			String classUri = platformConfig.getString("platform.classUri");						
-			Resource homepage = GraphUtil.getOptionalObjectResource(graph, null, vf.createURI("http://xmlns.com/foaf/0.1/homepage"));
+			String homepageStr = GraphUtil.getOptionalObjectResource(graph, null, vf.createURI("http://xmlns.com/foaf/0.1/homepage")).toString();
 			
 			String sparql = 
 					"SELECT ?dbpedia WHERE { " +
@@ -45,21 +46,26 @@ public class DBpediaEnricher extends AbstractEnricher {
 					"			?dbpedia <http://xmlns.com/foaf/0.1/homepage> ?homepage . " +
 					"		}" +
 					"}";
-										
-			TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SPARQL, sparql);
-			query.setBinding("homepage", homepage);
+
+			List<URI> homepages = new ArrayList<URI>();  
+		  Collections.addAll(homepages, vf.createURI(homepageStr), vf.createURI(homepageStr + "/")); 
 			
-			TupleQueryResult queryResult = query.evaluate();
-			
-			while (queryResult.hasNext()) {
-				BindingSet bindingSet = queryResult.next();
-				Binding dbpedia = bindingSet.getBinding("dbpedia");
+		  for (URI homepage : homepages) {
+		  	TupleQuery query = conn.prepareTupleQuery(QueryLanguage.SPARQL, sparql);
+				query.setBinding("homepage", homepage);
 				
-				statements.add(
-					vf.createStatement(graph.getGraphUri(), 
-					vf.createURI(classUri + "dbpedia"), 
-					vf.createURI(dbpedia.getValue().stringValue())));				
-			}			
+				TupleQueryResult queryResult = query.evaluate();
+				
+				while (queryResult.hasNext()) {
+					BindingSet bindingSet = queryResult.next();
+					Binding dbpedia = bindingSet.getBinding("dbpedia");
+					
+					statements.add(
+						vf.createStatement(graph.getGraphUri(), 
+						vf.createURI(classUri + "dbpedia"), 
+						vf.createURI(dbpedia.getValue().stringValue())));				
+				}
+		  }						
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

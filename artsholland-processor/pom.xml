@@ -1,58 +1,70 @@
-<project 
-    xmlns="http://maven.apache.org/POM/4.0.0" 
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>artsholland-processor</artifactId>
-  <name>Enricher</name>
-  <description>Arts Holland data processing module</description>
-  <packaging>ejb</packaging>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>artsholland-processor</artifactId>
+	<name>Enricher</name>
+	<description>Arts Holland data processing module</description>
+	<packaging>ejb</packaging>
 
-  <parent>
-    <groupId>org.waag.artsholland</groupId>
-    <artifactId>artsholland</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-  </parent>
+	<parent>
+		<groupId>org.waag.artsholland</groupId>
+		<artifactId>artsholland</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-ejb-plugin</artifactId>
-        <version>2.3</version>
-        <configuration>
-          <ejbVersion>${ejb.version}</ejbVersion>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-ejb-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<ejbVersion>${ejb.version}</ejbVersion>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.waag.artsholland</groupId>
-      <artifactId>artsholland-core</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <type>ejb</type>
-    </dependency>
-    <dependency>
-      <groupId>cascading</groupId>
-      <artifactId>cascading-11-jdbc</artifactId>
-      <version>0.0.4</version>
-    </dependency>    
-    <dependency>
-      <groupId>bixo</groupId>
-      <artifactId>bixo-core</artifactId>
-      <version>0.7.1</version>
-    </dependency>    
-    <dependency>
-      <groupId>org.apache.hadoop</groupId>
-      <artifactId>hadoop-core</artifactId>
-      <version>1.0.2</version>    
-    </dependency>
-    <dependency>
-      <groupId>org.geonames</groupId>
-      <artifactId>geonames</artifactId>
-      <version>1.6</version>
-    </dependency>
-  </dependencies>
+	<repositories>
+		<repository>
+			<id>foursquareapijava</id>
+			<name>Foursquare V2 API for Java Repository</name>
+			<url>http://foursquare-api-java.googlecode.com/svn/repository</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.waag.artsholland</groupId>
+			<artifactId>artsholland-core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<type>ejb</type>
+		</dependency>
+		<dependency>
+			<groupId>cascading</groupId>
+			<artifactId>cascading-11-jdbc</artifactId>
+			<version>0.0.4</version>
+		</dependency>
+		<dependency>
+			<groupId>bixo</groupId>
+			<artifactId>bixo-core</artifactId>
+			<version>0.7.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-core</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geonames</groupId>
+			<artifactId>geonames</artifactId>
+			<version>1.6</version>
+		</dependency>
+		
+		<dependency>		
+			<groupId>fi.foyt</groupId>
+			<artifactId>foursquare-api</artifactId>
+			<version>1.0.2</version>
+		</dependency>
+	</dependencies>
 </project>

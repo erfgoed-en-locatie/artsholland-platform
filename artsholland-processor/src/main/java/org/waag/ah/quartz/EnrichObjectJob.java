@@ -103,7 +103,7 @@ public class EnrichObjectJob implements Job {
 	}
 	
 	public void setExcludeProperties(String props) {
-		this.includeUris = cleanupUris(props);
+		this.excludeUris = cleanupUris(props);
 	}
 	
 	private List<String> cleanupUris(String uris) {

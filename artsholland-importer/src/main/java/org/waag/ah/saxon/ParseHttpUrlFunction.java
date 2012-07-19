@@ -39,6 +39,9 @@ public class ParseHttpUrlFunction extends ExtensionFunctionDefinition {
 					text = ((StringValue) arguments[0].next()).getStringValue();
 					if (text.length() > 0) {
 						text = text.replace(" ", "%20");
+						
+						// TODO: add trailing slash?
+						
 						if (!(text.startsWith("http://") || text.startsWith("https://"))) {
 							text = "http://" + text;
 						}

@@ -28,6 +28,7 @@ public class AHRDFNamespaces {
 		result.put("search", "http://rdf.opensahara.com/search#");
 		result.put("fn", "http://www.w3.org/2005/xpath-functions#");
 		result.put("gr", "http://purl.org/goodrelations/v1#");
+		result.put("gn", "http://www.geonames.org/ontology#");
 		
 		return Collections.unmodifiableMap(result);	
 	}
