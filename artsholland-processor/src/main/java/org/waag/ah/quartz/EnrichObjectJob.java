@@ -109,7 +109,7 @@ public class EnrichObjectJob implements Job {
 	private List<String> cleanupUris(String uris) {
 		List<String> uriList = new ArrayList<String>();
 		for (String uri : Arrays.asList(uris.split(","))) {
-			uriList.add(uri.replaceAll("\\r|\\n| ", ""));
+			uriList.add(uri.trim().replaceAll("\\r|\\n| ", ""));
 		}
 		return uriList;
 	}

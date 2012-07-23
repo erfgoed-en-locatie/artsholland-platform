@@ -8,6 +8,8 @@ import org.openrdf.model.Statement;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.util.GraphUtil;
 import org.openrdf.model.util.GraphUtilException;
+import org.waag.ah.PlatformConfig;
+import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.rdf.EnricherConfig;
 import org.waag.ah.rdf.NamedGraph;
 import org.waag.ah.tinkerpop.AbstractEnricher;
@@ -16,19 +18,25 @@ import fi.foyt.foursquare.api.FoursquareApi;
 import fi.foyt.foursquare.api.FoursquareApiException;
 import fi.foyt.foursquare.api.Result;
 import fi.foyt.foursquare.api.entities.CompactVenue;
+import fi.foyt.foursquare.api.entities.Contact;
 import fi.foyt.foursquare.api.entities.VenuesSearchResult;
 
 public class SocialMediaEnricher extends AbstractEnricher {
 
+	private PlatformConfig platformConfig;
+
 	public SocialMediaEnricher(EnricherConfig enricherConfig)
 			throws ConfigurationException {
 		super(enricherConfig);
+		this.platformConfig = PlatformConfigHelper.getConfig();
 	}
 
 	@Override
 	public List<Statement> enrich(EnricherConfig config, NamedGraph graph) {
 		List<Statement> statements = new ArrayList<Statement>();
 		ValueFactory vf = graph.getValueFactory();
+
+		String classUri = platformConfig.getString("platform.classUri");
 
 		// Facebook, met FQL:
 		// SELECT name, website, page_url, fan_count, location FROM page WHERE name
@@ -45,35 +53,53 @@ public class SocialMediaEnricher extends AbstractEnricher {
 		// https://developer.foursquare.com/docs/venues/search
 
 		try {
-			String latStr = GraphUtil.getOptionalObjectResource(graph, null,
-					vf.createURI("http://www.w3.org/2003/01/geo/wgs84_pos#lat"))
-					.toString();
-			String longStr = GraphUtil.getOptionalObjectResource(graph, null,
-					vf.createURI("http://www.w3.org/2003/01/geo/wgs84_pos#long"))
-					.toString();
+			// AHRDFNamespaces.getFullURI("foaf:homepage")
 			String homepageStr = GraphUtil.getOptionalObjectResource(graph, null,
 					vf.createURI("http://xmlns.com/foaf/0.1/homepage")).toString();
+
+			float lat = GraphUtil.getOptionalObjectLiteral(graph, null,
+					vf.createURI("http://www.w3.org/2003/01/geo/wgs84_pos#lat"))
+					.floatValue();
+
+			float lon = GraphUtil.getOptionalObjectLiteral(graph, null,
+					vf.createURI("http://www.w3.org/2003/01/geo/wgs84_pos#long"))
+					.floatValue();
 
 			FoursquareApi foursquareApi = new FoursquareApi(
 					"IPA5HMU0XWTH1CTSTFBSZZX3MYEEANCG3LH4YCIRAMVLZBI4",
 					"5FXJKYR4LU4IST0XWG0TJXPKVJ1SKNV5TJOAJC32N4DQ3RMZ",
 					"http://dev.artsholland.com");
 
-			Result<VenuesSearchResult> result = foursquareApi.venuesSearch(
-					latStr + "," + longStr, null, null, null, null, null,
-					null, null, homepageStr, null, null);
-			if (result.getMeta().getCode() == 200) {
+			Result<VenuesSearchResult> searchResult = foursquareApi.venuesSearch(
+					Float.toString(lat) + "," + Float.toString(lon), null, null, null,
+					null, null, null, null, homepageStr, null, null);
+			if (searchResult.getMeta().getCode() == 200) {
 				// if query was ok we can finally we do something with the data
-				for (CompactVenue venue : result.getResult().getVenues()) {
-					// TODO: Do something we the data
-					System.out.println(venue.getName());
+				for (CompactVenue venue : searchResult.getResult().getVenues()) {
+					String foursquareId = venue.getId();
+					Contact contact = venue.getContact();
+					String twitterId = contact.getTwitter();
+					String facebookId = contact.getFacebook();
+
+					if (foursquareId != null) {
+						statements.add(vf.createStatement(graph.getGraphUri(),
+								vf.createURI(classUri + "foursquare"),
+								vf.createURI(getFoursquareUrl(foursquareId))));
+					}
+
+					if (twitterId != null) {
+						statements.add(vf.createStatement(graph.getGraphUri(),
+								vf.createURI(classUri + "twitter"),
+								vf.createURI(getTwitterUrl(twitterId))));
+					}
+
+					if (facebookId != null) {
+						statements.add(vf.createStatement(graph.getGraphUri(),
+								vf.createURI(classUri + "facebook"),
+								vf.createURI(getFacebookUrl(facebookId))));
+					}
+
 				}
-			} else {
-				// TODO: Proper error handling
-				System.out.println("Error occured: ");
-				System.out.println("  code: " + result.getMeta().getCode());
-				System.out.println("  type: " + result.getMeta().getErrorType());
-				System.out.println("  detail: " + result.getMeta().getErrorDetail());
 			}
 		} catch (FoursquareApiException e) {
 			e.printStackTrace();
@@ -82,5 +108,17 @@ public class SocialMediaEnricher extends AbstractEnricher {
 		}
 
 		return statements;
+	}
+
+	private String getFoursquareUrl(String foursquareId) {
+		return "http://foursquare.com/venue/" + foursquareId;
+	}
+
+	private String getTwitterUrl(String twitterId) {
+		return "http://twitter.com/" + twitterId;
+	}
+
+	private String getFacebookUrl(String facebookId) {
+		return "http://facebook.com/" + facebookId;
 	}
 }

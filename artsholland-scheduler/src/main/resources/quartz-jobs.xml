@@ -80,7 +80,7 @@
     </trigger>
     
  -->    <!-- GEONAMES ENRICHER -->
-    <job>
+   <!--  <job>
       <name>GeonamesEnricher</name>
       <group>EnricherService</group>
       <description>Enrich objects in triplestore</description>
@@ -108,9 +108,9 @@
           <value>http://www.geonames.org/ontology#Feature</value>
         </entry>
       </job-data-map>
-    </job>
+    </job> -->
     
-    <trigger>
+    <!-- <trigger>
       <cron>
         <name>GeoNamesEnricherTrigger</name>
         <job-name>GeonamesEnricher</job-name>
@@ -118,10 +118,10 @@
         <cron-expression>0 0/5 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
-    </trigger>
+    </trigger> -->
     
     <!-- DBPEDIA ENRICHER -->
-    <job>
+   <!--  <job>
       <name>DBpediaEnricher</name>
       <group>EnricherService</group>
       <description>Enrich objects in triplestore</description>
@@ -159,7 +159,7 @@
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
-
+ -->
 
 	<!-- Social Media ENRICHER -->
     <job>
@@ -178,15 +178,21 @@
           <key>objectUri</key>
           <value>http://purl.org/artsholland/1.0/Venue</value>
         </entry>
-        <!-- <entry>
+        <entry>
           <key>includeProperties</key>
           <value>
-            http://xmlns.com/foaf/0.1/homepage            
+            http://xmlns.com/foaf/0.1/homepage,
+            http://www.w3.org/2003/01/geo/wgs84_pos#lat,
+            http://www.w3.org/2003/01/geo/wgs84_pos#long          
           </value>
-        </entry> -->
+        </entry>
         <entry>
           <key>excludeProperties</key>
-          <value>http://purl.org/artsholland/1.0/twitter,http://purl.org/artsholland/1.0/facebook,http://purl.org/artsholland/1.0/foursquare</value>
+          <value>
+	          http://purl.org/artsholland/1.0/twitter,
+	          http://purl.org/artsholland/1.0/facebook,
+	          http://purl.org/artsholland/1.0/foursquare
+          </value>
         </entry>
       </job-data-map>
     </job>
