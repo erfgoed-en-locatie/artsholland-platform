@@ -24,11 +24,16 @@ import fi.foyt.foursquare.api.entities.VenuesSearchResult;
 public class SocialMediaEnricher extends AbstractEnricher {
 
 	private PlatformConfig platformConfig;
-
+	private FoursquareApi foursquareApi;
+	
 	public SocialMediaEnricher(EnricherConfig enricherConfig)
 			throws ConfigurationException {
 		super(enricherConfig);
 		this.platformConfig = PlatformConfigHelper.getConfig();
+		
+		String clientId = platformConfig.getString("foursquare.api.clientId");
+		String clientSecret = platformConfig.getString("foursquare.api.clientSecret");		
+		this.foursquareApi = new FoursquareApi(clientId, clientSecret, "http://dev.artsholland.com");
 	}
 
 	@Override
@@ -64,11 +69,6 @@ public class SocialMediaEnricher extends AbstractEnricher {
 			float lon = GraphUtil.getOptionalObjectLiteral(graph, null,
 					vf.createURI("http://www.w3.org/2003/01/geo/wgs84_pos#long"))
 					.floatValue();
-
-			FoursquareApi foursquareApi = new FoursquareApi(
-					"IPA5HMU0XWTH1CTSTFBSZZX3MYEEANCG3LH4YCIRAMVLZBI4",
-					"5FXJKYR4LU4IST0XWG0TJXPKVJ1SKNV5TJOAJC32N4DQ3RMZ",
-					"http://dev.artsholland.com");
 
 			Result<VenuesSearchResult> searchResult = foursquareApi.venuesSearch(
 					Float.toString(lat) + "," + Float.toString(lon), null, null, null,
