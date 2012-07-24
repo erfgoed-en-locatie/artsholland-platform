@@ -189,9 +189,9 @@
         <entry>
           <key>excludeProperties</key>
           <value>
-	          http://purl.org/artsholland/1.0/twitter,
-	          http://purl.org/artsholland/1.0/facebook,
-	          http://purl.org/artsholland/1.0/foursquare
+	          http://purl.org/artsholland/1.0/twitterId,
+	          http://purl.org/artsholland/1.0/facebookId,
+	          http://purl.org/artsholland/1.0/foursquareId
           </value>
         </entry>
       </job-data-map>
