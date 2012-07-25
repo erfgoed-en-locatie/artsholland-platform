@@ -124,7 +124,6 @@ public class SocialMediaEnricher extends AbstractEnricher {
 			if (facebookCity != null && facebookCity.equals(city)) {			
 				String pageUrl = page.page_url;
 				String pageId = page.page_id;			
-				
 				statements.add(vf.createStatement(graph.getGraphUri(),
 						vf.createURI(classUri + "facebookPageId"), 
 						vf.createLiteral(pageId)));
@@ -168,7 +167,7 @@ public class SocialMediaEnricher extends AbstractEnricher {
 				if (twitterId != null) {
 					statements.add(vf.createStatement(graph.getGraphUri(),
 							vf.createURI(classUri + "twitterId"),
-							vf.createURI(twitterId)));
+							vf.createLiteral(twitterId)));
 					
 					statements.add(vf.createStatement(graph.getGraphUri(),
 							vf.createURI(classUri + "twitterUrl"),
