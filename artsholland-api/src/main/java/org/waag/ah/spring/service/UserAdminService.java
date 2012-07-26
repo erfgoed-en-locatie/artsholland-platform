@@ -1,11 +1,14 @@
 package org.waag.ah.spring.service;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.waag.ah.PlatformConfig;
-import org.waag.ah.spring.repository.MongoUserRepository;
+import org.waag.ah.model.User;
+import org.waag.ah.spring.repository.UserRepository;
 
 @Service("userAdminService")
 public class UserAdminService implements InitializingBean  {
@@ -15,11 +18,14 @@ public class UserAdminService implements InitializingBean  {
 	PlatformConfig platformConfig;
 		
 	@Autowired
-	MongoUserRepository userRepository;
+	UserRepository userRepository;
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		userRepository.insertPersonWithNameJohnAndRandomAge();
+	}
+
+	public List<User> getAllObjects() {
+		return userRepository.getAllObjects();
 	}
 	
 	/*getImporters

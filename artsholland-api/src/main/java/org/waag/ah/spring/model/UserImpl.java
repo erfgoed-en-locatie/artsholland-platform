@@ -5,19 +5,19 @@ import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.waag.ah.model.Application;
+import org.waag.ah.model.App;
 import org.waag.ah.model.User;
 
-@Document
-public class MongoUser implements User {
+@Document(collection="user")
+public class UserImpl implements User {
 
 	@Id
 	private String email;
 	private Date created;
 	private String name;
-	private List<Application> applications;
+	private List<App> apps;
 
-	public MongoUser(String email) {
+	public UserImpl(String email) {
 		this.email = email;
 	}
 	
@@ -49,12 +49,12 @@ public class MongoUser implements User {
 	}
 
 	@Override
-	public List<Application> getApplications() {
-		return applications;
+	public List<App> getApps() {
+		return apps;
 	}
 
-	public void setApplications(List<Application> applications) {
-		this.applications = applications;
+	public void setApps(List<App> apps) {
+		this.apps = apps;
 	}
 
 	

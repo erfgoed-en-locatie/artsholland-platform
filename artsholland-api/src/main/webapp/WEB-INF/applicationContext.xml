@@ -22,8 +22,6 @@
   <bean class="org.waag.ah.spring.view.QueryTaskView">
     <constructor-arg ref="queryService"/>    
   </bean>
-  
-  <bean class="org.waag.ah.spring.repository.MongoUserRepository" />
 
   <jee:jndi-lookup id="queryService" jndi-name="java:app/datastore/BigdataQueryService"/>
   

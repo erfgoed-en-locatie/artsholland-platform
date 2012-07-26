@@ -1,6 +1,6 @@
 package org.waag.ah.model;
 
-public interface Application {
+public interface App {
 	public String getApiKey();
 	public String getSecret();
 	public String getName();

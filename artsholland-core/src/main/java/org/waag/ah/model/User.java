@@ -7,5 +7,5 @@ public interface User {
 	public String getEmail();
 	public Date getCreated();
 	public String getName();
-	public List<Application> getApplications();
+	public List<App> getApps();
 }
