@@ -4,27 +4,39 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.waag.ah.WriterConfig;
+import org.waag.ah.WriterContentTypeConfig;
 
 public class RDFWriterConfig implements WriterConfig {
-	private String format;
-	private boolean prettyPrint;
+	private String contentType;
+	private boolean prettyPrint = false;
 	private String languageTag;
 	private Map<String, String> metaData = new HashMap<String, String>();
 	private String baseUri;
-	private boolean wrapResults;
+	private boolean wrapResults = false;
 	
-	public void setFormat(String format) {
+	private WriterContentTypeConfig contentTypeConfig;
+	private String responseContentType;	
+	
+	private String jsonpCallback;
+	private boolean jsonp = false;
+	
+	public void setContentType(String contentType) {
 		// TODO: This is, of course, a hack :)
-		if (format.equals("application/json")) {
-			format = RDFJSONFormat.MIMETYPE;
-		}
-		this.format = format;
+		/*if (format.equals("application/json")) {
+			contentType = RDFJSONFormat.MIMETYPE;
+		}*/
+		this.contentType = contentType;
+	}
+
+	@Override
+	public String getContentType() {
+		return contentType;
 	}
 	
-	@Override
-	public String getFormat() {
-		return format;
-	}
+	/*@Override
+	public String getContentTypeForQueryType(QueryType queryType) {
+		return contentTypeConfig.getContentTypeForQueryType(getContentType(), queryType);
+	}*/
 	
 	public void setPrettyPrint(boolean prettyPrint) {
 		this.prettyPrint = prettyPrint;
@@ -85,4 +97,42 @@ public class RDFWriterConfig implements WriterConfig {
 	public void setWrapResults(boolean wrapResults) {
 		this.wrapResults = wrapResults;
 	}
+
+	@Override
+	public WriterContentTypeConfig getContentTypeConfig() {
+		return contentTypeConfig;
+	}
+	
+	public void setContentTypeConfig(WriterContentTypeConfig writerContentTypeConfig) {
+		this.contentTypeConfig = writerContentTypeConfig;
+	}
+
+	public String getResponseContentType() {
+		return responseContentType;
+	}
+
+	public void setResponseContentType(String responseContentType) {
+		this.responseContentType = responseContentType;
+	}
+
+	public boolean isOverrideResponseContentType() {
+		return (responseContentType != null && responseContentType.length() > 0);		
+	}
+
+	public String getJSONPCallback() {
+		return jsonpCallback;
+	}
+
+	public void setJSONPCallback(String jsonpCallback) {
+		this.jsonpCallback = jsonpCallback;
+	}
+
+	public boolean isJSONP() {
+		return jsonp;
+	}
+
+	public void setJSONP(boolean jsonp) {
+		this.jsonp = jsonp;
+	}
+
 }

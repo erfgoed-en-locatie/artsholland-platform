@@ -6,9 +6,11 @@ import org.openrdf.rio.RDFFormat;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.waag.ah.WriterContentTypeConfig;
 import org.waag.ah.rdf.RDFJSONFormat;
 import org.waag.ah.rdf.RDFWriterConfig;
 import org.waag.ah.rdf.RdfQueryDefinition;
+import org.waag.ah.rdf.RestWriterTypeConfig;
 import org.waag.ah.rest.RestParameters;
 import org.waag.ah.rest.model.RestRelation;
 import org.waag.ah.rest.model.RestRelation.RelationQuantity;
@@ -29,56 +31,62 @@ public class RestService implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		RDFFormat.register(RDFJSONFormat.RESTAPIJSON);
+		// TODO: is this the right place?
+		RDFFormat.register(RDFJSONFormat.RESTAPIJSON);		
 
 		rootRelation = new RestRelation();
 
 		RestRelation eventsRelation =
-				rootRelation.addRelation("event",	"Event", RelationQuantity.MULTIPLE, RelationType.SELF, false);
+				rootRelation.addRelation("event",	"ah:Event", RelationQuantity.MULTIPLE, RelationType.SELF, false);
 		RestRelation venuesRelation =
-				rootRelation.addRelation("venue", "Venue", RelationQuantity.MULTIPLE, RelationType.SELF, false);
+				rootRelation.addRelation("venue", "ah:Venue", RelationQuantity.MULTIPLE, RelationType.SELF, false);
 		RestRelation productionsRelation = 
-				rootRelation.addRelation("production", "Production", RelationQuantity.MULTIPLE, RelationType.SELF, false);
+				rootRelation.addRelation("production", "ah:Production", RelationQuantity.MULTIPLE, RelationType.SELF, false);
 		
-		rootRelation.addRelation("genre", "Genre", RelationQuantity.MULTIPLE, RelationType.SELF, false);
-		rootRelation.addRelation("venuetype", "VenueType", RelationQuantity.MULTIPLE, RelationType.SELF, false);
+		rootRelation.addRelation("genre", "ah:Genre", RelationQuantity.MULTIPLE, RelationType.SELF, false);
+		rootRelation.addRelation("venuetype", "ah:VenueType", RelationQuantity.MULTIPLE, RelationType.SELF, false);
 
 		RestRelation eventRelation = 
-				eventsRelation.addRelation("cidn", "Event", RelationQuantity.SINGLE, RelationType.SELF, true);
+				eventsRelation.addRelation("cidn", "ah:Event", RelationQuantity.SINGLE, RelationType.SELF, true);
 		RestRelation venueRelation = 
-				venuesRelation.addRelation("cidn", "Venue", RelationQuantity.SINGLE, RelationType.SELF, true);
+				venuesRelation.addRelation("cidn", "ah:Venue", RelationQuantity.SINGLE, RelationType.SELF, true);
 		RestRelation productionRelation = 
-				productionsRelation.addRelation("cidn", "Production", RelationQuantity.SINGLE, RelationType.SELF, true);
+				productionsRelation.addRelation("cidn", "ah:Production", RelationQuantity.SINGLE, RelationType.SELF, true);
 
-		eventRelation.addRelation("production", "Production",	RelationQuantity.SINGLE, RelationType.FORWARD, false);
-		eventRelation.addRelation("venue", "Venue", RelationQuantity.SINGLE, RelationType.FORWARD, false);
-		eventRelation.addRelation("room", "Room", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+		eventRelation.addRelation("production", "ah:Production",	RelationQuantity.SINGLE, RelationType.FORWARD, false);
+		eventRelation.addRelation("venue", "ah:Venue", RelationQuantity.SINGLE, RelationType.FORWARD, false);
+		eventRelation.addRelation("room", "ah:Room", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
 
-		venueRelation.addRelation("event", "Event", RelationQuantity.MULTIPLE, RelationType.BACKWARD, false);
-		venueRelation.addRelation("production", "Production",	RelationQuantity.MULTIPLE, RelationType.BACKWARDFORWARD, false);
-		venueRelation.addRelation("room", "Room", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+		venueRelation.addRelation("event", "ah:Event", RelationQuantity.MULTIPLE, RelationType.BACKWARD, false);
+		venueRelation.addRelation("production", "ah:Production",	RelationQuantity.MULTIPLE, RelationType.BACKWARDFORWARD, false);
+		venueRelation.addRelation("room", "ah:Room", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+		venueRelation.addRelation("address", "ah:Address", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
 
-		productionRelation.addRelation("event", "Event", RelationQuantity.MULTIPLE, RelationType.BACKWARD, false);
-		productionRelation.addRelation("venue", "Venue", RelationQuantity.MULTIPLE, RelationType.BACKWARDFORWARD, false);
+		productionRelation.addRelation("event", "ah:Event", RelationQuantity.MULTIPLE, RelationType.BACKWARD, false);
+		productionRelation.addRelation("venue", "ah:Venue", RelationQuantity.MULTIPLE, RelationType.BACKWARDFORWARD, false);
 
-		RestRelation eventTicketRelation = 
-				eventRelation.addRelation("ticket", "Ticket", RelationQuantity.MULTIPLE,	RelationType.FORWARD, false);
-		eventTicketRelation.addRelation("id", "Ticket",	RelationQuantity.SINGLE, RelationType.SELF, true);
+		RestRelation eventOfferingsRelation = 
+				eventRelation.addRelation("offering", "gr:Offering", RelationQuantity.MULTIPLE,	RelationType.FORWARD, false);
+		RestRelation eventOfferingRelation = 
+		eventOfferingsRelation.addRelation("id", "gr:Offering",	RelationQuantity.SINGLE, RelationType.SELF, true);
+		
+		eventOfferingRelation.addRelation("price", "gr:PriceSpecification", RelationQuantity.SINGLE, RelationType.FORWARD, false);
 		
 		RestRelation venueAttachmentRelation = 
-				venueRelation.addRelation("attachment", "Attachment", RelationQuantity.MULTIPLE,	RelationType.FORWARD, false);
-		venueAttachmentRelation.addRelation("id", "Attachment",	RelationQuantity.SINGLE, RelationType.SELF, true);
+				venueRelation.addRelation("attachment", "ah:Attachment", RelationQuantity.MULTIPLE,	RelationType.FORWARD, false);
+		venueAttachmentRelation.addRelation("id", "ah:Attachment",	RelationQuantity.SINGLE, RelationType.SELF, true);
 		
 		RestRelation eventAttachmentRelation = 
-				eventRelation.addRelation("attachment", "Attachment", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
-		eventAttachmentRelation.addRelation("id", "Attachment",	RelationQuantity.SINGLE, RelationType.SELF, true);
+				eventRelation.addRelation("attachment", "ah:Attachment", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+		eventAttachmentRelation.addRelation("id", "ah:Attachment",	RelationQuantity.SINGLE, RelationType.SELF, true);
 		
   	// TODO: ?this instead of ?object  ???
+		
+		SPARQLFilter venuesLocalityFilter = new SPARQLFilter("locality", "?object ah:locationAddress ?address . ?address vcard:locality ?locality.", "lcase(?locality) = lcase(\"?parameter\")");
+		
+		venuesRelation.addFilter(venuesLocalityFilter);
 
-		SPARQLFilter venuesLocalityFilter = new SPARQLFilter("locality", "?object vcard:locality ?locality.", "lcase(?locality) = lcase(\"?parameter\")");
-  	venuesRelation.addFilter(venuesLocalityFilter);
-
-  	SPARQLFilter eventsLocalityFilter = new SPARQLFilter("locality", "?object <http://purl.org/artsholland/1.0/venue> ?venue . ?venue vcard:locality ?locality .", "lcase(?locality) = lcase(\"?parameter\")");
+  	SPARQLFilter eventsLocalityFilter = new SPARQLFilter("locality", "?object ah:venue ?venue . ?venue ah:locationAddress ?address . ?address vcard:locality ?locality .", "lcase(?locality) = lcase(\"?parameter\")");
   	SPARQLFilter eventsBeforeFilter = new SPARQLFilter("before", "?object time:hasBeginning ?hasBeginning.", "?hasBeginning < \"?parameter\"^^xsd:dateTime");
   	SPARQLFilter eventsAfterFilter = new SPARQLFilter("after", "?object time:hasBeginning ?hasBeginning.", "?hasBeginning > \"?parameter\"^^xsd:dateTime");
   	eventsRelation.addFilter(eventsLocalityFilter);
@@ -88,13 +96,14 @@ public class RestService implements InitializingBean {
   	//public double metersToDegrees(double meters) { return meters / (Math.PI/180) / 6378137; }  	
   	double metersToDegrees = 1 / ((Math.PI/180) * 6378137);
   	
-  	SPARQLFilter eventsNearbyFilter = new SPARQLFilter("nearby", "?object <http://purl.org/artsholland/1.0/venue> ?venue . ?venue <http://purl.org/artsholland/1.0/geometry> ?geometry .", "search:distance(?geometry, \"?parameter\"^^<http://rdf.opensahara.com/type/geo/wkt>) < ?distance * " + metersToDegrees);
+  	SPARQLFilter eventsNearbyFilter = new SPARQLFilter("nearby", "?object ah:venue ?venue . ?venue geo:geometry ?geometry .", "search:distance(?geometry, \"?parameter\"^^<http://rdf.opensahara.com/type/geo/wkt>) < ?distance * " + metersToDegrees);
   	eventsNearbyFilter.addExtraParameter("distance");
    	eventsRelation.addFilter(eventsNearbyFilter);
   	   	
-   	SPARQLFilter venuesNearbyFilter = new SPARQLFilter("nearby", "?object <http://purl.org/artsholland/1.0/geometry> ?geometry .", "search:distance(?geometry, \"?parameter\"^^<http://rdf.opensahara.com/type/geo/wkt>) < ?distance * " + metersToDegrees);
+   	SPARQLFilter venuesNearbyFilter = new SPARQLFilter("nearby", "?object geo:geometry ?geometry .", "search:distance(?geometry, \"?parameter\"^^<http://rdf.opensahara.com/type/geo/wkt>) < ?distance * " + metersToDegrees);
    	venuesNearbyFilter.addExtraParameter("distance");
   	venuesRelation.addFilter(venuesNearbyFilter);
+    // TODO: add search:within(?geometry, "POLYGON((4 53, 4 54, 5 54, 5 53, 4 53))"^^geo:wkt)  	
   	
   	SPARQLFilter productionGenreFilter = new SPARQLFilter(
   			"genre", "?object <http://purl.org/artsholland/1.0/genre> ?genre .", "?genre = ah:genre?parameter OR ?genre = ah:?parameter"
@@ -109,23 +118,11 @@ public class RestService implements InitializingBean {
   	/*
   	 * Price
   	 */
-  	
-  	/*
-		SELECT DISTINCT ?event ?highPrice
-		WHERE {
-			?event a ah:Event .
-			?event ah:ticket ?ticket .
-			?ticket ah:highPrice ?highPrice .
-			?ticket ah:lowPrice ?lowPrice .
-			FILTER (?highPrice < 10) .
-		}
-	 */
-	
-  	
-  	SPARQLFilter maxPriceFilter = new SPARQLFilter("max_price", "?object ah:ticket ?ticket . ?ticket ah:lowPrice ?lowPrice .", "?lowPrice <= ?parameter");    	
+   	
+  	SPARQLFilter maxPriceFilter = new SPARQLFilter("max_price", "?object gr:offers ?offering . ?offering gr:hasPriceSpecification ?price . ?price gr:hasMinCurrencyValue ?lowPrice .", "?lowPrice <= ?parameter");    	
   	eventsRelation.addFilter(maxPriceFilter);  
   	
-  	SPARQLFilter minPriceFilter = new SPARQLFilter("min_price", "?object ah:ticket ?ticket . ?ticket ah:highPrice ?highPrice .", "?highPrice >= ?parameter");
+  	SPARQLFilter minPriceFilter = new SPARQLFilter("min_price", "?object gr:offers ?offering . ?offering gr:hasPriceSpecification ?price . ?price gr:hasMaxCurrencyValue ?highPrice .", "?highPrice >= ?parameter");
   	eventsRelation.addFilter(minPriceFilter);  	
   	
   	/*
@@ -136,12 +133,7 @@ public class RestService implements InitializingBean {
   	eventsRelation.addFilter(searchFilter);
   	productionsRelation.addFilter(searchFilter);
   	venuesRelation.addFilter(searchFilter);
-  	
-  	
-  	
-  	
-    // search:within(?geometry, "POLYGON((4 53, 4 54, 5 54, 5 53, 4 53))"^^geo:wkt)
-  	
+  
   	queryGenerator = new RestRelationQueryGenerator(rootRelation);
 
 	}
@@ -161,7 +153,7 @@ public class RestService implements InitializingBean {
 		if (query == null) {
 			throw new MalformedQueryException();
 		}
-		RDFWriterConfig config = getDefaultWriterConfig(params);
+		RDFWriterConfig config = getDefaultWriterConfig(params);		
 		query.setWriterConfig(config);
 
 		if (!query.isSingle()) {
@@ -170,12 +162,18 @@ public class RestService implements InitializingBean {
 		}
 		
 		config.setWrapResults(true);
+		// TODO: JSONP support!!!!
 		return query;
 	}
 
 	private RDFWriterConfig getDefaultWriterConfig(RestParameters params) {
 		RDFWriterConfig config = new RDFWriterConfig();
+		config.setContentTypeConfig(new RestWriterTypeConfig());
 		config.setPrettyPrint(params.getPretty());
+		config.setJSONPCallback(params.getJSONPCallback());
+		if (params.isPlainText()) {
+			config.setResponseContentType(WriterContentTypeConfig.MIME_TEXT_PLAIN);
+		}
 		config.setBaseUri(platformConfig.getString("platform.baseUri"));
 		return config;
 	}

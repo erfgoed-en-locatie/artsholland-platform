@@ -33,11 +33,15 @@ public class MongoConnectionServiceImpl implements MongoConnectionService {
 		}
 	}
 	
-	public DB getConnection() {
+	public Mongo getMongo() {
+		return mongo;
+	}
+	
+	public DB getDatabase() {
 		return mongo.getDB(config.getString("mongo.database"));
 	}
 	
 	public DBCollection getCollection(String collection) {
-		return getConnection().getCollection(collection);
+		return getDatabase().getCollection(collection);
 	}
 }

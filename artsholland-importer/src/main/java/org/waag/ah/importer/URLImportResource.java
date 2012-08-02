@@ -10,8 +10,8 @@ import java.net.URLConnection;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
-import org.apache.tika.sax.ToXMLContentHandler;
 import org.waag.ah.ImportResource;
+import org.waag.ah.tika.parser.rdf.ToRDFContentHandler;
 import org.xml.sax.ContentHandler;
 
 import com.gc.iotools.stream.is.InputStreamFromOutputStream;
@@ -33,12 +33,13 @@ public class URLImportResource implements ImportResource {
 				InputStream in = conn.getInputStream();
 				
 				AutoDetectParser parser = new AutoDetectParser();
-				ContentHandler handler = new ToXMLContentHandler(outStream, "UTF-8"); 
+				ContentHandler handler = new ToRDFContentHandler(outStream, "UTF-8"); 
 
 				Metadata metadata = new Metadata();
 				metadata.add(Metadata.RESOURCE_NAME_KEY, url.toExternalForm());				
 				metadata.add(Metadata.CONTENT_ENCODING,
 						new InputStreamReader(in).getEncoding());		
+//				ContentHandler handler = new ToRDFContentHandler(outStream); 
 
 				parser.parse(in, handler, metadata, new ParseContext());
 				return "OK";

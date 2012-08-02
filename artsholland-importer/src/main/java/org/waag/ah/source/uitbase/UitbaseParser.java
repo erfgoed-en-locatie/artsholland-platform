@@ -96,7 +96,7 @@ public class UitbaseParser extends XMLParser {
 			if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV3_MIME_TYPE)) {
 				InputStream xquery = getFileContents(getClass(), "v3/event.xsparql");    			
 				return new MatchingContentHandler(
-					new XSPARQLQueryHandler(handler, metadata, context, xquery), 
+					new XSPARQLQueryHandler(handler, metadata, context, xquery, null), 
 					getXPathMatcher("/nubxml/events/descendant::node()"));
 				
 			} else if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_MIME_TYPE)) {
@@ -105,7 +105,7 @@ public class UitbaseParser extends XMLParser {
 					throw new IOException("XQuery definition file not found");
 				}
 				return new MatchingContentHandler(
-						new XSPARQLQueryHandler(handler, metadata, context, xquery),
+						new XSPARQLQueryHandler(handler, metadata, context, xquery, null),
 						getXPathMatcher("/search/descendant::node()"));
 			}
 		} catch (Exception e) {

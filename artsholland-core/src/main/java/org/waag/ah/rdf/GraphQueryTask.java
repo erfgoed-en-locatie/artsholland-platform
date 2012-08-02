@@ -26,7 +26,7 @@ public class GraphQueryTask extends AbstractQueryTask {
 		final GraphQuery sailGraphQuery = cxn
 				.prepareGraphQuery(query.getQueryLanguage(), query.getQuery(),
 						config.getBaseUri());
-		final RDFFormat format = RDFFormat.forMIMEType(config.getFormat(),
+		final RDFFormat format = RDFFormat.forMIMEType(config.getContentType(),
 				RDFFormat.RDFXML);
 		// final RDFFormat format = RDFWriterRegistry.getInstance()
 		// .getFileFormatForMIMEType(config.getFormat());
