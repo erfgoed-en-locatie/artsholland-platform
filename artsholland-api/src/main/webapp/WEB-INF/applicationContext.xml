@@ -18,12 +18,14 @@
   
   <bean id="platformConfigFactory" class="org.waag.ah.PlatformConfigHelper"
     factory-method="getConfig" />
-  
+    
+  <!-- <context:property-placeholder location="classpath*:*persistence.properties" /> -->
+          
   <bean class="org.waag.ah.spring.view.QueryTaskView">
     <constructor-arg ref="queryService"/>    
   </bean>
 
-  <bean class="org.waag.ah.spring.dao.UserDAOImpl" />
+  <!-- <bean class="org.waag.ah.spring.dao.UserDAOImpl" /> -->
   
   <jee:jndi-lookup id="queryService" jndi-name="java:app/datastore/BigdataQueryService"/>
   

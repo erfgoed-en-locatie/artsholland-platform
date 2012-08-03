@@ -1,113 +1,73 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<artifactId>artsholland-api</artifactId>
-	<packaging>war</packaging>
-	<name>API</name>
-	<description>Arts Holland API module</description>
+  <artifactId>artsholland-api</artifactId>
+  <packaging>war</packaging>
+  <name>API</name>
+  <description>Arts Holland API module</description>
 
-	<parent>
-		<groupId>org.waag.artsholland</groupId>
-		<artifactId>artsholland</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
-	</parent>
+  <parent>
+    <groupId>org.waag.artsholland</groupId>
+    <artifactId>artsholland</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>2.2</version>
-				<configuration>
-					<!-- TODO: Move this to EAR module as it is a deployment thang. -->
-					<packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.jvnet.jaxb2.maven2</groupId>
-				<artifactId>maven-jaxb2-plugin</artifactId>
-				<version>0.8.1</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<args>
-								<arg>-extension</arg>
-								<arg>-Xinheritance</arg>
-							</args>
-							<schemaDirectory>src/main/webapp/WEB-INF/xsd</schemaDirectory>
-							<generatePackage>org.waag.ah.api</generatePackage>
-							<removeOldOutput>false</removeOldOutput>
-							<verbose>true</verbose>
-							<plugins>
-								<plugin>
-									<groupId>org.jvnet.jaxb2_commons</groupId>
-									<artifactId>jaxb2-basics</artifactId>
-									<version>0.6.3</version>
-								</plugin>
-							</plugins>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
+          <!-- TODO: Move this to EAR module as it is a deployment thang. -->
+          <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jvnet.jaxb2.maven2</groupId>
+        <artifactId>maven-jaxb2-plugin</artifactId>
+        <version>0.8.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <args>
+                <arg>-extension</arg>
+                <arg>-Xinheritance</arg>
+              </args>
+              <schemaDirectory>src/main/webapp/WEB-INF/xsd</schemaDirectory>
+              <generatePackage>org.waag.ah.api</generatePackage>
+              <removeOldOutput>false</removeOldOutput>
+              <verbose>true</verbose>
+              <plugins>
+                <plugin>
+                  <groupId>org.jvnet.jaxb2_commons</groupId>
+                  <artifactId>jaxb2-basics</artifactId>
+                  <version>0.6.3</version>
+                </plugin>
+              </plugins>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
-	<dependencies>
-		<dependency>
-			<groupId>org.waag.artsholland</groupId>
-			<artifactId>artsholland-core</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<type>ejb</type>
-		</dependency>
-		<dependency>
-			<groupId>org.waag.artsholland</groupId>
-			<artifactId>artsholland-datastore</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-			<type>ejb</type>
-		</dependency>
-
-		<!-- Persistence -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>3.6.0.Final</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-commons-annotations</artifactId>
-			<version>3.2.0.Final</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>ejb3-persistence</artifactId>
-			<version>1.0.2.GA</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-annotations</artifactId>
-			<version>3.5.6-Final</version>
-		</dependency>
-		 <dependency>
-    <groupId>org.hibernate.java-persistence</groupId>
-    <artifactId>jpa-api</artifactId>
-    <version>2.0-cr-1</version>
-  </dependency>
-  <dependency>
-    <groupId>org.hibernate</groupId>
-    <artifactId>hibernate-entitymanager</artifactId>
-    <version>4.1.5.Final</version>
-  </dependency>
-<dependency>
-	<groupId>org.springframework</groupId>
-	<artifactId>spring-orm</artifactId>
-	<version>3.0.3.RELEASE</version>
-</dependency>
-		
-		
-
-	</dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>org.waag.artsholland</groupId>
+      <artifactId>artsholland-core</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <type>ejb</type>
+    </dependency>
+    <dependency>
+      <groupId>org.waag.artsholland</groupId>
+      <artifactId>artsholland-datastore</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <type>ejb</type>
+    </dependency>
+  </dependencies>
 </project>

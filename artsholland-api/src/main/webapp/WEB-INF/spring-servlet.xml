@@ -1,80 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:context="http://www.springframework.org/schema/context" 
-	xmlns:p="http://www.springframework.org/schema/p" xmlns:mvc="http://www.springframework.org/schema/mvc" 
-	xsi:schemaLocation=" http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd 
-	http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd 
-	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd 
-	http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd"> -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:lang="http://www.springframework.org/schema/lang"
-	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:util="http://www.springframework.org/schema/util"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
-        http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
-        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
-        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+  xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xsi:schemaLocation="
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd 
+    http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd 
+	  http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd 
+    http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
 
-	<!-- <context:annotation-config /> -->
+  <!-- <context:annotation-config /> -->
+  
+  <!-- TODO: Find out why the REST API stops working with this line enabled. -->
+  <mvc:annotation-driven />
 
-	<bean id="accessConfirmationController" class="org.waag.ah.spring.controller.OAuthController" />
+  <bean id="accessConfirmationController" class="org.waag.ah.spring.controller.OAuthController" />
 
-	<!-- <bean class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver"> 
-		<property name="order" value="1"/> <property name="ignoreAcceptHeader" value="1"/> 
-		<property name="defaultContentType" value="application/json"/> <property 
-		name="mediaTypes"> <map> <entry key="html" value="text/html"/> <entry key="json" 
-		value="application/json"/> <entry key="rdf" value="application/rdf+xml"/> 
-		<entry key="xml" value="application/xml"/> </map> </property> <property name="defaultViews"> 
-		<list> <bean class="org.waag.ah.spring.view.QueryTaskView"> <property name="contentType" 
-		value="application/json"/> <property name="queryService" ref="queryService"/> 
-		</bean> <bean class="org.waag.ah.spring.view.QueryTaskView"> <property name="contentType" 
-		value="application/rdf+xml"/> <property name="queryService" ref="queryService"/> 
-		</bean> </list> </property> </bean> -->
-
-	<!-- <bean id="ahObjectMapper" class="org.waag.ah.jackson.AHObjectMapper"/> -->
-
-	<bean id="viewResolver"
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="order" value="2" />
-		<property name="prefix" value="/WEB-INF/jsp/" />
-		<property name="suffix" value=".jsp" />
-	</bean>
-
-	<bean id="propertyConfigurer"
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
-		p:location="/WEB-INF/jdbc.properties" />
-
-	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
-		destroy-method="close" p:driverClassName="${jdbc.driverClassName}"
-		p:url="${jdbc.databaseurl}" p:username="${jdbc.username}" p:password="${jdbc.password}" />
-
-	<bean id="sessionFactory"
-		class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
-		<property name="dataSource" ref="dataSource" />
-		<property name="configLocation">
-			<value>classpath:hibernate.cfg.xml</value>
-		</property>
-		<property name="configurationClass">
-			<value>org.hibernate.cfg.AnnotationConfiguration</value>
-		</property>
-		<property name="hibernateProperties">
-			<props>
-				<prop key="hibernate.dialect">${jdbc.dialect}</prop>
-				<prop key="hibernate.show_sql">true</prop>
-			</props>
-		</property>
-	</bean>
-	<tx:annotation-driven />
-	<bean id="transactionManager"
-		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
-		<property name="sessionFactory" ref="sessionFactory" />
-	</bean>
-
-
+  <bean id="viewResolver"
+    class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <property name="order" value="2" />
+    <property name="prefix" value="/WEB-INF/jsp/" />
+    <property name="suffix" value=".jsp" />
+  </bean>
 
 </beans>

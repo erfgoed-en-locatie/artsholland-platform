@@ -12,8 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-import org.waag.ah.spring.model.User2;
+import org.waag.ah.spring.model.ApiUser;
 import org.waag.ah.spring.service.UserService;
 
 @Controller
@@ -24,17 +23,17 @@ public class UserAdminController { // implements InitializingBean
 	@Autowired
 	private UserService userService;
 
-	@RequestMapping(value="/vis/user/*", method=RequestMethod.GET, headers="Accept=*/*")
-	public @ResponseBody User2 user(
+	@RequestMapping(value="/vis/user/*", method=RequestMethod.GET)
+	public @ResponseBody ApiUser user(
 			final HttpServletRequest request,
 			final HttpServletResponse response)
 			throws IOException {
 		
+		ApiUser user = userService.findUserByEmail("bartsimpson@example.com");
 		
-		
-		User2 user = new User2();
-		user.setEmail("bert.spaan@gmail.com");
-		userService.addUser(user);
+//		ApiUser user = new ApiUser();
+//		user.setEmail("bert.spaan@gmail.com");
+//		userService.addUser(user);
 
 //		User user = new UserImpl("ivsn@boka.com");
 //		user.setName("Bokkabia");
@@ -47,11 +46,9 @@ public class UserAdminController { // implements InitializingBean
 //		userAdminService.saveApp(app);
 //		
 //		List<User> chips = userAdminService.getAllUsers();
-		ModelAndView view = new ModelAndView("admin/user");
+//		ModelAndView view = new ModelAndView("admin/user");
 		//view.getModel().put("users", chips);
 		//view.addObject("users", chips);
 		return user;
 	}
-
-	
 }

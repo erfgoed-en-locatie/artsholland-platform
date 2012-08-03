@@ -73,11 +73,10 @@
       token-services-ref="tokenServices"
       request-token-url="/oauth/request_token"
       authenticate-token-url="/oauth/authorize"
-      authentication-failed-url="/oauth/confirm_access"
       access-granted-url="/request_token_authorized.jsp"
       access-token-url="/oauth/access_token"
       require10a="false"/>
-  
+      <!-- authentication-failed-url="/oauth/confirm_access" -->
   <oauth:consumer-details-service id="consumerDetails">
     <oauth:consumer 
         name="Tonr.com"
@@ -90,4 +89,4 @@
   </oauth:consumer-details-service>
   <oauth:token-services id="tokenServices"/>
 
-</beans:beans>
+ </beans:beans>
