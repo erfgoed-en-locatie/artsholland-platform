@@ -32,6 +32,8 @@ public class ApiUserDetailsService implements UserDetailsService {
 			throw new UsernameNotFoundException(apiKey);
 		}
 		
+		// TODO: get user from database!
+		
 		UserAttributeEditor configAttribEd = new UserAttributeEditor();
 		configAttribEd.setAsText(userPropsValue);
 		UserAttribute userAttributes = (UserAttribute) configAttribEd.getValue(); 

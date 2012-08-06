@@ -1,85 +1,124 @@
-//package org.waag.ah.spring.model;
-//
-//import org.springframework.data.annotation.Id;
-//import org.springframework.data.mongodb.core.mapping.Document;
-//import org.waag.ah.model.App;
-//import org.waag.ah.model.User;
-//
-//@Document(collection="app")
-//public class AppImpl implements App {
-//
-//	@Id
-//	private String apiKey;
-//	private String user;
-//	private String secret;
-//	private String name;
-//	private String title;
-//	private String url;
-//	private String description;
-//	
-//	@Override
-//	public String getApiKey() {
-//		return apiKey;
-//	}
-//
-//	@Override
-//	public String getSecret() {
-//		return secret;
-//	}
-//
-//	@Override
-//	public String getName() {
-//		return name;
-//	}
-//
-//	@Override
-//	public String getTitle() {
-//		return title;
-//	}
-//
-//	@Override
-//	public String getURL() {
-//		return url;
-//	}
-//
-//	@Override
-//	public String getDescription() {
-//		return description;
-//	}
-//
-//	public void setApiKey(String apiKey) {
-//		this.apiKey = apiKey;
-//	}
-//
-//	public void setSecret(String secret) {
-//		this.secret = secret;
-//	}
-//
-//	public void setName(String name) {
-//		this.name = name;
-//	}
-//
-//	public void setTitle(String title) {
-//		this.title = title;
-//	}
-//	
-//	public void setURL(String url) {
-//		this.url = url;
-//	}
-//
-//	@Override
-//	public void setDescription(String description) {
-//		this.description = description;		
-//	}
-//
-//	@Override
-//	public String getUser() {
-//		return user;
-//	}
-//
-//	@Override
-//	public void setUser(String user) {
-//		this.user = user;
-//	}
-//
-//}
+package org.waag.ah.spring.model;
+
+import java.io.Serializable;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import org.waag.ah.model.App;
+import org.waag.ah.model.ApiUser;
+import org.waag.ah.model.DbObject;
+
+@SuppressWarnings("serial")
+@Entity
+@Table(name="app")
+public class AppImpl implements App, Serializable, DbObject {
+	
+	@Id 
+	@GeneratedValue(strategy=GenerationType.IDENTITY) 
+	@Column
+	private long id;
+	
+	@Column( unique = true, nullable = false ) 
+	private String apiKey;
+
+	@Column
+	private String secret;
+	
+	@Column
+	private String name;
+	
+	@Column
+	private String title;
+	
+	@Column
+	private String url;
+	
+	@Column
+	private String description;
+	
+//	@ManyToOne(fetch = FetchType.LAZY, targetEntity=ApiUserImpl.class)
+//@JoinColumn(name = "apiuser_id", nullable = false/*, referencedColumnName="id"*/)
+	@ManyToOne(optional=false)
+	@JoinColumn(name="apiuser_id", nullable=false, referencedColumnName="id")
+	private ApiUserImpl apiUser;
+	
+	@Override
+	public long getId() {
+		return id;
+	}
+	
+	public void setId(long id) {
+		this.id = id;
+	}
+	
+	@Override
+	public String getApiKey() {
+		return apiKey;
+	}
+
+	@Override
+	public String getSecret() {
+		return secret;
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public String getTitle() {
+		return title;
+	}
+
+	@Override
+	public String getUrl() {
+		return url;
+	}
+
+	@Override
+	public String getDescription() {
+		return description;
+	}
+
+	public void setApiKey(String apiKey) {
+		this.apiKey = apiKey;
+	}
+
+	public void setSecret(String secret) {
+		this.secret = secret;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;		
+	}
+
+	@Override
+	public ApiUser getApiUser() {
+		return apiUser;
+	}
+
+	public void setApiUser(ApiUserImpl apiUser) {
+		this.apiUser = apiUser;
+	}
+
+}

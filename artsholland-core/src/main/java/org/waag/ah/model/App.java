@@ -1,24 +1,46 @@
 package org.waag.ah.model;
 
-public interface App {
-	public String getApiKey();
-	public void setApiKey(String apiKey);
+public interface App { 
 	
-	public User getUser();
-	public void setUser(User user);
+	/*
+		DROP TABLE IF EXISTS app;
+	
+		CREATE TABLE app
+		(
+	  	id serial NOT NULL,	  	
+	  	apikey text,	
+			apiuser_id int,	
+			secret text,
+			Name text,	
+			title text,	
+			url text,	
+			description text,
+	  	CONSTRAINT pk_app_id PRIMARY KEY ( id )
+	  	CONSTRAINT fk_app_user_id FOREIGN KEY (apiuser_id)
+      	REFERENCES apiuser (id) MATCH SIMPLE
+      	ON UPDATE NO ACTION ON DELETE NO ACTION
+		)
+		WITH (
+	  	OIDS=FALSE
+		);
+		ALTER TABLE app
+		OWNER TO artsholland;
+	*/
+	
+	public long getId();
+	
+	public String getApiKey();
+	
+	public ApiUser getApiUser();
 	
 	public String getSecret();
-	public void setSecret(String secret);
 	
 	public String getName();
-	public void setName(String name);
 	
 	public String getTitle();
-	public void setTitle(String title);
 	
-	public String getURL();
-	public void setURL(String url);
+	public String getUrl();
 	
 	public String getDescription();
-	public void setDescription(String description);
+
 }
