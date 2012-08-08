@@ -1,15 +1,12 @@
 package org.waag.ah.spring.service;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.httpclient.Header;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.NameValuePair;
-import org.apache.commons.httpclient.URIException;
+import org.apache.http.Header;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,53 +31,39 @@ public class UitbaseService extends ProxyService implements InitializingBean  {
 	}
 	
 	@Override
-	protected void beforeProxyRequest(HttpServletRequest request, HttpServletResponse response,
-			HttpMethod method) {
-		
-		Enumeration<String> headerNames = request.getHeaderNames();
-		while (headerNames.hasMoreElements()) {
-
-			String headerName = headerNames.nextElement();
-			
-			if (!"Host".equalsIgnoreCase(headerName)) {
-				method.setRequestHeader(headerName, request.getHeader(headerName));
+	protected List<Header> getProxyHeaders(List<Header> requestHeaders) {		
+		List<Header> proxyHeaders = new ArrayList<Header>();
+		for (Header requestHeader : requestHeaders) {			
+			if (!"Host".equalsIgnoreCase(requestHeader.getName())) {
+				proxyHeaders.add(new BasicHeader(requestHeader.getName(), requestHeader.getValue()));
 			}
 		}
-		
-		Enumeration<String> paramNames = request.getParameterNames();
-		ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
-		while (paramNames.hasMoreElements()) { 
-			String paramName = paramNames.nextElement();
-			
-			// Copy all except apiKey parameter to proxy request:
-			if (!"apiKey".equalsIgnoreCase(paramName)) {				
-				params.add(new NameValuePair(paramName, request.getParameter(paramName)));				
-			}	
-		}
-		
-		params.add(new NameValuePair("key", UITBASE_APIKEY));		
-		
-		NameValuePair paramsArray[] = new NameValuePair[params.size()];		
-		method.setQueryString(params.toArray(paramsArray));	
-		try {
-			logger.info("URI: "+method.getURI());
-		} catch (URIException e) {
-		}
+		return proxyHeaders;		
 	}
 
-	@Override	
-	protected void afterProxyRequest(HttpServletRequest request, HttpServletResponse response,
-			HttpMethod method) {
-		
-		// Set the content type, as it comes from the server
-		Header[] headers = method.getResponseHeaders();
-		for (Header header : headers) {
-			if (
-					!"Host".equalsIgnoreCase(header.getName()) && 
-					!"Transfer-Encoding".equalsIgnoreCase(header.getName())) {
-//				logger.info("Copying header: "+header.getName()+" : "+header.getValue());
-				response.setHeader(header.getName(), header.getValue());
-			}		
-		}		
+	@Override
+	protected List<NameValuePair> getProxyParameters(
+			List<NameValuePair> requestParameters) {
+		List<NameValuePair> proxyParameters = new ArrayList<NameValuePair>();
+		for (NameValuePair proxyParameter : proxyParameters) {			
+			if (!"apiKey".equalsIgnoreCase(proxyParameter.getName())) {
+				proxyParameters.add(new BasicNameValuePair(proxyParameter.getName(), proxyParameter.getValue()));
+			}
+		}
+		proxyParameters.add(new BasicNameValuePair("key", UITBASE_APIKEY));
+		return proxyParameters;		
 	}
+
+	@Override
+	protected List<Header> getResponseHeaders(List<Header> proxyHeaders) {
+		List<Header> responseHeaders = new ArrayList<Header>();
+		for (Header proxyHeader : proxyHeaders) {			
+			if (!"Host".equalsIgnoreCase(proxyHeader.getName()) && 
+					!"Transfer-Encoding".equalsIgnoreCase(proxyHeader.getName())) {
+				responseHeaders.add(new BasicHeader(proxyHeader.getName(), proxyHeader.getValue()));
+			}
+		}
+		return responseHeaders;	
+	}
+	
 }
