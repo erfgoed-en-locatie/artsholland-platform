@@ -1,6 +1,7 @@
 package org.waag.ah.spring.service;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -53,10 +54,17 @@ abstract class ProxyService {
 		afterProxyRequest(request, response, method);
 
 		ServletOutputStream output = response.getOutputStream();
-		Util.copyStream(method.getResponseBodyAsStream(), output);
 		
-		output.flush();
-//		output.close();
+		InputStream input = method.getResponseBodyAsStream();
+		
+		if (input != null && output != null) {		
+			Util.copyStream(input, output);			
+		}
+		
+		if (output != null) {
+			output.flush();
+			output.close();
+		}
 	}
 
 //	public void proxyQuery(HttpServletRequest request,
