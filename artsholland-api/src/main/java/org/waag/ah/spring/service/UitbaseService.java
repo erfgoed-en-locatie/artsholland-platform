@@ -33,9 +33,12 @@ public class UitbaseService extends ProxyService implements InitializingBean  {
 	@Override
 	protected List<Header> getProxyHeaders(List<Header> requestHeaders) {		
 		List<Header> proxyHeaders = new ArrayList<Header>();
-		for (Header requestHeader : requestHeaders) {			
-			if (!"Host".equalsIgnoreCase(requestHeader.getName())) {
-				proxyHeaders.add(new BasicHeader(requestHeader.getName(), requestHeader.getValue()));
+		for (Header requestHeader : requestHeaders) {
+			String name = requestHeader.getName();
+			if (!"Host".equalsIgnoreCase(name) &&
+					!"if-none-match".equalsIgnoreCase(name)					
+					) {
+				proxyHeaders.add(new BasicHeader(name, requestHeader.getValue()));
 			}
 		}
 		return proxyHeaders;		
@@ -45,9 +48,9 @@ public class UitbaseService extends ProxyService implements InitializingBean  {
 	protected List<NameValuePair> getProxyParameters(
 			List<NameValuePair> requestParameters) {
 		List<NameValuePair> proxyParameters = new ArrayList<NameValuePair>();
-		for (NameValuePair proxyParameter : proxyParameters) {			
-			if (!"apiKey".equalsIgnoreCase(proxyParameter.getName())) {
-				proxyParameters.add(new BasicNameValuePair(proxyParameter.getName(), proxyParameter.getValue()));
+		for (NameValuePair requestParameter : requestParameters) {			
+			if (!"apiKey".equalsIgnoreCase(requestParameter.getName())) {
+				proxyParameters.add(new BasicNameValuePair(requestParameter.getName(), requestParameter.getValue()));
 			}
 		}
 		proxyParameters.add(new BasicNameValuePair("key", UITBASE_APIKEY));
