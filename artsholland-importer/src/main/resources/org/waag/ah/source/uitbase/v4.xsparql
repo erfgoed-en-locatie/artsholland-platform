@@ -292,7 +292,7 @@ return
 					
 					construct {
 										 
-						$vuri dc:title {waag:parse-string($language/sortname)}@{$language-tag}.
+						$vuri dc:title {waag:parse-string($language/name)}@{$language-tag}.
 						
 						$vuri dc:description {waag:parse-string($language/description)}@{$language-tag}.
 						$vuri ah:shortDescription {waag:parse-string($language/short-description)}@{$language-tag}.
@@ -380,7 +380,7 @@ return
 					
 					construct {				
 						
-						$puri dc:title {waag:parse-string($languageBlock/sortname)}@{$language-tag} ;						
+						$puri dc:title {waag:parse-string($languageBlock/title)}@{$language-tag} ;						
 							dc:description {waag:parse-string($languageBlock/description)}@{$language-tag} ;
 							ah:shortDescription {waag:parse-string($languageBlock/short-description)}@{$language-tag} ;
 						
