@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.waag.ah.model.App;
 import org.waag.ah.model.ApiUser;
 import org.waag.ah.model.DbObject;
@@ -18,6 +20,7 @@ import org.waag.ah.model.DbObject;
 @SuppressWarnings("serial")
 @Entity
 @Table(name="app")
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class AppImpl implements App, Serializable, DbObject {
 	
 	@Id 
@@ -48,6 +51,10 @@ public class AppImpl implements App, Serializable, DbObject {
 	@ManyToOne(optional=false)
 	@JoinColumn(name="apiuser_id", nullable=false, referencedColumnName="id")
 	private ApiUserImpl apiUser;
+	
+	@ManyToOne(optional=false)
+	@JoinColumn(name="role_id", nullable=false, referencedColumnName="id")
+	private RoleImpl role;
 	
 	@Override
 	public long getId() {
@@ -120,5 +127,10 @@ public class AppImpl implements App, Serializable, DbObject {
 	public void setApiUser(ApiUserImpl apiUser) {
 		this.apiUser = apiUser;
 	}
-
+	
+	@Override
+	public String getRole() {
+		return role.getRole();
+	}
+	
 }

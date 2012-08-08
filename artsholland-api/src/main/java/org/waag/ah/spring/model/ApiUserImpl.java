@@ -15,12 +15,14 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.waag.ah.model.ApiUser;
 import org.waag.ah.model.DbObject;
 
 @SuppressWarnings("serial")
 @Entity
 @Table(name="apiuser")
+@JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
 public class ApiUserImpl implements ApiUser, Serializable, DbObject {
 		
 	@Id 
@@ -36,7 +38,7 @@ public class ApiUserImpl implements ApiUser, Serializable, DbObject {
 	
 	@Column
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date created;
+	private Date created = new Date();
 
 	@OneToMany(mappedBy = "apiUser")//, cascade=CascadeType.ALL)	  
 	private List<AppImpl> apps;
@@ -86,5 +88,6 @@ public class ApiUserImpl implements ApiUser, Serializable, DbObject {
 	@Override
 	public String toString() {
 		return  "id: " + getId() + ", email: " + email + ", name: " + name;
-	}	
+	}
+
 }

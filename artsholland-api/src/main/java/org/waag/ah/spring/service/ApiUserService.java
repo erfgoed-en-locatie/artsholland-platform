@@ -8,9 +8,8 @@ import org.waag.ah.spring.model.ApiUserImpl;
  
 @Service
 public class ApiUserService extends CRUDService<ApiUserImpl> {
- 
 
-	public ApiUserImpl findApiUserByEmail(String email) {
+	public ApiUserImpl findByEmail(String email) {
 		Query query = entityManager.createQuery("from ApiUserImpl a where a.email=:email").setParameter("email", email);
 		try {
 			ApiUserImpl a = (ApiUserImpl) query.getSingleResult();
@@ -20,9 +19,4 @@ public class ApiUserService extends CRUDService<ApiUserImpl> {
 		}
 	}
 
-	@Override
-	public void update(ApiUserImpl object) {
-		// TODO Auto-generated method stub
-		
-	}
 }

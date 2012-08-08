@@ -12,9 +12,9 @@ public interface ApiUser {
 		CREATE TABLE apiuser
 		(
 	  	id serial NOT NULL,
-	  	email text,
+	  	email text NOT NULL UNIQUE,
 	  	name text,
-	  	created timestamp,	
+	  	created timestamp NOT NULL default now(),	
 	  	CONSTRAINT pk_apiuser_id PRIMARY KEY ( id )
 		)
 		WITH (

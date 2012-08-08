@@ -1,21 +1,27 @@
 package org.waag.ah.spring.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.userdetails.memory.UserAttribute;
-import org.springframework.security.core.userdetails.memory.UserAttributeEditor;
 import org.springframework.util.Assert;
+import org.waag.ah.spring.model.AppImpl;
 
 public class ApiUserDetailsService implements UserDetailsService {
 	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(ApiUserDetailsService.class);
 	private Properties userProperties;
+	
+	@Autowired
+	private AppService appService;
 	
 	public ApiUserDetailsService(Properties userProperties) {
 		super();
@@ -32,19 +38,21 @@ public class ApiUserDetailsService implements UserDetailsService {
 			throw new UsernameNotFoundException(apiKey);
 		}
 		
-		// TODO: get user from database!
+		AppImpl app = appService.findByApiKey(apiKey);		
 		
-		UserAttributeEditor configAttribEd = new UserAttributeEditor();
-		configAttribEd.setAsText(userPropsValue);
-		UserAttribute userAttributes = (UserAttribute) configAttribEd.getValue(); 
+		List<String> authorities = new ArrayList<String>();
+		authorities.add(app.getRole());
+		UserAttribute userAttrib = new UserAttribute();		
+		userAttrib.setAuthoritiesAsString(authorities);
+		userAttrib.setPassword(apiKey);
 		
 		UserDetails user = new User(apiKey, 
-				userAttributes.getPassword(), 
-				userAttributes.isEnabled(), 
+				userAttrib.getPassword(), 
+				userAttrib.isEnabled(), 
 				true, 
 				true, 
 				true, 
-				userAttributes.getAuthorities());
+				userAttrib.getAuthorities());
 		return user;
 	}
 }
