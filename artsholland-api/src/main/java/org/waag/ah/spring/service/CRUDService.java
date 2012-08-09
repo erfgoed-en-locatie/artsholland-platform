@@ -12,6 +12,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.waag.ah.model.DbObject;
+import org.waag.ah.spring.util.ApiResult;
+import org.waag.ah.spring.util.ApiResult.ApiResultType;
 
 @Service
 @Transactional
@@ -31,8 +33,17 @@ public abstract class CRUDService<T extends DbObject> {
 				.getActualTypeArguments()[0]);
 	}
 
-	public void create(T object) {		
-		entityManager.merge(object); 
+	public ApiResult create(T object) {
+		try {
+			T dbObject = entityManager.merge(object);
+			if (dbObject != null) {
+				return new ApiResult(ApiResultType.SUCCESS);	
+			} else {
+				return new ApiResult(ApiResultType.FAILED);
+			}			
+		} catch (IllegalArgumentException e) {
+			return new ApiResult(ApiResultType.FAILED);
+		}
 	}
 
 	public T read(Object primaryKey) {		
@@ -40,19 +51,25 @@ public abstract class CRUDService<T extends DbObject> {
     return dbObject;
 	}
 
-	public void update(T object) {
-		T dbObject = entityManager.find(type, object.getId());		
-		if (dbObject != null) {
-			BeanUtils.copyProperties(object, dbObject);
-		}		
-		entityManager.merge(dbObject);
+	public ApiResult update(T object) {
+		if (object != null) {
+			T dbObject = entityManager.find(type, object.getId());		
+			if (dbObject != null) {
+				BeanUtils.copyProperties(object, dbObject);
+				entityManager.merge(dbObject);
+				return new ApiResult(ApiResultType.SUCCESS);
+			}			
+		}
+		return new ApiResult(ApiResultType.FAILED);
 	}
 
-	public void delete(Object primaryKey) {		
+	public ApiResult delete(Object primaryKey) {		
     T dbObject = entityManager.find(type, primaryKey);
     if (dbObject != null) {
     	entityManager.remove(dbObject);
+    	return new ApiResult(ApiResultType.SUCCESS);
     }
+    return new ApiResult(ApiResultType.FAILED);
 	}
 
 	@SuppressWarnings("unchecked")

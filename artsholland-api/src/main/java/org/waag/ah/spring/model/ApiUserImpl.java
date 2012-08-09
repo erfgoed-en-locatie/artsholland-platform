@@ -2,19 +2,15 @@ package org.waag.ah.spring.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.waag.ah.model.ApiUser;
 import org.waag.ah.model.DbObject;
@@ -40,8 +36,16 @@ public class ApiUserImpl implements ApiUser, Serializable, DbObject {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date created = new Date();
 
-	@OneToMany(mappedBy = "apiUser")//, cascade=CascadeType.ALL)	  
-	private List<AppImpl> apps;
+	//@OneToMany(mappedBy = "apiUser")//, cascade=CascadeType.ALL)	  
+	//private List<AppImpl> apps;
+	
+	public ApiUserImpl() {
+		
+	}
+	
+	public ApiUserImpl(long id) {
+			setId(id);
+	}
 	
 	@Override
 	public long getId() {
@@ -77,12 +81,6 @@ public class ApiUserImpl implements ApiUser, Serializable, DbObject {
 
 	public void setName(String name) {
 		this.name = name;
-	}
-
-	@Override
-	@JsonIgnore
-	public List<AppImpl> getApps() {
-		return apps;
 	}
 
 	@Override

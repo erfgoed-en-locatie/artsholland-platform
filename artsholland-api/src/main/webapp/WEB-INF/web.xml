@@ -84,9 +84,9 @@
     <servlet-name>rest</servlet-name>
     <url-pattern>/rest/*</url-pattern>
   </servlet-mapping> -->
-  <servlet-mapping>
+<!--   <servlet-mapping>
     <servlet-name>soap</servlet-name>
     <url-pattern>/admin/*</url-pattern>
-  </servlet-mapping>
+  </servlet-mapping> -->
   
 </web-app>

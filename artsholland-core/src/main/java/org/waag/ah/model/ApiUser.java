@@ -1,8 +1,6 @@
 package org.waag.ah.model;
 
-import java.util.Collection;
 import java.util.Date;
-
 
 public interface ApiUser {
 	
@@ -31,7 +29,5 @@ public interface ApiUser {
 	public String getName();
 		
 	public Date getCreated();
-		
-	public Collection<? extends App> getApps();
-	
+			
 }

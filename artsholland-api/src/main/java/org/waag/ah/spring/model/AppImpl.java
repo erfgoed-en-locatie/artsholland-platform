@@ -1,20 +1,19 @@
 package org.waag.ah.spring.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.waag.ah.model.App;
-import org.waag.ah.model.ApiUser;
 import org.waag.ah.model.DbObject;
 
 @SuppressWarnings("serial")
@@ -46,15 +45,21 @@ public class AppImpl implements App, Serializable, DbObject {
 	@Column
 	private String description;
 	
-//	@ManyToOne(fetch = FetchType.LAZY, targetEntity=ApiUserImpl.class)
-//@JoinColumn(name = "apiuser_id", nullable = false/*, referencedColumnName="id"*/)
-	@ManyToOne(optional=false)
-	@JoinColumn(name="apiuser_id", nullable=false, referencedColumnName="id")
-	private ApiUserImpl apiUser;
+	@Column
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date created = new Date();
 	
-	@ManyToOne(optional=false)
-	@JoinColumn(name="role_id", nullable=false, referencedColumnName="id")
-	private RoleImpl role;
+//	@ManyToOne(cascade=CascadeType.PERSIST)
+//	@JoinColumn(name="apiuser_id", nullable=false, referencedColumnName="id")
+//	private ApiUserImpl apiUser;
+	@Column(name="apiuser_id", nullable=false)
+	private long apiUserId;
+	
+//	@ManyToOne(cascade=CascadeType.PERSIST)
+//	@JoinColumn(name="role_id", nullable=false, referencedColumnName="id")
+//	@JsonManagedReference
+	@Column(name="role_id", nullable=false)
+	private long roleId = 1;
 	
 	@Override
 	public long getId() {
@@ -120,17 +125,31 @@ public class AppImpl implements App, Serializable, DbObject {
 	}
 
 	@Override
-	public ApiUser getApiUser() {
-		return apiUser;
+	public long getApiUserId() {
+		return apiUserId;
 	}
 
-	public void setApiUser(ApiUserImpl apiUser) {
-		this.apiUser = apiUser;
+	public void setApiUserId(long apiUserId) {
+		this.apiUserId = apiUserId;
 	}
 	
 	@Override
-	public String getRole() {
-		return role.getRole();
+	public long getRoleId() {
+		return roleId;
 	}
+
+	public void setRoleId(long roleId) {
+		this.roleId = roleId;
+	}
+
+	@Override
+	public Date getCreated() {
+		return created;
+	}
+	
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
 	
 }

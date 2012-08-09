@@ -1,5 +1,7 @@
 package org.waag.ah.model;
 
+import java.util.Date;
+
 public interface App { 
 	
 	/*
@@ -15,6 +17,7 @@ public interface App {
 			title text,	
 			url text,	
 			description text,
+      created timestamp NOT NULL default now(),	
       role_id integer NOT NULL,
   		CONSTRAINT pk_app_id PRIMARY KEY (id ),
   		CONSTRAINT fk_app_role_id FOREIGN KEY (role_id)
@@ -35,7 +38,7 @@ public interface App {
 	
 	public String getApiKey();
 	
-	public ApiUser getApiUser();
+	public long getApiUserId();
 	
 	public String getSecret();
 	
@@ -47,6 +50,8 @@ public interface App {
 	
 	public String getDescription();
 
-	public String getRole();
+	public long getRoleId();
+	
+	public Date getCreated();
 
 }

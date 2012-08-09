@@ -13,7 +13,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.userdetails.memory.UserAttribute;
 import org.springframework.util.Assert;
-import org.waag.ah.spring.model.AppImpl;
+import org.waag.ah.model.App;
+import org.waag.ah.model.Role;
 
 public class ApiUserDetailsService implements UserDetailsService {
 	@SuppressWarnings("unused")
@@ -38,10 +39,10 @@ public class ApiUserDetailsService implements UserDetailsService {
 			throw new UsernameNotFoundException(apiKey);
 		}
 		
-		AppImpl app = appService.findByApiKey(apiKey);		
+		Role role = appService.getAppRoleByApiKey(apiKey);
 		
 		List<String> authorities = new ArrayList<String>();
-		authorities.add(app.getRole());
+		authorities.add(role.getRole());
 		UserAttribute userAttrib = new UserAttribute();		
 		userAttrib.setAuthoritiesAsString(authorities);
 		userAttrib.setPassword(apiKey);

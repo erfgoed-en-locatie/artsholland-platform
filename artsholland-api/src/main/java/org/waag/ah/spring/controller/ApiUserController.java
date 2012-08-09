@@ -18,19 +18,21 @@ import org.waag.ah.spring.model.ApiUserImpl;
 import org.waag.ah.spring.model.AppImpl;
 import org.waag.ah.spring.service.ApiUserService;
 import org.waag.ah.spring.service.AppService;
+import org.waag.ah.spring.util.ApiResult;
+import org.waag.ah.spring.util.ApiResult.ApiResultType;
 
 @Controller
 public class ApiUserController { // implements InitializingBean
 	final static Logger logger = LoggerFactory.getLogger(ApiUserController.class);
 	
-	private static final String MAPPING = "/vis";
+	private static final String MAPPING = "/admin";
 	
 	@Autowired
 	private ApiUserService apiUserService;
 
 	@Autowired
 	private AppService appService;
-	
+		
 	@RequestMapping(value=MAPPING + "/user", method=RequestMethod.GET)
 	public @ResponseBody Collection<ApiUserImpl> findAll (
 			final HttpServletRequest request,
@@ -40,52 +42,117 @@ public class ApiUserController { // implements InitializingBean
 		return users;		
 	}
 	
-	// curl -v -H "Content-Type: application/json" -X POST http://localhost:8080/vis/user -d '{"email":"vis@chips.com"}'
+	// curl -v -H "Content-Type: application/json" -X POST http://localhost:8080/admin/user -d '{"email":"admin@chips.com"}'
 	@RequestMapping(value=MAPPING + "/user", method=RequestMethod.POST)
-	public @ResponseBody String createUser (
+	public @ResponseBody ApiResult createUser (
 			@RequestBody ApiUserImpl apiUser,
 			final HttpServletRequest request,
 			final HttpServletResponse response)
-			throws IOException {
-		apiUserService.create(apiUser);
-		return "vius";
+			throws IOException {		
+		return apiUserService.create(apiUser);		
 	}
 		
 	
-	// curl -v -H "Content-Type: application/json" -X PUT http://localhost:8080/vis/user/6 -d '{"name": "Vis", "email":"vis@chips.com"}'
+	// curl -v -H "Content-Type: application/json" -X PUT http://localhost:8080/admin/user/6 -d '{"name": "admin", "email":"admin@chips.com"}'
 	@RequestMapping(value=MAPPING + "/user/{id}", method=RequestMethod.PUT) 
-	public @ResponseBody String update(@PathVariable long id,
+	public @ResponseBody ApiResult update(
+			@PathVariable long id,
 			@RequestBody ApiUserImpl apiUser,
 			final HttpServletRequest request,
-			final HttpServletResponse response) throws IOException {
-		apiUser.setId(id);
-		apiUserService.update(apiUser);
-		return "dsd";
+			final HttpServletResponse response) throws IOException {		
+		if (apiUser.getId() == 0 || apiUser.getId() == id) {
+			apiUser.setId(id);
+			return apiUserService.update(apiUser);
+		}		
+		return new ApiResult(ApiResultType.FAILED);
 	}
 	
 	@RequestMapping(value=MAPPING + "/user/{id}", method=RequestMethod.GET) 
-	public @ResponseBody ApiUserImpl read(@PathVariable long id,	     
+	public @ResponseBody ApiUserImpl findById(
+			@PathVariable long id,	     
 			final HttpServletRequest request,
 			final HttpServletResponse response) throws IOException {		
-		ApiUserImpl apiUser = apiUserService.read(id);		
+		ApiUserImpl apiUser = apiUserService.read(id);
 		return apiUser;		
 	}
 	
-	// curl -XDELETE http://localhost:8080/vis/user/2
+	// curl -XDELETE http://localhost:8080/admin/user/2
 	@RequestMapping(value=MAPPING + "/user/{id}", method=RequestMethod.DELETE) 
-	public @ResponseBody String delete(@PathVariable long id,	     
+	public @ResponseBody ApiResult delete(
+			@PathVariable long id,	     
 			final HttpServletRequest request,
 			final HttpServletResponse response) throws IOException {		
-		apiUserService.delete(id);
-		//ApiResult vis = new ApiResult(ApiResult.SUCCESS);
-		return "Result";
+		appService.deleteAllByApiUserId(id);
+		return apiUserService.delete(id);
 	}
 	
+	/*
+	 * ======================================== App =======================================
+	 */
+	
 	@RequestMapping(value=MAPPING + "/user/{id}/app", method=RequestMethod.GET) 
-	public @ResponseBody Collection<AppImpl> findAllApps(@PathVariable long id,	     
+	public @ResponseBody Collection<AppImpl> findAllApps(
+			@PathVariable long id,	     
 			final HttpServletRequest request,
 			final HttpServletResponse response) throws IOException {		
 		return appService.findAllByApiUserId(id);				
+	}
+	
+	@RequestMapping(value=MAPPING + "/user/{id}/app", method=RequestMethod.POST) 
+	public @ResponseBody ApiResult createApp(
+			@PathVariable long id,	
+			@RequestBody AppImpl app,
+			final HttpServletRequest request,
+			final HttpServletResponse response) throws IOException {		
+		// TODO: do check in separate function
+		if (app.getApiUserId() == 0 || app.getApiUserId() == id) {
+			app.setApiUserId(id);
+			return appService.create(app);
+		}
+		return new ApiResult(ApiResultType.FAILED);
+	}
+	
+	@RequestMapping(value=MAPPING + "/user/{id}/app/{appId}", method=RequestMethod.GET) 
+	public @ResponseBody Object findApp(
+			@PathVariable long id, 
+			@PathVariable long appId,	     
+			final HttpServletRequest request,
+			final HttpServletResponse response) throws IOException {		
+		AppImpl app = appService.read(appId);
+		if (app != null && app.getApiUserId() == id)	{
+			return app; 		
+		}
+		return new Object();
+	}	
+	
+	@RequestMapping(value=MAPPING + "/user/{id}/app/{appId}", method=RequestMethod.PUT) 
+	public @ResponseBody ApiResult updateApp(
+			@PathVariable long id, 
+			@PathVariable long appId,
+			@RequestBody AppImpl app,
+			final HttpServletRequest request,
+			final HttpServletResponse response) throws IOException {		
+		if (app.getId() == 0 || app.getId() == appId) {
+			app.setId(appId);
+			if (app.getApiUserId() == 0 || app.getApiUserId() == id) {
+				app.setApiUserId(id);
+				appService.update(app);
+			}
+		}
+		return null;
+	}	
+	
+	@RequestMapping(value=MAPPING + "/user/{id}/app/{appId}", method=RequestMethod.DELETE) 
+	public @ResponseBody AppImpl deleteApp(
+			@PathVariable long id, 
+			@PathVariable long appId,	     
+			final HttpServletRequest request,
+			final HttpServletResponse response) throws IOException {		
+		AppImpl app = appService.read(appId);
+		if (app != null && app.getApiUserId() == id) {
+			apiUserService.delete(appId);
+		}
+		return null;
 	}
 	
 }

@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.waag.ah.model.DbObject;
 import org.waag.ah.model.Role;
 
@@ -22,10 +23,19 @@ public class RoleImpl implements Role, Serializable, DbObject {
 	@Column
 	private long id;
 	
-	@Column( unique = true, nullable = false ) 
+	@Column(unique = true, nullable = false) 
 	private String role;
 	
+	public RoleImpl() {
+		
+	}
+	
+	public RoleImpl(long id) {
+    this.id = id;
+  }	
+	
 	@Override
+	@JsonIgnore
 	public long getId() {
 		return id;
 	}
