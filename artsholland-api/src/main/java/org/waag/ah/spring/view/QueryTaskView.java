@@ -73,7 +73,9 @@ public class QueryTaskView extends AbstractView {
 			} else {
 				// Use text/plain when target is browser:
 				if (config.isOverrideResponseContentType()) {
+					// TODO: Shouldn't config.getContentType() return the overridden value?
 					contentType = config.getResponseContentType();	
+					config.setContentType(contentType);
 				} else if (config.getContentType() == RDFJSONFormat.MIMETYPE) {
 					// Or when content-type is our custom "application/x-waag-artsholland-restapi+json",
 					// change to default JSON content-type
