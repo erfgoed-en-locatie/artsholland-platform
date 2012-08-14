@@ -92,6 +92,7 @@ public abstract class AbstractQueryTask implements QueryTask {
 				printStream.print(");");	
 			}			
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error(e.getMessage());
 		} finally {
 			try {

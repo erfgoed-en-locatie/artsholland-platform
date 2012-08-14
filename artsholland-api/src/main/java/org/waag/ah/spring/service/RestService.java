@@ -2,12 +2,10 @@ package org.waag.ah.spring.service;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.openrdf.query.MalformedQueryException;
-import org.openrdf.rio.RDFFormat;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.waag.ah.WriterContentTypeConfig;
-import org.waag.ah.rdf.RDFJSONFormat;
 import org.waag.ah.rdf.RDFWriterConfig;
 import org.waag.ah.rdf.RdfQueryDefinition;
 import org.waag.ah.rdf.RestWriterTypeConfig;
@@ -31,9 +29,6 @@ public class RestService implements InitializingBean {
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		// TODO: is this the right place?
-		RDFFormat.register(RDFJSONFormat.RESTAPIJSON);		
-
 		rootRelation = new RestRelation();
 
 		RestRelation eventsRelation =

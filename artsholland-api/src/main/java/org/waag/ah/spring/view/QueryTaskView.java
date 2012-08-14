@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.parser.ParsedQuery;
+import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -38,6 +39,8 @@ public class QueryTaskView extends AbstractView {
 	private ExecutorService executor;
 	
 	public QueryTaskView(QueryService queryService) {
+		RDFFormat.register(RDFJSONFormat.RESTAPIJSON);
+		
 		this.queryService = queryService;
 		this.executor = Executors.newCachedThreadPool();
 	}
