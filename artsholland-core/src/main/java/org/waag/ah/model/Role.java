@@ -15,7 +15,7 @@ public interface Role {
 		  OIDS=FALSE
 		);
 		ALTER TABLE role
-		  OWNER TO postgres;
+		  OWNER TO artsholland;
 	*/
 	
 	public long getId();
