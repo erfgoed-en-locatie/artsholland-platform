@@ -59,7 +59,6 @@ public class QueryTaskView extends AbstractView {
 			QueryType queryType = queryService.getQueryType(parsedQuery);
 			
 			String contentType = getRequestedContentType(request, typeConfig, queryType);
-
 			if (contentType == null) {
 				response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE);
 				return;
