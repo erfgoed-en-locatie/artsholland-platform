@@ -14,17 +14,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.waag.ah.rdf.RdfQueryDefinition;
 import org.waag.ah.rest.SPARQLParameters;
 import org.waag.ah.spring.annotation.SPARQLRequestParameters;
 import org.waag.ah.spring.service.SPARQLService;
 import org.waag.ah.spring.view.QueryTaskView;
 
-@Secured("ROLE_API_USER")
 @Controller
+@RequestMapping(value = "/sparql")
+@Secured("ROLE_API_USER")
 public class SPARQLController {
 	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory.getLogger(SPARQLController.class);
-	private static final String MAPPING = "/sparql";
     
 	@Resource(name="sparqlService")
 	private SPARQLService sparqlService;
@@ -32,7 +33,7 @@ public class SPARQLController {
 	@Autowired
 	private QueryTaskView view;
 	
-	@RequestMapping(value = MAPPING, method = RequestMethod.GET, headers = "Accept=text/html")
+	@RequestMapping(method = RequestMethod.GET, headers = "Accept=text/html")
 	public ModelAndView getSnorql(
 			final HttpServletRequest request,
 			final HttpServletResponse response,
@@ -42,31 +43,15 @@ public class SPARQLController {
 		if (extension == null) {
 			return new ModelAndView("snorql");
 		} else {
-			return doQuery(request, response, params);
+			return doQuery(params);
 		}
 	}
 	
-	@RequestMapping(value = MAPPING)	
+	@RequestMapping
 	public ModelAndView doQuery(
-			final HttpServletRequest request,
-			final HttpServletResponse response,
-			@SPARQLRequestParameters() SPARQLParameters params
-			) throws IOException {		
-		return new ModelAndView(view, QueryTaskView.MODEL_QUERY, sparqlService.getQuery(params));		
+			@SPARQLRequestParameters() SPARQLParameters params)
+			throws IOException {
+		RdfQueryDefinition query = sparqlService.getQuery(params);
+		return new ModelAndView(view, QueryTaskView.MODEL_QUERY, query);
 	}
-	
-	
-	/*@RequestMapping(value = MAPPING, method = RequestMethod.POST)	
-	public void postQuery(final HttpServletRequest request,
-			final HttpServletResponse response)
-			throws InterruptedException, ExecutionException, IOException {
-		sparqlService.query(request, response);	
-	}
-	
-	@RequestMapping(value = MAPPING, method = RequestMethod.GET) //, headers = "Accept=application/*"
-	public void getQuery(final HttpServletRequest request,
-			final HttpServletResponse response)
-			throws InterruptedException, ExecutionException, IOException  {      	
-		sparqlService.query(request, response);	
-	}*/
 }

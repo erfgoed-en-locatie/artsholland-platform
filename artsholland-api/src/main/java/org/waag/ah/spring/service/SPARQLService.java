@@ -24,13 +24,12 @@ public class SPARQLService {
 		config.setJSONPCallback(params.getJSONPCallback());
 		if (params.isPlainText()) {
 			config.setResponseContentType(WriterContentTypeConfig.MIME_TEXT_PLAIN);
+		} else {
+			config.setResponseContentType(WriterContentTypeConfig.MIME_SPARQL_RESULTS_JSON);
 		}
 		
 		query.setWriterConfig(config);		
 		
 		return query;
 	}
-	
 }
-
-
