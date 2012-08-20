@@ -1,3 +1,8 @@
+INSERT INTO role (id, role)
+    VALUES (1, 'ROLE_API_USER');
+
+-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
 INSERT INTO apiuser (email)
     VALUES ('artsholland@waag.org');
 
