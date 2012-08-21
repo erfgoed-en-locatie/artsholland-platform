@@ -116,8 +116,14 @@ public class QueryTaskView extends AbstractView {
 	// TODO: move to other class?
 	private String getRequestedContentType(HttpServletRequest request, WriterContentTypeConfig typeConfig, QueryType queryType) {
 		String extension = getExtension(request);		
-		String extensionType = typeConfig.mapExtension(queryType, extension);		
-		String acceptType = MIMEParse.bestMatch(typeConfig.getSupportedContentTypes(queryType), request.getHeader("Accept"));
+		String extensionType = typeConfig.mapExtension(queryType, extension);
+		
+		String acceptHeader = request.getHeader("Accept");
+		if (acceptHeader == null) {
+			acceptHeader = "*/*";
+		}
+		
+		String acceptType = MIMEParse.bestMatch(typeConfig.getSupportedContentTypes(queryType), acceptHeader);
 		
 		return typeConfig.getContentType(queryType, extensionType, acceptType);
 	}
