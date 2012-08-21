@@ -57,7 +57,8 @@
 			</simple>
 		</trigger>
 
- -->	<!-- 	<trigger>
+ -->
+ <!--  	<trigger>
 			<cron>
 				<name>UitbaseIncrementalImportTrigger</name>
 				<group>IncrementalImport</group>
@@ -72,7 +73,7 @@
 				<cron-expression>0 0/5 * * * ?</cron-expression>
 				<time-zone>Europe/Amsterdam</time-zone>
 			</cron>
-		</trigger> -->
+		</trigger> --> 
 
 		<!-- <trigger> <cron> <name>DOSAImportTrigger</name> <group>Import</group> 
 			<job-name>DOSA</job-name> <job-group>WebResourceImport</job-group> <misfire-instruction>MISFIRE_INSTRUCTION_DO_NOTHING</misfire-instruction> 
