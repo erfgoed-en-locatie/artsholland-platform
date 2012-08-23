@@ -101,12 +101,12 @@ public class RestService implements InitializingBean {
     // TODO: add search:within(?geometry, "POLYGON((4 53, 4 54, 5 54, 5 53, 4 53))"^^geo:wkt)  	
   	
   	SPARQLFilter productionGenreFilter = new SPARQLFilter(
-  			"genre", "?object <http://purl.org/artsholland/1.0/genre> ?genre .", "?genre = ah:genre?parameter OR ?genre = ah:?parameter"
+  			"genre", "?object <http://purl.org/artsholland/1.0/genre> ?genre .", "?genre = ah:genre?parameter || ?genre = ah:?parameter"
   			);    	
   	productionsRelation.addFilter(productionGenreFilter);
   	
   	SPARQLFilter venueTypeFilter = new SPARQLFilter(
-  			"type", "?object <http://purl.org/artsholland/1.0/venueType> ?type .", "?type = ah:venueType?parameter OR ?type = ah:?parameter"
+  			"type", "?object <http://purl.org/artsholland/1.0/venueType> ?type .", "?type = ah:venueType?parameter || ?type = ah:?parameter"
   			);    	
   	venuesRelation.addFilter(venueTypeFilter);  	
   	
