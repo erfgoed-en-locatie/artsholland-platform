@@ -122,9 +122,16 @@ public class RestService implements InitializingBean {
   	
   	/*
   	 * Free text
+  	 * Searches all linked literals of ?object
   	 */
   	
-  	SPARQLFilter searchFilter = new SPARQLFilter("search", "?object dc:description ?desc .", "search:text(?desc, \"?parameter\")");   
+  	// USeekM: https://dev.opensahara.com/projects/useekm/wiki/IndexingSail
+  	SPARQLFilter searchFilter = new SPARQLFilter("search", "?object dc:description ?desc .", "search:text(?desc, \"?parameter\")");
+  	
+  	// BigData: http://sourceforge.net/apps/mediawiki/bigdata/index.php?title=FullTextSearch 
+  	// Does not work currently. BUG: http://sourceforge.net/apps/trac/bigdata/timeline?from=2012-07-18T13%3A45%3A17Z%2B0000&precision=second
+  	//SPARQLFilter searchFilter = new SPARQLFilter("search", "?object ?ps ?fts . ?fts bd:search \"?parameter\" .");
+  	
   	eventsRelation.addFilter(searchFilter);
   	productionsRelation.addFilter(searchFilter);
   	venuesRelation.addFilter(searchFilter);
