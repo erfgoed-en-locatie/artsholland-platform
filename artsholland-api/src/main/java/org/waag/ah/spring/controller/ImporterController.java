@@ -8,14 +8,18 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.waag.ah.model.Importer;
 import org.waag.ah.model.Importer.ImporterType;
 import org.waag.ah.spring.model.ImporterImpl;
+import org.waag.ah.spring.service.ApiUserService;
+import org.waag.ah.spring.service.ImporterService;
 import org.waag.ah.spring.util.ApiResult;
 import org.waag.ah.spring.util.ApiResult.ApiResultType;
 
@@ -24,20 +28,25 @@ public class ImporterController { // implements InitializingBean
 	final static Logger logger = LoggerFactory.getLogger(ImporterController.class);
 	
 	private static final String MAPPING = "/admin";
+
+	@Autowired
+	private ImporterService importerService;
 		
 	@RequestMapping(value=MAPPING + "/importer", method=RequestMethod.GET)
-	public @ResponseBody Collection<ImporterImpl> findAll (
+	public @ResponseBody Collection<Importer> findAll (
 			final HttpServletRequest request,
 			final HttpServletResponse response)
 			throws IOException {
 		
-		ImporterImpl importer = new ImporterImpl();
+		return importerService.getImporters();
+		
+		/*ImporterImpl importer = new ImporterImpl();
 		importer.setName("uitbase");
 		importer.setType(ImporterType.IMPORTER_TYPE_INCREMENTAL);
 		
 		ArrayList<ImporterImpl> list = new ArrayList<ImporterImpl>();
 		list.add(importer);
-		return list;
+		return list;*/
 	}	
 	
 	@RequestMapping(value=MAPPING + "/importer", method=RequestMethod.POST)
