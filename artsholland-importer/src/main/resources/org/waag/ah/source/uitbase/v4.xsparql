@@ -390,6 +390,36 @@ return
 					}
 				} .
 				
+				# $pos is counter (http://stackoverflow.com/questions/5652397/xquery-counters-inside-a-for)
+				{ for $medium at $pos in $production/media//medium				
+					
+					let $muri := {waag:object-uri("production", $cidn, "attachment", xs:string($pos))}
+										
+					let $typeKey := {waag:parse-string($medium/type)}
+					let $typeClass := {waag:class-uri("attachmentType", waag:upper-case-first($typeKey))}
+					
+					construct {
+					
+						$puri ah:attachment $muri .
+						
+						$muri a ah:Attachment ;
+							dc:title {waag:parse-string($medium/title)}^^xsd:string ;
+							dc:description {waag:parse-string($medium/description)}^^xsd:string ;
+						
+							# TODO: string?
+							ah:url {waag:parse-http-url($medium/ref)} ;
+											
+							# TODO:
+							#	<alt>A family again</alt>	
+						
+							ah:attachmentType $typeClass .
+							
+						$typeClass a ah:AttachmentType ;
+							rdfs:label {$typeKey}^^xsd:string .
+										
+					}
+				} .		
+				
 				{ for $tag in $production/tags//tag
 				
 					construct {
