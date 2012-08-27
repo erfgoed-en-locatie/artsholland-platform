@@ -10,10 +10,14 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 import org.waag.ah.PlatformConfig;
 import org.waag.ah.RepositoryConnectionFactory;
+import org.waag.ah.model.Importer;
 import org.waag.ah.mongo.MongoConnectionServiceImpl;
 import org.waag.ah.service.MongoConnectionService;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 
 @Service("importerService")
@@ -23,12 +27,17 @@ public class ImporterService implements InitializingBean  {
 	@Autowired
 	PlatformConfig platformConfig;
 	
-	MongoConnectionServiceImpl;
+	@EJB(mappedName = "java:app/datastore/MongoConnectionServiceImpl")
+	private MongoConnectionService mongoService;
+
+	private DBCollection collection;
 	
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		
-    //MongoOperations mongoOps = new MongoTemplate(new Mongo(), "artsholland");
+		collection = mongoService.getCollection("org.waag.ah.importer.importJobMonitor");
+		
+		//MongoOperations mongoOps = new MongoTemplate(new Mongo(), "artsholland");
 
    // DBCollection vis = mongoOps.getCollection("artsholland.org.waag.ah.importer.ImportJobMonitor");
 
@@ -36,6 +45,13 @@ public class ImporterService implements InitializingBean  {
 		
 //		coll = mongoService.getCollection(ImportJobMonitor.class.getName());
 //		coll.setObjectClass(ImportJobResult.class);		
+	}
+	
+	public Importer getImporters() {
+		DBObject vis = new BasicDBObject();
+		return null;
+		//collection.find(query, fields, numToSkip, batchSize)
+		
 	}
 	
 	//getImporters
