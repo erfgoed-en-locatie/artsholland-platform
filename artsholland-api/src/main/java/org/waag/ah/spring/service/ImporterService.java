@@ -23,7 +23,7 @@ public class ImporterService implements InitializingBean  {
 	@Autowired
 	PlatformConfig platformConfig;
 	
-	
+	MongoConnectionServiceImpl;
 	
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -38,8 +38,8 @@ public class ImporterService implements InitializingBean  {
 //		coll.setObjectClass(ImportJobResult.class);		
 	}
 	
-	
-
+	//getImporters
+	//db.org.waag.ah.importer.ImportJobMonitor.distinct("jobClass")
 	
 	/*getImporters
 	
