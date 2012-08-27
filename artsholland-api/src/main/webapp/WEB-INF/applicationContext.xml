@@ -30,11 +30,12 @@
   <jee:jndi-lookup id="queryService" jndi-name="java:app/datastore/BigdataQueryService"/>
   
   <context:component-scan base-package="org.waag.ah.spring" />
-
+<!-- 
   <sws:annotation-driven />
   <sws:dynamic-wsdl id="admin" portTypeName="AdminInterface"
     locationUri="http://api.ah.local/admin/">
     <sws:xsd location="/WEB-INF/xsd/AdminInterface.xsd" />
   </sws:dynamic-wsdl>
 
-</beans>
+ -->
+ </beans>
