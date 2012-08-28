@@ -12,7 +12,15 @@
   <!-- <context:annotation-config /> -->
   
   <!-- TODO: Find out why the REST API stops working with this line enabled. -->
-  <mvc:annotation-driven />
+  <mvc:annotation-driven>
+  <mvc:message-converters>        
+        <bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+            <property name="objectMapper" ref="jacksonObjectMapper" />
+        </bean>        
+    </mvc:message-converters>
+  </mvc:annotation-driven>
+  
+  <bean id="jacksonObjectMapper" class="org.waag.ah.spring.map.WaagObjectMapper" />
 
   <bean id="accessConfirmationController" class="org.waag.ah.spring.controller.OAuthController" />
 
