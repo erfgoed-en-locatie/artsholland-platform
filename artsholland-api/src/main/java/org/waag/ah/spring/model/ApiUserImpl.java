@@ -19,7 +19,7 @@ import org.waag.ah.model.DbObject;
 @Entity
 @Table(name="apiuser")
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
-public class ApiUserImpl implements ApiUser, Serializable, DbObject {
+public class ApiUserImpl implements ApiUser, Serializable, DbObject<Long> {
 		
 	@Id 
 	@GeneratedValue( strategy = GenerationType.IDENTITY ) 
@@ -48,7 +48,7 @@ public class ApiUserImpl implements ApiUser, Serializable, DbObject {
 	}
 	
 	@Override
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 	

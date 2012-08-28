@@ -17,6 +17,10 @@ import org.waag.ah.spring.util.ApiResult.ApiResultType;
 
 @Service
 @Transactional
+/*
+ * TODO: never completely delete objects, only mark as expired
+ * Add expired property to DbObject
+ */
 public abstract class CRUDService<T extends DbObject> {
 
 	// TODO: use Spring transactions

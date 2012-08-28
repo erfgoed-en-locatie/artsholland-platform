@@ -10,7 +10,7 @@ import org.waag.ah.model.Import;
 
 import com.mongodb.DBObject;
 
-public class ImportJobResult implements DBObject, Import {
+public class ImportJobResult implements DBObject {//, Import {
 	public static String STRATEGY_FULL = "full";
 	public static String STRATEGY_INCREMENTAL = "incremental";
 	
