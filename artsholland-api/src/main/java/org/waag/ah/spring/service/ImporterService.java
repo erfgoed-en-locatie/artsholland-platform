@@ -13,8 +13,8 @@ import com.mongodb.CommandResult;
 @Service("importerService")
 public class ImporterService extends MongoService<Importer>  {
 		
-	public List<Importer> getImporters() {
-				List<Importer> importers = new ArrayList<Importer>();
+	public List<Importer> findAll() {
+		List<Importer> importers = new ArrayList<Importer>();
 		
 		String json = "{ distinct : \"org.waag.ah.importer.ImportJobMonitor\", key : \"jobClass\" }";
 		
@@ -30,6 +30,7 @@ public class ImporterService extends MongoService<Importer>  {
 		}		
 		return importers;		
 	}
+
 	
 	//getImporters
 	//db.org.waag.ah.importer.ImportJobMonitor.distinct("jobClass")

@@ -32,10 +32,4 @@ public abstract class MongoService<T extends Object> /*MongoCRUDService*/ {
 		template = new MongoTemplate(mongoService.getMongo(), platformConfig.getString("mongo.database"));
 	}
 	
-	public T find(Object primaryKey) {
-		return null;
-	}
-	
-	//findAll
-
 }

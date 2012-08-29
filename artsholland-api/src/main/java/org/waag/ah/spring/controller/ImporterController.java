@@ -8,6 +8,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.joda.time.Period;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,17 +46,34 @@ public class ImporterController { // implements InitializingBean
 			final HttpServletRequest request,
 			final HttpServletResponse response)
 			throws IOException {		
-		return importerService.getImporters();
+		return importerService.findAll();
 	}		
 		
 	@RequestMapping(value=MAPPING + "/importer/{id}", method=RequestMethod.GET)
-	public @ResponseBody Importer findById(
+	public @ResponseBody ApiResult findById(
 			@PathVariable String id, 
 			final HttpServletRequest request,
 			final HttpServletResponse response)
 			throws IOException {
-		return importerService.find(id);
+		return new ApiResult(ApiResultType.NOT_YET_IMPLEMENTED);
 	}
+	
+	@RequestMapping(value=MAPPING + "/importer/{id}/truncate", method=RequestMethod.GET) 
+	public @ResponseBody ApiResult truncateImport(
+			@PathVariable String id,	     
+			final HttpServletRequest request,
+			final HttpServletResponse response) throws IOException {		
+		return new ApiResult(ApiResultType.NOT_YET_IMPLEMENTED);				
+	}	
+	
+	@RequestMapping(value=MAPPING + "/importer/{id}/schedule", method=RequestMethod.POST) 
+	public @ResponseBody ApiResult scheduleImport(
+			@PathVariable String id,	     
+			final HttpServletRequest request,
+			final HttpServletResponse response) throws IOException {		
+		// TODO: expects org.joda.time.Period
+		return new ApiResult(ApiResultType.NOT_YET_IMPLEMENTED);				
+	}		
 	
 	@RequestMapping(value=MAPPING + "/importer/{id}/import", method=RequestMethod.GET) 
 	public @ResponseBody List<Import> findAllImports(
