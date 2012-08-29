@@ -62,7 +62,7 @@ public class PrivateObjectService extends MongoService<PrivateObject>  {
 		if (conn != null && vf != null) {
 		
 		String subject = privateObject.getUri();
-		String predicate = classUri + "secretObject";
+		String predicate = classUri + "privateObject";
 		String object = platformUri + "/private/object/" + privateObject.getId();
 		//http://localhost:8080/private/object/d17ff653-ebdb-473f-a5f9-15a0aea03eb7
 		
