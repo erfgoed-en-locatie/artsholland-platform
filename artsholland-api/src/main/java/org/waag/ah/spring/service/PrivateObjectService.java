@@ -1,6 +1,5 @@
 package org.waag.ah.spring.service;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 
 import javax.annotation.PostConstruct;
@@ -12,12 +11,10 @@ import org.openrdf.model.ValueFactory;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.waag.ah.RepositoryConnectionFactory;
-import org.waag.ah.bigdata.BigdataConnectionService;
 import org.waag.ah.exception.ConnectionException;
 import org.waag.ah.model.PrivateObject;
 import org.waag.ah.spring.model.PrivateObjectImpl;

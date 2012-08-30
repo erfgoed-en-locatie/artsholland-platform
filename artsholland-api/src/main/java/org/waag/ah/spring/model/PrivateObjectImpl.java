@@ -2,10 +2,7 @@ package org.waag.ah.spring.model;
 
 import java.io.Serializable;
 
-import org.bson.types.ObjectId;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
-import org.openrdf.model.URI;
-import org.openrdf.model.impl.URIImpl;
 import org.waag.ah.UUIDGenerator;
 import org.waag.ah.model.DbObject;
 import org.waag.ah.model.PrivateObject;
