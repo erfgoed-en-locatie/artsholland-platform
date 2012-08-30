@@ -52,6 +52,7 @@ public class RestParametersArgumentResolver extends
 				//params.setPagedQuery(params.getPage() > 0);
 			}
 			
+			params.setOrdered(getBooleanValue(paramMap, "ordered"));
 			params.setPretty(getBooleanValue(paramMap, "pretty"));
 			params.setPlainText(getBooleanValue(paramMap, "plaintext"));
 			params.setCountTotals(getBooleanValue(paramMap, "count"));

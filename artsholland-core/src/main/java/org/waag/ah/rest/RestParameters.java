@@ -17,6 +17,7 @@ public class RestParameters {
 	private boolean prettyPrint = false;
 	private boolean countTotals = false;
 	private boolean plainText = false;
+	private boolean ordered = false;
 
 	public static long DEFAULT_RESULT_LIMIT = 10;
 
@@ -150,6 +151,14 @@ public class RestParameters {
 
 	public void setPlainText(boolean plainText) {
 		this.plainText = plainText;
+	}
+	
+	public boolean isOrdered() {
+		return ordered;
+	}
+
+	public void setOrdered(boolean ordered) {
+		this.ordered = ordered;
 	}
 
 }

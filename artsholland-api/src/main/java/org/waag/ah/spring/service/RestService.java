@@ -170,7 +170,7 @@ public class RestService implements InitializingBean {
 
 	private RDFWriterConfig getDefaultWriterConfig(RestParameters params) {
 		RDFWriterConfig config = new RDFWriterConfig();
-		config.setContentTypeConfig(new RestWriterTypeConfig());
+		config.setContentTypeConfig(new RestWriterTypeConfig());		
 		config.setPrettyPrint(params.getPretty());
 		config.setJSONPCallback(params.getJSONPCallback());
 		if (params.isPlainText()) {
