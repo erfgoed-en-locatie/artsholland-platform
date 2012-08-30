@@ -25,7 +25,7 @@ import org.springframework.web.filter.GenericFilterBean;
 
 public class ApiKeyAuthenticationFilter extends GenericFilterBean implements ApplicationEventPublisherAware { 
 	private static final Logger logger = LoggerFactory.getLogger(ApiKeyAuthenticationFilter.class);
-	public static final String SPRING_SECURITY_API_KEY = "apiKey";
+	//public static final String SPRING_SECURITY_API_KEY = "apiKey";
 	private AuthenticationManager authenticationManager;
 	private ApiKeyServices apiKeyServices;
 	private ApplicationEventPublisher eventPublisher;
