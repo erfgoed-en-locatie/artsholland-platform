@@ -223,7 +223,7 @@ return
 			  $auri a ah:Address ;
         	vcard:street-address {concat($venue/street/name, " ", $venue/street/number, $venue/street/addition)} ;
 					vcard:locality {waag:parse-string($venue/city)} ;
-					vcard:postal-code {waag:parse-string($venue/postal-code)} .
+					vcard:postal-code {waag:postal-code(waag:parse-string($venue/postal-code))} .
 				
 				{ for $room in $venue/rooms//room
 					
