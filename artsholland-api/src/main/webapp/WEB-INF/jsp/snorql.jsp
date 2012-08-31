@@ -1,10 +1,10 @@
 <%
 	String apiKey = "";
 	String apiKeyUrl = "";
-	if (request.getParameterMap().containsKey("apiKey")) {
-		apiKey = request.getParameter("apiKey");
+	if (request.getParameterMap().containsKey("api_key")) {
+		apiKey = request.getParameter("api_key");
 		if (apiKey.length() > 0) {
-			apiKeyUrl = "&apiKey=" + apiKey;
+			apiKeyUrl = "&api_key=" + apiKey;
 		}			
 	}	
 	
