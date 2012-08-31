@@ -4,7 +4,8 @@ public class ApiResult {
 	
 	public enum ApiResultType {
     SUCCESS,
-    FAILED
+    FAILED, 
+    NOT_YET_IMPLEMENTED
 	}
 	
 	private ApiResultType result;

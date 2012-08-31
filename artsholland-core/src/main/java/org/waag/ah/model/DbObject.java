@@ -1,7 +1,9 @@
 package org.waag.ah.model;
 
-public interface DbObject {
+import java.io.Serializable;
 
-	public long getId();
+public interface DbObject<ID extends Serializable> {
 
+	public ID getId();
+	
 }

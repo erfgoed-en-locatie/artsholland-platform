@@ -16,7 +16,7 @@ import org.waag.ah.model.Role;
 @SuppressWarnings("serial")
 @Entity
 @Table(name="role")
-public class RoleImpl implements Role, Serializable, DbObject {
+public class RoleImpl implements Role, Serializable, DbObject<Long> {
 	
 	@Id 
 	@GeneratedValue(strategy=GenerationType.IDENTITY) 
@@ -36,7 +36,7 @@ public class RoleImpl implements Role, Serializable, DbObject {
 	
 	@Override
 	@JsonIgnore
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 	

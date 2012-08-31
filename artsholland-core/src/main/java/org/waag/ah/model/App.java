@@ -34,11 +34,11 @@ public interface App {
 		OWNER TO artsholland;
 	*/
 	
-	public long getId();
+	public Long getId();
 	
 	public String getApiKey();
 	
-	public long getApiUserId();
+	public Long getApiUserId();
 	
 	public String getSecret();
 	
@@ -50,7 +50,7 @@ public interface App {
 	
 	public String getDescription();
 
-	public long getRoleId();
+	public Long getRoleId();
 	
 	public Date getCreated();
 

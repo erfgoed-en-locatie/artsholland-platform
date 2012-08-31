@@ -11,30 +11,20 @@ import org.waag.ah.model.Importer;
 
 @SuppressWarnings("serial")
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
-public class ImporterImpl implements Importer, Serializable, DbObject {
+public class ImporterImpl implements Importer, Serializable, DbObject<String> {
 
-	private long id;
-	private String name;
+	private String id;
 	private String title;
 	private ImporterType type;
 	private List<Import> imports;
 	
 	@Override
-	public long getId() {
+	public String getId() {
 		return id;
 	}
 	
-	public void setId(long id) {
+	public void setId(String id) {
 		this.id = id;
-	}
-
-	@Override
-	public String getName() {
-		return name;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	@Override
@@ -72,7 +62,8 @@ public class ImporterImpl implements Importer, Serializable, DbObject {
 	@Override
 	public void schedule(Period period) {
 		// TODO Auto-generated method stub		
-	}	
+	}
+
 
 	
 }

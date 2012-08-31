@@ -22,7 +22,7 @@ public interface ApiUser {
   	OWNER TO artsholland;
 	*/
 	
-	public long getId();
+	public Long getId();
 		
 	public String getEmail();
 		

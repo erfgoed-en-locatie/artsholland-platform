@@ -20,7 +20,7 @@ import org.waag.ah.model.DbObject;
 @Entity
 @Table(name="app")
 @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)
-public class AppImpl implements App, Serializable, DbObject {
+public class AppImpl implements App, Serializable, DbObject<Long> {
 	
 	@Id 
 	@GeneratedValue(strategy=GenerationType.IDENTITY) 
@@ -62,7 +62,7 @@ public class AppImpl implements App, Serializable, DbObject {
 	private long roleId = 1;
 	
 	@Override
-	public long getId() {
+	public Long getId() {
 		return id;
 	}
 	
@@ -125,7 +125,7 @@ public class AppImpl implements App, Serializable, DbObject {
 	}
 
 	@Override
-	public long getApiUserId() {
+	public Long getApiUserId() {
 		return apiUserId;
 	}
 
@@ -134,11 +134,11 @@ public class AppImpl implements App, Serializable, DbObject {
 	}
 	
 	@Override
-	public long getRoleId() {
+	public Long getRoleId() {
 		return roleId;
 	}
 
-	public void setRoleId(long roleId) {
+	public void setRoleId(Long roleId) {
 		this.roleId = roleId;
 	}
 

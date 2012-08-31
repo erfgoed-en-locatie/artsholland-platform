@@ -11,7 +11,6 @@ public interface Importer {
     IMPORTER_TYPE_INCREMENTAL
 	}
 	
-	public String getName();
 	public String getTitle();
 	public List<Import> getImports();
 	public ImporterType getType();

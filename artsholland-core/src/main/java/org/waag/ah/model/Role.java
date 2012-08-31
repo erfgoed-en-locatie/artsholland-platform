@@ -18,7 +18,7 @@ public interface Role {
 		  OWNER TO artsholland;
 	*/
 	
-	public long getId();
+	public Long getId();
 	
 	public String getRole();
 
