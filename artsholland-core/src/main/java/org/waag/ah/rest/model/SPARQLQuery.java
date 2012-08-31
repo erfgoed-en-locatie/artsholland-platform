@@ -14,7 +14,7 @@ public class SPARQLQuery {
 	private static final String FILTER_PLACEMARK = "[[filter]]";
 	private static final String LANGUAGE_PLACEMARK = "[[language]]";
 	private static final String ORDER_PLACEMARK = "[[order]]";
-
+	
 	private static final long MAXIMUM_PER_PAGE = 250;
 			
 	/*
@@ -178,15 +178,17 @@ public class SPARQLQuery {
 	}
 
 	private String addLanguageFilter(String query, RestParameters params) {
-		ArrayList<String> filters = new ArrayList<String>();
-		
-		String languageFilter = "!isLiteral(?o) || datatype(?o) != \"xsd:string\" || langMatches(lang(?o), ?lang	) || langMatches(lang(?o), \"\")";
-		languageFilter = languageFilter.replace("?lang", "\"" + params.getLanguageTag() + "\"");
-		filters.add(languageFilter);		
-		
-		return addFilters(query, LANGUAGE_PLACEMARK, filters);
-	}
-	
+		if (params.isLocalized()) {
+			ArrayList<String> filters = new ArrayList<String>();
+			String languageFilter = "!isLiteral(?o) || datatype(?o) != \"xsd:string\" || langMatches(lang(?o), ?lang	) || langMatches(lang(?o), \"\")";
+			languageFilter = languageFilter.replace("?lang", "\"" + params.getLanguageTag() + "\"");
+			filters.add(languageFilter);		
+			
+			return addFilters(query, LANGUAGE_PLACEMARK, filters);	
+		}	else {
+			return query.replace(LANGUAGE_PLACEMARK, "");	
+		}		 
+	}	
 	
 	private String addPaging(String query, long perPage, long page) {
 		// TODO: check if count & page are valid
