@@ -1,6 +1,8 @@
 package org.waag.ah.spring.controller;
 
 import java.io.IOException;
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,6 +31,14 @@ public class DocumentationController {
 			final HttpServletResponse response)
 			throws IOException {
 		return documentationService.render(name);
+	}	
+	
+	@RequestMapping(value="", method=RequestMethod.GET)
+	public @ResponseBody List<String> list(			 
+			final HttpServletRequest request,
+			final HttpServletResponse response)
+			throws IOException {
+		return documentationService.list();
 	}	
 	
 }
