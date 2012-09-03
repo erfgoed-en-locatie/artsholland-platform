@@ -65,7 +65,7 @@ public class AppController { // implements InitializingBean
 	}	
 	
 	@RequestMapping(value="/app/{id}", method=RequestMethod.PUT) 
-	public @ResponseBody ApiResult updateApp(
+	public @ResponseBody Object updateApp(
 			@PathVariable long id,
 			@RequestBody AppImpl app,
 			final HttpServletRequest request,
