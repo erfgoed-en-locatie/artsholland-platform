@@ -55,13 +55,12 @@ public abstract class CRUDService<T extends DbObject<?>> {
     return dbObject;
 	}
 
-	public ApiResult update(T object) {
+	public Object update(T object) {
 		if (object != null) {
 			T dbObject = entityManager.find(type, object.getId());		
 			if (dbObject != null) {
 				BeanUtils.copyProperties(object, dbObject);
-				entityManager.merge(dbObject);
-				return new ApiResult(ApiResultType.SUCCESS);
+				return entityManager.merge(dbObject);				
 			}			
 		}
 		return new ApiResult(ApiResultType.FAILED);

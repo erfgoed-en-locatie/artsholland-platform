@@ -54,7 +54,7 @@ public class ApiUserController { // implements InitializingBean
 	
 	// curl -v -H "Content-Type: application/json" -X PUT http://localhost:8080/admin/user/6 -d '{"name": "admin", "email":"admin@chips.com"}'
 	@RequestMapping(value="/user/{id}", method=RequestMethod.PUT) 
-	public @ResponseBody ApiResult update(
+	public @ResponseBody Object update(
 			@PathVariable long id,
 			@RequestBody ApiUserImpl apiUser,
 			final HttpServletRequest request,
