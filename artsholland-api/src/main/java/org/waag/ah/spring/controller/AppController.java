@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.waag.ah.UUIDGenerator;
 import org.waag.ah.spring.model.AppImpl;
 import org.waag.ah.spring.service.AppService;
 import org.waag.ah.spring.util.ApiResult;
@@ -44,6 +45,7 @@ public class AppController { // implements InitializingBean
 			final HttpServletResponse response) throws IOException {		
 		// TODO: do check in separate function
 		if (app.getApiUserId() == 0 || app.getApiUserId() == id) {
+			app.setApiKey(UUIDGenerator.generate());
 			app.setApiUserId(id);
 			return appService.create(app);
 		}
