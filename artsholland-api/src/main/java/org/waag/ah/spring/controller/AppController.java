@@ -38,18 +38,13 @@ public class AppController { // implements InitializingBean
 	}
 	
 	@RequestMapping(value="/app", method=RequestMethod.POST) 
-	public @ResponseBody Object createApp(
-			@PathVariable long id,	
+	public @ResponseBody Object createApp(			
 			@RequestBody AppImpl app,
 			final HttpServletRequest request,
 			final HttpServletResponse response) throws IOException {		
-		// TODO: do check in separate function
-		if (app.getApiUserId() == 0 || app.getApiUserId() == id) {
-			app.setApiKey(UUIDGenerator.generate());
-			app.setApiUserId(id);
-			return appService.create(app);
-		}
-		return new ApiResult(ApiResultType.FAILED);
+		// TODO: do check in separate function		
+		app.setApiKey(UUIDGenerator.generate());			
+		return appService.create(app);		
 	}
 	
 	@RequestMapping(value="/app/{id}", method=RequestMethod.GET) 
