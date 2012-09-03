@@ -13,6 +13,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
+import org.waag.ah.UUIDGenerator;
 import org.waag.ah.model.App;
 import org.waag.ah.model.DbObject;
 
@@ -28,10 +29,10 @@ public class AppImpl implements App, Serializable, DbObject<Long> {
 	private long id;
 	
 	@Column( unique = true, nullable = false ) 
-	private String apiKey;
+	private String apiKey = UUIDGenerator.generate();
 
 	@Column
-	private String secret;
+	private String secret = UUIDGenerator.generate();
 	
 	@Column
 	private String name;
