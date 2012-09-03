@@ -21,7 +21,7 @@ import org.waag.ah.spring.util.ApiResult.ApiResultType;
  * TODO: never completely delete objects, only mark as expired
  * Add expired property to DbObject
  */
-public abstract class CRUDService<T extends DbObject> {
+public abstract class CRUDService<T extends DbObject<?>> {
 
 	// TODO: use Spring transactions
 	
@@ -37,11 +37,11 @@ public abstract class CRUDService<T extends DbObject> {
 				.getActualTypeArguments()[0]);
 	}
 
-	public ApiResult create(T object) {
+	public Object create(T object) {
 		try {
 			T dbObject = entityManager.merge(object);
 			if (dbObject != null) {
-				return new ApiResult(ApiResultType.SUCCESS);	
+				return dbObject;	
 			} else {
 				return new ApiResult(ApiResultType.FAILED);
 			}			
