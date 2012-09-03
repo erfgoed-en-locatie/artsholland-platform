@@ -39,8 +39,19 @@ function Snorql() {
         document.getElementById('toggleprefixes').onclick = this._togglePrefixes;
         
         var apiKeyRegEx = queryString.match(/api_key=([^&]*)/);
+        var apiKeyRegExOld = queryString.match(/apiKey=([^&]*)/);
+        
         var apiKeyUrl = apiKeyRegEx ? apiKeyRegEx[0] : null;
         var apiKey = apiKeyRegEx ? apiKeyRegEx[1] : null;
+        
+        var apiKeyUrlOld = apiKeyRegExOld ? apiKeyRegExOld[0] : null;
+        var apiKeyOld = apiKeyRegExOld ? apiKeyRegExOld[1] : null;
+        
+        apiKeyUrl = apiKeyUrl ? apiKeyUrl : apiKeyUrlOld;
+        apiKeyUrl = apiKeyUrl.replace("apiKey", "api_key");
+        
+        apiKey = apiKey ? apiKey : apiKeyOld;
+        
         this.setApiKey(apiKey);
         //this.setBrowserBase(document.location.href.replace(/\?.*/, '') );
         

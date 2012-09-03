@@ -2,11 +2,14 @@
 	String apiKey = "";
 	String apiKeyUrl = "";
 	if (request.getParameterMap().containsKey("api_key")) {
-		apiKey = request.getParameter("api_key");
-		if (apiKey.length() > 0) {
-			apiKeyUrl = "&api_key=" + apiKey;
-		}			
-	}	
+		apiKey = request.getParameter("api_key");					
+	}	else if (request.getParameterMap().containsKey("apiKey")) {
+		apiKey = request.getParameter("apiKey");
+	}
+	
+	if (apiKey.length() > 0) {
+		apiKeyUrl = "&api_key=" + apiKey;
+	}
 	
 %>
 <?xml version="1.0" encoding="utf-8"?>
@@ -63,7 +66,7 @@
       <pre id="prefixestext"></pre>
       <form id="queryform" action="#" method="get"><div>
         <input type="hidden" name="query" value="" id="query" />
-        <input type="hidden" name="apiKey" value="<%= apiKey %>" id="apiKey" />
+        <input type="hidden" name="api_key" value="<%= apiKey %>" id="apiKey" />
         <input type="hidden" name="output" value="json" id="jsonoutput" disabled="disabled" />
         <input type="hidden" name="stylesheet" value="" id="stylesheet" disabled="disabled" />
         <input type="hidden" name="graph" value="" id="graph-uri" disabled="disabled" />
