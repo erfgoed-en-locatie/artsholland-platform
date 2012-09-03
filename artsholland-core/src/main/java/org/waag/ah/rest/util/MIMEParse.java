@@ -235,8 +235,15 @@ public final class MIMEParse
      */
     public static String bestMatch(Collection<String> supported, String header)
     {
-        List<ParseResults> parseResults = new LinkedList<ParseResults>();
-        List<FitnessAndQuality> weightedMatches = new LinkedList<FitnessAndQuality>();
+    	/*
+    	 * temporary fix when header==null
+    	 */
+      if (header == null) {
+      	header = "*/*";
+      }
+      
+    	List<ParseResults> parseResults = new LinkedList<ParseResults>();
+    	List<FitnessAndQuality> weightedMatches = new LinkedList<FitnessAndQuality>();
         for (String r : StringUtils.split(header, ','))
             parseResults.add(parseMediaRange(r));
 

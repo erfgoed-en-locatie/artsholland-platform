@@ -19,7 +19,7 @@ public class RDFWriterConfig implements WriterConfig {
 	
 	private String jsonpCallback;
 	private boolean jsonp = false;
-	
+		
 	public void setContentType(String contentType) {
 		// TODO: This is, of course, a hack :)
 		/*if (format.equals("application/json")) {

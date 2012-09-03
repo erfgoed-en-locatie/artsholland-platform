@@ -6,7 +6,8 @@ import org.openrdf.rio.RDFFormat;
 
 public class RDFJSONFormat extends RDFFormat {
 	public static RDFJSONFormat RESTAPIJSON = new RDFJSONFormat();
-    public static final String MIMETYPE = "application/x-waag-artsholland-restapi+json";
+//    public static final String MIMETYPE = "application/x-waag-artsholland-restapi+json";
+    public static final String MIMETYPE = "application/json";
 
     private RDFJSONFormat() {
         super("RESTAPI/JSON",

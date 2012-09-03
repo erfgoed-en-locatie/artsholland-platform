@@ -109,12 +109,12 @@ public class RestService implements InitializingBean {
     // TODO: add search:within(?geometry, "POLYGON((4 53, 4 54, 5 54, 5 53, 4 53))"^^geo:wkt)  	
   	
   	SPARQLFilter productionGenreFilter = new SPARQLFilter(
-  			"genre", "?object <http://purl.org/artsholland/1.0/genre> ?genre .", "?genre = ah:genre?parameter OR ?genre = ah:?parameter"
+  			"genre", "?object <http://purl.org/artsholland/1.0/genre> ?genre .", "?genre = ah:genre?parameter || ?genre = ah:?parameter"
   			);    	
   	productionsRelation.addFilter(productionGenreFilter);
   	
   	SPARQLFilter venueTypeFilter = new SPARQLFilter(
-  			"type", "?object <http://purl.org/artsholland/1.0/venueType> ?type .", "?type = ah:venueType?parameter OR ?type = ah:?parameter"
+  			"type", "?object <http://purl.org/artsholland/1.0/venueType> ?type .", "?type = ah:venueType?parameter || ?type = ah:?parameter"
   			);    	
   	venuesRelation.addFilter(venueTypeFilter);  	
   	
@@ -130,9 +130,16 @@ public class RestService implements InitializingBean {
   	
   	/*
   	 * Free text
+  	 * Searches all linked literals of ?object
   	 */
   	
-  	SPARQLFilter searchFilter = new SPARQLFilter("search", "?object dc:description ?desc .", "search:text(?desc, \"?parameter\")");   
+  	// USeekM: https://dev.opensahara.com/projects/useekm/wiki/IndexingSail
+  	SPARQLFilter searchFilter = new SPARQLFilter("search", "?object dc:description ?desc .", "search:text(?desc, \"?parameter\")");
+  	
+  	// BigData: http://sourceforge.net/apps/mediawiki/bigdata/index.php?title=FullTextSearch 
+  	// Does not work currently. BUG: http://sourceforge.net/apps/trac/bigdata/timeline?from=2012-07-18T13%3A45%3A17Z%2B0000&precision=second
+  	//SPARQLFilter searchFilter = new SPARQLFilter("search", "?object ?ps ?fts . ?fts bd:search \"?parameter\" .");
+  	
   	eventsRelation.addFilter(searchFilter);
   	productionsRelation.addFilter(searchFilter);
   	venuesRelation.addFilter(searchFilter);
@@ -173,7 +180,7 @@ public class RestService implements InitializingBean {
 
 	private RDFWriterConfig getDefaultWriterConfig(RestParameters params) {
 		RDFWriterConfig config = new RDFWriterConfig();
-		config.setContentTypeConfig(new RestWriterTypeConfig());
+		config.setContentTypeConfig(new RestWriterTypeConfig());		
 		config.setPrettyPrint(params.getPretty());
 		config.setJSONPCallback(params.getJSONPCallback());
 		if (params.isPlainText()) {

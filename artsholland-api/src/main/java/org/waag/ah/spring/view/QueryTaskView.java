@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.parser.ParsedQuery;
+import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -38,6 +39,8 @@ public class QueryTaskView extends AbstractView {
 	private ExecutorService executor;
 	
 	public QueryTaskView(QueryService queryService) {
+		RDFFormat.register(RDFJSONFormat.RESTAPIJSON);
+		
 		this.queryService = queryService;
 		this.executor = Executors.newCachedThreadPool();
 	}
@@ -56,7 +59,6 @@ public class QueryTaskView extends AbstractView {
 			QueryType queryType = queryService.getQueryType(parsedQuery);
 			
 			String contentType = getRequestedContentType(request, typeConfig, queryType);
-
 			if (contentType == null) {
 				response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE);
 				return;
@@ -70,7 +72,9 @@ public class QueryTaskView extends AbstractView {
 			} else {
 				// Use text/plain when target is browser:
 				if (config.isOverrideResponseContentType()) {
+					// TODO: Shouldn't config.getContentType() return the overridden value?
 					contentType = config.getResponseContentType();	
+					config.setContentType(contentType);
 				} else if (config.getContentType() == RDFJSONFormat.MIMETYPE) {
 					// Or when content-type is our custom "application/x-waag-artsholland-restapi+json",
 					// change to default JSON content-type
@@ -112,8 +116,14 @@ public class QueryTaskView extends AbstractView {
 	// TODO: move to other class?
 	private String getRequestedContentType(HttpServletRequest request, WriterContentTypeConfig typeConfig, QueryType queryType) {
 		String extension = getExtension(request);		
-		String extensionType = typeConfig.mapExtension(queryType, extension);		
-		String acceptType = MIMEParse.bestMatch(typeConfig.getSupportedContentTypes(queryType), request.getHeader("Accept"));
+		String extensionType = typeConfig.mapExtension(queryType, extension);
+		
+		String acceptHeader = request.getHeader("Accept");
+		if (acceptHeader == null) {
+			acceptHeader = "*/*";
+		}
+		
+		String acceptType = MIMEParse.bestMatch(typeConfig.getSupportedContentTypes(queryType), acceptHeader);
 		
 		return typeConfig.getContentType(queryType, extensionType, acceptType);
 	}

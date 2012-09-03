@@ -21,7 +21,9 @@ import org.springframework.util.Assert;
 
 public class ApiKeyServices implements RememberMeServices, InitializingBean {
 	private static final Logger logger = LoggerFactory.getLogger(ApiKeyServices.class);
-	public static final String SPRING_SECURITY_API_KEY = "apiKey";
+	
+	public static final String SPRING_SECURITY_API_KEY = "api_key";
+	public static final String SPRING_SECURITY_API_KEY_OLD = "apiKey";
 	
 	private UserDetailsService userDetailsService;
 	private UserDetailsChecker userDetailsChecker = new AccountStatusUserDetailsChecker();
@@ -68,7 +70,11 @@ public class ApiKeyServices implements RememberMeServices, InitializingBean {
 	}
 
 	protected String obtainApiKey(HttpServletRequest request) {
-		return request.getParameter(SPRING_SECURITY_API_KEY);
+		String apiKey = request.getParameter(SPRING_SECURITY_API_KEY);
+		if (apiKey == null || apiKey.length() == 0) {
+			apiKey = request.getParameter(SPRING_SECURITY_API_KEY_OLD);
+		}
+		return apiKey;
 	}
 	
     protected Authentication createSuccessfulAuthentication(HttpServletRequest request, UserDetails user) {

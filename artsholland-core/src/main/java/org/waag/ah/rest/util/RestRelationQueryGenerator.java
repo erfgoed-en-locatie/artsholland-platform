@@ -49,6 +49,7 @@ public class RestRelationQueryGenerator {
 		RelationType type = relation.getType();
 		RelationQuantity quantity = relation.getQuantity();
 		
+		boolean ordered = params.isOrdered();
 		boolean calculateCount = /*(params.getPage() == 1) &&*/ params.isCountTotals() && (quantity == RelationQuantity.MULTIPLE);
 	
 		SPARQLQuery query = null;
@@ -96,7 +97,7 @@ public class RestRelationQueryGenerator {
 			throw new MalformedQueryException();
 		}
 					
-		String construct = query.generateContruct(relation, params, bindings, true);
+		String construct = query.generateContruct(relation, params, bindings, true, ordered);
 		String count = calculateCount ? query.generateCount(relation, params, bindings, true) : null;
 		
 		logger.info(construct);

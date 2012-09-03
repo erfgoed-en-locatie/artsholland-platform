@@ -17,12 +17,14 @@ public class RestParameters {
 	private boolean prettyPrint = false;
 	private boolean countTotals = false;
 	private boolean plainText = false;
-
+	private boolean ordered = false;
+	private boolean localized = false;
+	
 	public static long DEFAULT_RESULT_LIMIT = 10;
 
 	private LinkedList<String> uriPathParts = new LinkedList<String>();
 	private Map<String, String[]> parameterMap;
-	private String jsonpCallback;
+	private String jsonpCallback;	
 		
 	public boolean isPrettyPrint() {
 		return prettyPrint;
@@ -150,6 +152,22 @@ public class RestParameters {
 
 	public void setPlainText(boolean plainText) {
 		this.plainText = plainText;
+	}
+	
+	public boolean isOrdered() {
+		return ordered;
+	}
+
+	public void setOrdered(boolean ordered) {
+		this.ordered = ordered;
+	}
+
+	public void setLocalized(boolean localized) {
+		this.localized = localized;
+	}
+	
+	public boolean isLocalized() {
+		return localized;
 	}
 
 }

@@ -18,6 +18,8 @@ public class RestParametersArgumentResolver extends
 	final static Logger logger = LoggerFactory
 			.getLogger(RestParametersArgumentResolver.class);
 	
+	private static final String ALL_LANGUAGES = "all";
+	
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
 		return RestParameters.class.isAssignableFrom(parameter.getParameterType());
@@ -37,7 +39,19 @@ public class RestParametersArgumentResolver extends
 			Map<String, String[]> paramMap = request.getParameterMap();
 			RestParameters params = new RestParameters();
 			
-			params.setLanguageTag(getStringValue(paramMap, "lang"));
+			String languageTag = getStringValue(paramMap, "lang");
+			
+			if (languageTag != null) {
+				languageTag = languageTag.toLowerCase();
+			}
+			
+			if (ALL_LANGUAGES.equals(languageTag)) {
+				params.setLocalized(false);
+			} else {
+				params.setLocalized(true);
+			}
+			
+			params.setLanguageTag(languageTag);
 			if (params.getLanguageTag() == null) {
 				params.setLanguageTag(request.getLocale().getLanguage());
 			}			
@@ -52,6 +66,7 @@ public class RestParametersArgumentResolver extends
 				//params.setPagedQuery(params.getPage() > 0);
 			}
 			
+			params.setOrdered(getBooleanValue(paramMap, "ordered"));
 			params.setPretty(getBooleanValue(paramMap, "pretty"));
 			params.setPlainText(getBooleanValue(paramMap, "plaintext"));
 			params.setCountTotals(getBooleanValue(paramMap, "count"));

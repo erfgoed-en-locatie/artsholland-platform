@@ -28,15 +28,16 @@ public abstract class WriterContentTypeConfig {
 	private static List<String> CONTENT_TYPES_JSON = Arrays.asList(
 			MIME_SPARQL_RESULTS_JSON,
 			MIME_APPLICATION_JSON,
-			MIME_APPLICATION_JAVASCRIPT,
-			MIME_AH_REST_JSON
+			MIME_APPLICATION_JAVASCRIPT//,
+//			MIME_AH_REST_JSON
 		);
 	
 	private static List<String> CONTENT_TYPES_SELECT = Arrays.asList(
 		MIME_SPARQL_RESULTS_JSON,
 		MIME_SPARQL_RESULTS_XML,
 		MIME_SPARQL_RESULTS_CSV,
-		MIME_AH_REST_JSON
+//		MIME_AH_REST_JSON
+		MIME_APPLICATION_JSON
 	);
 	
 	private static List<String> CONTENT_TYPES_CONSTRUCT = Arrays.asList(
@@ -59,8 +60,8 @@ public abstract class WriterContentTypeConfig {
 	
 	private static Map<String, String> EXTENSION_MAP_CONSTRUCT = new HashMap<String, String>();
 	static {
-		EXTENSION_MAP_CONSTRUCT.put("json",	  MIME_AH_REST_JSON);
-		EXTENSION_MAP_CONSTRUCT.put("jsonp",  MIME_AH_REST_JSON);
+		EXTENSION_MAP_CONSTRUCT.put("json",	  MIME_APPLICATION_JSON);//MIME_AH_REST_JSON);
+		EXTENSION_MAP_CONSTRUCT.put("jsonp",  MIME_APPLICATION_JSON);//MIME_AH_REST_JSON);
 		EXTENSION_MAP_CONSTRUCT.put("rdf",		MIME_APPLICATION_RDF_XML);
 		EXTENSION_MAP_CONSTRUCT.put("turtle", MIME_TEXT_TURTLE);
 	}
