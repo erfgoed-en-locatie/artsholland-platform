@@ -21,6 +21,9 @@ public class UitbaseURLGenerator {
 	
 	private static final int ROWS = 500;
 	
+	private static final String UITBASE_OBJECT_PROPERTY_CREATED = "created";
+	private static final String UITBASE_OBJECT_PROPERTY_MODIFIED = "modified";
+	
 	public static final String[] RESOURCES = { 
 		"events", 
 		"locations", 
@@ -41,11 +44,11 @@ public class UitbaseURLGenerator {
 		List<URL> urls = new ArrayList<URL>();
 		
 		DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
+				
+		String dtToParam = dtTo != null ? String.format("&%sto=%s", UITBASE_OBJECT_PROPERTY_MODIFIED, fmt.withZone(DateTimeZone.UTC).print(dtTo)) : "";
+		String dtFromParam = dtFrom != null ? String.format("&%sfrom=%s", UITBASE_OBJECT_PROPERTY_MODIFIED, fmt.withZone(DateTimeZone.UTC).print(dtFrom)) : "";
 		
-		String dtToParam = dtTo != null ? "&createdto="+fmt.withZone(DateTimeZone.UTC).print(dtTo) : "";
-		String dtFromParam = dtFrom != null ? "&createdfrom="+fmt.withZone(DateTimeZone.UTC).print(dtFrom) : "";
-		
-		//dtFromParam = "&createdfrom=2012-08-8T14:41:59.998Z";
+		dtFromParam = "&modifiedfrom=2012-08-8T14:41:59.998Z";
 		
 		for (String resource : RESOURCES) {
 			String resourceFilterParam = "&filter=resource:" + resource;
