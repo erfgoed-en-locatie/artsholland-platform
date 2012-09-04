@@ -37,10 +37,13 @@ public class ApiUserController { // implements InitializingBean
 	@RequestMapping(value="/user", method=RequestMethod.GET)
 	public @ResponseBody Collection<ApiUserImpl> findAll(
 			@RequestParam(value="order_by", required=false, defaultValue="id") String orderBy,
+			@RequestParam(value="desc", required=false, defaultValue="false") boolean desc,
+			@RequestParam(value="page", required=false, defaultValue="0") int page,
+			@RequestParam(value="per_page", required=false, defaultValue="0") int perPage,
 			final HttpServletRequest request,
 			final HttpServletResponse response)
 			throws IOException {
-		Collection<ApiUserImpl> users = apiUserService.findAll(orderBy);
+		Collection<ApiUserImpl> users = apiUserService.findAll(orderBy, desc, page, perPage);
 		return users;		
 	}
 	

@@ -2,6 +2,7 @@ package org.waag.ah.spring.controller;
 
 import java.io.IOException;
 import java.util.Collection;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.waag.ah.UUIDGenerator;
-import org.waag.ah.spring.model.ApiUserImpl;
 import org.waag.ah.spring.model.AppImpl;
 import org.waag.ah.spring.service.AppService;
 import org.waag.ah.spring.util.ApiResult;
@@ -33,10 +33,13 @@ public class AppController { // implements InitializingBean
 	@RequestMapping(value="/app", method=RequestMethod.GET)
 	public @ResponseBody Collection<AppImpl> findAll (
 			@RequestParam(value="order_by", required=false, defaultValue="id") String orderBy,
+			@RequestParam(value="desc", required=false, defaultValue="false") boolean desc,
+			@RequestParam(value="page", required=false, defaultValue="0") int page,
+			@RequestParam(value="per_page", required=false, defaultValue="0") int perPage,
 			final HttpServletRequest request,
 			final HttpServletResponse response)
 			throws IOException {
-		Collection<AppImpl> apps = appService.findAll(orderBy);
+		Collection<AppImpl> apps = appService.findAll(orderBy, desc, page, perPage);
 		return apps;		
 	}	
 	
