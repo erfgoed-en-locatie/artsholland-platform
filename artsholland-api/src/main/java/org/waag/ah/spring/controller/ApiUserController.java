@@ -33,7 +33,7 @@ public class ApiUserController { // implements InitializingBean
 	@Autowired
 	private AppService appService;
 
-	
+	// TODO: use generic request parameter resolver, just like REST API does.
 	@RequestMapping(value="/user", method=RequestMethod.GET)
 	public @ResponseBody Collection<ApiUserImpl> findAll(
 			@RequestParam(value="order_by", required=false, defaultValue="id") String orderBy,
