@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.waag.ah.spring.model.ApiUserImpl;
 import org.waag.ah.spring.model.AppImpl;
@@ -31,13 +32,15 @@ public class ApiUserController { // implements InitializingBean
 
 	@Autowired
 	private AppService appService;
-		
+
+	
 	@RequestMapping(value="/user", method=RequestMethod.GET)
-	public @ResponseBody Collection<ApiUserImpl> findAll (
+	public @ResponseBody Collection<ApiUserImpl> findAll(
+			@RequestParam(value="order_by", required=false, defaultValue="id") String orderBy,
 			final HttpServletRequest request,
 			final HttpServletResponse response)
 			throws IOException {
-		Collection<ApiUserImpl> users = apiUserService.findAll();
+		Collection<ApiUserImpl> users = apiUserService.findAll(orderBy);
 		return users;		
 	}
 	

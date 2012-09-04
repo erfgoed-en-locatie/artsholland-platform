@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.waag.ah.UUIDGenerator;
+import org.waag.ah.spring.model.ApiUserImpl;
 import org.waag.ah.spring.model.AppImpl;
 import org.waag.ah.spring.service.AppService;
 import org.waag.ah.spring.util.ApiResult;
@@ -30,12 +32,13 @@ public class AppController { // implements InitializingBean
 	
 	@RequestMapping(value="/app", method=RequestMethod.GET)
 	public @ResponseBody Collection<AppImpl> findAll (
+			@RequestParam(value="order_by", required=false, defaultValue="id") String orderBy,
 			final HttpServletRequest request,
 			final HttpServletResponse response)
 			throws IOException {
-		Collection<AppImpl> apps = appService.findAll();
+		Collection<AppImpl> apps = appService.findAll(orderBy);
 		return apps;		
-	}
+	}	
 	
 	@RequestMapping(value="/app", method=RequestMethod.POST) 
 	public @ResponseBody Object createApp(			

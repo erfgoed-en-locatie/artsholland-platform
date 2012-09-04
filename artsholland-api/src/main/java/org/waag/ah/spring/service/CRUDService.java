@@ -77,7 +77,12 @@ public abstract class CRUDService<T extends DbObject<?>> {
 
 	@SuppressWarnings("unchecked")
 	public Collection<T> findAll() {		
-		Query query = entityManager.createQuery("SELECT e FROM " + type.getSimpleName() + " e");
+		return findAll("id");		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Collection<T> findAll(String orderBy) {		
+		Query query = entityManager.createQuery("SELECT e FROM " + type.getSimpleName() + " e ORDER BY e." + orderBy);
 		return (Collection<T>) query.getResultList();		
 	}
 
