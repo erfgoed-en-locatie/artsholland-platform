@@ -269,7 +269,6 @@ Response formats
 ----------------
 You can select one of the response data formats by setting the accept header to the appropriate media type, or by appending an file extension to the request. 
 
-
 <table>
 	<tr>
 		<th>Response</th>
@@ -297,6 +296,8 @@ You can select one of the response data formats by setting the accept header to 
 		<td>text/turtle</td>
 	</tr>
 </table>
+
+
 
 Most browsers will download the response an content-type
 
