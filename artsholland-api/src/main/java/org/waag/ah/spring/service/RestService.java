@@ -75,7 +75,11 @@ public class RestService implements InitializingBean {
 				eventRelation.addRelation("attachment", "ah:Attachment", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
 		eventAttachmentRelation.addRelation("id", "ah:Attachment",	RelationQuantity.SINGLE, RelationType.SELF, true);
 		
-  	// TODO: ?this instead of ?object  ???
+		RestRelation productionAttachmentRelation = 
+				productionRelation.addRelation("attachment", "ah:Attachment", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+		productionAttachmentRelation.addRelation("id", "ah:Attachment",	RelationQuantity.SINGLE, RelationType.SELF, true);
+		
+		// TODO: ?this instead of ?object  ???
 		
 		SPARQLFilter venuesLocalityFilter = new SPARQLFilter("locality", "?object ah:locationAddress ?address . ?address vcard:locality ?locality.", "lcase(?locality) = lcase(\"?parameter\")");
 		
