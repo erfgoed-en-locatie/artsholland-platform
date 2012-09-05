@@ -251,7 +251,7 @@
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/Production">
     <rdfs:comment xml:lang="nl">Een specifieke productie van een cultureel stuk.</rdfs:comment>
-    <rdfs:comment xml:lang="en">A specific prodcution of a cultural piece.</rdfs:comment>
+    <rdfs:comment xml:lang="en">A specific production of a cultural piece.</rdfs:comment>
     <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
     <rdfs:label rdf:datatype="http://www.w3.org/2001/XMLSchema#string"
     >Production</rdfs:label>
