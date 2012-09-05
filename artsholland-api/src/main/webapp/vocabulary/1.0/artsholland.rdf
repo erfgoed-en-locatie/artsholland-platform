@@ -235,7 +235,7 @@
     >Production</rdfs:label>
     <rdfs:subClassOf rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
     <dct:description xml:lang="nl">Een specifieke productie van een cultureel stuk.</dct:description>
-    <dct:description xml:lang="en">A specific prodcution of a cultural piece.</dct:description>
+    <dct:description xml:lang="en">A specific production of a cultural piece.</dct:description>
   </owl:Class>
   <owl:Class rdf:about="http://purl.org/artsholland/1.0/POIAttributeSituation">
     <rdfs:subClassOf rdf:resource="http://purl.org/artsholland/1.0/POIAttribute"/>
