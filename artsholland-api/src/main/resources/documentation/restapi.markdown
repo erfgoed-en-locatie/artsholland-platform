@@ -150,7 +150,7 @@ URI structure
 		<th>Description</th>
 	</tr>
 	<tr>
-		<td><code>/rest/event/{cidn}/venue</code></td>		<td>All venues in which event with CIDN = {cidn} takes place</td>
+		<td><code>/rest/event/{cidn}/venue</code></td>		<td>All venues in which event with CIDN = <code>{cidn}</code> takes place</td>
 	</tr>
 	<tr>
 		<td><code>/rest/event/{cidn}/production</code></td>
@@ -158,7 +158,7 @@ URI structure
 	</tr>
 	<tr>
 		<td><code>/rest/event/{cidn}/room	</code></td>
-		<td>All rooms in which event with CIDN = {cidn} takes place</td>
+		<td>All rooms in which event with CIDN = <code>{cidn}</code> takes place</td>
 	</tr>
 	<tr>
 		<td><code>/rest/event/{cidn}/attachment</code></td>
@@ -170,7 +170,7 @@ URI structure
 	</tr>
 	<tr>
 		<td><code>/rest/event/{cidn}/offering/{name}/price</code></td>
-		<td>Price specification of offer with name = {name}</td>
+		<td>Price specification of offer with name = <code>{name}</code></td>
 	</tr>
 	<tr>
 		<td><code>/rest/venue/{cidn}/event</code></td>
@@ -182,7 +182,7 @@ URI structure
 	</tr>
 	<tr>
 		<td><code>/rest/venue/{cidn}/room	</code></td>
-		<td>All rooms in venue with with CIDN = <code>{cidn}</code></td>
+		<td>All rooms in venue with CIDN = <code>{cidn}</code></td>
 	</tr>
 	<tr>
 		<td><code>/rest/venue/{cidn}/attachment</code></td>
@@ -198,7 +198,11 @@ URI structure
 	</tr>
 	<tr>
 		<td><code>/rest/production/{cidn}/venue</code></td>
-		<td>All venues in which production with CIDN = {cidn} takes place</td>
+		<td>All venues in which production with CIDN = <code>{cidn}</code> takes place</td>
+	</tr>
+	<tr>
+		<td><code>/rest/production/{cidn}/attachment</code></td>
+		<td>All attachments associated with production with CIDN = <code>{cidn}</code> takes place</td>
 	</tr>
 	<tr>
 </table>
@@ -214,63 +218,50 @@ Filters
 		<th>Range</th>
 	</tr>
 	<tr>
-		<td></td>
-		<td></td>
+		<td><code>search</code></td>
+		<td>Event, Production, Venue</td>
+		<td>Free text search on description field.</td>
+		<td><code>search=theater</code></td>
 	</tr>	
 	<tr>
-		<td></td>
-		<td></td>
+		<td><code>genre</code></td>
+		<td>Production</td>
+		<td>Filters production by genre	.</td>
+		<td><code>genre=genreLiterature</code></td>
 	</tr>	
 	<tr>
-		<td></td>
-		<td></td>
+		<td><code>type</code></td>
+		<td>Venue</td>
+		<td>Filters venues by venue type.</td>
+		<td><code>type=venueTypeCinema</code></td>
 	</tr>	
 	<tr>
-		<td></td>
-		<td></td>
+		<td><code>nearby</code></td>
+		<td>Event, Venue</td>
+		<td>Finds events or venues nearby a specific geographic location. The filter 
+accepts <a href="http://en.wikipedia.org/wiki/Well-known_text">WKT points</a>: <code>POINT(longitude latitude)</code>. A second argument specifies the distance in meters.</td>
+		<td><code>nearby=POINT(5.807 53.201)&distance=2500</code></td>
 	</tr>	
 	<tr>
-		<td></td>
-		<td></td>
+		<td><code>locality</code></td>
+		<td>Event, Venue</td>
+		<td>Filters events or venues on city or town. The locality filter is case-insensitive.</td>
+		<td><code>locality=utrecht</code></td>
 	</tr>	
 	<tr>
-		<td></td>
-		<td></td>
+		<td><code>before, after</td>
+		<td>Event</td>
+		<td>Filters events on start date and time, only returns events which start 
+before or after specified date and time. The filters accept the <a href="http://en.wikipedia.org/wiki/ISO_8601">ISO 8601 date and time format</a>.</td>
+		<td><code>after=2012-07-02</code></td>
 	</tr>	
 	<tr>
-		<td></td>
-		<td></td>
-	</tr>	
-	<tr>
-		<td></td>
-		<td></td>
-	</tr>	
-	<tr>
-		<td></td>
-		<td></td>
-	</tr>	
+		<td><code>min_price, max_price</td>
+		<td>Event</td>
+		<td>Finds events which have a ticket with a price (in any currency) of at least <code>min_price</code> or at most <code>max_price</code>.</td>
+		<td><code>max_price=15</td>
+	</tr>		
 </table>
-
-URI	On	Description	Example
-
-search	Event, Production, Venue	Free text search on description field (RDF dc:description property)	search=theater
-
-genre	Production	Filters production by genre	genre=genreLiterature
-
-type	Venue	Filters venues by venue type	type=venueTypeCinema
-
-nearby	Event, Venue	Finds events or venues nearby a specific geographic location. The filter 
-accepts WKT points: POINT(longitude latitude) (in the WKT specification, x is longitude and y is latitude). A second argument specifies the dinstance in meters.	nearby=POINT(5.807 53.201)&distance=2500
-
-locality	Event, Venue	Filters events or venues on city or town (RDF vcard:locality property). The locality filter is case-insensitive.	locality=utrecht
-
-before, after	Event	Filters events on start date and time, only returns events which start 
-before or after specified date and time. The filters accept the ISO 8601 date and time format.	before=2012-04-06
-
-after=2012-07-02
-
-min_price, max_price	Event	Finds events which have a ticket with a price (in any currency) of at least min_price or at most max_price.	min_price=10
-max_price=15
 
 Filters currently only work on first level main element API requests (e.g. `/rest/event`, `/rest/venue` and `/rest/production`).
 
