@@ -5,6 +5,19 @@ You can use SPARQL, a query language for RDF data, to query the Linked Open Data
 
 More information about SPARQL is found in the [W3C SPARQL specification](http://www.w3.org/TR/rdf-sparql-query/).
 
+Endpoint
+--------
+
+The SPARQL endpoint is `http://api.artsholland.com/sparql`.
+
+RDF vocabulary
+--------------
+
+The Arts Holland RDF vocabulary can be found on
+[http://api.artsholland.com/vocabulary/1.0/artsholland.rdf](http://api.artsholland.com/vocabulary/1.0/artsholland.rdf).
+
+The [REST API documentation](restapi) describes the basics of the Arts Holland data model.
+
 Authentication
 --------------
 
@@ -15,6 +28,8 @@ SPARQL requests
 SPARQL queries can be submitted to the database server by doing a [HTTP POST request](http://en.wikipedia.org/wiki/POST_%28HTTP%29) to `/sparql` and URL encoding the SPARQL query in the query parameter:
 
 http://dsldkjhn
+
+Also 
 
 Response formats
 ----------------

@@ -3,17 +3,17 @@ REST API
 
 A REST API is available to access the most important parts of the Arts Holland semantic Open Linked Database.
 
-Accessing this data using the [SPARQL endpoint](http://api.artsholland.com/sparql?api_key=9cbce178ed121b61a0797500d62cd440) provides the most flexibility, but its [query language](http://en.wikipedia.org/wiki/SPARQL) and response formats might sometimes be too complex and overwhelming. For simplicity’s sake, Arts Holland also provides a REST API, described below.
+Accessing this data using the [SPARQL endpoint](http://api.artsholland.com/sparql?api_key=9cbce178ed121b61a0797500d62cd440) provides the most flexibility, but its [query language](http://en.wikipedia.org/wiki/SPARQL) and response formats might sometimes be too complex and overwhelming. For simplicity's sake, Arts Holland also provides a REST API, described below.
+
+Endpoint
+--------
+
+The REST API endpoint is `http://api.artsholland.com/rest`.
 
 Authentication
 --------------
 
 A valid Arts Holland API key is needed for all REST API requests. The API key is appended to the requested URI, i.e. `api_key=9cbce178ed121b61a0797500d62cd440`. The latter is also the API key that can be used for test purposes.
-
-Endpoint
---------
-
-The REST API endpoint is `http://api.artsholland.com/rest/`
 
 Data model
 ----------
@@ -21,9 +21,14 @@ Data model
 more data, REST API only 
 
 
+The objects returned by the REST API are described below in short.
+
+Arts Holland namespace
+----------------------
+
+dlskadjldkjsdlakjdl
 
 ### Main elements ###
-The objects returned by the REST API are described below in short:
 
 <table>
 	<tr>
@@ -32,77 +37,242 @@ The objects returned by the REST API are described below in short:
 	</tr>
 	<tr>
 		<td>Production</td>
-		<td>dsdsd</td>
+		<td>A play, a movie, a concert, an exhibition, a lecture, etc. A production can be performed multiple times, and so can be be hosted by multiple events and venues.</td>
 	</tr>
 	<tr>
 		<td>Event</td>
-		<td>A cultural production at a specific location and time</td>
+		<td>A instance of a production at a specific location and time.</td>
 	</tr>
 	<tr>
 		<td>Venue</td>
-		<td>A physical location where events take place</td>
+		<td>A physical location where events take place.</td>
 	</tr>
 </table>
-	
-	
-Each event hosts at least production and takes place in at least one venue.
-	
-
-Production	
-A play, a movie, a concert, an exhibition, a lecture, etc. A production can be performed multiple times, and so can be be hosted by multiple events and venues.
 
 Events, venues and productions are identified by a [CIDN number](http://wiki.uitburo.nl/index.php/Nationaal_CIDN_register) managed by the Nederlands Uitburo.
 
 ### Other elements ###
-Element	Description
-Room	Child element of a venue, in which events can take place. A venue can have multiple rooms. Events can be held in one or more rooms of a specific venue.
-Attachment	Child element of both venues and events. An attachment holds information about images, movies or documents linked to the venue or event.
-Offering	Child element of an event. Information about tickets; an event can have multiple offers.
-PriceSpecification	Child element of an offer. Price and currency information.
-Genre	Productions are categorized by genre. Examples are dance, documentary, exhibition and musical.
-VenueType	Venues are categorized by type. Museums, cinemas and theaters, for example, all have a different VenueType.
-URI structure
-URI	Description
-/rest/event	Lists and describes all events
-/rest/venue	Lists and describes all venues
-/rest/production	Lists and describes all productions
-/rest/genre	Lists and describes all genres
-/rest/venuetype	Lists and describes all venue types
-All the above API requests are paginated.
 
-Single objects
-URI	Description
-/rest/event/{cidn}	Describes event with cidn = {cidn}
-/rest/venue/{cidn}	Describes venue with cidn = {cidn}
-/rest/production/{cidn}	Describes production with cidn = {cidn}
-Child elements and relations
-URI	Description
-/rest/event/{cidn}/venue	Lists and describes all venues in which event with cidn = {cidn} takes place
-/rest/event/{cidn}/production	Lists and describes all productions associated with event with cidn = {cidn}
-/rest/event/{cidn}/room	Lists and describes all rooms in which event with cidn = {cidn} takes place
-/rest/event/{cidn}/attachment	Lists and describes all attachments associated with event with cidn = {cidn}
-/rest/event/{cidn}/offering	Lists and describes all offers available for event with cidn = {cidn}
-/rest/event/{cidn}/offering/{name}/price	Describes price specification of offer with name = {name}
-/rest/venue/{cidn}/event	Lists and describes all events which take place in venue with cidn = {cidn}
-/rest/venue/{cidn}/production	Lists and describes all productions which take place in venue with cidn = {cidn}
-/rest/venue/{cidn}/room	Lists and describes all rooms in venue with with cidn = {cidn}
-/rest/venue/{cidn}/attachment	Lists and describes all attachments associated with venue with cidn = {cidn}
-/rest/production/{cidn}/event	Lists and describes all events associated with production with cidn = {cidn}
-/rest/production/{cidn}/venue	Lists and describes all venues in which production with cidn = {cidn} takes place
-All the above API requests are paginated.
+<table>
+	<tr>
+		<th>Element</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>Room</td>
+		<td>Child element of a venue, in which events can take place. A venue can have multiple rooms. Events can be held in one or more rooms of a specific venue.</td>
+	</tr>
+	<tr>
+		<td>Address</td>
+		<td>Child element of a venue, holds address information.</td>
+	</tr>
+	<tr>
+		<td>Attachment</td>
+		<td>Child element of both venues and events. An attachment holds information about images, movies or documents linked to the venue or event.</td>
+	</tr>
+	<tr>
+		<td>Offering</td>
+		<td>Child element of an event. Information about tickets; an event can have multiple offers.
+		</td>
+	</tr>
+	<tr>
+		<td>PriceSpecification</td>
+		<td>Child element of an offer. Information about price and currency.</td>
+	</tr>
+	<tr>
+		<td>Genre</td>
+		<td>Productions are categorized by genre. Examples are dance, documentary, exhibition and musical.
+		</td>
+	</tr>
+	<tr>
+		<td>VenueType</td>
+		<td>Venues are categorized by type. Museums, cinemas and theaters, for example, all have a different VenueType.</td>
+	</tr>
+</table>
+
+URI structure
+-------------
+### Object lists
+
+<table>
+	<tr>
+		<th>URI</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td><code>/rest/event</code></td>
+		<td>All events</td>
+	</tr>
+	<tr>
+		<td><code>/rest/venue</code></td>
+		<td>All venues</td>
+	</tr>
+	<tr>
+		<td><code>/rest/production</code></td>
+		<td>All productions</td>
+	</tr>
+	<tr>
+		<td><code>/rest/genre</code></td>
+		<td>All genres</td>
+	</tr>
+	<tr>
+		<td><code>/rest/venuetype</code></td>
+		<td>All venue types</td>
+	</tr>
+</table>
+
+### Single objects
+
+<table>
+	<tr>
+		<th>URI</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td><code>/rest/event/{cidn}</code></td>
+		<td>Event with CIDN = <code>{cidn}</code></td>
+	</tr>
+	<tr>
+		<td><code>/rest/venue/{cidn}</code></td>
+		<td>Venue with CIDN = <code>{cidn}</code></td>
+	</tr>
+	<tr>
+		<td><code>/rest/production/{cidn}</code></td>
+		<td>Production with CIDN = <code>{cidn}</code></td>
+	</tr>
+</table>
+
+### Child elements and relations
+
+<table>
+	<tr>
+		<th>URI</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td><code>/rest/event/{cidn}/venue</code></td>		<td>All venues in which event with CIDN = {cidn} takes place</td>
+	</tr>
+	<tr>
+		<td><code>/rest/event/{cidn}/production</code></td>
+		<td>All productions associated with event with CIDN = <code>{cidn}</code></td>
+	</tr>
+	<tr>
+		<td><code>/rest/event/{cidn}/room	</code></td>
+		<td>All rooms in which event with CIDN = {cidn} takes place</td>
+	</tr>
+	<tr>
+		<td><code>/rest/event/{cidn}/attachment</code></td>
+		<td>All attachments associated with event with CIDN = <code>{cidn}</code></td>
+	</tr>
+	<tr>
+		<td><code>/rest/event/{cidn}/offering</code></td>
+		<td>All offers available for event with CIDN = <code>{cidn}</code></td>
+	</tr>
+	<tr>
+		<td><code>/rest/event/{cidn}/offering/{name}/price</code></td>
+		<td>Price specification of offer with name = {name}</td>
+	</tr>
+	<tr>
+		<td><code>/rest/venue/{cidn}/event</code></td>
+		<td>All events which take place in venue with CIDN = <code>{cidn}</code></td>
+	</tr>
+	<tr>
+		<td><code>/rest/venue/{cidn}/production</code></td>
+		<td>All productions which take place in venue with CIDN = <code>{cidn}</code></td>
+	</tr>
+	<tr>
+		<td><code>/rest/venue/{cidn}/room	</code></td>
+		<td>All rooms in venue with with CIDN = <code>{cidn}</code></td>
+	</tr>
+	<tr>
+		<td><code>/rest/venue/{cidn}/attachment</code></td>
+		<td>All attachments associated with venue with CIDN = <code>{cidn}</code></td>
+	</tr>
+	<tr>
+<td><code>/rest/venue/{cidn}/address</code></td>
+<td>All addresses associated with venue with CIDN = <code>{cidn}</code></td>
+	</tr>
+	<tr>
+		<td><code>/rest/production/{cidn}/event</code></td>
+		<td>All events associated with production with CIDN = <code>{cidn}</code></td>
+	</tr>
+	<tr>
+		<td><code>/rest/production/{cidn}/venue</code></td>
+		<td>All venues in which production with CIDN = {cidn} takes place</td>
+	</tr>
+	<tr>
+</table>
 
 Filters
+-------
+
+<table>
+	<tr>
+		<th>Parameter</th>
+		<th>On</th>
+		<th>Description</th>
+		<th>Range</th>
+	</tr>
+	<tr>
+		<td></td>
+		<td></td>
+	</tr>	
+	<tr>
+		<td></td>
+		<td></td>
+	</tr>	
+	<tr>
+		<td></td>
+		<td></td>
+	</tr>	
+	<tr>
+		<td></td>
+		<td></td>
+	</tr>	
+	<tr>
+		<td></td>
+		<td></td>
+	</tr>	
+	<tr>
+		<td></td>
+		<td></td>
+	</tr>	
+	<tr>
+		<td></td>
+		<td></td>
+	</tr>	
+	<tr>
+		<td></td>
+		<td></td>
+	</tr>	
+	<tr>
+		<td></td>
+		<td></td>
+	</tr>	
+</table>
+
 URI	On	Description	Example
+
 search	Event, Production, Venue	Free text search on description field (RDF dc:description property)	search=theater
+
 genre	Production	Filters production by genre	genre=genreLiterature
+
 type	Venue	Filters venues by venue type	type=venueTypeCinema
-nearby	Event, Venue	Finds events or venues nearby a specific geographic location. The filter accepts WKT points: POINT(longitude latitude) (in the WKT specification, x is longitude and y is latitude). A second argument specifies the dinstance in meters.	nearby=POINT(5.807 53.201)&distance=2500
+
+nearby	Event, Venue	Finds events or venues nearby a specific geographic location. The filter 
+accepts WKT points: POINT(longitude latitude) (in the WKT specification, x is longitude and y is latitude). A second argument specifies the dinstance in meters.	nearby=POINT(5.807 53.201)&distance=2500
+
 locality	Event, Venue	Filters events or venues on city or town (RDF vcard:locality property). The locality filter is case-insensitive.	locality=utrecht
-before, after	Event	Filters events on start date and time, only returns events which start before or after specified date and time. The filters accept the ISO 8601 date and time format.	before=2012-04-06
+
+before, after	Event	Filters events on start date and time, only returns events which start 
+before or after specified date and time. The filters accept the ISO 8601 date and time format.	before=2012-04-06
+
 after=2012-07-02
+
 min_price, max_price	Event	Finds events which have a ticket with a price (in any currency) of at least min_price or at most max_price.	min_price=10
 max_price=15
-Filters currently only work on first level API requests (e.g. /rest/event, /rest/venue and /rest/production).
+
+Filters currently only work on first level main element API requests (e.g. `/rest/event`, `/rest/venue` and `/rest/production`).
 
 Response formats
 ----------------
@@ -137,6 +307,7 @@ You can select one of the response data formats by setting the accept header to 
 	</tr>
 </table>
 
+Most browsers will download the response an content-type
 
 
 	private boolean plainText = false;
