@@ -23,4 +23,4 @@ Example query
 -------------
 To display a list of productions, issue the following query:
 
-[`/uitbase/productions?api_key=9cbce178ed121b61a0797500d62cd440&rows=1`](http://api.artsholland.com/uitbase/productions?api_key=9cbce178ed121b61a0797500d62cd440&rows=1)
+[`/uitbase/productions?api_key=9cbce178ed121b61a0797500d62cd440&rows=25`](http://api.artsholland.com/uitbase/productions?api_key=9cbce178ed121b61a0797500d62cd440&rows=25)

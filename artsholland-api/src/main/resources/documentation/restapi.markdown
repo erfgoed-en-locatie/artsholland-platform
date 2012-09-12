@@ -18,15 +18,9 @@ A valid Arts Holland API key is needed for all REST API requests. The API key is
 Data model
 ----------
 
-more data, REST API only 
-
+The REST API only discloses the main elements in the Arts Holland database: events, productions and venues. If you want to access all the other data (such as information about hotels, restaurants and public transport stops) or if you want more control over the exact query and returned data, you can use the [SPARQL endpoint](sparql).
 
 The objects returned by the REST API are described below in short.
-
-Arts Holland namespace
-----------------------
-
-dlskadjldkjsdlakjdl
 
 ### Main elements ###
 
@@ -297,14 +291,10 @@ You can select one of the response data formats by setting the accept header to 
 	</tr>
 </table>
 
+If you want to display the API result in your browser, you can
+override the response media type by setting `plaintext=1`. This parameter will set the response media type to `text/html`, which your browser will nicely display instead of download to file.
 
-
-Most browsers will download the response an content-type
-
-
-	private boolean plainText = false;
-	private String jsonpCallback;
-
+[JSONP](http://en.wikipedia.org/wiki/JSONP) is also supported: all REST API JSON results can be encapsulated in a JavaScript function call by setting `callback={callback}`.
 
 Localization
 ------------
@@ -335,11 +325,9 @@ If JSON is the desired return format of the request, paginated requests return p
 Ordering
 --------
 
-ordered=1
-ordered by URI
-boolean parameters ordered=true also works.
+The REST API returns unordered results by default. This usually works fine for most applications, especially with filtered requests with small result sets. If your application, however, does require the results to be ordered, you can specify `ordered=1` in the request. The system will order the resulting objects by URI.
 
-Slower
+Please be warned that ordering has a performance impact, and will result in longer response times.
 
 Counting
 --------
@@ -356,7 +344,7 @@ The REST API will return the total number of available results for paged queries
 		]
 	}
 	
-Slower
+Counting will result in much longer response times as the REST API back-end has to submit the same query to the database twice; one time for counting the total number or results and one time for returning the data. 
 	
 The count parameter only works for requests where JSON is the desired return format.
 
@@ -376,18 +364,30 @@ Example requests
 		<th>Request</th>
 	</tr>
 		<td>List of productions, results 16 to 20</td>
-		<td>/rest/production.json?per_page=5&page=4&ordered=true</td>
+		<td><code><a href="">/rest/production.json?per_page=5&page=4&ordered=true</a></code></td>
 	</tr>
 	</tr>
-		<td>Single production with CIDN 0006816f-426c-4e43-8ac4-c8376f4dc3b4, all string properties regardless of language</td>
-		<td>/rest/production/0006816f-426c-4e43-8ac4-c8376f4dc3b4.json?lang=any</td>
+		<td>Single production with CIDN <code>0006816f-426c-4e43-8ac4-c8376f4dc3b4</code>, all string properties regardless of language</td>
+		<td><code><a href="http://api.artsholland.com/rest/production/0006816f-426c-4e43-8ac4-c8376f4dc3b4?lang=any&api_key=9cbce178ed121b61a0797500d62cd440">/rest/production/0006816f-426c-4e43-8ac4-c8376f4dc3b4?lang=any</a></code></td>
 	</tr>
 	</tr>
-		<td>Count</td>
-		<td>&count=1</td>
+		<td>List of events in Amsterdam (including count)</td>
+		<td><code><a href="http://api.artsholland.com/rest/event?locality=amsterdam&count=1&api_key=9cbce178ed121b61a0797500d62cd440">/rest/event?locality=amsterdam&count=1</code></td>
 	</tr>
+	<tr>
+		<td>All productions in the Stadsschouwburg Amsterdam, in RDF/XML format</td>
+		<td><code><a href="http://api.artsholland.com/rest/venue/04df157e-fc47-4448-83ed-d0a8c577d7dd/production.rdf?plaintext=true&api_key=9cbce178ed121b61a0797500d62cd440">/rest/venue/04df157e-fc47-4448-83ed-d0a8c577d7dd/production.rdf?plaintext=true</a></code></td>
 	</tr>
-		<td></td>
-		<td>.rdf plaintext=true</td>
+	<tr>
+		<td>All venues within 2.5 km. of Dam Square, Amsterdam</td>
+		<td><code><a href="http://api.artsholland.com/rest/venue?nearby=POINT(4.8931 52.3729)&distance=2500&api_key=9cbce178ed121b61a0797500d62cd440">/rest/venue?nearby=POINT(4.8931 52.3729)&distance=2500</a></code></td>
+	</tr>
+	<tr>
+		<td>All evens that take place after August 2<sup>nd</sup>, 2012</td>
+		<td><code><a href="http://api.artsholland.com/rest/event?after=2012-08-02">/rest/event?after=2012-08-02&api_key=9cbce178ed121b61a0797500d62cd440</a></code></td>
+	</tr>
+	<tr>
+		<td>The address of the Nederlands Muziek Instituut in The Hague</td>
+		<td><code><a href="http://api.artsholland.com/rest/venue/010f8e45-5726-48db-b0a7-aa95abc98432/address&api_key=9cbce178ed121b61a0797500d62cd440">/rest/venue/010f8e45-5726-48db-b0a7-aa95abc98432/address</a></code></td>
 	</tr>
 </table>		

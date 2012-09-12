@@ -14,9 +14,7 @@ RDF vocabulary
 --------------
 
 The Arts Holland RDF vocabulary can be found on
-[http://api.artsholland.com/vocabulary/1.0/artsholland.rdf](http://api.artsholland.com/vocabulary/1.0/artsholland.rdf).
-
-The [REST API documentation](restapi) describes the basics of the Arts Holland data model.
+[http://api.artsholland.com/vocabulary/1.0/artsholland.rdf](http://api.artsholland.com/vocabulary/1.0/artsholland.rdf). Also, a basic description of the Arts Holland data model can be found in the [REST API documentation](restapi).
 
 Authentication
 --------------
@@ -34,7 +32,6 @@ Also
 Response formats
 ----------------
 You can select one of the response data formats by setting the accept header to the appropriate media type, or by appending an file extension to the request. 
-
 
 <table>
 	<tr>
@@ -59,18 +56,23 @@ You can select one of the response data formats by setting the accept header to 
 	</tr>
 </table>
 
-
 Data browser
 ------------
 Arts Holland also provides a [web-based SPARQL browser](http://api.artsholland.com/sparql?api_key=9cbce178ed121b61a0797500d62cd440). You can use this browser to test SPARQL queries or just to get an impression about the data available in the Arts Holland database.
 
 RDF namespaces
 --------------
-
-be careful
+PREFIX ah: <http://purl.org/artsholland/1.0/>
 
 <http://www.w3.org/2006/vcard/ns#locality> instead of vcard:locality
 PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+
+
+Be careful: the data browser automatically appends the default namespace prefixes to all submitted queries. When your application uses GET and POST requests to directly query the SPARQL endpoint, you have to either append those prefixes yourself, or you have to 
+
+not use namespaces but full URIs.
+
+
 
 Example request
 ---------------
