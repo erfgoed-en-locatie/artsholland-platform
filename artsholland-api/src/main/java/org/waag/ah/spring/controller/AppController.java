@@ -2,6 +2,7 @@ package org.waag.ah.spring.controller;
 
 import java.io.IOException;
 import java.util.Collection;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.waag.ah.UUIDGenerator;
-import org.waag.ah.spring.model.ApiUserImpl;
 import org.waag.ah.spring.model.AppImpl;
 import org.waag.ah.spring.service.AppService;
 import org.waag.ah.spring.util.ApiResult;
