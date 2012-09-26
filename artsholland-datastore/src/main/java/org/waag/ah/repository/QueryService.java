@@ -1,8 +1,7 @@
-package org.waag.ah.bigdata;
+package org.waag.ah.repository;
 
 import java.io.OutputStream;
 
-import javax.ejb.DependsOn;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 
@@ -15,7 +14,6 @@ import org.openrdf.query.parser.QueryParser;
 import org.openrdf.query.parser.sparql.SPARQLParserFactory;
 import org.openrdf.repository.RepositoryConnection;
 import org.waag.ah.QueryDefinition;
-import org.waag.ah.QueryService;
 import org.waag.ah.QueryTask;
 import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.WriterConfig;
@@ -26,15 +24,14 @@ import org.waag.ah.rdf.TupleQueryTask;
 import com.bigdata.rdf.sparql.ast.QueryType;
 
 @Singleton
-@DependsOn("BigdataConnectionService")
-public class BigdataQueryService implements QueryService {
+public class QueryService { //implements QueryService {
 //	private static final Logger logger = LoggerFactory
-//			.getLogger(BigdataQueryService.class);
+//			.getLogger(QueryService.class);
 	
-	@EJB(mappedName="java:module/BigdataConnectionService")
+//	@EJB(mappedName="java:module/BigdataConnectionService")
+	@EJB(mappedName="java:module/ConnectionService")
 	private RepositoryConnectionFactory cf;
 
-	@Override
 	public QueryTask getQueryTask(QueryDefinition query,
 			WriterConfig config, OutputStream out)
 			throws MalformedQueryException {
@@ -58,7 +55,6 @@ public class BigdataQueryService implements QueryService {
 				+ ParsedQuery.class.getName());
 	}
 	
-	@Override
 	public QueryTask getQueryTask(ParsedQuery parsedQuery, QueryDefinition query,
 			WriterConfig config, OutputStream out)
 			throws MalformedQueryException {
@@ -79,7 +75,6 @@ public class BigdataQueryService implements QueryService {
 				+ ParsedQuery.class.getName());
 	}
 	
-	@Override
 	public ParsedQuery getParsedQuery(QueryDefinition query,
 			WriterConfig config) throws MalformedQueryException {
 		QueryParser parser = new SPARQLParserFactory().getParser();
@@ -87,7 +82,6 @@ public class BigdataQueryService implements QueryService {
 				config.getBaseUri());		
 	}
 
-	@Override
 	public QueryType getQueryType(ParsedQuery parsedQuery) {
 		if (parsedQuery instanceof ParsedTupleQuery) {
 			return QueryType.SELECT;
@@ -99,6 +93,4 @@ public class BigdataQueryService implements QueryService {
 			return null;
 		}
 	}
-	
-	
 }

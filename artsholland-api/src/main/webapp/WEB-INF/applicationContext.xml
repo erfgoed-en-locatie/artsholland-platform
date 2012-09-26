@@ -23,7 +23,7 @@
     <constructor-arg ref="queryService"/>    
   </bean>
 
-  <jee:jndi-lookup id="queryService" jndi-name="java:app/datastore/BigdataQueryService"/>
+  <jee:jndi-lookup id="queryService" jndi-name="java:app/datastore/QueryService"/>
   
   <context:component-scan base-package="org.waag.ah.spring" />
 
