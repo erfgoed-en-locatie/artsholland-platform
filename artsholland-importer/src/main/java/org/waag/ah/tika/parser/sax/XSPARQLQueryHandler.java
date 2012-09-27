@@ -234,6 +234,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				logger.error(e.getMessage());
 				logger.info(xmlString);
 				logger.info(turtleString);
+				e.printStackTrace();
 				throw new SAXException(e.getMessage(), e);
 			} finally {
 				xmlCollector = null;

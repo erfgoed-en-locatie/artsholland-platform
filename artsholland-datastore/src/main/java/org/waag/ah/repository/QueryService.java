@@ -13,6 +13,7 @@ import org.openrdf.query.parser.ParsedTupleQuery;
 import org.openrdf.query.parser.QueryParser;
 import org.openrdf.query.parser.sparql.SPARQLParserFactory;
 import org.openrdf.repository.RepositoryConnection;
+import org.openrdf.repository.RepositoryException;
 import org.waag.ah.QueryDefinition;
 import org.waag.ah.QueryTask;
 import org.waag.ah.RepositoryConnectionFactory;
@@ -24,22 +25,21 @@ import org.waag.ah.rdf.TupleQueryTask;
 import com.bigdata.rdf.sparql.ast.QueryType;
 
 @Singleton
-public class QueryService { //implements QueryService {
+public class QueryService {
 //	private static final Logger logger = LoggerFactory
 //			.getLogger(QueryService.class);
 	
-//	@EJB(mappedName="java:module/BigdataConnectionService")
 	@EJB(mappedName="java:module/ConnectionService")
 	private RepositoryConnectionFactory cf;
 
 	public QueryTask getQueryTask(QueryDefinition query,
 			WriterConfig config, OutputStream out)
-			throws MalformedQueryException {
+			throws MalformedQueryException, RepositoryException {
 		QueryParser parser = new SPARQLParserFactory().getParser();
 		ParsedQuery parsedQuery = parser.parseQuery(query.getQuery(),
 				config.getBaseUri());
+		RepositoryConnection conn = cf.getConnection();
 		try {
-			RepositoryConnection conn = cf.getConnection();
 			if (parsedQuery instanceof ParsedTupleQuery) {
 				return new TupleQueryTask(conn, query, config, out);
 			} else if (parsedQuery instanceof ParsedBooleanQuery) {
@@ -47,19 +47,18 @@ public class QueryService { //implements QueryService {
 			} else if (parsedQuery instanceof ParsedGraphQuery) {
 				return new GraphQueryTask(conn, query, config, out);
 			}			
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage(), e);
+		} finally {
+			conn.close();
 		}
-		
 		throw new MalformedQueryException("Unknown query type: "
 				+ ParsedQuery.class.getName());
 	}
 	
 	public QueryTask getQueryTask(ParsedQuery parsedQuery, QueryDefinition query,
 			WriterConfig config, OutputStream out)
-			throws MalformedQueryException {
+			throws MalformedQueryException, RepositoryException {
+		RepositoryConnection conn = cf.getConnection();
 		try {
-			RepositoryConnection conn = cf.getConnection();
 			if (parsedQuery instanceof ParsedTupleQuery) {
 				return new TupleQueryTask(conn, query, config, out);
 			} else if (parsedQuery instanceof ParsedBooleanQuery) {
@@ -67,10 +66,9 @@ public class QueryService { //implements QueryService {
 			} else if (parsedQuery instanceof ParsedGraphQuery) {
 				return new GraphQueryTask(conn, query, config, out);
 			}			
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage(), e);
+		} finally {
+			conn.close();
 		}
-		
 		throw new MalformedQueryException("Unknown query type: "
 				+ ParsedQuery.class.getName());
 	}

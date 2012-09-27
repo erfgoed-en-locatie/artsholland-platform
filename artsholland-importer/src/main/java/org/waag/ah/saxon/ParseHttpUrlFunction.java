@@ -1,5 +1,7 @@
 package org.waag.ah.saxon;
 
+import java.net.URI;
+
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.lib.ExtensionFunctionDefinition;
@@ -11,8 +13,12 @@ import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.Value;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @SuppressWarnings("serial")
 public class ParseHttpUrlFunction extends ExtensionFunctionDefinition {
+	private static final Logger logger = LoggerFactory.getLogger(ParseHttpUrlFunction.class);
 	
 	@Override
 	public SequenceType[] getArgumentTypes() {
@@ -42,8 +48,13 @@ public class ParseHttpUrlFunction extends ExtensionFunctionDefinition {
 						if (!(text.startsWith("http://") || text.startsWith("https://"))) {
 							text = "http://" + text;
 						}
+//						text = new URLCodec().encode(text);
+						text = new URI(text).toASCIIString();
+//						logger.info("URL: "+text);
 					}
-				} catch (NullPointerException e) {					
+				} catch (Exception e) {	
+					logger.error(e.getMessage());
+					return Value.asIterator(EmptySequence.getInstance());
 				}
 				
 				if (text.length() == 0) {

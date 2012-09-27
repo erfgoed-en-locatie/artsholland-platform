@@ -73,7 +73,7 @@ public class ImportServiceBean implements ImportService {
 			conn.commit();
 			logger.info("Import comitted, "+(conn.size()-oldsize)+" added");
 		} catch (Exception e) {
-			logger.error("Error importimg url <"+curResource+">: "+e);
+			logger.error("Error importing url <"+curResource+">: "+e);
 			conn.rollback();
 			throw e;
 		} finally {
