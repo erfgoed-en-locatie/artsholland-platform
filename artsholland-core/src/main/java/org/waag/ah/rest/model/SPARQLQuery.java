@@ -13,7 +13,8 @@ public class SPARQLQuery {
 	private static final String STATEMENTS_PLACEMARK = "[[statements]]";
 	private static final String FILTER_PLACEMARK = "[[filter]]";
 	private static final String LANGUAGE_PLACEMARK = "[[language]]";
-
+	private static final String ORDER_PLACEMARK = "[[order]]";
+	
 	private static final long MAXIMUM_PER_PAGE = 250;
 			
 	/*
@@ -30,7 +31,7 @@ public class SPARQLQuery {
 		+ "    {"
 		+ "      [[statements]]"
 		+ "      [[filter]]"
-		+ "    } [[paging]]" //ORDER BY ?object 
+		+ "    } [[order]] [[paging]]" 
 		+ "  } [[language]]"
 		+ "} ORDER BY ?object ?p";
 		
@@ -69,11 +70,12 @@ public class SPARQLQuery {
 		this.singleSelf = singleSelf;
 	}
 			
-	public String generateContruct(RestRelation relation, RestParameters params, Map<String, String> bindings, boolean includePrefix) {
+	public String generateContruct(RestRelation relation, RestParameters params, Map<String, String> bindings, boolean includePrefix, boolean ordered) {
 		String query = singleSelf ? SPARQL_SINGLE_SELF : SPARQL_CONSTRUCT;		
 
 		query = addPaging(query, params.getPerPage(), params.getPage());
 		query = addLanguageFilter(query, params);
+		query = addOrder(query, generateOrder(ordered));
 		query = addFilters(query, generateFilters(relation, params));		
 		query = addStatements(query, (String[]) ArrayUtils.addAll(statements, relation.getStatements(params).toArray()));
 		
@@ -82,6 +84,8 @@ public class SPARQLQuery {
 		return includePrefix ? AHRDFNamespaces.getSPARQLPrefix() + query : query;
 	}
 	
+
+
 	public String generateCount(RestRelation relation, RestParameters params, Map<String, String> bindings, boolean includePrefix) {
 		String query = SPARQL_COUNT;		
 		
@@ -142,7 +146,17 @@ public class SPARQLQuery {
 	}
 
 	
+	private String generateOrder(boolean ordered) {
+		String order = "";		
+		if (ordered) {
+			order = "ORDER BY ?object";
+		}
+		return order;
+	}
 	
+	private String addOrder(String query, String order) {
+		return query.replace(ORDER_PLACEMARK, order);		
+	}
 	
 	
 	private ArrayList<String> generateFilters(RestRelation relation,
@@ -164,15 +178,17 @@ public class SPARQLQuery {
 	}
 
 	private String addLanguageFilter(String query, RestParameters params) {
-		ArrayList<String> filters = new ArrayList<String>();
-		
-		String languageFilter = "!isLiteral(?o) || datatype(?o) != \"xsd:string\" || langMatches(lang(?o), ?lang	) || langMatches(lang(?o), \"\")";
-		languageFilter = languageFilter.replace("?lang", "\"" + params.getLanguageTag() + "\"");
-		filters.add(languageFilter);		
-		
-		return addFilters(query, LANGUAGE_PLACEMARK, filters);
-	}
-	
+		if (params.isLocalized()) {
+			ArrayList<String> filters = new ArrayList<String>();
+			String languageFilter = "!isLiteral(?o) || datatype(?o) != \"xsd:string\" || langMatches(lang(?o), ?lang	) || langMatches(lang(?o), \"\")";
+			languageFilter = languageFilter.replace("?lang", "\"" + params.getLanguageTag() + "\"");
+			filters.add(languageFilter);		
+			
+			return addFilters(query, LANGUAGE_PLACEMARK, filters);	
+		}	else {
+			return query.replace(LANGUAGE_PLACEMARK, "");	
+		}		 
+	}	
 	
 	private String addPaging(String query, long perPage, long page) {
 		// TODO: check if count & page are valid

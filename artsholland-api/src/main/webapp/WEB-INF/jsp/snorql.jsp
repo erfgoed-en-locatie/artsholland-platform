@@ -1,12 +1,15 @@
 <%
 	String apiKey = "";
 	String apiKeyUrl = "";
-	if (request.getParameterMap().containsKey("apiKey")) {
+	if (request.getParameterMap().containsKey("api_key")) {
+		apiKey = request.getParameter("api_key");					
+	}	else if (request.getParameterMap().containsKey("apiKey")) {
 		apiKey = request.getParameter("apiKey");
-		if (apiKey.length() > 0) {
-			apiKeyUrl = "&apiKey=" + apiKey;
-		}			
-	}	
+	}
+	
+	if (apiKey.length() > 0) {
+		apiKeyUrl = "&api_key=" + apiKey;
+	}
 	
 %>
 <?xml version="1.0" encoding="utf-8"?>
@@ -18,7 +21,7 @@
     <script type="text/javascript" src="/static/snorql/prototype.js"></script>
     <script type="text/javascript" src="/static/snorql/scriptaculous/scriptaculous.js"></script>
     <script type="text/javascript" src="/static/snorql/sparql.js"></script>
-    <script type="text/javascript" src="/static/snorql/namespaces.js"></script>
+    <script type="text/javascript" src="/static/namespaces/namespaces.jsp"></script>
     <script type="text/javascript" src="/static/snorql/snorql.js"></script>
     
     <script src="/static/codemirror/lib/codemirror.js"></script>
@@ -63,7 +66,7 @@
       <pre id="prefixestext"></pre>
       <form id="queryform" action="#" method="get"><div>
         <input type="hidden" name="query" value="" id="query" />
-        <input type="hidden" name="apiKey" value="<%= apiKey %>" id="apiKey" />
+        <input type="hidden" name="api_key" value="<%= apiKey %>" id="apiKey" />
         <input type="hidden" name="output" value="json" id="jsonoutput" disabled="disabled" />
         <input type="hidden" name="stylesheet" value="" id="stylesheet" disabled="disabled" />
         <input type="hidden" name="graph" value="" id="graph-uri" disabled="disabled" />

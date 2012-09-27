@@ -8,6 +8,6 @@ public class ApiKeyRequestMatcher implements RequestMatcher {
 
 	@Override
 	public boolean matches(HttpServletRequest request) {
-		return request.getParameter(ApiKeyServices.SPRING_SECURITY_API_KEY) != null;
+		return (request.getParameter(ApiKeyServices.SPRING_SECURITY_API_KEY) != null) || (request.getParameter(ApiKeyServices.SPRING_SECURITY_API_KEY_OLD) != null);
 	}
 }

@@ -223,7 +223,7 @@ return
 			  $auri a ah:Address ;
         	vcard:street-address {concat($venue/street/name, " ", $venue/street/number, $venue/street/addition)} ;
 					vcard:locality {waag:parse-string($venue/city)} ;
-					vcard:postal-code {waag:parse-string($venue/postal-code)} .
+					vcard:postal-code {waag:postal-code(waag:parse-string($venue/postal-code))} .
 				
 				{ for $room in $venue/rooms//room
 					
@@ -292,7 +292,7 @@ return
 					
 					construct {
 										 
-						$vuri dc:title {waag:parse-string($language/sortname)}@{$language-tag}.
+						$vuri dc:title {waag:parse-string($language/name)}@{$language-tag}.
 						
 						$vuri dc:description {waag:parse-string($language/description)}@{$language-tag}.
 						$vuri ah:shortDescription {waag:parse-string($language/short-description)}@{$language-tag}.
@@ -380,7 +380,7 @@ return
 					
 					construct {				
 						
-						$puri dc:title {waag:parse-string($languageBlock/sortname)}@{$language-tag} ;						
+						$puri dc:title {waag:parse-string($languageBlock/title)}@{$language-tag} ;						
 							dc:description {waag:parse-string($languageBlock/description)}@{$language-tag} ;
 							ah:shortDescription {waag:parse-string($languageBlock/short-description)}@{$language-tag} ;
 						
@@ -389,6 +389,36 @@ return
 	
 					}
 				} .
+				
+				# $pos is counter (http://stackoverflow.com/questions/5652397/xquery-counters-inside-a-for)
+				{ for $medium at $pos in $production/media//medium				
+					
+					let $muri := {waag:object-uri("production", $cidn, "attachment", xs:string($pos))}
+										
+					let $typeKey := {waag:parse-string($medium/type)}
+					let $typeClass := {waag:class-uri("attachmentType", waag:upper-case-first($typeKey))}
+					
+					construct {
+					
+						$puri ah:attachment $muri .
+						
+						$muri a ah:Attachment ;
+							dc:title {waag:parse-string($medium/title)}^^xsd:string ;
+							dc:description {waag:parse-string($medium/description)}^^xsd:string ;
+						
+							# TODO: string?
+							ah:url {waag:parse-http-url($medium/ref)} ;
+											
+							# TODO:
+							#	<alt>A family again</alt>	
+						
+							ah:attachmentType $typeClass .
+							
+						$typeClass a ah:AttachmentType ;
+							rdfs:label {$typeKey}^^xsd:string .
+										
+					}
+				} .		
 				
 				{ for $tag in $production/tags//tag
 				

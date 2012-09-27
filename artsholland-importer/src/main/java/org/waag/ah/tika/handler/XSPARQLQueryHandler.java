@@ -54,6 +54,7 @@ import org.waag.ah.saxon.ParseHttpUrlFunction;
 import org.waag.ah.saxon.ParseLocaleFunction;
 import org.waag.ah.saxon.ParseNonZeroNumber;
 import org.waag.ah.saxon.ParseStringFunction;
+import org.waag.ah.saxon.PostalCodeFunction;
 import org.waag.ah.saxon.UpperCaseFirstFunction;
 import org.waag.ah.saxon.WKTGeometryFunction;
 import org.waag.ah.tika.parser.TurtleParser;
@@ -136,6 +137,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			config.registerExtensionFunction(new ParseHttpUrlFunction());
 			config.registerExtensionFunction(new ParseNonZeroNumber());
 			config.registerExtensionFunction(new UpperCaseFirstFunction());
+			config.registerExtensionFunction(new PostalCodeFunction());
 			config.registerExtensionFunction(new WKTGeometryFunction());
 			
 			Processor processor = new Processor(config);

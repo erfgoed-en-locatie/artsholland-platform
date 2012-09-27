@@ -24,6 +24,7 @@ public class AHRDFNamespaces {
 		result.put("geo", "http://www.w3.org/2003/01/geo/wgs84_pos#");
 		result.put("vcard", "http://www.w3.org/2006/vcard/ns#");
 		result.put("osgeo", "http://rdf.opensahara.com/type/geo/");
+		result.put("bd", "http://www.bigdata.com/rdf/search#");
 		result.put("search", "http://rdf.opensahara.com/search#");
 		result.put("fn", "http://www.w3.org/2005/xpath-functions#");
 		result.put("gr", "http://purl.org/goodrelations/v1#");
@@ -47,6 +48,15 @@ public class AHRDFNamespaces {
 	
 	public static Map<String, String> getNamespaces() {
 		return NAMESPACES;
+	}
+	
+	public static String getJavaScriptNamespaces() {
+		String javascript = "var D2R_namespacePrefixes = {\n";
+		for (Map.Entry<String, String> entry : getNamespaces().entrySet()) {
+			javascript += "\t" + entry.getKey() + ": \"" + entry.getValue() + "\",\n";
+		}		
+		javascript += "};";		
+		return javascript;
 	}
 
 	public static String getFullURI(String namespaceURI) {

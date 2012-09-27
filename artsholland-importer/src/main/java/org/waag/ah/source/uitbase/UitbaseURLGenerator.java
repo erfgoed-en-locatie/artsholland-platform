@@ -16,8 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.PlatformConfig;
 import org.waag.ah.PlatformConfigHelper;
-import org.waag.ah.importer.ImportStrategy;
 import org.waag.ah.importer.ImportConfig;
+import org.waag.ah.importer.ImportStrategy;
 import org.waag.ah.importer.UrlGenerator;
 
 public class UitbaseURLGenerator implements UrlGenerator {
@@ -27,6 +27,9 @@ public class UitbaseURLGenerator implements UrlGenerator {
 	private final String baseUrl;
 	private final String apiKey;
 	private final int ROWS = 500;
+	
+	private static final String UITBASE_OBJECT_PROPERTY_CREATED = "created";
+	private static final String UITBASE_OBJECT_PROPERTY_MODIFIED = "modified";
 	
 	public static final String[] RESOURCES = { 
 		"events", 
@@ -46,6 +49,9 @@ public class UitbaseURLGenerator implements UrlGenerator {
 		List<URL> urls = new ArrayList<URL>();
 		
 		DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
+				
+//		String dtToParam = dtTo != null ? String.format("&%sto=%s", UITBASE_OBJECT_PROPERTY_MODIFIED, fmt.withZone(DateTimeZone.UTC).print(dtTo)) : "";
+//		String dtFromParam = dtFrom != null ? String.format("&%sfrom=%s", UITBASE_OBJECT_PROPERTY_MODIFIED, fmt.withZone(DateTimeZone.UTC).print(dtFrom)) : "";
 		
 		String dtFromParam = "";
 		String dtToParam = "";
@@ -56,8 +62,6 @@ public class UitbaseURLGenerator implements UrlGenerator {
 		if (config.getUntilImportDate() != null) {
 			dtToParam = "&createdto="+fmt.withZone(DateTimeZone.UTC).print(config.getUntilImportDate());
 		}
-		
-		//dtFromParam = "&createdfrom=2012-04-20T14:41:59.998Z";
 		
 		for (String resource : RESOURCES) {
 			String resourceFilterParam = "&filter=resource:" + resource;

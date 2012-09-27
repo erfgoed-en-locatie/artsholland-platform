@@ -30,6 +30,8 @@ import org.waag.ah.rdf.AskQueryTask;
 import org.waag.ah.rdf.GraphQueryTask;
 import org.waag.ah.rdf.TupleQueryTask;
 
+import com.bigdata.rdf.sparql.ast.QueryType;
+
 @Singleton
 @DependsOn("BigdataConnectionService")
 public class BigdataQueryService implements QueryService {
@@ -73,6 +75,27 @@ public class BigdataQueryService implements QueryService {
 		throw new MalformedQueryException("Unknown query type: "
 				+ ParsedQuery.class.getName());
 	}
+
+	@Override
+	public QueryType getQueryType(ParsedQuery parsedQuery) {
+		if (parsedQuery instanceof ParsedTupleQuery) {
+			return QueryType.SELECT;
+		} else if (parsedQuery instanceof ParsedBooleanQuery) {
+			return QueryType.ASK;
+		} else if (parsedQuery instanceof ParsedGraphQuery) {
+			return QueryType.CONSTRUCT;
+		}	else {
+			return null;
+		}
+	}
+	
+	@Override
+	public ParsedQuery getParsedQuery(QueryDefinition query,
+			WriterConfig config) throws MalformedQueryException {
+		QueryParser parser = new SPARQLParserFactory().getParser();
+		return parser.parseQuery(query.getQuery(),
+				config.getBaseUri());		
+	}
 	
 	@Override
 	public GraphQueryResult executeQuery(String queryString)
@@ -84,5 +107,25 @@ public class BigdataQueryService implements QueryService {
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
+	}
+
+	public QueryTask getQueryTask(ParsedQuery parsedQuery, QueryDefinition query,
+			WriterConfig config, OutputStream out)
+			throws MalformedQueryException {
+		try {
+			RepositoryConnection conn = cf.getConnection();
+			if (parsedQuery instanceof ParsedTupleQuery) {
+				return new TupleQueryTask(conn, query, config, out);
+			} else if (parsedQuery instanceof ParsedBooleanQuery) {
+				return new AskQueryTask(conn, query, config, out);
+			} else if (parsedQuery instanceof ParsedGraphQuery) {
+				return new GraphQueryTask(conn, query, config, out);
+			}			
+		} catch (Exception e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}
+		
+		throw new MalformedQueryException("Unknown query type: "
+				+ ParsedQuery.class.getName());
 	}
 }

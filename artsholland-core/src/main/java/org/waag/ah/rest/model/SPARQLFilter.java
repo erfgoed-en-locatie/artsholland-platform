@@ -10,17 +10,32 @@ public class SPARQLFilter {
 	private String filter;
 	private ArrayList<String> extraParameters = new ArrayList<String>();
 	
+	public SPARQLFilter(String parameter, String statement) {
+		this.parameter = parameter;
+		this.statement = statement;
+		this.filter = "";
+	}
+	
 	public SPARQLFilter(String parameter, String statement, String filter) {
 		this.parameter = parameter;
 		this.statement = statement;
 		this.filter = filter;
+	}	
+
+	public void setStatement(String statement) {
+		this.statement = statement;
 	}
 	
 	public String getStatement() {
 		return statement;
 	}
-	public void setStatement(String statement) {
-		this.statement = statement;
+	
+	public String getStatement(String parameter) {
+		return getSPARQL(statement, parameter);		
+	}
+	
+	public String getStatement(String parameter, Map<String, String[]> parameterMap) {
+		return getSPARQL(statement, parameter, parameterMap);
 	}
 	
 	public String getFilter() {
@@ -28,24 +43,37 @@ public class SPARQLFilter {
 	}
 	
 	public String getFilter(String parameter) {
-		return filter.replace("?parameter", parameter);
+		return getSPARQL(filter, parameter);		
 	}
 	
 	public String getFilter(String parameter, Map<String, String[]> parameterMap) {
-		String filter = this.filter;
-		for (String extraParameter : extraParameters) {
-			if (parameterMap.containsKey(extraParameter)) {
-				String[] values = parameterMap.get(extraParameter);
-				if (values.length > 0) {
-					// TODO: now only works for integer/double values
-					// Add check to test whether values[0] is a string
-					filter = filter.replace("?" + extraParameter, values[0]);	
-				}				
-			}
+		return getSPARQL(filter, parameter, parameterMap);
+	}	
+	
+	public String getSPARQL(String sparql, String parameter) {
+		if (sparql != null) {
+			sparql = sparql.replace("?parameter", parameter);
 		}
-		
-		return filter.replace("?parameter", parameter);
+		return sparql;
 	}
+	
+	public String getSPARQL(String sparql, String parameter, Map<String, String[]> parameterMap) {
+		if (sparql != null) {
+			for (String extraParameter : extraParameters) {
+				if (parameterMap.containsKey(extraParameter)) {
+					String[] values = parameterMap.get(extraParameter);
+					if (values.length > 0) {
+						// TODO: now only works for integer/double values
+						// Add check to test whether values[0] is a string
+						sparql = sparql.replace("?" + extraParameter, values[0]);	
+					}				
+				}
+			}
+			
+			sparql = sparql.replace("?parameter", parameter);
+		}
+		return sparql;
+	}	
 	
 	public void setFilter(String filter) {
 		this.filter = filter;

@@ -3,14 +3,14 @@ package org.waag.ah.spring.service;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.rio.RDFFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.waag.ah.WriterContentTypeConfig;
 import org.waag.ah.rdf.RDFJSONFormat;
 import org.waag.ah.rdf.RDFWriterConfig;
 import org.waag.ah.rdf.RdfQueryDefinition;
+import org.waag.ah.rdf.RestWriterTypeConfig;
 import org.waag.ah.rest.RestParameters;
 import org.waag.ah.rest.model.RestRelation;
 import org.waag.ah.rest.model.RestRelation.RelationQuantity;
@@ -20,8 +20,8 @@ import org.waag.ah.rest.util.RestRelationQueryGenerator;
 
 @Service("restService")
 public class RestService implements InitializingBean {
-	private static final Logger logger = LoggerFactory
-			.getLogger(RestService.class);
+//	private static final Logger logger = LoggerFactory
+//			.getLogger(RestService.class);
 
 	RestRelation rootRelation;
 	RestRelationQueryGenerator queryGenerator;
@@ -80,12 +80,11 @@ public class RestService implements InitializingBean {
 				eventRelation.addRelation("attachment", "ah:Attachment", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
 		eventAttachmentRelation.addRelation("id", "ah:Attachment",	RelationQuantity.SINGLE, RelationType.SELF, true);
 		
-  	// TODO: ?this instead of ?object  ???
-
-		/*
-		 * Aanpassen:
-		 * ticket
-		 */
+		RestRelation productionAttachmentRelation = 
+				productionRelation.addRelation("attachment", "ah:Attachment", RelationQuantity.MULTIPLE, RelationType.FORWARD, false);
+		productionAttachmentRelation.addRelation("id", "ah:Attachment",	RelationQuantity.SINGLE, RelationType.SELF, true);
+		
+		// TODO: ?this instead of ?object  ???
 		
 		SPARQLFilter venuesLocalityFilter = new SPARQLFilter("locality", "?object ah:locationAddress ?address . ?address vcard:locality ?locality.", "lcase(?locality) = lcase(\"?parameter\")");
 		
@@ -111,12 +110,12 @@ public class RestService implements InitializingBean {
     // TODO: add search:within(?geometry, "POLYGON((4 53, 4 54, 5 54, 5 53, 4 53))"^^geo:wkt)  	
   	
   	SPARQLFilter productionGenreFilter = new SPARQLFilter(
-  			"genre", "?object <http://purl.org/artsholland/1.0/genre> ?genre .", "?genre = ah:genre?parameter OR ?genre = ah:?parameter"
+  			"genre", "?object <http://purl.org/artsholland/1.0/genre> ?genre .", "?genre = ah:genre?parameter || ?genre = ah:?parameter"
   			);    	
   	productionsRelation.addFilter(productionGenreFilter);
   	
   	SPARQLFilter venueTypeFilter = new SPARQLFilter(
-  			"type", "?object <http://purl.org/artsholland/1.0/venueType> ?type .", "?type = ah:venueType?parameter OR ?type = ah:?parameter"
+  			"type", "?object <http://purl.org/artsholland/1.0/venueType> ?type .", "?type = ah:venueType?parameter || ?type = ah:?parameter"
   			);    	
   	venuesRelation.addFilter(venueTypeFilter);  	
   	
@@ -132,9 +131,16 @@ public class RestService implements InitializingBean {
   	
   	/*
   	 * Free text
+  	 * Searches all linked literals of ?object
   	 */
   	
-  	SPARQLFilter searchFilter = new SPARQLFilter("search", "?object dc:description ?desc .", "search:text(?desc, \"?parameter\")");   
+  	// USeekM: https://dev.opensahara.com/projects/useekm/wiki/IndexingSail
+  	SPARQLFilter searchFilter = new SPARQLFilter("search", "?object dc:description ?desc .", "search:text(?desc, \"?parameter\")");
+  	
+  	// BigData: http://sourceforge.net/apps/mediawiki/bigdata/index.php?title=FullTextSearch 
+  	// Does not work currently. BUG: http://sourceforge.net/apps/trac/bigdata/timeline?from=2012-07-18T13%3A45%3A17Z%2B0000&precision=second
+  	//SPARQLFilter searchFilter = new SPARQLFilter("search", "?object ?ps ?fts . ?fts bd:search \"?parameter\" .");
+  	
   	eventsRelation.addFilter(searchFilter);
   	productionsRelation.addFilter(searchFilter);
   	venuesRelation.addFilter(searchFilter);
@@ -158,7 +164,7 @@ public class RestService implements InitializingBean {
 		if (query == null) {
 			throw new MalformedQueryException();
 		}
-		RDFWriterConfig config = getDefaultWriterConfig(params);
+		RDFWriterConfig config = getDefaultWriterConfig(params);		
 		query.setWriterConfig(config);
 
 		if (!query.isSingle()) {
@@ -167,13 +173,18 @@ public class RestService implements InitializingBean {
 		}
 		
 		config.setWrapResults(true);
-		logger.info("RETURN PAGED QUERY");
+
 		return query;
 	}
 
 	private RDFWriterConfig getDefaultWriterConfig(RestParameters params) {
 		RDFWriterConfig config = new RDFWriterConfig();
+		config.setContentTypeConfig(new RestWriterTypeConfig());		
 		config.setPrettyPrint(params.getPretty());
+		config.setJSONPCallback(params.getJSONPCallback());
+		if (params.isPlainText()) {
+			config.setResponseContentType(WriterContentTypeConfig.MIME_TEXT_PLAIN);
+		}
 		config.setBaseUri(platformConfig.getString("platform.baseUri"));
 		return config;
 	}

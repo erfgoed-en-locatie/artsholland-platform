@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.rest.RestParameters;
 
@@ -56,11 +55,6 @@ public class RestRelation {
 		} catch (ConfigurationException e) {
 			// TODO: add catch code
 		} 
-
-				
-		// TODO: get from properties
-		//public static String OBJECT_NAMESPACE ="http://data.artsholland.com/";
-		//public static String CLASS_NAMESPACE = "http://purl.org/artsholland/1.0/";		
 	}
 	
 	public RestRelation(String parameter, String classURI, RelationQuantity quantity, RelationType type, boolean parameterized) {
@@ -220,15 +214,25 @@ public class RestRelation {
 		return this;
 	}
 	
-	public ArrayList<String> getStatements(RestParameters params) {
-		
+	public ArrayList<String> getStatements(RestParameters params) {		
 		ArrayList<String> statements = new ArrayList<String>();
 		
 		for (Map.Entry<String, String[]> uriParameter : params.getURIParameterMap().entrySet()) {
 			String parameter = uriParameter.getKey();
 			SPARQLFilter filter = findFilter(parameter);
-			if (filter != null) {
-				statements.add(filter.getStatement());
+			if (filter != null) {					
+				String[] value = uriParameter.getValue();
+				String statementString = null;
+				
+				if (value.length > 0) {
+					statementString = filter.getStatement(value[0], params.getURIParameterMap());
+				} else {
+					statementString = filter.getStatement();
+				}
+				
+				if (statementString != null & statementString.length() > 0) {
+					statements.add(statementString);
+				}
 			}
 		}
 			
@@ -244,8 +248,16 @@ public class RestRelation {
 			SPARQLFilter filter = findFilter(parameter);
 			if (filter != null) {
 				String[] value = uriParameter.getValue();
+				String filterString = null;
+				
 				if (value.length > 0) {
-					filters.add(filter.getFilter(value[0], params.getURIParameterMap()));
+					filterString = filter.getFilter(value[0], params.getURIParameterMap());					
+				}	else {
+					filterString = filter.getFilter();
+				}
+				
+				if (filterString != null & filterString.length() > 0) {
+					filters.add(filterString);
 				}				
 			}
 		}

@@ -38,9 +38,20 @@ function Snorql() {
         //document.getElementById('toggleprefixes').setAttribute('onclick', this._togglePrefixes());
         document.getElementById('toggleprefixes').onclick = this._togglePrefixes;
         
-        var apiKeyRegEx = queryString.match(/apiKey=([^&]*)/);
+        var apiKeyRegEx = queryString.match(/api_key=([^&]*)/);
+        var apiKeyRegExOld = queryString.match(/apiKey=([^&]*)/);
+        
         var apiKeyUrl = apiKeyRegEx ? apiKeyRegEx[0] : null;
         var apiKey = apiKeyRegEx ? apiKeyRegEx[1] : null;
+        
+        var apiKeyUrlOld = apiKeyRegExOld ? apiKeyRegExOld[0] : null;
+        var apiKeyOld = apiKeyRegExOld ? apiKeyRegExOld[1] : null;
+        
+        apiKeyUrl = apiKeyUrl ? apiKeyUrl : apiKeyUrlOld;
+        apiKeyUrl = apiKeyUrl.replace("apiKey", "api_key");
+        
+        apiKey = apiKey ? apiKey : apiKeyOld;
+        
         this.setApiKey(apiKey);
         //this.setBrowserBase(document.location.href.replace(/\?.*/, '') );
         
@@ -58,21 +69,23 @@ function Snorql() {
         if (browse && browse[1] == 'classes') {
             var resultTitle = 'List of all classes:';
             var query = 'SELECT DISTINCT ?class\n' +
-                    'WHERE { [] a ?class }\n' +
-                    'ORDER BY ?class';
+                    'WHERE {\n' +
+                    '\t[] a ?class\n' +
+                    '} ORDER BY ?class';
         }
         if (browse && browse[1] == 'properties') {
             var resultTitle = 'List of all properties:';
             var query = 'SELECT DISTINCT ?property\n' +
-                    'WHERE { [] ?property [] }\n' +
-                    'ORDER BY ?property';
+                    'WHERE {\n' +
+                    '\t[] ?property []\n' +
+                    '} ORDER BY ?property';
         }
         if (browse && browse[1] == 'graphs') {
             var resultTitle = 'List of all named graphs:';
             var querytext = 'SELECT DISTINCT ?namedgraph ?label\n' +
                     'WHERE {\n' +
-                    '  GRAPH ?namedgraph { ?s ?p ?o }\n' +
-                    '  OPTIONAL { ?namedgraph rdfs:label ?label }\n' +
+                    '\tGRAPH ?namedgraph { ?s ?p ?o }\n' +
+                    '\tOPTIONAL { ?namedgraph rdfs:label ?label }\n' +
                     '}\n' +
                     'ORDER BY ?namedgraph';
             var query = 'PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n' + querytext;
@@ -81,24 +94,26 @@ function Snorql() {
         if (match) {
             var resultTitle = 'All uses of property ' + decodeURIComponent(match[1]) + ':';
             var query = 'SELECT DISTINCT ?resource ?value\n' +
-                    'WHERE { ?resource <' + decodeURIComponent(match[1]) + '> ?value }\n' +
-                    'ORDER BY ?resource ?value';
+                    'WHERE {\n' +
+                    '\t?resource <' + decodeURIComponent(match[1]) + '> ?value\n' +
+                    '} ORDER BY ?resource ?value';
         }
         var match = queryString.match(/class=([^&]*)/);
         if (match) {
             var resultTitle = 'All instances of class ' + decodeURIComponent(match[1]) + ':';
             var query = 'SELECT DISTINCT ?instance\n' +
-                    'WHERE { ?instance a <' + decodeURIComponent(match[1]) + '> }\n' +
-                    'ORDER BY ?instance';
+                    'WHERE {\n' +
+                    '\t?instance a <' + decodeURIComponent(match[1]) + '>\n' +
+                    '} ORDER BY ?instance';
         }
         var match = queryString.match(/describe=([^&]*)/);
         if (match) {
             var resultTitle = 'Description of ' + decodeURIComponent(match[1]) + ':';
             var query = 'SELECT DISTINCT ?property ?hasValue ?isValueOf\n' +
                     'WHERE {\n' +
-                    '  { <' + decodeURIComponent(match[1]) + '> ?property ?hasValue }\n' +
-                    '  UNION\n' +
-                    '  { ?isValueOf ?property <' + decodeURIComponent(match[1]) + '> }\n' +
+                    '\t{ <' + decodeURIComponent(match[1]) + '> ?property ?hasValue }\n' +
+                    '\tUNION\n' +
+                    '\t{ ?isValueOf ?property <' + decodeURIComponent(match[1]) + '> }\n' +
                     '}\n' +
                     'ORDER BY (!BOUND(?hasValue)) ?property ?hasValue ?isValueOf';
         }
@@ -114,7 +129,7 @@ function Snorql() {
         }
         document.getElementById('querytext').value = querytext;
         this.displayBusyMessage();
-        var service = new SPARQL.Service(this._endpoint + '?apiKey=1e4263ef2d20da8eff6996381bb0d78b');        
+        var service = new SPARQL.Service(this._endpoint + '?api_key=' + apiKey);        
         
         if (this._graph) {
             service.addDefaultGraph(this._graph);
@@ -256,7 +271,7 @@ function Snorql() {
     };
 
     this.resetQuery = function() {
-        document.location = this._browserBase + "?apiKey=" + this._apiKey;
+        document.location = this._browserBase + "?api_key=" + this._apiKey;
     };
 
     this.submitQuery = function() {
@@ -498,7 +513,7 @@ function SPARQLResultFormatter(json, namespaces, apiKey) {
         var span = document.createElement('span');
         span.className = 'uri';
         var a = document.createElement('a');
-        a.href = (this._getLinkMaker(varName)(node.value)) + (this._apiKey ? ('&apiKey=' + this._apiKey) : '');
+        a.href = (this._getLinkMaker(varName)(node.value)) + (this._apiKey ? ('&api_key=' + this._apiKey) : '');
         a.title = '<' + node.value + '>';
         a.className = 'graph-link';
         var qname = this._toQName(node.value);
