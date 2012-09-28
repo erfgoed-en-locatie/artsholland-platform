@@ -85,7 +85,7 @@
       <group>EnricherService</group>
       <description>Enrich objects in triplestore</description>
       <job-class>org.waag.ah.quartz.EnrichObjectJob</job-class>
-      <durability>false</durability>
+      <durability>true</durability>
       <recover>false</recover>
       <job-data-map>
         <entry>
@@ -109,16 +109,16 @@
         </entry>
       </job-data-map>
     </job>
-    
+<!--     
     <trigger>
       <cron>
         <name>GeoNamesEnricherTrigger</name>
         <job-name>GeonamesEnricher</job-name>
         <job-group>EnricherService</job-group>
-        <cron-expression>0 0/5 * * * ?</cron-expression>
+        <cron-expression>0 0/1 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
-    </trigger>
+    </trigger> -->
     
     <!-- DBPEDIA ENRICHER -->
     <job>

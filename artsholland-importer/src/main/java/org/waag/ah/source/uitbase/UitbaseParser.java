@@ -30,33 +30,10 @@ public class UitbaseParser extends XMLParser {
 	private static final Set<MediaType> SUPPORTED_TYPES = new HashSet<MediaType>() {{ 
 		add(MediaType.application("x-waag-uitbase-v3+xml")); 
 		add(MediaType.application("x-waag-uitbase-v4+xml")); 
-		
-		//TODO: delete
-		/*
-		add(MediaType.application("x-waag-uitbase-v4-event+xml"));
-		add(MediaType.application("x-waag-uitbase-v4-production+xml"));
-		add(MediaType.application("x-waag-uitbase-v4-location+xml"));
-		add(MediaType.application("x-waag-uitbase-v4-group+xml"));
-		
-		add(MediaType.application("x-waag-uitbase-v4-event-old+xml"));
-		add(MediaType.application("x-waag-uitbase-v4-production-old+xml"));
-		add(MediaType.application("x-waag-uitbase-v4-location-old+xml"));
-		add(MediaType.application("x-waag-uitbase-v4-group-old+xml"));*/
 	}};
-	
-	/*private static final Set<MediaType> SUPPORTED_TYPES = Collections.singleton(
-    		MediaType.application("x-waag-uitbase-v3+xml"));*/
 	
     public static final String UITBASEV3_MIME_TYPE = "application/x-waag-uitbase-v3+xml";
     public static final String UITBASEV4_MIME_TYPE = "application/x-waag-uitbase-v4+xml";
-    
-		//TODO: delete
-    /*
-    public static final String UITBASEV4_EVENT_MIME_TYPE = "application/x-waag-uitbase-v4-event+xml";
-    public static final String UITBASEV4_PRODUCTION_MIME_TYPE = "application/x-waag-uitbase-v4-production+xml";
-    public static final String UITBASEV4_LOCATION_MIME_TYPE = "application/x-waag-uitbase-v4-location+xml";
-    public static final String UITBASEV4_GROUP_MIME_TYPE = "application/x-waag-uitbase-v4-group+xml"; 
-*/
     
 	@Override
 	public Set<MediaType> getSupportedTypes(ParseContext context) {
@@ -78,14 +55,14 @@ public class UitbaseParser extends XMLParser {
       }
       
       try {
-          context.getSAXParser().parse(
-                  new CloseShieldInputStream(stream),
-                  new OfflineContentHandler(wrappedHandler));
+      context.getSAXParser().parse(
+              new CloseShieldInputStream(stream),
+              new OfflineContentHandler(wrappedHandler));
 //          logger.info("OUTPUT: "+wrappedHandler.toString());
-      } catch (SAXException e) {
+      } catch (Exception e) {
 //    	  e.printStackTrace();
           tagged.throwIfCauseOf(e);
-//          throw new TikaException("XML parse error", e);
+          throw new TikaException("XML parse error", e);
       }
 	}	
 
@@ -122,17 +99,7 @@ public class UitbaseParser extends XMLParser {
 	 */
 	
     public static InputStream getFileContents(Class<?> clazz, String fileName) throws IOException {
-    	InputStream input = clazz.getResourceAsStream(fileName);
-//    	BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-    	return input;
-//    	String str = "";
-//    	StringBuffer buffer = new StringBuffer();
-//        while ((str = reader.readLine()) != null) {
-//            buffer.append(str + "\n");
-//        }
-//        reader.close();
-//        input.close();
-//        return buffer.toString();
+    	return clazz.getResourceAsStream(fileName);
     }
     
     private Matcher getXPathMatcher(String selector) {

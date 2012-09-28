@@ -40,7 +40,7 @@ public class GeoNamesEnricher extends AbstractEnricher {
 //			List<Toponym> searchResult = WebService.findNearbyPlaceName(latitude, longitude, 50, 10);
 			
 			for (Toponym toponym : searchResult) {
-				System.out.println(toponym.toString());
+//				System.out.println(toponym.toString());
 				statements.add(
 						vf.createStatement(graph.getGraphUri(), 
 						vf.createURI("http://www.geonames.org/ontology#Feature"), 

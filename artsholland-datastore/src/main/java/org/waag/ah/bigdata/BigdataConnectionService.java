@@ -43,13 +43,13 @@ public class BigdataConnectionService implements RepositoryConnectionFactory {
 			config = PlatformConfigHelper.getConfig(); 
 			
 			Properties properties = ConfigurationConverter.getProperties(loadProperties());
-			PostgisIndexerSettings settings = PostgisIndexerSettingsGenerator.generateSettings();
+//			PostgisIndexerSettings settings = PostgisIndexerSettingsGenerator.generateSettings();
 			
-			BigdataSailRepository repository = new BigdataSailRepository(new com.bigdata.rdf.sail.BigdataSail(properties));
-			BigdataSail sail = new BigdataSail(repository);
-			IndexingSail idxSail = new IndexingSail(sail, settings);
-			
-			repo = new SailRepository(idxSail);
+			repo = new BigdataSailRepository(new com.bigdata.rdf.sail.BigdataSail(properties));
+//			BigdataSail sail = new BigdataSail(repository);
+//			IndexingSail idxSail = new IndexingSail(sail, settings);
+//			
+//			repo = new SailRepository(idxSail);
 			repo.initialize();
 			
 			conn = repo.getConnection();

@@ -160,26 +160,6 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	private boolean processing() {
 		return stack.size() > 0;
 	}
-	
-//	@Override
-//	public void startPrefixMapping(String prefix, String uri)
-//			throws SAXException {
-//		namepool.allocateNamespaceCode(prefix, uri);
-//	}
-	
-//	@Override
-//	public void startDocument() throws SAXException {
-//		this.handler.startDocument();
-//		AttributesImpl atts = new AttributesImpl();
-//		applyNamespaces(handler);
-//		this.handler.startElement(RDF.NAMESPACE, "RDF", "rdf:RDF", atts);
-//	}
-
-//	@Override
-//	public void endDocument() throws SAXException {
-//		this.handler.endElement(RDF.NAMESPACE, "RDF", "rdf:RDF");
-//		super.endDocument();
-//	}
 
 	@Override
 	public void startElement(String uri, String localName, String qName,
@@ -229,18 +209,9 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				evaluator.setSource(new StreamSource(new StringReader(xmlString)));
 				StringBuilder combined = new StringBuilder();
 				
-//				Iterator<XdmItem> iterator = evaluator.iterator();
-//				String namespaces = iterator.next().toString();
-//				String content = iterator.next().toString();
-//				combined.append(namespaces);
-//				combined.append(content);
-				
 				for (XdmItem item : evaluator) {
 					combined.append(item);
 				}
-				
-//				logger.info("ROW: "+row+combined.toString());
-//				row++;
 				
 				Metadata mdata = new Metadata();
 				mdata.set(Metadata.CONTENT_TYPE, "text/turtle");
@@ -260,34 +231,12 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				logger.error(e.getMessage());
 				logger.info(xmlString);
 				logger.info(turtleString);
-				e.getCause().printStackTrace();
-				throw new SAXException(e.getMessage(), e);
+//				e.getCause().printStackTrace();
+//				e.printStackTrace();
+				throw new SAXException(e.getMessage());
 			} finally {
 				xmlCollector = null;
 			}
 		}
 	}
-	
-//	private void applyNamespaces(ContentHandler handler) throws SAXException {
-//		for (Entry<String, String> mapping : namepool.getMappings().entrySet()) {
-//			handler.startPrefixMapping(mapping.getKey(), mapping.getValue());
-//		}		
-//	}
-	
-//	private static class NamespaceCollector extends NamePool {
-//		private static final long serialVersionUID = -2352244560755994347L;
-//		private Map<String, String> mappings = new HashMap<String, String>();
-//		
-//		@Override
-//		public synchronized int allocateNamespaceCode(String prefix, String uri) {
-//			if (!prefix.startsWith("_")) {
-//				mappings.put(prefix, uri);
-//			}
-//			return super.allocateNamespaceCode(prefix, uri);
-//		}
-//		
-//		public Map<String, String> getMappings() {
-//			return mappings;
-//		}
-//	}
 }

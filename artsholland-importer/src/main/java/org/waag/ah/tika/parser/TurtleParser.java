@@ -14,8 +14,6 @@ import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.AbstractParser;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.OfflineContentHandler;
-import org.openrdf.rio.RDFHandlerException;
-import org.openrdf.rio.RDFParseException;
 import org.openrdf.rio.rdfxml.RDFXMLWriter;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -49,10 +47,8 @@ public class TurtleParser extends AbstractParser {
 		
 		try {
 			turtleParser.parse(stream, metadata.get(Metadata.RESOURCE_NAME_KEY));
-		} catch (RDFParseException e) {
-			e.printStackTrace();
-		} catch (RDFHandlerException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			throw new SAXException(e.getMessage());
 		}
 		
         context.getSAXParser().parse(

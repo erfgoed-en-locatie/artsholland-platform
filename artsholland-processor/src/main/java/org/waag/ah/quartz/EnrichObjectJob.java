@@ -76,11 +76,14 @@ public class EnrichObjectJob implements Job {
 			pipeline.setStarts(statements);
 			
 			while(pipeline.hasNext()) {
-				conn.add(pipeline.next());
+				Statement st = pipeline.next();
+				logger.info(st.toString());
+				conn.add(st);
 			}
 			
 			conn.commit();
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new JobExecutionException(e.getMessage(), e);
 		}
 	}
@@ -102,7 +105,7 @@ public class EnrichObjectJob implements Job {
 	}
 	
 	public void setExcludeProperties(String props) {
-		this.includeUris = cleanupUris(props);
+		this.excludeUris = cleanupUris(props);
 	}
 	
 	private List<String> cleanupUris(String uris) {

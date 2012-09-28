@@ -22,16 +22,20 @@ public class TikaParserPipe extends AbstractStreamingPipe<URL> {
 	protected void process(URL url, OutputStream out)
 			throws IOException, SAXException, TikaException {
 		URLConnection conn = url.openConnection();
-		InputStream in = conn.getInputStream();		
-		
-		AutoDetectParser parser = new AutoDetectParser();
-		ContentHandler handler = new ToRDFContentHandler(out, "UTF-8");
-
-		Metadata metadata = new Metadata();
-		metadata.add(Metadata.RESOURCE_NAME_KEY, url.toExternalForm());
-		metadata.add(Metadata.CONTENT_ENCODING,
-				new InputStreamReader(in).getEncoding());
-
-		parser.parse(in, handler, metadata, new ParseContext());
+		InputStream in = conn.getInputStream();	
+		try {
+			AutoDetectParser parser = new AutoDetectParser();
+			ContentHandler handler = new ToRDFContentHandler(out, "UTF-8");
+	
+			Metadata metadata = new Metadata();
+			metadata.add(Metadata.RESOURCE_NAME_KEY, url.toExternalForm());
+			metadata.add(Metadata.CONTENT_ENCODING,
+					new InputStreamReader(in).getEncoding());
+	
+			parser.parse(in, handler, metadata, new ParseContext());
+		} finally {
+			in.close();
+		}
+//		return in.getResult();
 	}
 }

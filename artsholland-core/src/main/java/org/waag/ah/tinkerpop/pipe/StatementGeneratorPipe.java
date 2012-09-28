@@ -1,5 +1,6 @@
 package org.waag.ah.tinkerpop.pipe;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.NoSuchElementException;
 import org.apache.commons.configuration.ConfigurationException;
 import org.openrdf.model.Statement;
 import org.openrdf.rio.RDFHandlerException;
+import org.openrdf.rio.RDFParseException;
 import org.openrdf.rio.helpers.RDFHandlerBase;
 import org.openrdf.rio.rdfxml.RDFXMLParser;
 import org.slf4j.Logger;
@@ -32,16 +34,20 @@ public class StatementGeneratorPipe extends
 
 	@Override
 	protected List<Statement> processNextStart() throws NoSuchElementException {
+		List<Statement> statements = new ArrayList<Statement>();
+		RDFXMLParser parser = new RDFXMLParser();
+		parser.setRDFHandler(new RDFStatementHandler(statements));
+		InputStream is = this.starts.next();
 		try {
-			List<Statement> statements = new ArrayList<Statement>();
-			RDFXMLParser parser = new RDFXMLParser();
-			parser.setRDFHandler(new RDFStatementHandler(statements));
-			parser.parse(this.starts.next(), config.getString("platform.classUri"));
-//			logger.info(statements.toString());		
-			return statements;
-		} catch (Exception e) {
-			throw new NoSuchElementException(e.getMessage());
+			parser.parse(is, config.getString("platform.classUri"));
+		} catch (RDFParseException e) {
+			throw new RuntimeException(e);
+		} catch (RDFHandlerException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
+		return statements;
 	}
 
 	private class RDFStatementHandler extends RDFHandlerBase {

@@ -103,7 +103,7 @@ public class UrlImportJob implements Job {
 			} catch (RepositoryException e1) {
 				logger.warn("Error rolling back transaction");
 			}
-			throw new JobExecutionException(e.getMessage(), e);
+			throw new JobExecutionException(e.getCause().getMessage());
 		} finally {
 			coll.insert(result);
 		}
