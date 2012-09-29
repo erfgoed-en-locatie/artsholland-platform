@@ -28,8 +28,8 @@ public class UitbaseURLGenerator implements UrlGenerator {
 	private final String apiKey;
 	private final int ROWS = 500;
 	
-	private static final String UITBASE_OBJECT_PROPERTY_CREATED = "created";
-	private static final String UITBASE_OBJECT_PROPERTY_MODIFIED = "modified";
+//	private static final String UITBASE_OBJECT_PROPERTY_CREATED = "created";
+//	private static final String UITBASE_OBJECT_PROPERTY_MODIFIED = "modified";
 	
 	public static final String[] RESOURCES = { 
 		"events", 

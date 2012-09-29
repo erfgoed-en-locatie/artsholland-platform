@@ -32,8 +32,8 @@ public class ImporterPipeline extends Pipeline<URL, Statement> {
 	private class ProgressPipe extends IdentityPipe<URL> {
 		@Override
 		protected URL processNextStart() {
-			pos++;
 			URL url = super.processNextStart();
+			pos++;
 			logger.info("Importing "+pos+"/"+count+": "+url);
 			return url;
 		}

@@ -48,6 +48,7 @@ public class ParseHttpUrlFunction extends ExtensionFunctionDefinition {
 						if (!(text.startsWith("http://") || text.startsWith("https://"))) {
 							text = "http://" + text;
 						}
+
 						text = new URI(text).toASCIIString();
 //						logger.info("URL: "+text);
 					}

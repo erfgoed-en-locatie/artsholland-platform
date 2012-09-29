@@ -12,17 +12,18 @@ import junit.framework.Assert;
 import org.openrdf.model.Statement;
 import org.openrdf.query.GraphQueryResult;
 import org.openrdf.repository.RepositoryConnection;
+import org.openrdf.repository.RepositoryException;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.ah.QueryService;
 import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.enrich.EnrichUtils;
 import org.waag.ah.exception.ConnectionException;
 import org.waag.ah.rdf.EnricherConfig;
 import org.waag.ah.rdf.GraphEnricher;
+import org.waag.ah.rdf.QueryService;
 import org.waag.ah.tinkerpop.pipe.EnricherPipeline;
 
 import com.tinkerpop.pipes.util.Pipeline;
@@ -38,7 +39,7 @@ public class EnrichObjectJob implements Job {
 	private List<String> includeUris = new ArrayList<String>();
 	private List<String> excludeUris = new ArrayList<String>();
 
-	public EnrichObjectJob() throws NamingException, ConnectionException {
+	public EnrichObjectJob() throws NamingException, ConnectionException, RepositoryException {
 		InitialContext ic = new InitialContext();
 		
 		queryService = (QueryService) ic

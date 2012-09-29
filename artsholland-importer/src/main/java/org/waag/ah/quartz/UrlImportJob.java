@@ -20,9 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.exception.ConnectionException;
+import org.waag.ah.importer.ImportConfig;
 import org.waag.ah.importer.ImportResult;
 import org.waag.ah.importer.ImportStrategy;
-import org.waag.ah.importer.ImportConfig;
 import org.waag.ah.importer.UrlGenerator;
 import org.waag.ah.service.MongoConnectionService;
 import org.waag.ah.tinkerpop.pipe.ImporterPipeline;
@@ -36,15 +36,13 @@ import com.tinkerpop.pipes.util.Pipeline;
 public class UrlImportJob implements Job {
 	final static Logger logger = LoggerFactory.getLogger(UrlImportJob.class);
 
+	private RepositoryConnectionFactory cf;
 	private DBCollection coll;
-	private RepositoryConnection conn;
-	private ValueFactory vf;
-	private URI source;
 
 	private UrlGenerator urlGenerator;
 	private ImportStrategy strategy = ImportStrategy.FULL;
 
-	public UrlImportJob() throws NamingException, ConnectionException {
+	public UrlImportJob() throws NamingException, ConnectionException, RepositoryException {
 		InitialContext ic = new InitialContext();
 		
 		MongoConnectionService mongo = (MongoConnectionService) ic
@@ -52,12 +50,8 @@ public class UrlImportJob implements Job {
 		this.coll = mongo.getCollection(UrlImportJob.class.getName());
 		coll.setObjectClass(ImportResult.class);
 		
-		RepositoryConnectionFactory cf = (RepositoryConnectionFactory) ic
-				.lookup("java:global/artsholland-platform/datastore/BigdataConnectionService");
-		this.conn = cf.getConnection();
-		
-		this.vf = conn.getValueFactory();
-		this.source = vf.createURI("http://purl.org/artsholland/1.0/metadata/source");
+		cf = (RepositoryConnectionFactory) ic
+				.lookup("java:global/artsholland-platform/core/ConnectionService");
 	}
 
 	@Override
@@ -70,42 +64,50 @@ public class UrlImportJob implements Job {
 		result.put("strategy", this.strategy.toString());
 		
 		try {
-			ImportConfig config = new ImportConfig();
-			config.setId(context.getFireInstanceId());
-			config.setStrategy(this.strategy);
-			config.setFromImportDate(getStartTime(context.getJobDetail().getKey().toString()));
-			config.setUntilImportDate(new DateTime(context.getFireTime().getTime()));
-
-			logger.info("Running import job with strategy: "+config.getStrategy());
-
-			Literal id = vf.createLiteral(config.getId());
-			long oldsize = conn.size();
-
-			Pipeline<URL, Statement> pipeline = new ImporterPipeline(config);
-			pipeline.setStarts(urlGenerator.getUrls(config));
-
-			while (pipeline.hasNext()) {
-				Statement statement = getContextStatement(pipeline.next());
-				conn.add(statement);
-				conn.add(statement.getContext(), source, id);				
-			}
-
-			conn.commit();
-
-			logger.info("Import comitted, added " + (conn.size() - oldsize) + " statements");
-			result.put("success", true);
-
-		} catch (Exception e) {
-			logger.warn("JOB FAILURE: " + e.getMessage());
-			result.put("success", false);
+			RepositoryConnection conn = cf.getConnection();
+			ValueFactory vf = conn.getValueFactory();
+			URI source = vf.createURI("http://purl.org/artsholland/1.0/metadata/source");
 			try {
-				conn.rollback();
-			} catch (RepositoryException e1) {
-				logger.warn("Error rolling back transaction");
+				ImportConfig config = new ImportConfig();
+				config.setId(context.getFireInstanceId());
+				config.setStrategy(this.strategy);
+				config.setFromImportDate(getStartTime(context.getJobDetail().getKey().toString()));
+				config.setUntilImportDate(new DateTime(context.getFireTime().getTime()));
+	
+				logger.info("Running import job with strategy: "+config.getStrategy());
+	
+				Literal id = vf.createLiteral(config.getId());
+				long oldsize = conn.size();
+	
+				Pipeline<URL, Statement> pipeline = new ImporterPipeline(config);
+				pipeline.setStarts(urlGenerator.getUrls(config));
+	
+				while (pipeline.hasNext()) {
+					Statement statement = getContextStatement(vf, pipeline.next());
+					conn.add(statement);
+					conn.add(statement.getContext(), source, id);	
+				}
+	
+				conn.commit();
+	
+				logger.info("Import comitted, added " + (conn.size() - oldsize) + " statements");
+				result.put("success", true);
+	
+			} catch (Exception e) {
+				logger.warn("JOB FAILURE: " + e.getMessage());
+				result.put("success", false);
+				try {
+					conn.rollback();
+				} catch (RepositoryException e1) {
+					logger.warn("Error rolling back transaction");
+				}
+				throw new JobExecutionException(e.getCause().getMessage());
+			} finally {
+				coll.insert(result);
+				conn.close();
 			}
-			throw new JobExecutionException(e.getCause().getMessage());
-		} finally {
-			coll.insert(result);
+		} catch (RepositoryException e) {
+			throw new JobExecutionException(e);
 		}
 	}
 
@@ -139,7 +141,7 @@ public class UrlImportJob implements Job {
 		return null;
 	}
 	
-	private Statement getContextStatement(Statement st) {
+	private Statement getContextStatement(ValueFactory vf, Statement st) {
 		return vf.createStatement(st.getSubject(), st.getPredicate(), 
 				st.getObject(), vf.createBNode());
 	}

@@ -1,15 +1,14 @@
-package org.waag.ah.bigdata;
+package org.waag.ah.rdf;
 
 import java.io.OutputStream;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.DependsOn;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 
 import org.openrdf.query.GraphQuery;
 import org.openrdf.query.GraphQueryResult;
 import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.parser.ParsedBooleanQuery;
 import org.openrdf.query.parser.ParsedGraphQuery;
@@ -18,48 +17,39 @@ import org.openrdf.query.parser.ParsedTupleQuery;
 import org.openrdf.query.parser.QueryParser;
 import org.openrdf.query.parser.sparql.SPARQLParserFactory;
 import org.openrdf.repository.RepositoryConnection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openrdf.repository.RepositoryException;
 import org.waag.ah.QueryDefinition;
-import org.waag.ah.QueryService;
 import org.waag.ah.QueryTask;
 import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.WriterConfig;
-import org.waag.ah.exception.ConnectionException;
-import org.waag.ah.rdf.AskQueryTask;
-import org.waag.ah.rdf.GraphQueryTask;
-import org.waag.ah.rdf.TupleQueryTask;
 
 import com.bigdata.rdf.sparql.ast.QueryType;
 
 @Singleton
-@DependsOn("BigdataConnectionService")
-public class BigdataQueryService implements QueryService {
-	private static final Logger logger = LoggerFactory
-			.getLogger(BigdataQueryService.class);
+public class QueryService {
+//	private static final Logger logger = LoggerFactory
+//			.getLogger(QueryService.class);
 	
-	@EJB(mappedName="java:module/BigdataConnectionService")
+	@EJB(mappedName="java:module/ConnectionService")
 	private RepositoryConnectionFactory cf;
 
-	private RepositoryConnection conn;
-
-	@PostConstruct
-	public void connect() {
+	public GraphQueryResult executeQuery(String query) throws RepositoryException, MalformedQueryException, QueryEvaluationException {
+		RepositoryConnection conn = cf.getConnection();
 		try {
-			this.conn = cf.getConnection();
-		} catch (ConnectionException e) {
-			logger.error(e.getMessage());
+			GraphQuery graphQuery = conn.prepareGraphQuery(QueryLanguage.SPARQL, query);
+			return graphQuery.evaluate();
+		} finally {
+			conn.close();
 		}
 	}
 	
-	@Override
 	public QueryTask getQueryTask(QueryDefinition query,
 			WriterConfig config, OutputStream out)
-			throws MalformedQueryException {
-
+			throws MalformedQueryException, RepositoryException {
 		QueryParser parser = new SPARQLParserFactory().getParser();
 		ParsedQuery parsedQuery = parser.parseQuery(query.getQuery(),
 				config.getBaseUri());
+		RepositoryConnection conn = cf.getConnection();
 		try {
 			if (parsedQuery instanceof ParsedTupleQuery) {
 				return new TupleQueryTask(conn, query, config, out);
@@ -68,15 +58,39 @@ public class BigdataQueryService implements QueryService {
 			} else if (parsedQuery instanceof ParsedGraphQuery) {
 				return new GraphQueryTask(conn, query, config, out);
 			}			
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage(), e);
+		} finally {
+			conn.close();
 		}
-		
+		throw new MalformedQueryException("Unknown query type: "
+				+ ParsedQuery.class.getName());
+	}
+	
+	public ParsedQuery getParsedQuery(QueryDefinition query,
+			WriterConfig config) throws MalformedQueryException {
+		QueryParser parser = new SPARQLParserFactory().getParser();
+		return parser.parseQuery(query.getQuery(),
+				config.getBaseUri());		
+	}
+	
+	public QueryTask getQueryTask(ParsedQuery parsedQuery, QueryDefinition query,
+			WriterConfig config, OutputStream out)
+			throws MalformedQueryException, RepositoryException {
+		RepositoryConnection conn = cf.getConnection();
+		try {
+			if (parsedQuery instanceof ParsedTupleQuery) {
+				return new TupleQueryTask(conn, query, config, out);
+			} else if (parsedQuery instanceof ParsedBooleanQuery) {
+				return new AskQueryTask(conn, query, config, out);
+			} else if (parsedQuery instanceof ParsedGraphQuery) {
+				return new GraphQueryTask(conn, query, config, out);
+			}			
+		} finally {
+			conn.close();
+		}
 		throw new MalformedQueryException("Unknown query type: "
 				+ ParsedQuery.class.getName());
 	}
 
-	@Override
 	public QueryType getQueryType(ParsedQuery parsedQuery) {
 		if (parsedQuery instanceof ParsedTupleQuery) {
 			return QueryType.SELECT;
@@ -87,45 +101,5 @@ public class BigdataQueryService implements QueryService {
 		}	else {
 			return null;
 		}
-	}
-	
-	@Override
-	public ParsedQuery getParsedQuery(QueryDefinition query,
-			WriterConfig config) throws MalformedQueryException {
-		QueryParser parser = new SPARQLParserFactory().getParser();
-		return parser.parseQuery(query.getQuery(),
-				config.getBaseUri());		
-	}
-	
-	@Override
-	public GraphQueryResult executeQuery(String queryString)
-			throws MalformedQueryException {
-		try {
-			GraphQuery query = conn.prepareGraphQuery(QueryLanguage.SPARQL,
-					queryString);
-			return query.evaluate();
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-	}
-
-	public QueryTask getQueryTask(ParsedQuery parsedQuery, QueryDefinition query,
-			WriterConfig config, OutputStream out)
-			throws MalformedQueryException {
-		try {
-			RepositoryConnection conn = cf.getConnection();
-			if (parsedQuery instanceof ParsedTupleQuery) {
-				return new TupleQueryTask(conn, query, config, out);
-			} else if (parsedQuery instanceof ParsedBooleanQuery) {
-				return new AskQueryTask(conn, query, config, out);
-			} else if (parsedQuery instanceof ParsedGraphQuery) {
-				return new GraphQueryTask(conn, query, config, out);
-			}			
-		} catch (Exception e) {
-			throw new RuntimeException(e.getMessage(), e);
-		}
-		
-		throw new MalformedQueryException("Unknown query type: "
-				+ ParsedQuery.class.getName());
 	}
 }

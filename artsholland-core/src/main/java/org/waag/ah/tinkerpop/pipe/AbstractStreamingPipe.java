@@ -14,11 +14,12 @@ public abstract class AbstractStreamingPipe<T> extends
 
 	@Override
 	public final InputStream processNextStart() throws NoSuchElementException {
+		final T nextItem = starts.next();
 		final InputStreamFromOutputStream<String> isos = new InputStreamFromOutputStream<String>() {
 			@Override
 			public String produce(final OutputStream outStream)
 					throws Exception {
-				process(starts.next(), outStream);
+				process(nextItem, outStream);
 				return "OK";
 			}
 		};

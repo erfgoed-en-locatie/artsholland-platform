@@ -27,8 +27,8 @@ public class XSPARQLCharacterEncoder {
 
 //		result.put("\"", completeEncoding("quote_double")); // DO NOT ENABLE THIS: QUOTES ARE HANDLED BY org.waag.ah.saxon.ParseString
 //		result.put("http:", completeEncoding("http_prefix"));
-		result.put("<", completeEncoding("less_than"));
-		result.put(">", completeEncoding("greater_than"));
+//		result.put("<", completeEncoding("less_than"));
+//		result.put(">", completeEncoding("greater_than"));
 		result.put("\\", completeEncoding("backslash"));
 //		result.put("/", completeEncoding("slash"));
 //		result.put("https", completeEncoding("http"));

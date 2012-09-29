@@ -20,9 +20,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.view.AbstractView;
 import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.WebUtils;
-import org.waag.ah.QueryService;
 import org.waag.ah.QueryTask;
 import org.waag.ah.WriterContentTypeConfig;
+import org.waag.ah.rdf.QueryService;
 import org.waag.ah.rdf.RDFJSONFormat;
 import org.waag.ah.rdf.RDFWriterConfig;
 import org.waag.ah.rdf.RdfQueryDefinition;
@@ -38,10 +38,9 @@ public class QueryTaskView extends AbstractView {
 	private QueryService queryService;
 	private ExecutorService executor;
 	
-	public QueryTaskView(QueryService queryService) {
+	public QueryTaskView() {
 		RDFFormat.register(RDFJSONFormat.RESTAPIJSON);
-		
-		this.queryService = queryService;
+		this.queryService = new QueryService();
 		this.executor = Executors.newCachedThreadPool();
 	}
 

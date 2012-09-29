@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   
   <artifactId>artsholland-core</artifactId>
-  <packaging>jar</packaging>  
+  <packaging>ejb</packaging>  
   <name>Core</name>
   <description>Arts Holland core module</description>
   
@@ -11,7 +11,20 @@
     <artifactId>artsholland</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-    
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-ejb-plugin</artifactId>
+        <version>2.3</version>
+        <configuration>
+          <ejbVersion>${ejb.version}</ejbVersion>
+        </configuration>
+      </plugin>         
+    </plugins>
+  </build>
+      
   <dependencies>
     <dependency>
       <groupId>org.openrdf.sesame</groupId>
