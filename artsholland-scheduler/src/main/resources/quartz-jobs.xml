@@ -31,9 +31,13 @@
           <key>urlGeneratorClass</key>
           <value>org.waag.ah.source.uitbase.UitbaseURLGenerator</value>
         </entry>        
+        <entry>
+          <key>graphUri</key>
+          <value>http://uitburo.nl</value>
+        </entry>        
       </job-data-map>
     </job>
- 
+<!--  
     <trigger>
       <cron>
         <name>UitbaseIncrementalImportTrigger</name>
@@ -44,6 +48,23 @@
           <entry>
             <key>strategy</key>
             <value>incremental</value>
+          </entry>
+        </job-data-map>
+        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <time-zone>Europe/Amsterdam</time-zone>
+      </cron>
+    </trigger>
+ --> 
+    <trigger>
+      <cron>
+        <name>UitbaseFullImportTrigger</name>
+        <group>FullImport</group>
+        <job-name>ImportUitbase</job-name>
+        <job-group>ImporterService</job-group>
+        <job-data-map>
+          <entry>
+            <key>strategy</key>
+            <value>full</value>
           </entry>
         </job-data-map>
         <cron-expression>0 0/1 * * * ?</cron-expression>

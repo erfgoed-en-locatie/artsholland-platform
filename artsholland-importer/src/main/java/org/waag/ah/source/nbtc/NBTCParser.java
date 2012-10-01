@@ -18,7 +18,7 @@ import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.ah.tika.handler.XSPARQLQueryHandler;
+import org.waag.ah.tika.XSPARQLQueryHandler;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 

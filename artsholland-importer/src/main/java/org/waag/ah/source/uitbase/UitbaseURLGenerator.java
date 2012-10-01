@@ -56,11 +56,11 @@ public class UitbaseURLGenerator implements UrlGenerator {
 		String dtFromParam = "";
 		String dtToParam = "";
 		
-		if (config.getStrategy().equals(ImportStrategy.INCREMENTAL) && config.getFromImportDate() != null) {
-			dtFromParam = "&createdfrom="+fmt.withZone(DateTimeZone.UTC).print(config.getFromImportDate());
+		if (config.getStrategy().equals(ImportStrategy.INCREMENTAL) && config.getFromDateTime() != null) {
+			dtFromParam = "&createdfrom="+fmt.withZone(DateTimeZone.UTC).print(config.getFromDateTime());
 		}
-		if (config.getUntilImportDate() != null) {
-			dtToParam = "&createdto="+fmt.withZone(DateTimeZone.UTC).print(config.getUntilImportDate());
+		if (config.getToDateTime() != null) {
+			dtToParam = "&createdto="+fmt.withZone(DateTimeZone.UTC).print(config.getToDateTime());
 		}
 		
 		for (String resource : RESOURCES) {

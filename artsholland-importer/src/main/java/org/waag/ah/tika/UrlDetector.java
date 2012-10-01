@@ -1,4 +1,4 @@
-package org.waag.ah.tika.detect;
+package org.waag.ah.tika;
 
 import java.io.IOException;
 import java.io.InputStream;

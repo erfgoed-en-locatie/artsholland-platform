@@ -1,8 +1,7 @@
-package org.waag.ah.tinkerpop.pipe;
+package org.waag.ah.tinkerpop;
 
 import org.openrdf.model.Statement;
 import org.waag.ah.rdf.EnricherConfig;
-import org.waag.ah.tinkerpop.process.XsdDateTimeProcessor;
 
 import com.tinkerpop.pipes.util.Pipeline;
 

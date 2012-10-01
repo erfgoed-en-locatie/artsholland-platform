@@ -1,4 +1,4 @@
-package org.waag.ah.tinkerpop.pipe;
+package org.waag.ah.tinkerpop;
 
 import java.net.URL;
 import java.util.List;

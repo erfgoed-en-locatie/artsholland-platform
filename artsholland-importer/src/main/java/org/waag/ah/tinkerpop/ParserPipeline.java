@@ -1,9 +1,10 @@
-package org.waag.ah.tinkerpop.pipe;
+package org.waag.ah.tinkerpop;
 
 import java.net.URL;
 import java.util.List;
 
 import org.openrdf.model.Statement;
+import org.waag.ah.tinkerpop.pipe.StatementGeneratorPipe;
 
 import com.tinkerpop.pipes.transform.ScatterPipe;
 import com.tinkerpop.pipes.util.Pipeline;

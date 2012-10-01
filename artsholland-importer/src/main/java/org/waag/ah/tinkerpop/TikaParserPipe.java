@@ -1,4 +1,4 @@
-package org.waag.ah.tinkerpop.pipe;
+package org.waag.ah.tinkerpop;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +11,8 @@ import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
-import org.waag.ah.tika.parser.rdf.ToRDFContentHandler;
+import org.waag.ah.tika.ToRDFContentHandler;
+import org.waag.ah.tinkerpop.pipe.AbstractStreamingPipe;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 

@@ -1,12 +1,14 @@
 package org.waag.ah.importer;
 
 import org.joda.time.DateTime;
+import org.openrdf.model.URI;
 
 public class ImportConfig {
 	private String id;
 	private ImportStrategy strategy = ImportStrategy.FULL;
 	private DateTime importFrom;
 	private DateTime importUntil;
+	private URI context;
 	
 	public void setId(String id) {
 		this.id = id;
@@ -24,19 +26,27 @@ public class ImportConfig {
 		return this.strategy;
 	}
 	
-	public void setFromImportDate(DateTime date) {
+	public void setFromDateTime(DateTime date) {
 		this.importFrom = date;
 	}
 	
-	public final DateTime getFromImportDate() {
+	public final DateTime getFromDateTime() {
 		return importFrom;
 	}
 	
-	public void setUntilImportDate(DateTime date) {
+	public void setToDateTime(DateTime date) {
 		this.importUntil = date;
 	}
 	
-	public final DateTime getUntilImportDate() {
+	public final DateTime getToDateTime() {
 		return importUntil;
+	}
+
+	public void setContext(URI context) {
+		this.context = context;
+	}
+	
+	public URI getContext() {
+		return this.context;
 	}
 }

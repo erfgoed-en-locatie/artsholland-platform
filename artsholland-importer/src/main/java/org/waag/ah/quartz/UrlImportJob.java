@@ -1,17 +1,19 @@
 package org.waag.ah.quartz;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.joda.time.DateTime;
-import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
-import org.openrdf.model.URI;
-import org.openrdf.model.ValueFactory;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
+import org.openrdf.rio.RDFFormat;
+import org.openrdf.rio.binary.BinaryRDFWriter;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -25,7 +27,7 @@ import org.waag.ah.importer.ImportResult;
 import org.waag.ah.importer.ImportStrategy;
 import org.waag.ah.importer.UrlGenerator;
 import org.waag.ah.service.MongoConnectionService;
-import org.waag.ah.tinkerpop.pipe.ImporterPipeline;
+import org.waag.ah.tinkerpop.ImporterPipeline;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
@@ -40,6 +42,7 @@ public class UrlImportJob implements Job {
 	private DBCollection coll;
 
 	private UrlGenerator urlGenerator;
+	private String graphUri;
 	private ImportStrategy strategy = ImportStrategy.FULL;
 
 	public UrlImportJob() throws NamingException, ConnectionException, RepositoryException {
@@ -65,48 +68,70 @@ public class UrlImportJob implements Job {
 		
 		try {
 			RepositoryConnection conn = cf.getConnection();
-			ValueFactory vf = conn.getValueFactory();
-			URI source = vf.createURI("http://purl.org/artsholland/1.0/metadata/source");
+			
+			File tempFile = File.createTempFile(result.get("jobKey").toString(),".tmp");
+            FileOutputStream fout = new FileOutputStream(tempFile);			
+            BinaryRDFWriter writer = new BinaryRDFWriter(fout);
+			
 			try {
+				// TODO: Refactor ImportConfig to a UrlImporterPipeline with
+				//       appropriate interface and abstract class to support
+				//       all kinds of import inputs (URLs, files, etc).
 				ImportConfig config = new ImportConfig();
+				
+				// TODO: Use context as id?
 				config.setId(context.getFireInstanceId());
 				config.setStrategy(this.strategy);
-				config.setFromImportDate(getStartTime(context.getJobDetail().getKey().toString()));
-				config.setUntilImportDate(new DateTime(context.getFireTime().getTime()));
+				config.setFromDateTime(getStartTime(context.getJobDetail().getKey().toString()));
+				config.setToDateTime(new DateTime(context.getFireTime().getTime()));
+				config.setContext(conn.getValueFactory().createURI(graphUri));
 	
-				logger.info("Running import job with strategy: "+config.getStrategy());
+				logger.info("Running import job: strategy="+config.getStrategy()+", tempfile="+tempFile.getAbsolutePath());
 	
-				Literal id = vf.createLiteral(config.getId());
 				long oldsize = conn.size();
 	
+				// TODO: Change ImporterPipeline to receive ImportConfig(s) and 
+				//       return ImportResult(s). All writing will be done by the
+				//       pipeline, and not here.
 				Pipeline<URL, Statement> pipeline = new ImporterPipeline(config);
 				pipeline.setStarts(urlGenerator.getUrls(config));
 	
+				writer.startRDF();
+				
 				while (pipeline.hasNext()) {
-					Statement statement = getContextStatement(vf, pipeline.next());
-					conn.add(statement);
-					conn.add(statement.getContext(), source, id);	
+					writer.handleStatement(pipeline.next());
 				}
-	
+				
+				writer.endRDF();
+				fout.close();
+				
+//				if (this.strategy == ImportStrategy.FULL) {
+//					conn.clear(config.getContext());
+//				}
+				
+				conn.add(tempFile, null, RDFFormat.BINARY, config.getContext());
 				conn.commit();
 	
 				logger.info("Import comitted, added " + (conn.size() - oldsize) + " statements");
 				result.put("success", true);
 	
 			} catch (Exception e) {
-				logger.warn("JOB FAILURE: " + e.getMessage());
-				result.put("success", false);
 				try {
+					logger.info("Rolling back transaction");
 					conn.rollback();
 				} catch (RepositoryException e1) {
 					logger.warn("Error rolling back transaction");
 				}
+				result.put("success", false);
 				throw new JobExecutionException(e.getCause().getMessage());
 			} finally {
+				tempFile.delete();
 				coll.insert(result);
 				conn.close();
 			}
 		} catch (RepositoryException e) {
+			throw new JobExecutionException(e);
+		} catch (IOException e) {
 			throw new JobExecutionException(e);
 		}
 	}
@@ -121,6 +146,10 @@ public class UrlImportJob implements Job {
 		}
 	}
 
+	public void setGraphUri(String uri) {
+		this.graphUri = uri;
+	}
+	
 	public void setStrategy(String strategy) {
 		this.strategy = ImportStrategy.fromValue(strategy);
 	}
@@ -139,10 +168,5 @@ public class UrlImportJob implements Job {
 		}
 
 		return null;
-	}
-	
-	private Statement getContextStatement(ValueFactory vf, Statement st) {
-		return vf.createStatement(st.getSubject(), st.getPredicate(), 
-				st.getObject(), vf.createBNode());
 	}
 }

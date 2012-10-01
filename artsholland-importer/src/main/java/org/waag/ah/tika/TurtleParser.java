@@ -1,4 +1,4 @@
-package org.waag.ah.tika.parser;
+package org.waag.ah.tika;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -50,8 +50,8 @@ public class TurtleParser extends AbstractParser {
 		} catch (Exception e) {
 			throw new SAXException(e.getMessage());
 		}
-		
-        context.getSAXParser().parse(
+
+		context.getSAXParser().parse(
                 new CloseShieldInputStream(new ByteArrayInputStream(outputStream.toByteArray())),
                 new OfflineContentHandler(handler));
 	}

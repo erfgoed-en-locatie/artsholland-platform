@@ -1,4 +1,4 @@
-package org.waag.ah.tika.handler;
+package org.waag.ah.tika;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -57,8 +57,6 @@ import org.waag.ah.saxon.ParseStringFunction;
 import org.waag.ah.saxon.PostalCodeFunction;
 import org.waag.ah.saxon.UpperCaseFirstFunction;
 import org.waag.ah.saxon.WKTGeometryFunction;
-import org.waag.ah.tika.parser.TurtleParser;
-import org.waag.ah.tika.util.XSPARQLCharacterEncoder;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -185,7 +183,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			throws SAXException {
 		if (processing()) {
 			String data = new StringBuffer().append(ch, start, length).toString();
-			data = XSPARQLCharacterEncoder.encode(data);
+//			data = XSPARQLCharacterEncoder.encode(data);
 			xmlCollector.characters(data.toCharArray(), 0, data.length());
 		}			
 	}
@@ -217,12 +215,12 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				mdata.set(Metadata.CONTENT_TYPE, "text/turtle");
 				mdata.set(Metadata.RESOURCE_NAME_KEY, metadata.get(Metadata.RESOURCE_NAME_KEY));
        				
-				turtleString = XSPARQLCharacterEncoder.decode(combined.toString());
-				turtleString = XSPARQLCharacterEncoder.repairInvalidTypeURIs(turtleString);
+//				turtleString = XSPARQLCharacterEncoder.decode(combined.toString());
+//				turtleString = XSPARQLCharacterEncoder.repairInvalidTypeURIs(turtleString);
 //				logger.info(turtleString);
 				
 				turtleParser.parse(
-						new ByteArrayInputStream(turtleString.getBytes()), 
+						new ByteArrayInputStream(combined.toString().getBytes()), 
 						new MatchingContentHandler(
 						new EmbeddedContentHandler(this.handler), matcher), mdata, context);
 			} catch (NoSuchElementException e) {

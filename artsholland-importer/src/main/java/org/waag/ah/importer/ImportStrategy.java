@@ -1,5 +1,9 @@
 package org.waag.ah.importer;
 
+/**
+ * @author Raoul Wissink <raoul@raoul.net>
+ * @todo Merge with ImportConfig.
+ */
 public enum ImportStrategy {
 
 	FULL,
