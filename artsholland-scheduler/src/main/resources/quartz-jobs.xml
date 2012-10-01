@@ -37,7 +37,7 @@
         </entry>        
       </job-data-map>
     </job>
-<!--  
+  
     <trigger>
       <cron>
         <name>UitbaseIncrementalImportTrigger</name>
@@ -54,7 +54,8 @@
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
- --> 
+ 
+<!-- 
     <trigger>
       <cron>
         <name>UitbaseFullImportTrigger</name>
@@ -71,7 +72,7 @@
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
-
+ -->
     <!-- NBTC IMPORT -->
     
     <job>

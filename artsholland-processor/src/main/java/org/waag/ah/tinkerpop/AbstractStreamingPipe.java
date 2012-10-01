@@ -20,7 +20,7 @@ public abstract class AbstractStreamingPipe<T> extends
 			public String produce(final OutputStream outStream)
 					throws Exception {
 				process(nextItem, outStream);
-				return "OK";
+				return "Processed: "+nextItem.toString();
 			}
 		};
 		return isos;

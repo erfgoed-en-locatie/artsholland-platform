@@ -1,6 +1,7 @@
 package org.waag.ah.saxon;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExtensionFunctionCall;
@@ -50,10 +51,9 @@ public class ParseHttpUrlFunction extends ExtensionFunctionDefinition {
 						}
 
 						text = new URI(text).toASCIIString();
-//						logger.info("URL: "+text);
 					}
-				} catch (Exception e) {	
-					logger.error(e.getMessage());
+				} catch (URISyntaxException e) {	
+					logger.warn(e.getMessage());
 					return Value.asIterator(EmptySequence.getInstance());
 				}
 				

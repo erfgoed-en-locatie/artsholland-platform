@@ -80,20 +80,24 @@ public class UrlImportJob implements Job {
 				logger.info("Running import job: strategy="+config.getStrategy());
 	
 				// TODO: Change ImporterPipeline to receive ImportConfig(s) and 
-				//       return ImportResult(s). All writing will be done by the
-				//       pipeline, and not here.
+				//       return ImportResult(s). Persistence must be handled by
+				//       the pipeline, not here.
 				Pipeline<URL, Statement> pipeline = new ImporterPipeline(config);
 				pipeline.setStarts(urlGenerator.getUrls(config));
 	
 				long oldsize = conn.size(contextUri);
 				
-//				if (this.strategy == ImportStrategy.FULL) {
-//					conn.clear(config.getContext());
-//				}
+				if (this.strategy == ImportStrategy.FULL) {
+					conn.clear(config.getContext());
+				}
 				
 				while (pipeline.hasNext()) {
 //					writer.write(pipeline.next());
+					// TODO: Check if quering for the statement is less
+					//       expensive. Maybe repositories should indicate
+					//       whether they support delete on insert/update.
 					Statement statement = pipeline.next();
+//					logger.debug("Upserting statement "+statement);
 					conn.remove(statement, contextUri);
 					conn.add(statement, contextUri);
 				}
