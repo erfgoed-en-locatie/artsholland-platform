@@ -23,7 +23,4 @@
   <module id="EjbModule_1348858126324">
   	<ejb>core.jar</ejb>
   </module>
-  <module id="EjbModule_1348857645931">
-  	<ejb>importer.jar</ejb>
-  </module>
 </application>

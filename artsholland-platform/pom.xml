@@ -37,12 +37,7 @@
               <groupId>${project.groupId}</groupId>
               <artifactId>artsholland-datastore</artifactId>
               <bundleFileName>datastore.jar</bundleFileName>
-            </ejbModule>            
-            <ejbModule>
-              <groupId>${project.groupId}</groupId>
-              <artifactId>artsholland-importer</artifactId>
-              <bundleFileName>importer.jar</bundleFileName>
-            </ejbModule>            
+            </ejbModule>                        
             <ejbModule>
               <groupId>${project.groupId}</groupId>
               <artifactId>artsholland-processor</artifactId>
@@ -115,13 +110,7 @@
       <artifactId>artsholland-datastore</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <type>ejb</type>
-    </dependency>  
-    <dependency>
-      <groupId>org.waag.artsholland</groupId>
-      <artifactId>artsholland-importer</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <type>ejb</type>
-    </dependency>  
+    </dependency>   
     <dependency>
       <groupId>org.waag.artsholland</groupId>
       <artifactId>artsholland-processor</artifactId>

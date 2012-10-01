@@ -29,7 +29,7 @@
       <job-data-map>
         <entry>
           <key>urlGeneratorClass</key>
-          <value>org.waag.ah.source.uitbase.UitbaseURLGenerator</value>
+          <value>org.waag.ah.importer.uitbase.UitbaseURLGenerator</value>
         </entry>        
         <entry>
           <key>graphUri</key>
@@ -84,7 +84,7 @@
       <job-data-map>
         <entry>
           <key>urlGeneratorClass</key>
-          <value>org.waag.ah.source.nbtc.NBTCUrlGenerator</value>
+          <value>org.waag.ah.importer.nbtc.NBTCUrlGenerator</value>
         </entry>        
       </job-data-map>      
     </job>
@@ -111,7 +111,7 @@
       <job-data-map>
         <entry>
           <key>enricherClass</key>
-          <value>org.waag.ah.tinkerpop.enrich.GeoNamesEnricher</value>
+          <value>org.waag.ah.enricher.GeoNamesEnricher</value>
         </entry>
         <entry>
           <key>objectUri</key>
@@ -152,7 +152,7 @@
       <job-data-map>
         <entry>
           <key>enricherClass</key>
-          <value>org.waag.ah.tinkerpop.enrich.DBpediaEnricher</value>
+          <value>org.waag.ah.enricher.DBpediaEnricher</value>
         </entry>
         <entry>
           <key>objectUri</key>

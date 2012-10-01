@@ -5,7 +5,6 @@ import java.util.List;
 import org.openrdf.model.Statement;
 import org.waag.ah.rdf.EnricherConfig;
 import org.waag.ah.rdf.NamedGraph;
-import org.waag.ah.tinkerpop.function.GraphFilterPipeFunction;
 
 import com.tinkerpop.pipes.filter.FilterFunctionPipe;
 import com.tinkerpop.pipes.util.Pipeline;

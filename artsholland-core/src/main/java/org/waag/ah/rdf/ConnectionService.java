@@ -29,8 +29,22 @@ public class ConnectionService implements RepositoryConnectionFactory {
 //			PostgisIndexerSettings settings = PostgisIndexerSettingsGenerator.generateSettings();			
 //			IndexingSail idxSail = new IndexingSail(sail, settings);
 //			repository = new SailRepository(idxSail);
+			
+//			Repository myRepository = new SailRepository(
+//                    new ForwardChainingRDFSInferencer(
+//                    new MemoryStore()));
+			
+//			repository = new SailRepository(
+//					new DirectTypeHierarchyInferencer(
+//					new ForwardChainingRDFSInferencer((NotifyingSail) sail)));
+//			repository.initialize();			
+			
+//			ForwardChainingRDFSInferencer inferencer = new ForwardChainingRDFSInferencer((NotifyingSail) sail);
+			
 			repository = new SailRepository(sail);
-			repository.initialize();			
+			
+//			System.out.println("SCHEMA URL: "+Thread.currentThread().getContextClassLoader().getResource("/org/waag/ah/rdf/schema/artsholland.rdf"));
+			
 		} catch (Exception e) {
 			throw new RepositoryException(e);
 		}
