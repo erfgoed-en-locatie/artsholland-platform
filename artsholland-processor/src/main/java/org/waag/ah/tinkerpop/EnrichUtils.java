@@ -7,6 +7,7 @@ public class EnrichUtils {
 	
 	public static String getObjectQuery(EnricherConfig config, int limit) {
 		
+		limit = 250;
 		String query = "" +
 			"CONSTRUCT { ?object ?p ?o . } \n" +
 			"WHERE {\n" +

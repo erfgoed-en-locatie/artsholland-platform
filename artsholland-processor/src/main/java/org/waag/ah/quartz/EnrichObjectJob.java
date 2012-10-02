@@ -63,6 +63,7 @@ public class EnrichObjectJob implements Job {
 			config.setObjectUri(this.objectUri);
 			config.addIncludeUri(this.includeUris);
 			config.addExcludeUri(this.excludeUris);
+			config.setConnection(this.conn);
 
 			String queryString = EnrichUtils.getObjectQuery(config, 10);
 			GraphQueryResult result = queryService.executeQuery(queryString);
@@ -112,7 +113,7 @@ public class EnrichObjectJob implements Job {
 	private List<String> cleanupUris(String uris) {
 		List<String> uriList = new ArrayList<String>();
 		for (String uri : Arrays.asList(uris.split(","))) {
-			uriList.add(uri.replaceAll("\\r|\\n| ", ""));
+			uriList.add(uri.trim().replaceAll("\\r|\\n| ", ""));
 		}
 		return uriList;
 	}

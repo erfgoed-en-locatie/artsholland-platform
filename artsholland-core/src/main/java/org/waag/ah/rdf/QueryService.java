@@ -72,6 +72,7 @@ public class QueryService {
 				config.getBaseUri());		
 	}
 	
+//	@Override
 	public QueryTask getQueryTask(ParsedQuery parsedQuery, QueryDefinition query,
 			WriterConfig config, OutputStream out)
 			throws MalformedQueryException, RepositoryException {
@@ -102,4 +103,16 @@ public class QueryService {
 			return null;
 		}
 	}
+	
+//	@Override
+//	public GraphQueryResult executeQuery(String queryString)
+//			throws MalformedQueryException {
+//		try {
+//			GraphQuery query = conn.prepareGraphQuery(QueryLanguage.SPARQL,
+//					queryString);
+//			return query.evaluate();
+//		} catch (Exception e) {
+//			throw new RuntimeException(e.getMessage(), e);
+//		}
+//	}
 }

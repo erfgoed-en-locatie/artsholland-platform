@@ -37,8 +37,8 @@
         </entry>        
       </job-data-map>
     </job>
-  
-    <trigger>
+ 
+<!--     <trigger>
       <cron>
         <name>UitbaseIncrementalImportTrigger</name>
         <group>IncrementalImport</group>
@@ -73,6 +73,7 @@
       </cron>
     </trigger>
  -->
+
     <!-- NBTC IMPORT -->
     
     <job>
@@ -135,8 +136,8 @@
         </entry>
       </job-data-map>
     </job>
-<!--     
-    <trigger>
+    
+    <!-- <trigger>
       <cron>
         <name>GeoNamesEnricherTrigger</name>
         <job-name>GeonamesEnricher</job-name>
@@ -147,7 +148,7 @@
     </trigger> -->
     
     <!-- DBPEDIA ENRICHER -->
-    <job>
+   <!--  <job>
       <name>DBpediaEnricher</name>
       <group>EnricherService</group>
       <description>Enrich objects in triplestore</description>
@@ -168,13 +169,70 @@
           <value>
             http://xmlns.com/foaf/0.1/homepage            
           </value>
-        </entry><!-- 
+        </entry>
         <entry>
           <key>excludeProperties</key>
-          <value>http://www.geonames.org/ontology#Feature</value>
-        </entry> -->
+          <value>http://purl.org/artsholland/1.0/dbpedia</value>
+        </entry>
       </job-data-map>
     </job>
+    
+    <trigger>
+      <cron>
+        <name>DBpediaEnricherTrigger</name>
+        <job-name>DBpediaEnricher</job-name>
+        <job-group>EnricherService</job-group>
+        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <time-zone>Europe/Amsterdam</time-zone>
+      </cron>
+    </trigger>
+ -->
+
+	<!-- Social Media ENRICHER -->
+    <job>
+      <name>SocialMediaEnricher</name>
+      <group>EnricherService</group>
+      <description>Enrich objects in triplestore</description>
+      <job-class>org.waag.ah.quartz.EnrichObjectJob</job-class>
+      <durability>true</durability>
+      <recover>false</recover>
+      <job-data-map>
+        <entry>
+          <key>enricherClass</key>
+          <value>org.waag.ah.tinkerpop.enrich.SocialMediaEnricher</value>
+        </entry>
+        <entry>
+          <key>objectUri</key>
+          <value>http://purl.org/artsholland/1.0/Venue</value>
+        </entry>
+        <entry>
+          <key>includeProperties</key>
+          <value>
+            http://xmlns.com/foaf/0.1/homepage,
+            http://www.w3.org/2003/01/geo/wgs84_pos#lat,
+            http://www.w3.org/2003/01/geo/wgs84_pos#long          
+          </value>
+        </entry>
+        <entry>
+          <key>excludeProperties</key>
+          <value>
+	          http://purl.org/artsholland/1.0/twitterId,
+	          http://purl.org/artsholland/1.0/facebookId,
+	          http://purl.org/artsholland/1.0/foursquareId
+          </value>
+        </entry>
+      </job-data-map>
+    </job>
+    
+    <trigger>
+      <cron>
+        <name>SocialMediaEnricherTrigger</name>
+        <job-name>SocialMediaEnricher</job-name>
+        <job-group>EnricherService</job-group>
+        <cron-expression>0 0/5 * * * ?</cron-expression>
+        <time-zone>Europe/Amsterdam</time-zone>
+      </cron>
+    </trigger>
 
     <!-- DOSA IMPORTER -->
 <!--         
