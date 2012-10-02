@@ -28,11 +28,11 @@
               <bundleFileName>api.war</bundleFileName>
               <contextRoot>/</contextRoot>
             </webModule>
-            <jarModule>
+            <ejbModule>
               <groupId>${project.groupId}</groupId>
               <artifactId>artsholland-core</artifactId>
               <bundleFileName>core.jar</bundleFileName>
-            </jarModule>            
+            </ejbModule>            
             <ejbModule>
               <groupId>${project.groupId}</groupId>
               <artifactId>artsholland-datastore</artifactId>
