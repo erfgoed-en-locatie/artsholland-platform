@@ -50,7 +50,7 @@
             <value>incremental</value>
           </entry>
         </job-data-map>
-        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <cron-expression>0 0/5 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
@@ -86,10 +86,14 @@
         <entry>
           <key>urlGeneratorClass</key>
           <value>org.waag.ah.importer.nbtc.NBTCUrlGenerator</value>
-        </entry>        
+        </entry>
+        <entry>
+          <key>graphUri</key>
+          <value>http://nbtc.nl</value>
+        </entry>           
       </job-data-map>      
     </job>
-<!-- 
+
     <trigger>
       <simple>
         <name>NBTCImportTrigger</name>
@@ -101,7 +105,7 @@
       </simple>
     </trigger>
     
- -->    <!-- GEONAMES ENRICHER -->
+    <!-- GEONAMES ENRICHER -->
     <job>
       <name>GeonamesEnricher</name>
       <group>EnricherService</group>

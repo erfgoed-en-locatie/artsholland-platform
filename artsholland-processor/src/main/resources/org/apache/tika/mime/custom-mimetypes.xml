@@ -6,7 +6,7 @@
     <_comment>
       Dienst onderzoek en statistiek (Amsterdam) Excel
     </_comment>
-    <glob pattern="http://127.0.0.1/ah/dosa/*.xls" />
+    <glob pattern="*/files/dosa/*.xls" />
   </mime-type>
 
   <mime-type type="text/turtle">
@@ -39,7 +39,7 @@
     <_comment>
       Nederlands Bureau voor Toerisme en Congressen POI XML
     </_comment>
-    <glob pattern="http://127.0.0.1/ah/nbtc/ArtsHollandPois-*.xml" />
+    <glob pattern="*/files/nbtc/ArtsHollandPois-*.xml" />
   </mime-type>
   
 </mime-info>

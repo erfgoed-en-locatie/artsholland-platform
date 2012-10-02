@@ -59,7 +59,7 @@ public class QueryService {
 				return new GraphQueryTask(conn, query, config, out);
 			}			
 		} finally {
-			conn.close();
+//			conn.close();
 		}
 		throw new MalformedQueryException("Unknown query type: "
 				+ ParsedQuery.class.getName());
@@ -85,7 +85,7 @@ public class QueryService {
 				return new GraphQueryTask(conn, query, config, out);
 			}			
 		} finally {
-			conn.close();
+//			conn.close();
 		}
 		throw new MalformedQueryException("Unknown query type: "
 				+ ParsedQuery.class.getName());

@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.exception.ConnectionException;
+import org.waag.ah.exception.ImportException;
 import org.waag.ah.importer.ImportConfig;
 import org.waag.ah.importer.ImportResult;
 import org.waag.ah.importer.ImportStrategy;
@@ -54,6 +55,7 @@ public class UrlImportJob implements Job {
 	@Override
 	public void execute(JobExecutionContext context)
 			throws JobExecutionException {
+		
 		ImportResult result = new ImportResult();
 		result.put("jobKey", context.getJobDetail().getKey().toString());
 		result.put("jobId", context.getFireInstanceId());
@@ -63,20 +65,20 @@ public class UrlImportJob implements Job {
 		try {
 			RepositoryConnection conn = cf.getConnection();
 			URI contextUri = conn.getValueFactory().createURI(graphUri);
-//			BatchedStatementWriter writer = new BatchedStatementWriter(conn, contextUri);
+
+			// TODO: Refactor ImportConfig to a UrlImporterPipeline with
+			//       appropriate interface and abstract class to support
+			//       all kinds of import inputs (URLs, files, etc).
+			ImportConfig config = new ImportConfig();
+			
+			// TODO: Use context as id?
+			config.setId(context.getFireInstanceId());
+			config.setStrategy(this.strategy);
+			config.setFromDateTime(getStartTime(context.getJobDetail().getKey().toString()));
+			config.setToDateTime(new DateTime(context.getFireTime().getTime()));
+			config.setContext(conn.getValueFactory().createURI(graphUri));
+
 			try {
-				// TODO: Refactor ImportConfig to a UrlImporterPipeline with
-				//       appropriate interface and abstract class to support
-				//       all kinds of import inputs (URLs, files, etc).
-				ImportConfig config = new ImportConfig();
-				
-				// TODO: Use context as id?
-				config.setId(context.getFireInstanceId());
-				config.setStrategy(this.strategy);
-				config.setFromDateTime(getStartTime(context.getJobDetail().getKey().toString()));
-				config.setToDateTime(new DateTime(context.getFireTime().getTime()));
-				config.setContext(conn.getValueFactory().createURI(graphUri));
-	
 				logger.info("Running import job: strategy="+config.getStrategy());
 	
 				// TODO: Change ImporterPipeline to receive ImportConfig(s) and 
@@ -92,7 +94,6 @@ public class UrlImportJob implements Job {
 				}
 				
 				while (pipeline.hasNext()) {
-//					writer.write(pipeline.next());
 					// TODO: Check if quering for the statement is less
 					//       expensive. Maybe repositories should indicate
 					//       whether they support delete on insert/update.
@@ -104,23 +105,23 @@ public class UrlImportJob implements Job {
 				
 				conn.commit();
 				
-//				writer.commit();
-				logger.info("Comitted import, added "+(oldsize-conn.size(contextUri))+" statements");
+				logger.info("Comitted import, added "+(conn.size(contextUri)-oldsize)+" statements");
 	
 				result.put("success", true);
 	
 			} catch (Exception e) {
 				logger.error("Exception while importing "+contextUri+" ("+e.getMessage()+")");
-//				writer.rollback();
 				conn.rollback();
 				result.put("success", false);
-				throw new JobExecutionException(e.getCause().getMessage());
+				throw new ImportException(e.getCause().getMessage());
 			} finally {
 				coll.insert(result);
 				conn.close();
 			}
-		} catch (RepositoryException e) {
+		} catch (Exception e) {
 			throw new JobExecutionException(e);
+//			JobExecutionException exception = new JobExecutionException(e);
+//			exception.refireImmediately();
 		}
 	}
 	

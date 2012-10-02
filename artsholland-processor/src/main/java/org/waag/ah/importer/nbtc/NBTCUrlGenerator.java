@@ -5,6 +5,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.configuration.ConfigurationException;
+import org.waag.ah.PlatformConfig;
+import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.importer.ImportConfig;
 import org.waag.ah.importer.UrlGenerator;
 
@@ -12,22 +15,23 @@ public class NBTCUrlGenerator implements UrlGenerator {
 
 	private final List<URL> urls;
 	private static final String[] RESOURCES = { 
-//		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-test.xml",
-		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-da_DK.xml",
-		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-de_DE.xml",
-		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-en_GB.xml",
-		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-es_ES.xml",
-		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-fr_FR.xml",
-		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-it_IT.xml",
-		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-nl_NL.xml",
-		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-ru_RU.xml",
-		"http://127.0.0.1/ah/nbtc/ArtsHollandPois-sv_SE.xml",
+//		"nbtc/ArtsHollandPois-test.xml",
+		"nbtc/ArtsHollandPois-da_DK.xml",
+		"nbtc/ArtsHollandPois-de_DE.xml",
+		"nbtc/ArtsHollandPois-en_GB.xml",
+		"nbtc/ArtsHollandPois-es_ES.xml",
+		"nbtc/ArtsHollandPois-fr_FR.xml",
+		"nbtc/ArtsHollandPois-it_IT.xml",
+		"nbtc/ArtsHollandPois-nl_NL.xml",
+		"nbtc/ArtsHollandPois-ru_RU.xml",
+		"nbtc/ArtsHollandPois-sv_SE.xml",
 	};	
 	
-	public NBTCUrlGenerator() throws MalformedURLException {
+	public NBTCUrlGenerator() throws MalformedURLException, ConfigurationException {
+		PlatformConfig config = PlatformConfigHelper.getConfig();
 		this.urls = new ArrayList<URL>();
 		for (String url : RESOURCES) {
-			this.urls.add(new URL(url));
+			this.urls.add(new URL(config.getString("platform.fileUri")+url));
 		}
 	}
 	

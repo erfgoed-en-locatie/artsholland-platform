@@ -35,12 +35,14 @@ public class QueryTaskView extends AbstractView {
 	static final UrlPathHelper urlPathHelper = new UrlPathHelper();
 	public static String MODEL_QUERY = "queryDefinition";
 	
+//	@EJB(mappedName="java:global/artsholland-platform/core/QueryService")
 	private QueryService queryService;
+	
 	private ExecutorService executor;
 	
-	public QueryTaskView() {
+	public QueryTaskView(QueryService queryService) {
 		RDFFormat.register(RDFJSONFormat.RESTAPIJSON);
-		this.queryService = new QueryService();
+		this.queryService = queryService;
 		this.executor = Executors.newCachedThreadPool();
 	}
 
@@ -95,6 +97,7 @@ public class QueryTaskView extends AbstractView {
 
 			try {
 				ft.get(30, TimeUnit.SECONDS);
+//				logger.info(ft.);
 			} catch (TimeoutException e) {
 				logger.error("Query execution timeout: " + query.getQuery());
 				ft.cancel(true);
@@ -106,9 +109,11 @@ public class QueryTaskView extends AbstractView {
 			logger.error("BAD QUERY: " + query.getQuery());
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
 		} catch (Exception e) {
-			e.printStackTrace();
+//			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e
 					.getCause().getMessage());
+		} catch (Throwable e) {
+			e.printStackTrace();
 		}
 	}
 

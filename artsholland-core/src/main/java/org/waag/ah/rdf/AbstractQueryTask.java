@@ -7,6 +7,7 @@ import org.openrdf.model.Literal;
 import org.openrdf.model.Value;
 import org.openrdf.query.BindingSet;
 import org.openrdf.query.MalformedQueryException;
+import org.openrdf.query.QueryEvaluationException;
 import org.openrdf.query.QueryLanguage;
 import org.openrdf.query.TupleQuery;
 import org.openrdf.query.TupleQueryResult;
@@ -38,7 +39,7 @@ public abstract class AbstractQueryTask implements QueryTask {
 	
 	@Override
 	public long getCount() throws UnsupportedOperationException,
-			MalformedQueryException {
+			MalformedQueryException, RepositoryException, QueryEvaluationException {
 		String countQuery = query.getCountQuery();
 		if (countQuery == null) {
 			throw new UnsupportedOperationException("No count query specified");
@@ -59,8 +60,8 @@ public abstract class AbstractQueryTask implements QueryTask {
 			return 0;
 		} catch (MalformedQueryException e) {
 			throw e;
-		} catch (Exception e) {
-			e.printStackTrace();
+//		} catch (Exception e) {
+//			e.printStackTrace();
 		} finally {
 			if (conn != null) {
 				try {
@@ -70,11 +71,11 @@ public abstract class AbstractQueryTask implements QueryTask {
 				}
 			}
 		}
-		return 0;
+//		return 0;
 	}
 
 	@Override
-	public Void call() {
+	public Void call() throws Exception{
 		try {
 			String jsonpCallback = null;
 			PrintStream printStream = null;
@@ -91,9 +92,9 @@ public abstract class AbstractQueryTask implements QueryTask {
 			if (config.isJSONP()) {
 				printStream.print(");");	
 			}			
-		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(e.getMessage());
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			logger.error(e.getMessage());
 		} finally {
 			try {
 				conn.close();
