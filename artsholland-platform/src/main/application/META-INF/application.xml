@@ -5,22 +5,22 @@
 <application>
   <display-name>artsholland-platform</display-name>
   <description>Arts Holland Platform</description>
-  <module id="WebModule_1348857645056">
+  <module>
     <web>
       <web-uri>api.war</web-uri>
       <context-root>/</context-root>
     </web>
   </module>
-  <module id="EjbModule_1348857645060">
+  <module>
+    <ejb>core.jar</ejb>
+  </module>
+  <module>
     <ejb>datastore.jar</ejb>
   </module>
-  <module id="EjbModule_1348857645062">
+  <module>
     <ejb>processor.jar</ejb>
   </module>
-  <module id="EjbModule_1348857645064">
+  <module>
     <ejb>scheduler.jar</ejb>
-  </module>
-  <module id="EjbModule_1348858126324">
-  	<ejb>core.jar</ejb>
   </module>
 </application>
