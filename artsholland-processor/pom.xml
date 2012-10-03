@@ -41,12 +41,6 @@
       <type>ejb</type>
     </dependency>
     <dependency>
-      <groupId>org.waag.artsholland</groupId>
-      <artifactId>artsholland-core</artifactId>
-      <version>0.0.1-SNAPSHOT</version>
-      <type>ejb</type>
-    </dependency>
-    <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-parsers</artifactId>
       <version>1.0</version>
@@ -106,6 +100,11 @@
       <groupId>com.restfb</groupId>
       <artifactId>restfb</artifactId>
       <version>1.6.9</version>
-    </dependency>        
+    </dependency>
+    <dependency>
+      <groupId>commons-validator</groupId>
+      <artifactId>commons-validator</artifactId>
+      <version>1.4.0</version>
+    </dependency>
   </dependencies>
 </project>
