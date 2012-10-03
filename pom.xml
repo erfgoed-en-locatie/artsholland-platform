@@ -41,7 +41,6 @@
     <module>artsholland-api</module>
     <module>artsholland-core</module>
     <module>artsholland-datastore</module>
-    <module>artsholland-importer</module>
     <module>artsholland-platform</module>
     <module>artsholland-processor</module>
     <module>artsholland-scheduler</module>
