@@ -5,28 +5,25 @@ import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.tika.exception.TikaException;
-import org.apache.tika.io.CloseShieldInputStream;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.xml.XMLParser;
-import org.apache.tika.sax.OfflineContentHandler;
-import org.apache.tika.sax.TaggedContentHandler;
-import org.apache.tika.sax.xpath.Matcher;
 import org.apache.tika.sax.xpath.MatchingContentHandler;
-import org.apache.tika.sax.xpath.XPathParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.waag.ah.importer.AbstractParser;
 import org.waag.ah.tika.XSPARQLQueryHandler;
 import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
 
-public class UitbaseParser extends XMLParser {
+/**
+ * Parser for NUB Uitbase data.
+ * 
+ * @author Raoul Wissink <raoul@raoul.net>
+ */
+@SuppressWarnings("serial")
+public class UitbaseParser extends AbstractParser {
 	private Logger logger = LoggerFactory.getLogger(UitbaseParser.class);
-	private static final long serialVersionUID = 116487633414164925L;
 
-	@SuppressWarnings("serial")
 	private static final Set<MediaType> SUPPORTED_TYPES = new HashSet<MediaType>() {{ 
 		add(MediaType.application("x-waag-uitbase-v3+xml")); 
 		add(MediaType.application("x-waag-uitbase-v4+xml")); 
@@ -39,32 +36,6 @@ public class UitbaseParser extends XMLParser {
 	public Set<MediaType> getSupportedTypes(ParseContext context) {
 		return SUPPORTED_TYPES;
 	}
-
-	public void parse(
-          InputStream stream, ContentHandler handler,
-          Metadata metadata, ParseContext context)
-          throws IOException, SAXException, TikaException {
-      if (metadata.get(Metadata.CONTENT_TYPE) == null) {
-      	throw new TikaException("No content type set");
-      }
-
-      TaggedContentHandler tagged = new TaggedContentHandler(handler);
-      ContentHandler wrappedHandler = getContentHandler(tagged, metadata, context);
-      if (wrappedHandler == null) {
-    	  throw new TikaException("Parsing aborted, unable to init Tika handler");
-      }
-      
-      try {
-      context.getSAXParser().parse(
-              new CloseShieldInputStream(stream),
-              new OfflineContentHandler(wrappedHandler));
-//          logger.info("OUTPUT: "+wrappedHandler.toString());
-      } catch (Exception e) {
-//    	  e.printStackTrace();
-          tagged.throwIfCauseOf(e);
-          throw new TikaException("XML parse error", e);
-      }
-	}	
 
 	protected ContentHandler getContentHandler(ContentHandler handler, 
     		Metadata metadata, ParseContext context) {		
@@ -92,17 +63,5 @@ public class UitbaseParser extends XMLParser {
 			return null;
 		}
 		return handler;
-    }
-    
-	/**
-	 * @todo Move to utility class.
-	 */
-	
-    public static InputStream getFileContents(Class<?> clazz, String fileName) throws IOException {
-    	return clazz.getResourceAsStream(fileName);
-    }
-    
-    private Matcher getXPathMatcher(String selector) {
-        return new XPathParser(null, "").parse(selector);
     }
 }

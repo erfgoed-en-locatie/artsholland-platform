@@ -162,6 +162,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	@Override
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
+//		logger.debug("Processing element: "+localName);
 		if (!processing()) {
 			xmlCollector = new ToXMLContentHandler();
 		}
@@ -183,7 +184,6 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			throws SAXException {
 		if (processing()) {
 			String data = new StringBuffer().append(ch, start, length).toString();
-//			data = XSPARQLCharacterEncoder.encode(data);
 			xmlCollector.characters(data.toCharArray(), 0, data.length());
 		}			
 	}
@@ -214,15 +214,16 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				Metadata mdata = new Metadata();
 				mdata.set(Metadata.CONTENT_TYPE, "text/turtle");
 				mdata.set(Metadata.RESOURCE_NAME_KEY, metadata.get(Metadata.RESOURCE_NAME_KEY));
-       				
-//				turtleString = XSPARQLCharacterEncoder.decode(combined.toString());
-//				turtleString = XSPARQLCharacterEncoder.repairInvalidTypeURIs(turtleString);
-//				logger.info(turtleString);
 				
+//				logger.info(combined.toString());
+//				logger.info("NEW DOCUMENT");
+				
+//				this.handler.startDocument();
 				turtleParser.parse(
 						new ByteArrayInputStream(combined.toString().getBytes()), 
 						new MatchingContentHandler(
-						new EmbeddedContentHandler(this.handler), matcher), mdata, context);
+						this.handler, matcher), mdata, context);
+//				this.handler.endDocument();
 			} catch (NoSuchElementException e) {
 				logger.debug("Not enough data to proceed: "+xmlString);
 			} catch (Exception e) {

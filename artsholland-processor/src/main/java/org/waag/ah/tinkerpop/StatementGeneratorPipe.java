@@ -1,5 +1,6 @@
 package org.waag.ah.tinkerpop;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -19,22 +20,22 @@ import org.waag.ah.PlatformConfigHelper;
 import com.tinkerpop.pipes.AbstractPipe;
 
 public class StatementGeneratorPipe extends
-		AbstractPipe<InputStream, List<Statement>> {
+		AbstractPipe<String, List<Statement>> {
 	final static Logger logger = LoggerFactory.getLogger(StatementGeneratorPipe.class);
 	private PlatformConfig config;
 
-	public StatementGeneratorPipe() {
-		try {
-			config = PlatformConfigHelper.getConfig();
-		} catch (ConfigurationException e) {
-			e.printStackTrace();
-		}
+	public StatementGeneratorPipe() throws ConfigurationException {
+//		try {
+		config = PlatformConfigHelper.getConfig();
+//		} catch (ConfigurationException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	@Override
 	protected List<Statement> processNextStart() throws NoSuchElementException {
 		List<Statement> statements = new ArrayList<Statement>();
-		InputStream is = this.starts.next();
+		InputStream is = new ByteArrayInputStream(this.starts.next().getBytes());//"UTF-8"
 		try {
 			RDFXMLParser parser = new RDFXMLParser();
 			parser.setRDFHandler(new RDFStatementHandler(statements));
@@ -45,9 +46,10 @@ public class StatementGeneratorPipe extends
 			try {
 				is.close();
 			} catch (IOException e) {
-				logger.warn(e.getMessage());
+				throw new RuntimeException(e);
 			}
 		}
+//		logger.info("STMNTS: "+statements.size());
 		return statements;
 	}
 

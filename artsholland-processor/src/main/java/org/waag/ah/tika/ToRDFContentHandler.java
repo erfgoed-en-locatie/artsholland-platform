@@ -25,6 +25,8 @@ import java.util.Stack;
 
 import org.apache.tika.sax.ToTextContentHandler;
 import org.openrdf.model.vocabulary.RDF;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -38,7 +40,8 @@ import org.xml.sax.helpers.AttributesImpl;
  * @since Apache Tika 0.10
  */
 public class ToRDFContentHandler extends ToTextContentHandler {
-
+	final static Logger logger = LoggerFactory.getLogger(ToRDFContentHandler.class);
+	
     private static class ElementInfo {
 
         private final ElementInfo parent;

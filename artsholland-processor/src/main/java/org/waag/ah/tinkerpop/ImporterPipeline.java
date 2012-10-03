@@ -3,6 +3,7 @@ package org.waag.ah.tinkerpop;
 import java.net.URL;
 import java.util.List;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.openrdf.model.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,7 @@ public class ImporterPipeline extends Pipeline<URL, Statement> {
 	private long count = 0;
 	private long pos = 0;
 
-	public ImporterPipeline(ImportConfig config) {
+	public ImporterPipeline(ImportConfig config) throws ConfigurationException {
 		super();
 		this.addPipe(new ProgressPipe());
 		this.addPipe(new ParserPipeline());
@@ -37,5 +38,12 @@ public class ImporterPipeline extends Pipeline<URL, Statement> {
 			logger.info("Importing "+pos+"/"+count+": "+url);
 			return url;
 		}
+	}
+
+	@Override
+	public void reset() {
+		count = 0;
+		pos = 0;
+		super.reset();
 	}
 }

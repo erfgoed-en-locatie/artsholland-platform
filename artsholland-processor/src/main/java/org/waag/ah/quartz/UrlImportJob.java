@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.exception.ConnectionException;
-import org.waag.ah.exception.ImportException;
 import org.waag.ah.importer.ImportConfig;
 import org.waag.ah.importer.ImportResult;
 import org.waag.ah.importer.ImportStrategy;
@@ -63,7 +62,7 @@ public class UrlImportJob implements Job {
 		result.put("strategy", this.strategy.toString());
 		
 		try {
-			RepositoryConnection conn = cf.getConnection();
+			RepositoryConnection conn = cf.getConnection(false);
 			URI contextUri = conn.getValueFactory().createURI(graphUri);
 
 			// TODO: Refactor ImportConfig to a UrlImporterPipeline with
@@ -89,16 +88,18 @@ public class UrlImportJob implements Job {
 	
 				long oldsize = conn.size(contextUri);
 				
-				if (this.strategy == ImportStrategy.FULL) {
-					conn.clear(config.getContext());
-				}
+//				if (this.strategy == ImportStrategy.FULL) {
+//					conn.clear(config.getContext());
+//				}
 				
 				while (pipeline.hasNext()) {
 					// TODO: Check if quering for the statement is less
 					//       expensive. Maybe repositories should indicate
-					//       whether they support delete on insert/update.
+					//       whether they support delete on insert/update, or
+					//       implement a custom RepositoryConnection to handle
+					//       these cases.
 					Statement statement = pipeline.next();
-//					logger.debug("Upserting statement "+statement);
+//					logger.info(statement.toString());
 					conn.remove(statement, contextUri);
 					conn.add(statement, contextUri);
 				}
@@ -113,15 +114,17 @@ public class UrlImportJob implements Job {
 				logger.error("Exception while importing "+contextUri+" ("+e.getMessage()+")");
 				conn.rollback();
 				result.put("success", false);
-				throw new ImportException(e.getCause().getMessage());
+				e.printStackTrace();
+				throw e; //new ImportException(e.getCause().getMessage());
 			} finally {
 				coll.insert(result);
 				conn.close();
 			}
 		} catch (Exception e) {
-			throw new JobExecutionException(e);
-//			JobExecutionException exception = new JobExecutionException(e);
-//			exception.refireImmediately();
+//			throw new JobExecutionException(e);
+			JobExecutionException exception = new JobExecutionException(e);
+			exception.refireImmediately();
+			throw exception;
 		}
 	}
 	
