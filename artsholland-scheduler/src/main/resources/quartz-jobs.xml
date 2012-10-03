@@ -29,7 +29,7 @@
       <job-data-map>
         <entry>
           <key>urlGeneratorClass</key>
-          <value>org.waag.ah.importer.uitbase.UitbaseURLGenerator</value>
+          <value>org.waag.ah.importer.uitbase.UitbaseUrlGenerator</value>
         </entry>        
         <entry>
           <key>graphUri</key>

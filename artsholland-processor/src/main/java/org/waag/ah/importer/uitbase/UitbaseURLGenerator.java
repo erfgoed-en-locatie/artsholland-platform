@@ -20,8 +20,8 @@ import org.waag.ah.importer.ImportConfig;
 import org.waag.ah.importer.ImportStrategy;
 import org.waag.ah.importer.UrlGenerator;
 
-public class UitbaseURLGenerator implements UrlGenerator {
-	final static Logger logger = LoggerFactory.getLogger(UitbaseURLGenerator.class);
+public class UitbaseUrlGenerator implements UrlGenerator {
+	final static Logger logger = LoggerFactory.getLogger(UitbaseUrlGenerator.class);
 	
 	private final PlatformConfig config;
 	private final String baseUrl;
@@ -38,7 +38,7 @@ public class UitbaseURLGenerator implements UrlGenerator {
 		"groups" 
 	};
 	
-	public UitbaseURLGenerator() throws ConfigurationException {
+	public UitbaseUrlGenerator() throws ConfigurationException {
 		this.config = PlatformConfigHelper.getConfig();
 		this.baseUrl = config.getString("importer.source.uitbase.v4.endpoint")+"/search";
 		this.apiKey = config.getString("importer.source.uitbase.v4.apiKey");		
