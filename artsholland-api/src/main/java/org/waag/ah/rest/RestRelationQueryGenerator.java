@@ -1,4 +1,4 @@
-package org.waag.ah.rest.util;
+package org.waag.ah.rest;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -9,7 +9,6 @@ import org.openrdf.query.QueryLanguage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.rdf.RdfQueryDefinition;
-import org.waag.ah.rest.RestParameters;
 import org.waag.ah.rest.model.RestRelation;
 import org.waag.ah.rest.model.RestRelation.RelationQuantity;
 import org.waag.ah.rest.model.RestRelation.RelationType;

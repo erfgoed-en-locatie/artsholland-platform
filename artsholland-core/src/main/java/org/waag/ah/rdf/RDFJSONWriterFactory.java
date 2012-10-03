@@ -6,7 +6,6 @@ import java.io.Writer;
 import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.RDFWriter;
 import org.openrdf.rio.RDFWriterFactory;
-import org.waag.ah.rest.RestJSONWriter;
 
 public class RDFJSONWriterFactory implements RDFWriterFactory {
 

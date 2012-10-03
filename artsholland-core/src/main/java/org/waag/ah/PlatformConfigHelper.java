@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
  * Platform configuration helper class.
  *  
  * @author Raoul Wissink <raoul@raoul.net>
+ * @todo Merge with PlatformConfig class.
  */
 public class PlatformConfigHelper { //extends PropertiesConfiguration {
 	final static Logger logger = LoggerFactory.getLogger(PlatformConfigHelper.class);

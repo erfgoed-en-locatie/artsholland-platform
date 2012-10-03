@@ -12,11 +12,11 @@ import org.waag.ah.rdf.RDFWriterConfig;
 import org.waag.ah.rdf.RdfQueryDefinition;
 import org.waag.ah.rdf.RestWriterTypeConfig;
 import org.waag.ah.rest.RestParameters;
+import org.waag.ah.rest.RestRelationQueryGenerator;
 import org.waag.ah.rest.model.RestRelation;
 import org.waag.ah.rest.model.RestRelation.RelationQuantity;
 import org.waag.ah.rest.model.RestRelation.RelationType;
 import org.waag.ah.rest.model.SPARQLFilter;
-import org.waag.ah.rest.util.RestRelationQueryGenerator;
 
 @Service("restService")
 public class RestService implements InitializingBean {

@@ -26,7 +26,7 @@ import org.waag.ah.rdf.QueryService;
 import org.waag.ah.rdf.RDFJSONFormat;
 import org.waag.ah.rdf.RDFWriterConfig;
 import org.waag.ah.rdf.RdfQueryDefinition;
-import org.waag.ah.rest.util.MIMEParse;
+import org.waag.ah.rest.MIMEParse;
 
 import com.bigdata.rdf.sparql.ast.QueryType;
 
@@ -96,8 +96,7 @@ public class QueryTaskView extends AbstractView {
 			Future<Void> ft = executor.submit(queryTask);
 
 			try {
-				ft.get(30, TimeUnit.SECONDS);
-//				logger.info(ft.);
+				ft.get(300, TimeUnit.SECONDS);
 			} catch (TimeoutException e) {
 				logger.error("Query execution timeout: " + query.getQuery());
 				ft.cancel(true);
@@ -109,11 +108,9 @@ public class QueryTaskView extends AbstractView {
 			logger.error("BAD QUERY: " + query.getQuery());
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
 		} catch (Exception e) {
-//			e.printStackTrace();
+			e.printStackTrace();
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e
 					.getCause().getMessage());
-		} catch (Throwable e) {
-			e.printStackTrace();
 		}
 	}
 

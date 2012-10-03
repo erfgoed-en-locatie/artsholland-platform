@@ -37,8 +37,8 @@
         </entry>        
       </job-data-map>
     </job>
- 
-<!--     <trigger>
+<!-- 
+    <trigger>
       <cron>
         <name>UitbaseIncrementalImportTrigger</name>
         <group>IncrementalImport</group>
@@ -50,11 +50,11 @@
             <value>incremental</value>
           </entry>
         </job-data-map>
-        <cron-expression>0 0/5 * * * ?</cron-expression>
+        <cron-expression>0 0/1 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
- 
+ --> 
 <!-- 
     <trigger>
       <cron>
@@ -75,7 +75,6 @@
  -->
 
     <!-- NBTC IMPORT -->
-    
     <job>
       <name>ImportNBTC</name>
       <group>ImporterService</group>
@@ -105,7 +104,7 @@
         <repeat-interval>1</repeat-interval>
       </simple>
     </trigger>
-    
+     
     <!-- GEONAMES ENRICHER -->
     <job>
       <name>GeonamesEnricher</name>
@@ -136,8 +135,8 @@
         </entry>
       </job-data-map>
     </job>
-    
-    <!-- <trigger>
+<!-- 
+    <trigger>
       <cron>
         <name>GeoNamesEnricherTrigger</name>
         <job-name>GeonamesEnricher</job-name>
@@ -145,10 +144,11 @@
         <cron-expression>0 0/1 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
-    </trigger> -->
-    
-    <!-- DBPEDIA ENRICHER -->
-   <!--  <job>
+    </trigger>
+ -->   
+ 
+   <!-- DBPEDIA ENRICHER -->
+   <job>
       <name>DBpediaEnricher</name>
       <group>EnricherService</group>
       <description>Enrich objects in triplestore</description>
@@ -176,7 +176,7 @@
         </entry>
       </job-data-map>
     </job>
-    
+<!--      
     <trigger>
       <cron>
         <name>DBpediaEnricherTrigger</name>
@@ -223,7 +223,7 @@
         </entry>
       </job-data-map>
     </job>
-    
+<!--     
     <trigger>
       <cron>
         <name>SocialMediaEnricherTrigger</name>
@@ -233,9 +233,9 @@
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
-
+ -->
+ 
     <!-- DOSA IMPORTER -->
-<!--         
     <job>
       <name>DOSA</name>
       <group>ImporterService</group>
@@ -246,11 +246,11 @@
       <job-data-map>
         <entry>
           <key>urlGeneratorClass</key>
-          <value>org.waag.ah.source.dosa.DOSAUrlGenerator</value>
+          <value>org.waag.ah.importer.dosa.DOSAUrlGenerator</value>
         </entry>        
       </job-data-map>            
     </job>
-    
+<!--     
     <trigger>
       <cron>
         <name>DOSAImportTrigger</name>
@@ -261,8 +261,8 @@
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger> 
--->
     
+ -->
   </schedule>
 
 </job-scheduling-data>

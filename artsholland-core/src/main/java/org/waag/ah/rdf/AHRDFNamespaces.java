@@ -1,4 +1,4 @@
-package org.waag.ah.rest.model;
+package org.waag.ah.rdf;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;

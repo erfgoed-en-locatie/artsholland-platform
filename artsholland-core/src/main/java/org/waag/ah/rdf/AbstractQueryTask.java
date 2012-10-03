@@ -14,15 +14,13 @@ import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.rio.RDFWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.waag.ah.QueryDefinition;
 import org.waag.ah.QueryTask;
 import org.waag.ah.WriterConfig;
 
 public abstract class AbstractQueryTask implements QueryTask {
-	private static final Logger logger = LoggerFactory
-			.getLogger(AbstractQueryTask.class);
+//	private static final Logger logger = LoggerFactory
+//			.getLogger(AbstractQueryTask.class);
 	
 	private RepositoryConnection conn;
 	private OutputStream os;

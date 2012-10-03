@@ -36,7 +36,7 @@ public class RestRelation {
 	
 	private RestRelation parent = null;
 	
-	private String classUri;
+//	private String classUri;
 	private String objectUri;
 	
 	public RestRelation() {
@@ -50,7 +50,7 @@ public class RestRelation {
 		PropertiesConfiguration config;
 		try {
 			config = PlatformConfigHelper.getConfig();
-			this.classUri = config.getString("platform.classUri");
+//			this.classUri = config.getString("platform.classUri");
 			this.objectUri = config.getString("platform.objectUri");
 		} catch (ConfigurationException e) {
 			// TODO: add catch code

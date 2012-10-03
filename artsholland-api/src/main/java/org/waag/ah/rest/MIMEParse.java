@@ -1,4 +1,4 @@
-package org.waag.ah.rest.util;
+package org.waag.ah.rest;
 
 import java.util.Collection;
 import java.util.Collections;

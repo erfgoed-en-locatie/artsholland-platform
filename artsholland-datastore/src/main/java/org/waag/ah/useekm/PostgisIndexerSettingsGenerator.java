@@ -12,7 +12,7 @@ import org.apache.commons.dbcp.BasicDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.PlatformConfigHelper;
-import org.waag.ah.rest.model.AHRDFNamespaces;
+import org.waag.ah.rdf.AHRDFNamespaces;
 
 import com.useekm.indexing.postgis.PostgisIndexMatcher;
 import com.useekm.indexing.postgis.PostgisIndexerSettings;

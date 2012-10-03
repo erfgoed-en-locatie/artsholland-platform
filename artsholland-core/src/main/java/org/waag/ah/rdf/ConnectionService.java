@@ -19,7 +19,7 @@ public class ConnectionService implements RepositoryConnectionFactory {
 
 	private PlatformConfig config;
 	private SailRepository repository;
-	private SailRepositoryConnection connection; 
+//	private SailRepositoryConnection connection; 
 	
 	@PostConstruct
 	public void init() throws ConfigurationException, RepositoryException {
@@ -49,11 +49,28 @@ public class ConnectionService implements RepositoryConnectionFactory {
 			throw new RepositoryException(e);
 		}
 	}
-	
+
+	/*
+	 * Return repository connection with autocommit enabled.
+	 * 
+	 * @author Raoul Wissink <raoul@waag.org>
+	 * @see org.waag.ah.RepositoryConnectionFactory#getConnection()
+	 */
 	@Override
-	public synchronized SailRepositoryConnection getConnection() throws RepositoryException {
-		connection = repository.getConnection();
-		connection.setAutoCommit(false);			
+	public SailRepositoryConnection getConnection() throws RepositoryException {
+		return getConnection(true);
+	}
+
+	/*
+	 * Return repository connection with autocommit disabled.
+	 * 
+	 * @author Raoul Wissink <raoul@waag.org>
+	 * @see org.waag.ah.RepositoryConnectionFactory#getConnection(boolean)
+	 */
+	@Override
+	public synchronized SailRepositoryConnection getConnection(boolean autoCommit) throws RepositoryException {
+		SailRepositoryConnection connection = repository.getConnection();
+		connection.setAutoCommit(autoCommit);			
 		return connection;
 	}
 }

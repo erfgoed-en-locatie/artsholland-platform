@@ -1,4 +1,4 @@
-package org.waag.ah.tinkerpop;
+package org.waag.ah.spring.interceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
