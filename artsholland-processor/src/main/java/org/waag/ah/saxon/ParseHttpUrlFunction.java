@@ -1,8 +1,5 @@
 package org.waag.ah.saxon;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.lib.ExtensionFunctionDefinition;
@@ -14,6 +11,8 @@ import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.Value;
 
+import org.apache.commons.validator.routines.EmailValidator;
+import org.apache.commons.validator.routines.UrlValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,50 +20,66 @@ import org.slf4j.LoggerFactory;
 public class ParseHttpUrlFunction extends ExtensionFunctionDefinition {
 	private static final Logger logger = LoggerFactory.getLogger(ParseHttpUrlFunction.class);
 	
+	private UrlValidator urlValidator = UrlValidator.getInstance();
+	private EmailValidator emailValidator = EmailValidator.getInstance();
+	
+	/*
+	 * @author Raoul Wissink <raoul@waag.org>
+	 * @see net.sf.saxon.lib.ExtensionFunctionDefinition#getArgumentTypes()
+	 */
 	@Override
 	public SequenceType[] getArgumentTypes() {
 		return new SequenceType[] {SequenceType.OPTIONAL_STRING};
 	}
 
+	/*
+	 * @author Raoul Wissink <raoul@waag.org>
+	 * @see net.sf.saxon.lib.ExtensionFunctionDefinition#getFunctionQName()
+	 */
 	@Override
 	public StructuredQName getFunctionQName() {
 		return new StructuredQName("waag", "http://waag.org/saxon-extension", "parse-http-url");
 	}
 
+	/*
+	 * @author Raoul Wissink <raoul@waag.org>
+	 * @see net.sf.saxon.lib.ExtensionFunctionDefinition#getResultType(net.sf.saxon.value.SequenceType[])
+	 */
 	@Override
 	public SequenceType getResultType(SequenceType[] suppliedArgumentTypes) {
 		return SequenceType.OPTIONAL_STRING;
 	}
 
+	/*
+	 * Validate URL.
+	 * 
+	 * @author Raoul Wissink <raoul@waag.org>
+	 * @see net.sf.saxon.lib.ExtensionFunctionDefinition#makeCallExpression()
+	 */
 	@Override
 	public ExtensionFunctionCall makeCallExpression() {
 		return new ExtensionFunctionCall() {
 			public SequenceIterator call(SequenceIterator[] arguments,
 					XPathContext context) throws XPathException {
-				String text = "";
-				try {					
-					text = ((StringValue) arguments[0].next()).getStringValue();
-					if (text.length() > 0) {
-						text = text.replace(" ", "%20");
-						
-						// TODO: add trailing slash?
-						
-						if (!(text.startsWith("http://") || text.startsWith("https://"))) {
-							text = "http://" + text;
-						}
-
-						text = new URI(text).toASCIIString();
-					}
-				} catch (URISyntaxException e) {	
-					logger.warn(e.getMessage());
-					return Value.asIterator(EmptySequence.getInstance());
-				}
-				
+				String text = ((StringValue) arguments[0].next()).getStringValue();
 				if (text.length() == 0) {
 					return Value.asIterator(EmptySequence.getInstance());
-				} else {
-					return Value.asIterator(StringValue.makeStringValue(text));
 				}
+				// Filter out e-mail adresses.
+				if (emailValidator.isValid(text)) {
+					return Value.asIterator(StringValue.makeStringValue("mailto:"+text));
+				}
+				// Try to fix URL.
+				if (!text.startsWith("http://") && !text.startsWith("https://")) {
+					text = "http://" + text;
+				}
+				text = text.replace(" ", "%20");
+				// Validate URL.
+				if (!urlValidator.isValid(text)) {
+					logger.warn("Invalid URL: "+text);
+					return Value.asIterator(EmptySequence.getInstance());
+				}
+				return Value.asIterator(StringValue.makeStringValue(text));
 			}
 		};
 	}
