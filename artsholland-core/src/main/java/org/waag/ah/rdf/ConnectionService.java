@@ -42,6 +42,7 @@ public class ConnectionService implements RepositoryConnectionFactory {
 //			ForwardChainingRDFSInferencer inferencer = new ForwardChainingRDFSInferencer((NotifyingSail) sail);
 			
 			repository = new SailRepository(sail);
+			repository.initialize();			
 			
 //			System.out.println("SCHEMA URL: "+Thread.currentThread().getContextClassLoader().getResource("/org/waag/ah/rdf/schema/artsholland.rdf"));
 			
