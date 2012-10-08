@@ -84,6 +84,10 @@
       <recover>false</recover>
       <job-data-map>
         <entry>
+          <key>strategy</key>
+          <value>once</value>
+        </entry>      
+        <entry>
           <key>urlGeneratorClass</key>
           <value>org.waag.ah.importer.nbtc.NBTCUrlGenerator</value>
         </entry>
@@ -95,14 +99,19 @@
     </job>
 
     <trigger>
-      <simple>
+      <cron>
         <name>NBTCImportTrigger</name>
+        <group>SingleImport</group>
         <job-name>ImportNBTC</job-name>
         <job-group>ImporterService</job-group>
+        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <time-zone>Europe/Amsterdam</time-zone>
+        <!--         
         <start-time-seconds-in-future>30</start-time-seconds-in-future>
         <repeat-count>1</repeat-count>
-        <repeat-interval>1</repeat-interval>
-      </simple>
+        <repeat-interval>1</repeat-interval> 
+        -->
+      </cron>
     </trigger>
 
     <!-- GEONAMES ENRICHER -->

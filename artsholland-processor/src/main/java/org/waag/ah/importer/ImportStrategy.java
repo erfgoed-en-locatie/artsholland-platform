@@ -6,6 +6,7 @@ package org.waag.ah.importer;
  */
 public enum ImportStrategy {
 
+	ONCE,
 	FULL,
 	INCREMENTAL;
 

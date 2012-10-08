@@ -61,12 +61,18 @@ public class UrlImportJob implements Job {
 		result.put("jobId", context.getFireInstanceId());
 		result.put("timestamp", context.getFireTime().getTime());
 		result.put("strategy", this.strategy.toString());
+
+		ImportResult lastResult = getLastResult((String) result.get("jobKey"));
+		if (lastResult != null && this.strategy == ImportStrategy.ONCE) {
+			context.setResult("Import job with strategy ONCE already executed, skipping.");
+			return;
+		}
 		
 		try {
 			RepositoryConnection conn = cf.getConnection(false);
 			ValueFactory vf = conn.getValueFactory();
 			URI contextUri = vf.createURI(graphUri);
-
+			
 			// TODO: Refactor ImportConfig to a UrlImporterPipeline with
 			//       appropriate interface and abstract class to support
 			//       all kinds of import inputs (URLs, files, etc).
@@ -75,7 +81,9 @@ public class UrlImportJob implements Job {
 			// TODO: Use context as id?
 			config.setId(context.getFireInstanceId());
 			config.setStrategy(this.strategy);
-			config.setFromDateTime(getStartTime(context.getJobDetail().getKey().toString()));
+			if (lastResult != null) {
+				config.setFromDateTime(new DateTime(lastResult.get("timestamp")));
+			}
 			config.setToDateTime(new DateTime(context.getFireTime().getTime()));
 			config.setContext(vf.createURI(graphUri));
 
@@ -95,24 +103,19 @@ public class UrlImportJob implements Job {
 //				}
 				
 				while (pipeline.hasNext()) {
+					Statement statement = pipeline.next();
 					// TODO: Check if quering for the statement is less
 					//       expensive. Maybe repositories should indicate
 					//       whether they support delete on insert/update, or
 					//       implement a custom RepositoryConnection to handle
 					//       these cases.
-					Statement statement = pipeline.next();
-//					Statement clone = vf.createStatement(statement.getSubject(), statement.getPredicate(), statement.getObject(), contextUri);
-//					logger.info(statement.toString());
 					conn.remove(statement, contextUri);
 					conn.add(statement, contextUri);
-//					conn.remove(clone);
-//					conn.add(clone);
 				}
 				
 				conn.commit();
 				
-				logger.info("Comitted import, added "+(conn.size(contextUri)-oldsize)+" statements");
-	
+				context.setResult("Added "+(conn.size(contextUri)-oldsize)+" statements");
 				result.put("success", true);
 	
 			} catch (Exception e) {
@@ -150,8 +153,8 @@ public class UrlImportJob implements Job {
 	public void setStrategy(String strategy) {
 		this.strategy = ImportStrategy.fromValue(strategy);
 	}
-
-	private DateTime getStartTime(String jobKey) throws NamingException {
+	
+	private ImportResult getLastResult(String jobKey) {
 		BasicDBObject query = new BasicDBObject();
 		query.put("jobKey", jobKey);
 		query.put("success", true);
@@ -160,10 +163,9 @@ public class UrlImportJob implements Job {
 				.sort(new BasicDBObject("timestamp", -1));
 
 		if (cur.hasNext()) {
-			ImportResult lastResult = (ImportResult) cur.next();
-			return new DateTime(lastResult.get("timestamp"));
+			return (ImportResult) cur.next();
 		}
-
+		
 		return null;
 	}
 }
