@@ -14,8 +14,6 @@ public class BuildNamedGraphPipeFunction implements
 
 	@Override
 	public NamedGraph compute(Entry<URI, List<Statement>> statements) {
-//		return new AbstractMap.SimpleEntry<URI, Graph>(statements.getKey(),
-//				new GraphImpl(statements.getValue()));
 		return new NamedGraph(statements.getKey(), statements.getValue());
 	}
 }

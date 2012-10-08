@@ -37,7 +37,7 @@
         </entry>        
       </job-data-map>
     </job>
-<!-- 
+
     <trigger>
       <cron>
         <name>UitbaseIncrementalImportTrigger</name>
@@ -54,7 +54,7 @@
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
- --> 
+
 <!-- 
     <trigger>
       <cron>
@@ -104,7 +104,7 @@
         <repeat-interval>1</repeat-interval>
       </simple>
     </trigger>
-     
+
     <!-- GEONAMES ENRICHER -->
     <job>
       <name>GeonamesEnricher</name>

@@ -8,6 +8,7 @@ import javax.naming.NamingException;
 import org.joda.time.DateTime;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
+import org.openrdf.model.ValueFactory;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.quartz.DisallowConcurrentExecution;
@@ -63,7 +64,8 @@ public class UrlImportJob implements Job {
 		
 		try {
 			RepositoryConnection conn = cf.getConnection(false);
-			URI contextUri = conn.getValueFactory().createURI(graphUri);
+			ValueFactory vf = conn.getValueFactory();
+			URI contextUri = vf.createURI(graphUri);
 
 			// TODO: Refactor ImportConfig to a UrlImporterPipeline with
 			//       appropriate interface and abstract class to support
@@ -75,7 +77,7 @@ public class UrlImportJob implements Job {
 			config.setStrategy(this.strategy);
 			config.setFromDateTime(getStartTime(context.getJobDetail().getKey().toString()));
 			config.setToDateTime(new DateTime(context.getFireTime().getTime()));
-			config.setContext(conn.getValueFactory().createURI(graphUri));
+			config.setContext(vf.createURI(graphUri));
 
 			try {
 				logger.info("Running import job: strategy="+config.getStrategy());
@@ -99,9 +101,12 @@ public class UrlImportJob implements Job {
 					//       implement a custom RepositoryConnection to handle
 					//       these cases.
 					Statement statement = pipeline.next();
+//					Statement clone = vf.createStatement(statement.getSubject(), statement.getPredicate(), statement.getObject(), contextUri);
 //					logger.info(statement.toString());
 					conn.remove(statement, contextUri);
 					conn.add(statement, contextUri);
+//					conn.remove(clone);
+//					conn.add(clone);
 				}
 				
 				conn.commit();

@@ -15,7 +15,6 @@ public class ToStringPipe extends AbstractPipe<Object, String> {
 	@Override
 	protected String processNextStart() throws NoSuchElementException {
 		Object result = this.starts.next();
-		
 		try {
 			if (result instanceof Map) {
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();

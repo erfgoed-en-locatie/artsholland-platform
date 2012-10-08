@@ -25,11 +25,7 @@ public class StatementGeneratorPipe extends
 	private PlatformConfig config;
 
 	public StatementGeneratorPipe() throws ConfigurationException {
-//		try {
 		config = PlatformConfigHelper.getConfig();
-//		} catch (ConfigurationException e) {
-//			e.printStackTrace();
-//		}
 	}
 
 	@Override
@@ -49,7 +45,6 @@ public class StatementGeneratorPipe extends
 				throw new RuntimeException(e);
 			}
 		}
-//		logger.info("STMNTS: "+statements.size());
 		return statements;
 	}
 

@@ -30,7 +30,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.ContentHandlerDecorator;
-import org.apache.tika.sax.EmbeddedContentHandler;
 import org.apache.tika.sax.ToXMLContentHandler;
 import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
@@ -215,24 +214,18 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				mdata.set(Metadata.CONTENT_TYPE, "text/turtle");
 				mdata.set(Metadata.RESOURCE_NAME_KEY, metadata.get(Metadata.RESOURCE_NAME_KEY));
 				
-//				logger.info(combined.toString());
-//				logger.info("NEW DOCUMENT");
-				
-//				this.handler.startDocument();
 				turtleParser.parse(
 						new ByteArrayInputStream(combined.toString().getBytes()), 
 						new MatchingContentHandler(
 						this.handler, matcher), mdata, context);
-//				this.handler.endDocument();
+
 			} catch (NoSuchElementException e) {
 				logger.debug("Not enough data to proceed: "+xmlString);
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 				logger.info(xmlString);
 				logger.info(turtleString);
-//				e.getCause().printStackTrace();
-//				e.printStackTrace();
-				throw new SAXException(e.getMessage());
+				throw new SAXException(e);
 			} finally {
 				xmlCollector = null;
 			}
