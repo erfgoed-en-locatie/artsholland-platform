@@ -38,7 +38,7 @@
       </job-data-map>
     </job>
  
-<!--     <trigger>
+    <trigger>
       <cron>
         <name>UitbaseIncrementalImportTrigger</name>
         <group>IncrementalImport</group>

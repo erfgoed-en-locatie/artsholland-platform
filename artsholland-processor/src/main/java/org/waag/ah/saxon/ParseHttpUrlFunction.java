@@ -65,7 +65,7 @@ public class ParseHttpUrlFunction extends ExtensionFunctionDefinition {
 				if (text.length() == 0) {
 					return Value.asIterator(EmptySequence.getInstance());
 				}
-				// Filter out e-mail adresses.
+				// Filter out e-mail addresses.
 				if (emailValidator.isValid(text)) {
 					return Value.asIterator(StringValue.makeStringValue("mailto:"+text));
 				}
