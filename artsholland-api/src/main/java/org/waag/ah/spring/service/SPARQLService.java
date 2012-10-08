@@ -25,7 +25,7 @@ public class SPARQLService {
 		if (params.isPlainText()) {
 			config.setResponseContentType(WriterContentTypeConfig.MIME_TEXT_PLAIN);
 		} else {
-			config.setResponseContentType(WriterContentTypeConfig.MIME_SPARQL_RESULTS_JSON);
+//			config.setResponseContentType(WriterContentTypeConfig.MIME_SPARQL_RESULTS_JSON);
 		}
 		
 		query.setWriterConfig(config);		

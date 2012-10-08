@@ -66,7 +66,7 @@
 				<job-data-map>
 					<entry>
 						<key>strategy</key>
-						<value>incremental</value>
+						<value>full</value>
 					</entry>
 				</job-data-map>
 				<cron-expression>0 0/5 * * * ?</cron-expression>
