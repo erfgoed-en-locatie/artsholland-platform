@@ -19,7 +19,7 @@
     
     <!-- UITBASE IMPORT -->
     
-		<job>
+		<!-- <job>
       <name>ImportUitbase</name>
       <group>ImporterService</group>
       <description>Import Uitbase data</description>
@@ -53,6 +53,44 @@
         <cron-expression>0 0/5 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
+    </trigger> -->
+    
+    <!-- TAM IMPORT -->
+    
+		<job>
+      <name>ImportTAM</name>
+      <group>ImporterService</group>
+      <description>Import TAM data</description>
+      <job-class>org.waag.ah.quartz.UrlImportJob</job-class>
+      <durability>true</durability>
+      <recover>false</recover>
+      <job-data-map>
+				<entry>
+          <key>urlGeneratorClass</key>
+          <value>org.waag.ah.importer.tam.TAMURLGenerator</value>
+        </entry>
+        <entry>
+          <key>graphUri</key>
+          <value>http://uitburo.nl</value>
+        </entry>
+      </job-data-map>
+    </job>
+ 
+    <trigger>
+      <cron>
+        <name>TAMIncrementalImportTrigger</name>
+        <group>IncrementalImport</group>
+        <job-name>ImportTAM</job-name>
+        <job-group>ImporterService</job-group>
+        <job-data-map>
+          <entry>
+            <key>strategy</key>
+            <value>incremental</value>
+          </entry>
+        </job-data-map>
+        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <time-zone>Europe/Amsterdam</time-zone>
+      </cron>
     </trigger>
  
 <!-- 
@@ -71,12 +109,12 @@
         <cron-expression>0 0/1 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
-    </trigger>
- -->
+    </trigger> -->
+ 
 
     <!-- NBTC IMPORT -->
     
-    <job>
+   <!--  <job>
       <name>ImportNBTC</name>
       <group>ImporterService</group>
       <description>Import POI data from NBTC</description>
@@ -104,10 +142,10 @@
         <repeat-count>1</repeat-count>
         <repeat-interval>1</repeat-interval>
       </simple>
-    </trigger>
+    </trigger> -->
     
     <!-- GEONAMES ENRICHER -->
-    <job>
+    <!-- <job>
       <name>GeonamesEnricher</name>
       <group>EnricherService</group>
       <description>Enrich objects in triplestore</description>
@@ -135,7 +173,7 @@
           <value>http://www.geonames.org/ontology#Feature</value>
         </entry>
       </job-data-map>
-    </job>
+    </job> -->
     
     <!-- <trigger>
       <cron>
@@ -189,7 +227,7 @@
  -->
 
 	<!-- Social Media ENRICHER -->
-    <job>
+    <!-- <job>
       <name>SocialMediaEnricher</name>
       <group>EnricherService</group>
       <description>Enrich objects in triplestore</description>
@@ -232,7 +270,7 @@
         <cron-expression>0 0/5 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
-    </trigger>
+    </trigger> -->
 
     <!-- DOSA IMPORTER -->
 <!--         

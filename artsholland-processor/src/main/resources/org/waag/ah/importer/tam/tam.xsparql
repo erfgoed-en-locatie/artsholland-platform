@@ -1,0 +1,118 @@
+declare namespace dc="http://purl.org/dc/terms/";
+declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+declare namespace rdfs="http://www.w3.org/2000/01/rdf-schema#";
+declare namespace xsd="http://www.w3.org/2001/XMLSchema#";
+declare namespace owl="http://www.w3.org/2002/07/owl#";
+declare namespace time="http://www.w3.org/2006/time#"; 
+declare namespace foaf="http://xmlns.com/foaf/0.1/";
+declare namespace geo="http://www.w3.org/2003/01/geo/wgs84_pos#";
+declare namespace vcard="http://www.w3.org/2006/vcard/ns#";
+declare namespace gr="http://purl.org/goodrelations/v1#";
+declare namespace osgeo="http://rdf.opensahara.com/type/geo/";
+
+declare namespace ah="http://purl.org/artsholland/1.0/";
+
+declare namespace waag="http://waag.org/saxon-extension";
+
+let $articles 			:= //node[descendant::type='article']
+let $blogs 					:= //node[descendant::type='blog']
+let $editorials 		:= //node[descendant::type='editorial']
+let $hotels 				:= //node[descendant::type='hotel']
+let $locations 			:= //node[descendant::type='locatie']
+let $press_releases := //node[descendant::type='press_release']
+let $productions 		:= //node[descendant::type='productie']
+let $restaurants 		:= //node[descendant::type='restaurant']
+let $routes 				:= //node[descendant::type='route']
+let $shops 					:= //node[descendant::type='shop']
+
+return
+
+##############################################################################################################################
+##################   Article   ###############################################################################################
+##############################################################################################################################
+
+	if ($articles) then {
+		for $article in $articles	
+		
+			let $nid := {$article/nid}
+			let $auri := {waag:object-uri("article", $nid)}
+		
+			let $language-tag := {$article/language}
+			
+			let $title := {$article/title}
+			let $body := {$article/body}
+			
+			construct { 
+							
+				$auri a ah:Article ;					
+					dc:title {waag:parse-string($title)}@{$language-tag} ;				
+					ah:body {waag:parse-string($body)}@{$language-tag} .
+							
+				# TODO: field_images!!
+				# TODO: vragen hoeveel field_images een article kan hebben
+
+			}
+			
+		}
+
+##############################################################################################################################
+##################   Blog   ##################################################################################################
+##############################################################################################################################
+
+	else if ($blogs) then {
+		for $blog in $blogs	
+		
+			let $nid := {$blog/nid}
+			let $buri := {waag:object-uri("blog", $nid)}
+		
+			let $language-tag := {$blog/language}
+			
+			let $title := {$blog/title}
+			let $body := {$blog/body}
+			
+			construct { 
+							
+				$buri a ah:Blog ;					
+					dc:title {waag:parse-string($title)}@{$language-tag} ;				
+					ah:body {waag:parse-string($body)}@{$language-tag} .
+							
+				# TODO: field_blog_image
+				# TODO: field_blog_video
+
+			}
+			
+		}
+		
+##############################################################################################################################
+##################   Editorial   #############################################################################################
+##############################################################################################################################
+
+	else if ($editorials) then {
+		for $editorial in $editorials	
+		
+			let $nid := {$editorial/nid}
+			let $euri := {waag:object-uri("editorial", $nid)}
+		
+			let $language-tag := {$editorial/language}
+			
+			let $title := {$editorial/title}
+			let $body := {$editorial/body}			
+			
+			# TODO: field_editorial_cidn
+			#		Dit veld is gevuld met CIDN waar deze editorial betrekking op heeft.
+			# TODO: field_images			
+			
+			construct { 
+							
+				$euri a ah:Editorial ;					
+					dc:title {waag:parse-string($title)}@{$language-tag} ;				
+					ah:body {waag:parse-string($body)}@{$language-tag} .
+
+			}
+			
+		}
+
+##############################################################################################################################
+##############################################################################################################################
+
+	else ()
