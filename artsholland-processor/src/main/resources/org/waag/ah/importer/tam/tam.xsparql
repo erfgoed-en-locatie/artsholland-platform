@@ -113,6 +113,99 @@ return
 		}
 
 ##############################################################################################################################
+##################   Hotel   #################################################################################################
+##############################################################################################################################
+
+	else if ($hotels) then {
+		for $hotel in $hotels	
+		
+			let $nid := {$hotel/nid}
+			let $euri := {waag:object-uri("hotel", $nid)}
+		
+			let $language-tag := {$hotel/language}
+			
+			let $title := {$hotel/title}
+			let $body := {$hotel/body}
+			
+
+			let $short_description := {$hotel/field_short_descr/n0/value}
+			let $long_description := {$hotel/field_long_descr/n0/value}
+			
+			let $website := {$hotel/field_website/n0/value}
+			let $email := {$hotel/field_email/n0/value}
+
+			let $opening := {$hotel/field_opening/n0/value}
+			let $highlights := {$hotel/field_highlights/n0/value}
+			let $email := {$hotel/field_transport/n0/value}
+			
+			let $location := {$hotel/field_location/n0}			
+			
+			# <location>  		
+    	# 	<street>J.C. Verthorenpad 100</street>   
+    	# 	<additional/> 
+    	# 	<city>Utrecht</city>    
+    	# 	<postal_code>3541 MV</postal_code>    
+    	# 	<latitude>52.089577</latitude>
+    	# 	<longitude>5.077873</longitude>
+      # 	<country_name>Netherlands</country_name>
+    	# 	<phone>+31 30 286 22 86</phone>  
+			# </location>
+			
+			let $street := {$location/street}
+			let $additional := {$location/additional}
+			let $city := {$location/street}
+			let $postal-code := {$location/street}
+			let $lat := { waag:parse-non-zero-number($location/latitude) }
+			let $long := { waag:parse-non-zero-number($location/longitude) }
+			# TODO: country_name
+			let $phone := {$location/phone}						
+			
+			# TODO: make function to extract number from street address...
+			# MOEILIJK WANT SOMMIGE STRAATNAMEN HEBBEN NUMMER... 
+			# of makkelijk als je gewoon laatste nummer na laatste spatie pakt
+			#let $auri := {waag:object-uri("address", waag:address-uri($postal-code, $venue/street/number, $venue/street/addition))}
+			
+			# TODO:
+			# 	field_images
+			# 	field_essential_links
+			# 	field_genre
+			#	 	taxonomy		
+			
+			construct { 
+							
+				$euri a ah:Hotel ;					
+					dc:title {waag:parse-string($title)}@{$language-tag} ;				
+					ah:body {waag:parse-string($body)}@{$language-tag} ;
+					
+					geo:lat {$lat}^^xsd:float ;
+					geo:long {$long}^^xsd:float ;
+	
+					geo:geometry{waag:wkt-geometry($lat, $long)}^^osgeo:wkt ;
+					
+					#ah:locationAddress $auri ;
+					
+					vcard:email {waag:parse-string($email)}^^xsd:string ;
+					
+					# TODO: ah???
+					ah:telephone {waag:parse-string($phone)}^^xsd:string .
+				
+				#$auri a ah:Address ;
+        #	vcard:street-address {concat($venue/street/name, " ", $venue/street/number, $venue/street/addition)} ;
+				#	vcard:locality {waag:parse-string($venue/city)} ;
+				#	vcard:postal-code {waag:postal-code(waag:parse-string($venue/postal-code))} .
+
+			}
+			
+		}	
+		
+		
+		
+		
+		
+		
+
+
+##############################################################################################################################
 ##############################################################################################################################
 
 	else ()
