@@ -55,8 +55,20 @@ public class ClassUriFunction extends ExtensionFunctionDefinition {
 				String uri = config.getString("platform.classUri");
 				for (SequenceIterator arg : arguments) {
 					try {
-						String s = ((StringValue) arg.next()).getStringValue();						
-						uri += s.replaceAll("\\/+", "/").replaceAll(" ", "");
+						String s = ((StringValue) arg.next()).getStringValue();
+						
+						s = s.replaceAll("\\/+", "/");
+						
+						// Some class names have & characters in them: replace by 'And' for use in URLs
+						s = s.replace("&", "And");
+						
+						String[] words = s.split("\\s+");
+						for (String word : words) {
+							uri += upperCaseFirstOnly(word);
+						}
+						
+						//uri += s.replaceAll("\\/+", "/")						
+						//.replaceAll(" ", "");
 						
 					} catch (NullPointerException e) {
 						return Value.asIterator(EmptySequence.getInstance());
@@ -71,4 +83,14 @@ public class ClassUriFunction extends ExtensionFunctionDefinition {
 			}
 		};
 	}
+	
+	private String upperCaseFirstOnly(String text) {
+		if (text.length() == 1) {
+			text = text.toUpperCase();
+		} else {
+			text = text.substring(0, 1).toUpperCase() + text.substring(1);
+		}	
+		return text;
+	}
+	
 }

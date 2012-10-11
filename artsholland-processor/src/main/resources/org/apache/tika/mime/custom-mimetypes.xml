@@ -47,6 +47,6 @@
     <sub-class-of type="application/xml" />
     <acronym>TAMXML</acronym>
     <_comment>TAM XML Export</_comment>
-    <glob pattern="https://dl.dropbox.com/*" />    
+    <glob pattern="*tam/export.xml" />    
   </mime-type>
 </mime-info>

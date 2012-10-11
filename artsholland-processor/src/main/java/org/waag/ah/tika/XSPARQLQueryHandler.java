@@ -49,14 +49,17 @@ import org.waag.ah.exception.ParserException;
 import org.waag.ah.saxon.AddressUriFunction;
 import org.waag.ah.saxon.ClassUriFunction;
 import org.waag.ah.saxon.ObjectUriFunction;
+import org.waag.ah.saxon.ParseCidnFunction;
 import org.waag.ah.saxon.ParseDateTimeFunction;
 import org.waag.ah.saxon.ParseHttpUrlFunction;
 import org.waag.ah.saxon.ParseLocaleFunction;
 import org.waag.ah.saxon.ParseNonZeroNumber;
 import org.waag.ah.saxon.ParseStringFunction;
 import org.waag.ah.saxon.PostalCodeFunction;
+import org.waag.ah.saxon.StreetNumberFunction;
 import org.waag.ah.saxon.UpperCaseFirstFunction;
 import org.waag.ah.saxon.WKTGeometryFunction;
+import org.waag.ah.saxon.WebContentTypeFunction;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
@@ -136,7 +139,10 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			config.registerExtensionFunction(new ParseNonZeroNumber());
 			config.registerExtensionFunction(new UpperCaseFirstFunction());
 			config.registerExtensionFunction(new PostalCodeFunction());
+			config.registerExtensionFunction(new StreetNumberFunction());
 			config.registerExtensionFunction(new WKTGeometryFunction());
+			config.registerExtensionFunction(new WebContentTypeFunction());
+			config.registerExtensionFunction(new ParseCidnFunction());
 			
 			Processor processor = new Processor(config);
 			XQueryCompiler compiler = processor.newXQueryCompiler();	

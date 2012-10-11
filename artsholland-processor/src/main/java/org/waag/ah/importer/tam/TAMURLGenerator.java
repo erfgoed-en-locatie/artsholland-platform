@@ -42,12 +42,6 @@ public class TAMURLGenerator implements UrlGenerator {
 					+ timestamp;
 			
 			url = "http://localhost/ah/tam/export.xml";
-			//url = "http://127.0.0.1/ah/tam/export_2.xml";
-			url = "https://dl.dropbox.com/u/12905316/export.xml";
-			//url = "https://dl.dropbox.com/u/12905316/export_2.xml";
-			//url = "https://dl.dropbox.com/u/12905316/exp_nub.xml";
-			//url = "http://ps4.uitburo.nl/api/search?key=505642b12881b9a60688411a333bc78b&resolve=true&resource=events&rows=50&start=14500";
-			//url = "http://ps4.uitburo.nl/api/locations/25f69cc1-428c-4b49-aff3-b493f5a17a00?key=505642b12881b9a60688411a333bc78b&resolve";
 			
 			try {
 				urls.add(new URL(url));

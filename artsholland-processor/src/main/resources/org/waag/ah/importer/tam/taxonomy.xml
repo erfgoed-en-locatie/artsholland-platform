@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taxonomy>
+	<classes>
+		<class tid="1">Architecture</class>
+		<class tid="2">Landmarks</class>
+		<class tid="3">Festivals</class>
+		<class tid="4">Fashion</class>
+		<class tid="5">Dance</class>
+		<class tid="6">Theater</class>
+		<class tid="7">Music</class>
+		<class tid="8">Film</class>
+		<class tid="9">Museum</class>
+		<class tid="10">Design</class>
+		<class tid="11">Events</class>
+		<class tid="12">Photography</class>
+		<class tid="13">Galleries</class>
+		<class tid="14">Festivals &amp; Events</class>
+		<class tid="15">Fashion &amp; Design</class>
+		<class tid="16">Film &amp; Photography</class>
+		<class tid="17">Museums &amp; Galleries</class>
+		<class tid="18">Shop</class>
+		<class tid="19">Eat</class>
+		<class tid="20">Stay</class>
+		<class tid="24">Eat &amp; Stay</class>
+	</classes>
+</taxonomy>
