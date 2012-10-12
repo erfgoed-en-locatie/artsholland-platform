@@ -12,32 +12,39 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.PlatformConfig;
 import org.waag.ah.PlatformConfigHelper;
-import org.waag.ah.RepositoryFactory;
+import org.waag.rdf.sesame.SailFactory;
 
 import com.bigdata.journal.Options;
-import com.bigdata.rdf.sail.BigdataSailRepository;
 import com.useekm.bigdata.BigdataSail;
+import com.useekm.inference.SimpleTypeInferencingSail;
 
-public class Bigdata implements RepositoryFactory {
+public class Bigdata implements SailFactory {
 	final static Logger logger = LoggerFactory.getLogger(Bigdata.class);
 
 	private PlatformConfig config; 
 	private PropertiesConfiguration properties;
-	private Sail repo;
+	private Sail sail;
 
 	@Override
 	public synchronized Sail getSail() throws SailException {
-		if (repo == null) {
+		if (sail == null) {
 			try {
 				config = PlatformConfigHelper.getConfig();
 				Properties properties = ConfigurationConverter.getProperties(loadProperties());
-				BigdataSailRepository repository = new BigdataSailRepository(new com.bigdata.rdf.sail.BigdataSail(properties));
-				repo = new BigdataSail(repository);
-			} catch (ConfigurationException e) {
+//				BigdataSailRepository repository = new BigdataSailRepository(new com.bigdata.rdf.sail.BigdataSail(properties));
+//				repo = new BigdataSail(repository);
+				sail = new SimpleTypeInferencingSail(
+//					   new SmartSailWrapper(
+					   new BigdataSail(properties));
+//				sail.setPipelineTypes(Arrays.asList(
+//						"getReadOnlyConnection", 
+//						"getReadWriteConnection",
+//						"getUnisolatedConnection"));
+			} catch (Exception e) {
 				throw new SailException(e);
 			} 
 		}
-		return repo;
+		return sail;
 	}
 	
 	/**

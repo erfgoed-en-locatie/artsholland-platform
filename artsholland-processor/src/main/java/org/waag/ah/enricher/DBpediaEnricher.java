@@ -17,9 +17,9 @@ import org.openrdf.query.TupleQueryResult;
 import org.openrdf.repository.RepositoryConnection;
 import org.waag.ah.PlatformConfig;
 import org.waag.ah.PlatformConfigHelper;
-import org.waag.ah.rdf.EnricherConfig;
-import org.waag.ah.rdf.NamedGraph;
 import org.waag.ah.tinkerpop.AbstractEnricher;
+import org.waag.rdf.sesame.EnricherConfig;
+import org.waag.rdf.sesame.NamedGraph;
 
 public class DBpediaEnricher extends AbstractEnricher { 
 		

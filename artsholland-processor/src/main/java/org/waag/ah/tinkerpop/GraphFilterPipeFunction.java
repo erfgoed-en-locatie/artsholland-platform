@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.openrdf.model.URI;
 import org.openrdf.model.impl.ValueFactoryImpl;
-import org.waag.ah.rdf.NamedGraph;
+import org.waag.rdf.sesame.NamedGraph;
 
 import com.tinkerpop.pipes.PipeFunction;
 

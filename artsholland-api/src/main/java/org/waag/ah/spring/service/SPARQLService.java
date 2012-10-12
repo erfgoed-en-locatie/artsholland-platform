@@ -4,11 +4,11 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.openrdf.query.QueryLanguage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.waag.ah.WriterContentTypeConfig;
-import org.waag.ah.rdf.RDFWriterConfig;
-import org.waag.ah.rdf.RdfQueryDefinition;
-import org.waag.ah.rdf.SPARQLWriterTypeConfig;
 import org.waag.ah.rest.SPARQLParameters;
+import org.waag.rdf.RDFWriterConfig;
+import org.waag.rdf.SPARQLWriterTypeConfig;
+import org.waag.rdf.WriterContentTypeConfig;
+import org.waag.rdf.sesame.RdfQueryDefinition;
 
 @Service(value="sparqlService")
 public class SPARQLService {

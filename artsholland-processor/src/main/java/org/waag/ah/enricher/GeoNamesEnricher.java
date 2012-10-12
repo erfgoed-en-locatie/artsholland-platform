@@ -13,9 +13,9 @@ import org.openrdf.model.ValueFactory;
 import org.openrdf.model.util.GraphUtil;
 import org.waag.ah.PlatformConfig;
 import org.waag.ah.PlatformConfigHelper;
-import org.waag.ah.rdf.EnricherConfig;
-import org.waag.ah.rdf.NamedGraph;
 import org.waag.ah.tinkerpop.AbstractEnricher;
+import org.waag.rdf.sesame.EnricherConfig;
+import org.waag.rdf.sesame.NamedGraph;
 
 public class GeoNamesEnricher extends AbstractEnricher { 
 	private PlatformConfig config;

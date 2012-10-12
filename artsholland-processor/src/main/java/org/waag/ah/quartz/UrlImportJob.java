@@ -17,7 +17,6 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.exception.ConnectionException;
 import org.waag.ah.importer.ImportConfig;
 import org.waag.ah.importer.ImportResult;
@@ -25,6 +24,7 @@ import org.waag.ah.importer.ImportStrategy;
 import org.waag.ah.importer.UrlGenerator;
 import org.waag.ah.service.MongoConnectionService;
 import org.waag.ah.tinkerpop.ImporterPipeline;
+import org.waag.rdf.sesame.SailConnectionFactory;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
@@ -35,7 +35,7 @@ import com.tinkerpop.pipes.util.Pipeline;
 public class UrlImportJob implements Job {
 	final static Logger logger = LoggerFactory.getLogger(UrlImportJob.class);
 
-	private RepositoryConnectionFactory cf;
+	private SailConnectionFactory cf;
 	private DBCollection coll;
 
 	private UrlGenerator urlGenerator;
@@ -48,27 +48,28 @@ public class UrlImportJob implements Job {
 				.lookup("java:global/artsholland-platform/datastore/MongoConnectionServiceImpl");
 		this.coll = mongo.getCollection(UrlImportJob.class.getName());
 		coll.setObjectClass(ImportResult.class);
-		cf = (RepositoryConnectionFactory) ic
-				.lookup("java:global/artsholland-platform/core/ConnectionService");
+		cf = (SailConnectionFactory) ic
+				.lookup("java:global/artsholland-platform/core/SailConnectionService");
 	}
 
 	@Override
 	public void execute(JobExecutionContext context)
 			throws JobExecutionException {
-		
-		ImportResult result = new ImportResult();
-		result.put("jobKey", context.getJobDetail().getKey().toString());
-		result.put("jobId", context.getFireInstanceId());
-		result.put("timestamp", context.getFireTime().getTime());
-		result.put("strategy", this.strategy.toString());
-
-		ImportResult lastResult = getLastResult((String) result.get("jobKey"));
-		if (lastResult != null && this.strategy == ImportStrategy.ONCE) {
-			context.setResult("Import job with strategy ONCE already executed, skipping.");
-			return;
-		}
-		
 		try {
+			String jobKey = context.getJobDetail().getKey().toString(); //this.urlGenerator.getClass().getName();
+			
+			ImportResult lastResult = getLastResult(jobKey);
+			if (lastResult != null && this.strategy == ImportStrategy.ONCE) {
+				context.setResult("Import job "+jobKey+" with strategy ONCE already executed, skipping.");
+				return;
+			}
+
+			ImportResult result = new ImportResult();
+			result.put("jobKey", jobKey);
+			result.put("jobId", context.getFireInstanceId());
+			result.put("timestamp", context.getFireTime().getTime());
+			result.put("strategy", this.strategy.toString());
+
 			RepositoryConnection conn = cf.getConnection(false);
 			ValueFactory vf = conn.getValueFactory();
 			URI contextUri = vf.createURI(graphUri);
@@ -88,7 +89,7 @@ public class UrlImportJob implements Job {
 			config.setContext(vf.createURI(graphUri));
 
 			try {
-				logger.info("Running import job: strategy="+config.getStrategy());
+				logger.info("Running import job "+jobKey+" with strategy="+config.getStrategy());
 	
 				// TODO: Change ImporterPipeline to receive ImportConfig(s) and 
 				//       return ImportResult(s). Persistence must be handled by
@@ -98,19 +99,19 @@ public class UrlImportJob implements Job {
 	
 				long oldsize = conn.size(contextUri);
 				
-//				if (this.strategy == ImportStrategy.FULL) {
-//					conn.clear(config.getContext());
-//				}
+				if (this.strategy == ImportStrategy.FULL) {
+					conn.clear(config.getContext());
+				}
 				
 				while (pipeline.hasNext()) {
-					Statement statement = pipeline.next();
+//					Statement statement = pipeline.next();
 					// TODO: Check if quering for the statement is less
 					//       expensive. Maybe repositories should indicate
 					//       whether they support delete on insert/update, or
 					//       implement a custom RepositoryConnection to handle
 					//       these cases.
-					conn.remove(statement, contextUri);
-					conn.add(statement, contextUri);
+//					conn.remove(statement, contextUri);
+					conn.add(pipeline.next(), contextUri);
 				}
 				
 				conn.commit();
@@ -126,13 +127,11 @@ public class UrlImportJob implements Job {
 				throw e; //new ImportException(e.getCause().getMessage());
 			} finally {
 				coll.insert(result);
+				logger.info("Closing connection: "+conn);
 				conn.close();
 			}
 		} catch (Exception e) {
-//			throw new JobExecutionException(e);
-			JobExecutionException exception = new JobExecutionException(e);
-			exception.refireImmediately();
-			throw exception;
+			throw new JobExecutionException(e);
 		}
 	}
 	

@@ -55,13 +55,6 @@
       <version>2.7.2</version>
     </dependency>
     <dependency>
-      <groupId>net.fortytwo.sesametools</groupId>
-      <artifactId>rdfjson</artifactId>
-      <version>1.6</version>
-    </dependency>    
-    
-    <!-- Virtuoso -->
-    <dependency>
       <groupId>org.waag.virtuoso</groupId>
       <artifactId>sesame</artifactId>
       <version>2</version>
@@ -73,14 +66,11 @@
       <version>3-dist</version>
       <type>jar</type>
     </dependency>     
-  
-  	<!-- OpenSahara -->
 		<dependency>
 			<groupId>com.opensahara</groupId>
 			<artifactId>useekm-core</artifactId>
 			<version>${useekm.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>postgresql</groupId>
 			<artifactId>postgresql</artifactId>

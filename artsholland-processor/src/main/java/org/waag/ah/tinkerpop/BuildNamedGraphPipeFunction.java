@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
-import org.waag.ah.rdf.NamedGraph;
+import org.waag.rdf.sesame.NamedGraph;
 
 import com.tinkerpop.pipes.PipeFunction;
 

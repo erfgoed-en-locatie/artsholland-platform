@@ -11,8 +11,8 @@ package org.waag.ah.enricher;
 //import org.openrdf.model.util.GraphUtilException;
 //import org.waag.ah.PlatformConfig;
 //import org.waag.ah.PlatformConfigHelper;
-//import org.waag.ah.rdf.EnricherConfig;
-//import org.waag.ah.rdf.NamedGraph;
+//import org.waag.rdf.EnricherConfig;
+//import org.waag.rdf.NamedGraph;
 //import org.waag.ah.tinkerpop.AbstractEnricher;
 //
 //import com.restfb.DefaultFacebookClient;

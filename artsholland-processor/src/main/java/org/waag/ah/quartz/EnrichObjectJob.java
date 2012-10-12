@@ -18,14 +18,14 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.ah.RepositoryConnectionFactory;
 import org.waag.ah.exception.ConnectionException;
 import org.waag.ah.exception.EnrichException;
-import org.waag.ah.rdf.EnricherConfig;
-import org.waag.ah.rdf.GraphEnricher;
-import org.waag.ah.rdf.QueryService;
 import org.waag.ah.tinkerpop.EnrichUtils;
 import org.waag.ah.tinkerpop.EnricherPipeline;
+import org.waag.rdf.sesame.EnricherConfig;
+import org.waag.rdf.sesame.GraphEnricher;
+import org.waag.rdf.sesame.QueryService;
+import org.waag.rdf.sesame.SailConnectionFactory;
 
 import com.tinkerpop.pipes.util.Pipeline;
 
@@ -33,7 +33,7 @@ public class EnrichObjectJob implements Job {
 	final static Logger logger = LoggerFactory.getLogger(EnrichObjectJob.class);
 
 	private QueryService queryService;
-	private RepositoryConnectionFactory cf;
+	private SailConnectionFactory cf;
 
 	private Class<? extends GraphEnricher> enricher;
 	private String objectUri;
@@ -44,8 +44,8 @@ public class EnrichObjectJob implements Job {
 		InitialContext ic = new InitialContext();
 		queryService = (QueryService) ic
 				.lookup("java:global/artsholland-platform/core/QueryService");
-		cf = (RepositoryConnectionFactory) ic
-				.lookup("java:global/artsholland-platform/core/ConnectionService");
+		cf = (SailConnectionFactory) ic
+				.lookup("java:global/artsholland-platform/core/SailConnectionService");
 	}
 
 	@Override

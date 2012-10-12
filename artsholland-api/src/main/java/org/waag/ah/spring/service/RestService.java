@@ -6,17 +6,17 @@ import org.openrdf.rio.RDFFormat;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.waag.ah.WriterContentTypeConfig;
-import org.waag.ah.rdf.RDFJSONFormat;
-import org.waag.ah.rdf.RDFWriterConfig;
-import org.waag.ah.rdf.RdfQueryDefinition;
-import org.waag.ah.rdf.RestWriterTypeConfig;
 import org.waag.ah.rest.RestParameters;
 import org.waag.ah.rest.RestRelationQueryGenerator;
 import org.waag.ah.rest.model.RestRelation;
 import org.waag.ah.rest.model.RestRelation.RelationQuantity;
 import org.waag.ah.rest.model.RestRelation.RelationType;
 import org.waag.ah.rest.model.SPARQLFilter;
+import org.waag.rdf.RDFWriterConfig;
+import org.waag.rdf.RestWriterTypeConfig;
+import org.waag.rdf.WriterContentTypeConfig;
+import org.waag.rdf.sesame.RDFJSONFormat;
+import org.waag.rdf.sesame.RdfQueryDefinition;
 
 @Service("restService")
 public class RestService implements InitializingBean {
@@ -178,6 +178,7 @@ public class RestService implements InitializingBean {
 
 	private RDFWriterConfig getDefaultWriterConfig(RestParameters params) {
 		RDFWriterConfig config = new RDFWriterConfig();
+		// TODO: Think of BigData independent implementation of RestWriterTypeConfig. 
 		config.setContentTypeConfig(new RestWriterTypeConfig());		
 		config.setPrettyPrint(params.getPretty());
 		config.setJSONPCallback(params.getJSONPCallback());

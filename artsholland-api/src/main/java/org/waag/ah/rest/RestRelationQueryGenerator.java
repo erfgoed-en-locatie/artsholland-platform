@@ -8,11 +8,11 @@ import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.QueryLanguage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.ah.rdf.RdfQueryDefinition;
 import org.waag.ah.rest.model.RestRelation;
 import org.waag.ah.rest.model.RestRelation.RelationQuantity;
 import org.waag.ah.rest.model.RestRelation.RelationType;
 import org.waag.ah.rest.model.SPARQLQuery;
+import org.waag.rdf.sesame.RdfQueryDefinition;
 
 public class RestRelationQueryGenerator {
 	final static Logger logger = LoggerFactory.getLogger(RestRelationQueryGenerator.class);

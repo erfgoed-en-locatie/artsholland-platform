@@ -3,8 +3,8 @@ package org.waag.ah.tinkerpop;
 import java.util.List;
 
 import org.openrdf.model.Statement;
-import org.waag.ah.rdf.EnricherConfig;
-import org.waag.ah.rdf.NamedGraph;
+import org.waag.rdf.sesame.EnricherConfig;
+import org.waag.rdf.sesame.NamedGraph;
 
 import com.tinkerpop.pipes.filter.FilterFunctionPipe;
 import com.tinkerpop.pipes.util.Pipeline;

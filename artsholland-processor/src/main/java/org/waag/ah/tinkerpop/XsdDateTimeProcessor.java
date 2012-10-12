@@ -4,8 +4,8 @@ import org.openrdf.model.Literal;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
-import org.waag.ah.rdf.EnricherConfig;
 import org.waag.ah.tinkerpop.AbstractProcessor;
+import org.waag.rdf.sesame.EnricherConfig;
 
 public class XsdDateTimeProcessor extends AbstractProcessor {
 

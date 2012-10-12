@@ -1,4 +1,4 @@
-package org.waag.ah.sesame;
+package org.waag.rdf.sesame;
 
 import java.math.BigDecimal;
 
@@ -21,8 +21,8 @@ import org.openrdf.repository.object.ObjectQuery;
 import org.openrdf.repository.object.ObjectRepository;
 import org.openrdf.repository.object.config.ObjectRepositoryConfig;
 import org.openrdf.repository.object.config.ObjectRepositoryFactory;
-import org.waag.ah.model.decorator.EventJsonDecorator;
-import org.waag.ah.model.decorator.ProductionJsonDecorator;
+import org.waag.ah.model.rdf.annotation.EventJsonDecorator;
+import org.waag.ah.model.rdf.annotation.ProductionJsonDecorator;
 import org.waag.ah.model.rdf.Attachment;
 import org.waag.ah.model.rdf.AttachmentType;
 import org.waag.ah.model.rdf.EventStatus;

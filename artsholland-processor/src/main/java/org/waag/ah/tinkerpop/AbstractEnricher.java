@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.openrdf.model.Statement;
-import org.waag.ah.rdf.EnricherConfig;
-import org.waag.ah.rdf.GraphEnricher;
-import org.waag.ah.rdf.NamedGraph;
+import org.waag.rdf.sesame.EnricherConfig;
+import org.waag.rdf.sesame.GraphEnricher;
+import org.waag.rdf.sesame.NamedGraph;
 
 import com.tinkerpop.pipes.AbstractPipe;
 

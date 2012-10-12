@@ -3,8 +3,6 @@ package org.waag.ah.jackson;
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.module.SimpleModule;
-import org.waag.ah.model.decorator.EventJsonDecorator;
-import org.waag.ah.model.decorator.ProductionJsonDecorator;
 import org.waag.ah.model.json.AttachmentJson;
 import org.waag.ah.model.json.AttachmentTypeJson;
 import org.waag.ah.model.json.EventJson;
@@ -29,6 +27,8 @@ import org.waag.ah.model.rdf.Room;
 import org.waag.ah.model.rdf.UnitPriceSpecification;
 import org.waag.ah.model.rdf.Venue;
 import org.waag.ah.model.rdf.VenueType;
+import org.waag.ah.model.rdf.annotation.EventJsonDecorator;
+import org.waag.ah.model.rdf.annotation.ProductionJsonDecorator;
 
 public class AHObjectMapper extends ObjectMapper {
 

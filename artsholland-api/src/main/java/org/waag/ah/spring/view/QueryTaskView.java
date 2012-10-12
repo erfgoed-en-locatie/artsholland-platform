@@ -20,13 +20,13 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.view.AbstractView;
 import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.WebUtils;
-import org.waag.ah.QueryTask;
-import org.waag.ah.WriterContentTypeConfig;
-import org.waag.ah.rdf.QueryService;
-import org.waag.ah.rdf.RDFJSONFormat;
-import org.waag.ah.rdf.RDFWriterConfig;
-import org.waag.ah.rdf.RdfQueryDefinition;
 import org.waag.ah.rest.MIMEParse;
+import org.waag.rdf.QueryTask;
+import org.waag.rdf.RDFWriterConfig;
+import org.waag.rdf.WriterContentTypeConfig;
+import org.waag.rdf.sesame.QueryService;
+import org.waag.rdf.sesame.RDFJSONFormat;
+import org.waag.rdf.sesame.RdfQueryDefinition;
 
 import com.bigdata.rdf.sparql.ast.QueryType;
 

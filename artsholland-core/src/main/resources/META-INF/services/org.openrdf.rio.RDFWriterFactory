@@ -1,1 +1,1 @@
-org.waag.ah.rdf.RDFJSONWriterFactory
+org.waag.rdf.sesame.RDFJSONWriterFactory

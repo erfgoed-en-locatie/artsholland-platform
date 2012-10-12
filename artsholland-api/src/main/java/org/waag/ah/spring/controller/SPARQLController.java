@@ -14,11 +14,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-import org.waag.ah.rdf.RdfQueryDefinition;
 import org.waag.ah.rest.SPARQLParameters;
 import org.waag.ah.spring.annotation.SPARQLRequestParameters;
 import org.waag.ah.spring.service.SPARQLService;
 import org.waag.ah.spring.view.QueryTaskView;
+import org.waag.rdf.sesame.RdfQueryDefinition;
 
 @Controller
 @RequestMapping(value = "/sparql")

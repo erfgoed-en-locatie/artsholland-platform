@@ -8,13 +8,13 @@ import org.openrdf.sail.Sail;
 import org.openrdf.sail.SailException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.ah.RepositoryFactory;
+import org.waag.rdf.sesame.SailFactory;
 
 import virtuoso.sesame2.driver.VirtuosoRepository;
 
 import com.useekm.reposail.RepositorySail;
 
-public class Virtuoso implements RepositoryFactory {
+public class Virtuoso implements SailFactory {
 	final static Logger logger = LoggerFactory.getLogger(Virtuoso.class);
 	
 	private VirtuosoRepository virtuoso;

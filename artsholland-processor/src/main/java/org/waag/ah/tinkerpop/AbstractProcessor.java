@@ -3,8 +3,8 @@ package org.waag.ah.tinkerpop;
 import java.util.NoSuchElementException;
 
 import org.openrdf.model.Statement;
-import org.waag.ah.rdf.EnricherConfig;
-import org.waag.ah.rdf.StatementProcessor;
+import org.waag.rdf.sesame.EnricherConfig;
+import org.waag.rdf.sesame.StatementProcessor;
 
 import com.tinkerpop.pipes.AbstractPipe;
 

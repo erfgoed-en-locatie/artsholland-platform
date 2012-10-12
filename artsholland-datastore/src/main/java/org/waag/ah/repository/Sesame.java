@@ -7,22 +7,22 @@ import org.openrdf.sail.SailException;
 import org.openrdf.sail.nativerdf.NativeStore;
 import org.waag.ah.PlatformConfig;
 import org.waag.ah.PlatformConfigHelper;
-import org.waag.ah.RepositoryFactory;
+import org.waag.rdf.sesame.SailFactory;
 
-public class Sesame implements RepositoryFactory {
-	private Sail repository;
+public class Sesame implements SailFactory {
+	private Sail sail;
 	
 	@Override
 	public Sail getSail() throws SailException {
-		if (repository == null) {
+		if (sail == null) {
 			try {	
 				PlatformConfig config = PlatformConfigHelper.getConfig();
-				File dataDir = new File(config.getString("sesame.datastore"));
-				repository = new NativeStore(dataDir, "spoc,posc,cosp");				
+				File dataDir = new File(config.getString("repository.sesame.datastore"));
+				sail = new NativeStore(dataDir, "spoc,posc,cosp");				
 			} catch (Exception e) {
 				throw new SailException(e);
 			}
 		}
-		return repository;
+		return sail;
 	}
 }

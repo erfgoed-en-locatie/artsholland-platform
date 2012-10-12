@@ -20,8 +20,8 @@
     <!-- UITBASE IMPORT -->
     
 		<job>
-      <name>ImportUitbase</name>
-      <group>ImporterService</group>
+      <name>Uitbase</name>
+      <group>Importer</group>
       <description>Import Uitbase data</description>
       <job-class>org.waag.ah.quartz.UrlImportJob</job-class>
       <durability>true</durability>
@@ -40,10 +40,10 @@
 
     <trigger>
       <cron>
-        <name>UitbaseIncrementalImportTrigger</name>
-        <group>IncrementalImport</group>
-        <job-name>ImportUitbase</job-name>
-        <job-group>ImporterService</job-group>
+        <name>UitbaseIncremental</name>
+        <group>Importer</group>
+        <job-name>Uitbase</job-name>
+        <job-group>Importer</job-group>
         <job-data-map>
           <entry>
             <key>strategy</key>
@@ -58,10 +58,10 @@
 <!-- 
     <trigger>
       <cron>
-        <name>UitbaseFullImportTrigger</name>
-        <group>FullImport</group>
-        <job-name>ImportUitbase</job-name>
-        <job-group>ImporterService</job-group>
+        <name>UitbaseFull</name>
+        <group>Importer</group>
+        <job-name>Uitbase</job-name>
+        <job-group>Importer</job-group>
         <job-data-map>
           <entry>
             <key>strategy</key>
@@ -76,8 +76,8 @@
 
     <!-- NBTC IMPORT -->
     <job>
-      <name>ImportNBTC</name>
-      <group>ImporterService</group>
+      <name>NBTC</name>
+      <group>Importer</group>
       <description>Import POI data from NBTC</description>
       <job-class>org.waag.ah.quartz.UrlImportJob</job-class>
       <durability>true</durability>
@@ -100,20 +100,48 @@
 
     <trigger>
       <cron>
-        <name>NBTCImportTrigger</name>
-        <group>SingleImport</group>
-        <job-name>ImportNBTC</job-name>
-        <job-group>ImporterService</job-group>
+        <name>NBTC</name>
+        <group>Importer</group>
+        <job-name>NBTC</job-name>
+        <job-group>Importer</job-group>
         <cron-expression>0 0/1 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
-        <!--         
+<!--                 
         <start-time-seconds-in-future>30</start-time-seconds-in-future>
         <repeat-count>1</repeat-count>
         <repeat-interval>1</repeat-interval> 
-        -->
+ -->       
       </cron>
     </trigger>
 
+    <!-- DOSA IMPORTER -->
+    <job>
+      <name>DOSA</name>
+      <group>Importer</group>
+      <description>Import data from DOSA</description>
+      <job-class>org.waag.ah.quartz.UrlImportJob</job-class>
+      <durability>true</durability>
+      <recover>false</recover>
+      <job-data-map>
+        <entry>
+          <key>urlGeneratorClass</key>
+          <value>org.waag.ah.importer.dosa.DOSAUrlGenerator</value>
+        </entry>        
+      </job-data-map>            
+    </job>
+<!--     
+    <trigger>
+      <cron>
+        <name>DOSAImportTrigger</name>
+        <group>Importer</group>
+        <job-name>DOSA</job-name>
+        <job-group>Importer</job-group>        
+        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <time-zone>Europe/Amsterdam</time-zone>
+      </cron>
+    </trigger> 
+ -->
+ 
     <!-- GEONAMES ENRICHER -->
     <job>
       <name>GeonamesEnricher</name>
@@ -242,35 +270,6 @@
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
- -->
- 
-    <!-- DOSA IMPORTER -->
-    <job>
-      <name>DOSA</name>
-      <group>ImporterService</group>
-      <description>Import data from DOSA</description>
-      <job-class>org.waag.ah.quartz.UrlImportJob</job-class>
-      <durability>true</durability>
-      <recover>false</recover>
-      <job-data-map>
-        <entry>
-          <key>urlGeneratorClass</key>
-          <value>org.waag.ah.importer.dosa.DOSAUrlGenerator</value>
-        </entry>        
-      </job-data-map>            
-    </job>
-<!--     
-    <trigger>
-      <cron>
-        <name>DOSAImportTrigger</name>
-        <group>Import</group>
-        <job-name>DOSA</job-name>
-        <job-group>WebResourceImport</job-group>        
-        <cron-expression>0 0/1 * * * ?</cron-expression>
-        <time-zone>Europe/Amsterdam</time-zone>
-      </cron>
-    </trigger> 
-    
  -->
   </schedule>
 

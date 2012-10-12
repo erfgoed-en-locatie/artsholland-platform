@@ -8,8 +8,8 @@ import java.util.Map.Entry;
 import org.openrdf.model.Graph;
 import org.openrdf.model.Statement;
 import org.openrdf.model.URI;
-import org.waag.ah.rdf.EnricherConfig;
-import org.waag.ah.rdf.NamedGraph;
+import org.waag.rdf.sesame.EnricherConfig;
+import org.waag.rdf.sesame.NamedGraph;
 
 import com.tinkerpop.pipes.Pipe;
 import com.tinkerpop.pipes.branch.CopySplitPipe;

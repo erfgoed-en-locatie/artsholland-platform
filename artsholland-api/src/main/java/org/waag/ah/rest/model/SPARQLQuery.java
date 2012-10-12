@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.waag.ah.rdf.AHRDFNamespaces;
 import org.waag.ah.rest.RestParameters;
+import org.waag.rdf.AHRDFNamespaces;
 
 public class SPARQLQuery {
 	

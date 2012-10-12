@@ -1,7 +1,7 @@
 package org.waag.ah.tinkerpop;
 
 import org.openrdf.model.URI;
-import org.waag.ah.rdf.EnricherConfig;
+import org.waag.rdf.sesame.EnricherConfig;
 
 public class EnrichUtils {
 	
