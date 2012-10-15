@@ -58,6 +58,7 @@ import org.waag.ah.saxon.ParseStringFunction;
 import org.waag.ah.saxon.PostalCodeFunction;
 import org.waag.ah.saxon.StreetNumberFunction;
 import org.waag.ah.saxon.UpperCaseFirstFunction;
+import org.waag.ah.saxon.UrlConcatFunction;
 import org.waag.ah.saxon.WKTGeometryFunction;
 import org.waag.ah.saxon.WebContentTypeFunction;
 import org.xml.sax.Attributes;
@@ -143,6 +144,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			config.registerExtensionFunction(new WKTGeometryFunction());
 			config.registerExtensionFunction(new WebContentTypeFunction());
 			config.registerExtensionFunction(new ParseCidnFunction());
+			config.registerExtensionFunction(new UrlConcatFunction());
 			
 			Processor processor = new Processor(config);
 			XQueryCompiler compiler = processor.newXQueryCompiler();	
