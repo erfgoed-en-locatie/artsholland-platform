@@ -8,6 +8,8 @@ import java.util.List;
 import org.apache.commons.configuration.ConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.waag.ah.PlatformConfig;
+import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.importer.ImportConfig;
 import org.waag.ah.importer.ImportStrategy;
 import org.waag.ah.importer.UrlGenerator;
@@ -15,17 +17,18 @@ import org.waag.ah.importer.UrlGenerator;
 public class TAMURLGenerator implements UrlGenerator {
 	final static Logger logger = LoggerFactory.getLogger(TAMURLGenerator.class);
 	
-	//private final PlatformConfig config;
+	private final PlatformConfig config;
+	private final String username;
+	private final String password;	
 	private final String baseUrl;
 		
 	public TAMURLGenerator() throws ConfigurationException {
-		//this.config = PlatformConfigHelper.getConfig();
-
-		// http://acc.artsholland.com/api?timestamp=1349605041
-		// user: artsholland
-		// password: choose only one master nature
-			
-		this.baseUrl = "http://artsholland:choose only one master nature@acc.artsholland.com/api";
+		this.config = PlatformConfigHelper.getConfig();
+		this.username = config.getString("importer.source.tam.username");
+		this.password = config.getString("importer.source.tam.password");	
+		
+		// http://username:password@acc.artsholland.com/api?timestamp=1349605041			
+		this.baseUrl = "http://username:password@acc.artsholland.com/api";
 	}	
 
 	@Override
@@ -37,7 +40,8 @@ public class TAMURLGenerator implements UrlGenerator {
 			timestamp = config.getFromDateTime().getMillis() / 1000;
 		} 
 		
-		String url = baseUrl
+		// TODO: Niet zo mooi, maar soit.
+		String url = baseUrl.replace("password", password).replace("username", username)
 				+ "?timestamp="
 				+ timestamp;
 				
