@@ -32,21 +32,21 @@ public class TAMURLGenerator implements UrlGenerator {
 	public List<URL> getUrls(ImportConfig config) {
 		List<URL> urls = new ArrayList<URL>();
 									
-		if (config.getStrategy().equals(ImportStrategy.INCREMENTAL) && config.getFromDateTime() != null) {			
-			long timestamp = config.getFromDateTime().getMillis();
+		long timestamp = 0;
+		if (config.getStrategy().equals(ImportStrategy.INCREMENTAL) && config.getFromDateTime() != null) {
+			timestamp = config.getFromDateTime().getMillis() / 1000;
+		} 
+		
+		String url = baseUrl
+				+ "?timestamp="
+				+ timestamp;
+				
+		try {
+			urls.add(new URL(url));
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e.getMessage(), e);
+		}			
 			
-			String url = baseUrl
-					+ "?timestamp="
-					+ timestamp;
-			
-			//url = "http://localhost/ah/tam/export.xml";
-			
-			try {
-				urls.add(new URL(url));
-			} catch (MalformedURLException e) {
-				throw new RuntimeException(e.getMessage(), e);
-			}			
-		}		
 		return urls;
 	}
 }
