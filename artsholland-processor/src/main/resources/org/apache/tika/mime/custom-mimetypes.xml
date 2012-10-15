@@ -47,6 +47,6 @@
     <sub-class-of type="application/xml" />
     <acronym>TAMXML</acronym>
     <_comment>TAM XML Export</_comment>
-    <glob pattern="*tam/export.xml" />    
+    <glob pattern="*acc.artsholland.com/api*" />    
   </mime-type>
 </mime-info>

@@ -21,7 +21,11 @@ public class TAMURLGenerator implements UrlGenerator {
 	public TAMURLGenerator() throws ConfigurationException {
 		//this.config = PlatformConfigHelper.getConfig();
 
-		this.baseUrl = "http://acc.artsholland.com/api";
+		//this.baseUrl = "http://acc.artsholland.com/api";
+		//this.baseUrl = "http://artsholland:choose%20only%20one%20master%20nature@acc.artsholland.com/api";
+		this.baseUrl = "http://artsholland:choose only one master nature@acc.artsholland.com/api";
+		//this.baseUrl = "http://acc.artsholland.com/api";
+
 		// http://acc.artsholland.com/api?timestamp=1349605041\
 		// user: artsholland
 		// password: choose only one master nature
@@ -37,11 +41,13 @@ public class TAMURLGenerator implements UrlGenerator {
 		if (config.getStrategy().equals(ImportStrategy.INCREMENTAL) && config.getFromDateTime() != null) {			
 			long timestamp = config.getFromDateTime().getMillis();
 			
+			timestamp = 1350094402;
+			
 			String url = baseUrl
 					+ "?timestamp="
 					+ timestamp;
 			
-			url = "http://localhost/ah/tam/export.xml";
+			//url = "http://localhost/ah/tam/export.xml";
 			
 			try {
 				urls.add(new URL(url));
