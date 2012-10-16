@@ -43,7 +43,10 @@ return
 			let $language-tag := { $node/language }
 			
 			let $title := { $node/title }
-			let $body := { $node/body }			
+			
+			# TODO: fix to remove inline images that cause errors
+			let $body := { if (contains($node/body, "image/jpeg;base64")) then () else $node/body }
+			#let $body := { $node/body }			
 			
 			let $short-description := { $node/field_short_descr/n0/value }
 			let $long-description := { $node/field_long_descr/n0/value }
