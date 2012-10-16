@@ -65,27 +65,30 @@ public class RepositoryConnectionService implements RepositoryConnectionFactory,
 					logger.info("Using simple inferencer for third-party Sail implementation...");
 					sail = new SimpleTypeInferencingSail(sail);
 				}
+				
+				// Add PostGIS indexer & fulltext search to SAIL stack.
+				// TODO: Update PostgreSQL table latout. 
+//				sail = new IndexingSail(sail,
+//						PostgisIndexerSettingsGenerator.generateSettings());
+
+				// Optimize performance by allowing concurrent read/writes.
+				// Do we want a (uSeekm) Spring dependency here? Additionally, the
+				// PipelineSailConnection stores all statements in memory before
+				// committing.
+//				SmartSailWrapper smartsail = new SmartSailWrapper(sail);
+//				smartsail.setConnectionFactory(connectionFactory)
+//				sail = new PipelineSail(sail);
+				
 				repository = new SailRepository(sail);
 			}
-			
-			// Add PostGIS indexer & fulltext search to SAIL stack.
-			// TODO: Update PostgreSQL table latout. 
-//			sail = new IndexingSail(sail,
-//					PostgisIndexerSettingsGenerator.generateSettings());
 
-			// Optimize performance by allowing concurrent read/writes.
-			// Do we want a (uSeekm) Spring dependency here? Additionally, the
-			// PipelineSailConnection stores all statements in memory before
-			// committing.
-//			sail = new SmartSailWrapper(sail);
-//			sail = new PipelineSail(sail);
 
 			// Create and initialize repository instance.
 			
 //			if (!repository.isInitialized()) {
 			repository.initialize();
 			connection = repository.getConnection();
-			connection.setAutoCommit(false);
+//			connection.setAutoCommit(false);
 //			}
 		} catch (Exception e) {
 //			close();
@@ -116,6 +119,7 @@ public class RepositoryConnectionService implements RepositoryConnectionFactory,
 	 */
 	public void close() throws IOException {
 		try {
+			connection.close();
 			repository.shutDown();
 		} catch (Exception e) {
 			throw new IOException(e);

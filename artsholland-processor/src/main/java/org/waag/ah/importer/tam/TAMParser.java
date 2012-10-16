@@ -89,8 +89,9 @@ public class TAMParser extends XMLParser {
 						getXPathMatcher("/node_export/descendant::node()"));
 			}
 		} catch (Exception e) {
-			logger.error(e.getMessage());
-			return null;
+//			logger.error(e.getMessage());
+//			return null;
+			throw new RuntimeException(e);
 		}
 		return handler;
 	}
