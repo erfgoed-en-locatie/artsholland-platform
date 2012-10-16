@@ -39,7 +39,7 @@
     <_comment>
       Nederlands Bureau voor Toerisme en Congressen POI XML
     </_comment>
-    <glob pattern="*/files/nbtc/ArtsHollandPois-*.xml" />
+    <glob pattern="*/nbtc/ArtsHollandPois-*.xml" />
   </mime-type>
   
 	<!-- TAM Export -->

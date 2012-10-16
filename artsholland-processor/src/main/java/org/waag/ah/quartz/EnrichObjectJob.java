@@ -84,7 +84,7 @@ public class EnrichObjectJob implements Job {
 				
 				conn.commit();
 			} catch (Exception e) {
-	//			e.printStackTrace();
+				e.printStackTrace();
 				conn.rollback();
 				throw new EnrichException(e.getMessage());
 			} finally {

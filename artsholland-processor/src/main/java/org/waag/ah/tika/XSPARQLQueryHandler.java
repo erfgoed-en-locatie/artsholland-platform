@@ -153,12 +153,13 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			if (includes != null) {
 				DocumentBuilder docBuilder = processor.newDocumentBuilder();
 				for (Entry<String, URI> item : includes.entrySet()) {
+//					logger.info(item.getValue().toString());
 					XdmNode document = docBuilder.build(new File(item.getValue()));
 					evaluator.setExternalVariable(new QName(item.getKey()), document);				
 				}
 			}
 		} catch (Exception e) {
-			throw new ParserException(e.getMessage());
+			throw new ParserException(e);
 		}		
 	}
 

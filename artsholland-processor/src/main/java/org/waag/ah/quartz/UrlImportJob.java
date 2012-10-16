@@ -104,14 +104,15 @@ public class UrlImportJob implements Job {
 				}
 				
 				while (pipeline.hasNext()) {
-//					Statement statement = pipeline.next();
+					Statement statement = pipeline.next();
 					// TODO: Check if quering for the statement is less
 					//       expensive. Maybe repositories should indicate
 					//       whether they support delete on insert/update, or
 					//       implement a custom RepositoryConnection to handle
 					//       these cases.
 //					conn.remove(statement, contextUri);
-					conn.add(pipeline.next(), contextUri);
+//					logger.info(statement.toString());
+					conn.add(statement, contextUri);
 				}
 				
 				logger.info("Import finished, committing statements...");
