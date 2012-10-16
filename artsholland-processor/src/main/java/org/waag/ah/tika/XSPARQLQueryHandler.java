@@ -225,16 +225,10 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				mdata.set(Metadata.CONTENT_TYPE, "text/turtle");
 				mdata.set(Metadata.RESOURCE_NAME_KEY, metadata.get(Metadata.RESOURCE_NAME_KEY));
 				
-				String vis = combined.toString();
-				if (vis.contains("image/jpeg;base64")) {
-					logger.debug("OOOOOOOOOOOOOoooooooooooooo een plaaaatje!!!!!");					
-				} else {
-				
 				turtleParser.parse(
 						new ByteArrayInputStream(combined.toString().getBytes()), 
 						new MatchingContentHandler(
 						this.handler, matcher), mdata, context);
-				}
 
 			} catch (NoSuchElementException e) {
 				logger.debug("Not enough data to proceed: "+xmlString);
