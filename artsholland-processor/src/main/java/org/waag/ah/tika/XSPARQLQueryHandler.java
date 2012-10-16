@@ -48,6 +48,7 @@ import org.waag.ah.exception.ParserException;
 import org.waag.ah.saxon.AddressUriFunction;
 import org.waag.ah.saxon.ClassUriFunction;
 import org.waag.ah.saxon.ObjectUriFunction;
+import org.waag.ah.saxon.ParseBooleanFunction;
 import org.waag.ah.saxon.ParseCidnFunction;
 import org.waag.ah.saxon.ParseDateTimeFunction;
 import org.waag.ah.saxon.ParseHttpUrlFunction;
@@ -135,6 +136,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			config.registerExtensionFunction(new AddressUriFunction());
 			config.registerExtensionFunction(new ParseLocaleFunction());
 			config.registerExtensionFunction(new ParseStringFunction());			
+			config.registerExtensionFunction(new ParseBooleanFunction());
 			config.registerExtensionFunction(new ParseHttpUrlFunction());
 			config.registerExtensionFunction(new ParseNonZeroNumber());
 			config.registerExtensionFunction(new UpperCaseFirstFunction());
@@ -222,10 +224,16 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				mdata.set(Metadata.CONTENT_TYPE, "text/turtle");
 				mdata.set(Metadata.RESOURCE_NAME_KEY, metadata.get(Metadata.RESOURCE_NAME_KEY));
 				
+				String vis = combined.toString();
+				if (vis.contains("image/jpeg;base64")) {
+					logger.debug("OOOOOOOOOOOOOoooooooooooooo een plaaaatje!!!!!");					
+				} else {
+				
 				turtleParser.parse(
 						new ByteArrayInputStream(combined.toString().getBytes()), 
 						new MatchingContentHandler(
 						this.handler, matcher), mdata, context);
+				}
 
 			} catch (NoSuchElementException e) {
 				logger.debug("Not enough data to proceed: "+xmlString);
