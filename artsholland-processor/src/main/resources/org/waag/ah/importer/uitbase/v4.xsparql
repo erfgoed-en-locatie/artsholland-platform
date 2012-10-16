@@ -329,6 +329,8 @@ return
 			
 			let $language := {waag:parse-locale($production/language)}
 			let $subtitles :=	{waag:parse-locale($production/subtitles)}
+			
+			let $lnp := { waag:parse-boolean($production/lnp) }
 				
 			construct {
 			
@@ -345,6 +347,8 @@ return
 				
 					dc:language {$language}^^xsd:string ;						
 					ah:subtitleLanguage {$subtitles}^^xsd:string ;
+					
+					ah:languageNoProblem { $lnp }^^xsd:boolean ;
 					
 					ah:productionType $typeClass .
 				
