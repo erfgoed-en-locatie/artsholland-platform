@@ -78,6 +78,8 @@ public class TikaParserPipe extends AbstractStreamingPipe<URL> {
 					new InputStreamReader(in).getEncoding());
 	
 			parser.parse(in, handler, metadata, new ParseContext());
+		} catch(Exception e) {
+			throw new TikaException(e.getMessage(), e);
 		} finally {
 			in.close();
 			out.close();
@@ -106,7 +108,7 @@ public class TikaParserPipe extends AbstractStreamingPipe<URL> {
 			try {
 				outputStream.writeUTF(writer.toString());
 			} catch (IOException e) {
-				throw new RuntimeException(e);
+				throw new SAXException(e);
 			} finally {
 				writer.reset();
 			}

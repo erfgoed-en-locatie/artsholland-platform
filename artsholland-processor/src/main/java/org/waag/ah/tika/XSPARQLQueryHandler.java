@@ -154,7 +154,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				DocumentBuilder docBuilder = processor.newDocumentBuilder();
 				for (Entry<String, URI> item : includes.entrySet()) {
 //					logger.info(item.getValue().toString());
-					XdmNode document = docBuilder.build(new File(item.getValue()));
+					XdmNode document = docBuilder.build(new File(item.getValue().getPath()));
 					evaluator.setExternalVariable(new QName(item.getKey()), document);				
 				}
 			}
@@ -231,9 +231,9 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			} catch (NoSuchElementException e) {
 				logger.debug("Not enough data to proceed: "+xmlString);
 			} catch (Exception e) {
-				logger.error(e.getMessage());
-				logger.info(xmlString);
-				logger.info(turtleString);
+//				logger.error(e.getMessage());
+//				logger.info(xmlString);
+//				logger.info(turtleString);
 				throw new SAXException(e);
 			} finally {
 				xmlCollector = null;

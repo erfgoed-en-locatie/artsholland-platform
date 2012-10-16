@@ -123,10 +123,10 @@ public class UrlImportJob implements Job {
 	
 			} catch (Exception e) {
 //				logger.error("Exception while importing "+contextUri+" ("+e.getMessage()+")");
-				context.setResult("Exception while importing "+contextUri+" ("+e.getMessage()+"), rolling back transaction...");
+//				context.setResult("Exception while importing "+contextUri+" ("+e.getMessage()+"), rolling back transaction...");
 				conn.rollback();
 				result.put("success", false);
-				e.printStackTrace();
+//				e.printStackTrace();
 				throw e; //new ImportException(e.getCause().getMessage());
 			} finally {
 				coll.insert(result);

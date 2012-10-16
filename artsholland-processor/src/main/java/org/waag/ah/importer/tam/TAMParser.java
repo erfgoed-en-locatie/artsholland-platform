@@ -20,15 +20,12 @@ import org.apache.tika.sax.TaggedContentHandler;
 import org.apache.tika.sax.xpath.Matcher;
 import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.waag.ah.importer.dosa.DOSAParser;
 import org.waag.ah.tika.XSPARQLQueryHandler;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 public class TAMParser extends XMLParser {
-	private Logger logger = LoggerFactory.getLogger(TAMParser.class);
+//	private Logger logger = LoggerFactory.getLogger(TAMParser.class);
 	private static final long serialVersionUID = 116987633414164925L;
 
 	@SuppressWarnings("serial")
@@ -53,22 +50,22 @@ public class TAMParser extends XMLParser {
 		}
 
 		TaggedContentHandler tagged = new TaggedContentHandler(handler);
-		ContentHandler wrappedHandler = getContentHandler(tagged, metadata, context);
-		if (wrappedHandler == null) {
-			throw new TikaException("Parsing aborted, unable to init Tika handler");
-		}
 
 		try {
+			ContentHandler wrappedHandler = getContentHandler(tagged, metadata, context);
+			if (wrappedHandler == null) {
+				throw new TikaException("Parsing aborted, unable to init Tika handler");
+			}
 			context.getSAXParser().parse(new CloseShieldInputStream(stream),
 					new OfflineContentHandler(wrappedHandler));
 			// logger.info("OUTPUT: "+wrappedHandler.toString());
-		} catch (Exception e) {
-			// e.printStackTrace();
-			tagged.throwIfCauseOf(e);
-			throw new TikaException("XML parse error", e);
+		} catch (SAXException e) {
+            tagged.throwIfCauseOf(e);
+            throw new TikaException("XML parse error", e);
 		}
 	}
 
+	@Override
 	protected ContentHandler getContentHandler(ContentHandler handler,
 			Metadata metadata, ParseContext context) {
 		try {
@@ -104,7 +101,7 @@ public class TAMParser extends XMLParser {
 			throws IOException {
 		URI uri = null;
 		try {
-			uri = new URI(clazz.getResource(fileName).toString());
+			uri = new URI(clazz.getResource(fileName).getPath());
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
