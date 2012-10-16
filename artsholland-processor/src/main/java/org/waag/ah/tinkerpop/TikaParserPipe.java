@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -22,11 +24,49 @@ public class TikaParserPipe extends AbstractStreamingPipe<URL> {
 //	private static final Logger logger = LoggerFactory.getLogger(TikaParserPipe.class);
 
 	private ByteArrayOutputStream writer = new ByteArrayOutputStream();
+
+	class PasswordAuthenticator extends Authenticator {
+	  
+		private String username;
+		private String password;
+		
+	  PasswordAuthenticator(String username, String password) {
+	  	super();
+	  	this.username = username;
+	  	this.password = password;
+	  }
+		
+		protected PasswordAuthentication getPasswordAuthentication() {	    
+	    return new PasswordAuthentication(username, password.toCharArray());
+	  }
+	}	
 	
 	@Override
 	protected void process(URL url, ObjectOutputStream out)
 			throws IOException, SAXException, TikaException {
+		
+		boolean authenticated = false;
+		String username = "";
+		String password = "";
+		
+		String userInfo = url.getUserInfo();
+		if (userInfo != null) {
+			String[] usernamePassword = userInfo.split(":");
+			if (usernamePassword.length == 2) {
+				username = usernamePassword[0];
+				password = usernamePassword[1];
+				authenticated = true;
+			}
+		}		
+		
+		if (authenticated) {
+			Authenticator.setDefault(new PasswordAuthenticator(username, password));
+		} else {
+			Authenticator.setDefault(null);
+		}
+		
 		URLConnection conn = url.openConnection();
+				
 		InputStream in = conn.getInputStream();	
 		try {
 			AutoDetectParser parser = new AutoDetectParser();

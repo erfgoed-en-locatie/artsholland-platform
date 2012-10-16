@@ -61,22 +61,32 @@ public class ParseHttpUrlFunction extends ExtensionFunctionDefinition {
 		return new ExtensionFunctionCall() {
 			public SequenceIterator call(SequenceIterator[] arguments,
 					XPathContext context) throws XPathException {
-				String text = ((StringValue) arguments[0].next()).getStringValue();
-				if (text.length() == 0) {
-					return Value.asIterator(EmptySequence.getInstance());
-				}
-				// Filter out e-mail adresses.
-				if (emailValidator.isValid(text)) {
-					return Value.asIterator(StringValue.makeStringValue("mailto:"+text));
-				}
-				// Try to fix URL.
-				if (!text.startsWith("http://") && !text.startsWith("https://")) {
-					text = "http://" + text;
-				}
-				text = text.replace(" ", "%20");
-				// Validate URL.
-				if (!urlValidator.isValid(text)) {
-					logger.warn("Invalid URL: "+text);
+				
+				String text = "";
+				try {
+					text = ((StringValue) arguments[0].next()).getStringValue();
+				
+					text = text.trim();
+
+					if (text.length() == 0) {
+						return Value.asIterator(EmptySequence.getInstance());
+					}
+					// Filter out e-mail addresses.
+					if (emailValidator.isValid(text)) {
+						return Value.asIterator(StringValue.makeStringValue("mailto:" + text));
+					}
+					// Try to fix URL.
+					if (!text.startsWith("http://") && !text.startsWith("https://")) {
+						text = "http://" + text;
+					}
+					text = text.replace(" ", "%20");
+					// Validate URL.
+					if (!urlValidator.isValid(text)) {
+						logger.warn("Invalid URL: " + text);
+						return Value.asIterator(EmptySequence.getInstance());
+					}			
+
+				} catch (Exception e) {
 					return Value.asIterator(EmptySequence.getInstance());
 				}
 				return Value.asIterator(StringValue.makeStringValue(text));

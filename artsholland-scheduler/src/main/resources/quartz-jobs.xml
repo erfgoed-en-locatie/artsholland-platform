@@ -54,6 +54,44 @@
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
+    
+    <!-- TAM IMPORT -->
+    
+		<job>
+      <name>ImportTAM</name>
+      <group>ImporterService</group>
+      <description>Import TAM data</description>
+      <job-class>org.waag.ah.quartz.UrlImportJob</job-class>
+      <durability>true</durability>
+      <recover>false</recover>
+      <job-data-map>
+				<entry>
+          <key>urlGeneratorClass</key>
+          <value>org.waag.ah.importer.tam.TAMURLGenerator</value>
+        </entry>
+        <entry>
+          <key>graphUri</key>
+          <value>http://uitburo.nl</value>
+        </entry>
+      </job-data-map>
+    </job>
+ 
+    <trigger>
+      <cron>
+        <name>TAMIncrementalImportTrigger</name>
+        <group>IncrementalImport</group>
+        <job-name>ImportTAM</job-name>
+        <job-group>ImporterService</job-group>
+        <job-data-map>
+          <entry>
+            <key>strategy</key>
+            <value>incremental</value>
+          </entry>
+        </job-data-map>
+        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <time-zone>Europe/Amsterdam</time-zone>
+      </cron>
+    </trigger>
 
 <!-- 
     <trigger>
@@ -71,8 +109,9 @@
         <cron-expression>0 0/1 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
-    </trigger>
- -->
+    </trigger> 
+-->
+ 
 
     <!-- NBTC IMPORT -->
     <job>
@@ -105,12 +144,7 @@
         <job-name>NBTC</job-name>
         <job-group>Importer</job-group>
         <cron-expression>0 0/1 * * * ?</cron-expression>
-        <time-zone>Europe/Amsterdam</time-zone>
-<!--                 
-        <start-time-seconds-in-future>30</start-time-seconds-in-future>
-        <repeat-count>1</repeat-count>
-        <repeat-interval>1</repeat-interval> 
- -->       
+        <time-zone>Europe/Amsterdam</time-zone>      
       </cron>
     </trigger>
 
@@ -141,7 +175,7 @@
       </cron>
     </trigger> 
  -->
- 
+
     <!-- GEONAMES ENRICHER -->
     <job>
       <name>GeonamesEnricher</name>
@@ -172,6 +206,7 @@
         </entry>
       </job-data-map>
     </job>
+
 <!-- 
     <trigger>
       <cron>
@@ -225,7 +260,7 @@
     </trigger>
  -->
 
-	<!-- Social Media ENRICHER -->
+    <!-- Social Media ENRICHER -->
     <job>
       <name>SocialMediaEnricher</name>
       <group>EnricherService</group>
@@ -269,8 +304,8 @@
         <cron-expression>0 0/5 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
-    </trigger>
- -->
+    </trigger> 
+-->
   </schedule>
 
 </job-scheduling-data>

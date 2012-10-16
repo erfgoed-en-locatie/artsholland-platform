@@ -1,4 +1,5 @@
 org.waag.ah.tika.TurtleParser
 org.waag.ah.importer.dosa.DOSAParser
 org.waag.ah.importer.uitbase.UitbaseParser
+org.waag.ah.importer.tam.TAMParser
 org.waag.ah.importer.nbtc.NBTCParser

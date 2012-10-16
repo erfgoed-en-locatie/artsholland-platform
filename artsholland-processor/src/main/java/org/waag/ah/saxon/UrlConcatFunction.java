@@ -19,10 +19,10 @@ import org.waag.ah.PlatformConfig;
 import org.waag.ah.PlatformConfigHelper;
 
 @SuppressWarnings("serial")
-public class ClassUriFunction extends ExtensionFunctionDefinition {
+public class UrlConcatFunction extends ExtensionFunctionDefinition {
 	private final PlatformConfig config;
 
-	public ClassUriFunction() throws ConfigurationException {
+	public UrlConcatFunction() throws ConfigurationException {
 		config = PlatformConfigHelper.getConfig();
 	}
 
@@ -39,7 +39,7 @@ public class ClassUriFunction extends ExtensionFunctionDefinition {
 	@Override
 	public StructuredQName getFunctionQName() {
 		return new StructuredQName("waag", "http://waag.org/saxon-extension",
-				"class-uri");
+				"url-concat");
 	}
 
 	@Override
@@ -52,30 +52,17 @@ public class ClassUriFunction extends ExtensionFunctionDefinition {
 		return new ExtensionFunctionCall() {
 			public SequenceIterator call(SequenceIterator[] arguments,
 					XPathContext context) throws XPathException {
-				String uri = config.getString("platform.classUri");
+				String url = "";
 				for (SequenceIterator arg : arguments) {
 					try {
-						String s = ((StringValue) arg.next()).getStringValue();
-						
-						s = s.replaceAll("\\/+", "/");
-						
-						// Some class names have & characters in them: replace by 'And' for use in URLs
-						s = s.replace("&", "And");
-						
-						String[] words = s.split("\\s+");
-						for (String word : words) {
-							uri += upperCaseFirstOnly(word);
-						}
-						
-						//uri += s.replaceAll("\\/+", "/")						
-						//.replaceAll(" ", "");
-						
+						String s = ((StringValue) arg.next()).getStringValue();						
+						url += s;						
 					} catch (NullPointerException e) {
 						return Value.asIterator(EmptySequence.getInstance());
 					}					
 				}
 				try {
-					return Value.asIterator(StringValue.makeStringValue(new URL(uri)
+					return Value.asIterator(StringValue.makeStringValue(new URL(url)
 							.toExternalForm()));
 				} catch (MalformedURLException e) {
 					throw new XPathException(e.getMessage(), e);
