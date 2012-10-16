@@ -26,8 +26,10 @@ public class PostgisIndexerSettingsGenerator {
 		Map<String, Boolean> result = new LinkedHashMap<String, Boolean>();
 		
 		result.put("ah:geometry", false);
+		result.put("rdfs:label", true);
 		result.put("dc:description", true);
 		result.put("dc:title", true);
+		result.put("ah:webContentBody", true);
 		
 		return Collections.unmodifiableMap(result);	
 	}
