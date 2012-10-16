@@ -24,7 +24,7 @@ import org.waag.ah.importer.ImportStrategy;
 import org.waag.ah.importer.UrlGenerator;
 import org.waag.ah.service.MongoConnectionService;
 import org.waag.ah.tinkerpop.ImporterPipeline;
-import org.waag.rdf.sesame.SailConnectionFactory;
+import org.waag.rdf.sesame.RepositoryConnectionFactory;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
@@ -35,7 +35,7 @@ import com.tinkerpop.pipes.util.Pipeline;
 public class UrlImportJob implements Job {
 	final static Logger logger = LoggerFactory.getLogger(UrlImportJob.class);
 
-	private SailConnectionFactory cf;
+	private RepositoryConnectionFactory cf;
 	private DBCollection coll;
 
 	private UrlGenerator urlGenerator;
@@ -48,8 +48,8 @@ public class UrlImportJob implements Job {
 				.lookup("java:global/artsholland-platform/datastore/MongoConnectionServiceImpl");
 		this.coll = mongo.getCollection(UrlImportJob.class.getName());
 		coll.setObjectClass(ImportResult.class);
-		cf = (SailConnectionFactory) ic
-				.lookup("java:global/artsholland-platform/core/SailConnectionService");
+		cf = (RepositoryConnectionFactory) ic
+				.lookup("java:global/artsholland-platform/core/RepositoryConnectionService");
 	}
 
 	@Override
@@ -114,13 +114,15 @@ public class UrlImportJob implements Job {
 					conn.add(pipeline.next(), contextUri);
 				}
 				
+				logger.info("Import finished, committing statements...");
 				conn.commit();
 				
 				context.setResult("Added "+(conn.size(contextUri)-oldsize)+" statements");
 				result.put("success", true);
 	
 			} catch (Exception e) {
-				logger.error("Exception while importing "+contextUri+" ("+e.getMessage()+")");
+//				logger.error("Exception while importing "+contextUri+" ("+e.getMessage()+")");
+				context.setResult("Exception while importing "+contextUri+" ("+e.getMessage()+"), rolling back transaction...");
 				conn.rollback();
 				result.put("success", false);
 				e.printStackTrace();
@@ -128,7 +130,7 @@ public class UrlImportJob implements Job {
 			} finally {
 				coll.insert(result);
 				logger.info("Closing connection: "+conn);
-				conn.close();
+//				conn.close();
 			}
 		} catch (Exception e) {
 			throw new JobExecutionException(e);

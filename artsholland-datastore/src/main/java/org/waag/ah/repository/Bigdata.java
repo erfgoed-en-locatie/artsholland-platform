@@ -57,7 +57,7 @@ public class Bigdata implements SailFactory {
 	 */
 	private Configuration loadProperties() throws ConfigurationException {
 		properties = new PropertiesConfiguration("bigdata.properties");
-		properties.setProperty(Options.FILE, config.getProperty("bigdata.journal"));
+		properties.setProperty(Options.FILE, config.getProperty("repository.bigdata.datastore"));
 		return properties;
 	}
 }

@@ -11,8 +11,8 @@ import junit.framework.Assert;
 
 import org.openrdf.model.Statement;
 import org.openrdf.query.GraphQueryResult;
+import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
-import org.openrdf.repository.sail.SailRepositoryConnection;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -25,7 +25,7 @@ import org.waag.ah.tinkerpop.EnricherPipeline;
 import org.waag.rdf.sesame.EnricherConfig;
 import org.waag.rdf.sesame.GraphEnricher;
 import org.waag.rdf.sesame.QueryService;
-import org.waag.rdf.sesame.SailConnectionFactory;
+import org.waag.rdf.sesame.RepositoryConnectionFactory;
 
 import com.tinkerpop.pipes.util.Pipeline;
 
@@ -33,7 +33,7 @@ public class EnrichObjectJob implements Job {
 	final static Logger logger = LoggerFactory.getLogger(EnrichObjectJob.class);
 
 	private QueryService queryService;
-	private SailConnectionFactory cf;
+	private RepositoryConnectionFactory cf;
 
 	private Class<? extends GraphEnricher> enricher;
 	private String objectUri;
@@ -44,15 +44,15 @@ public class EnrichObjectJob implements Job {
 		InitialContext ic = new InitialContext();
 		queryService = (QueryService) ic
 				.lookup("java:global/artsholland-platform/core/QueryService");
-		cf = (SailConnectionFactory) ic
-				.lookup("java:global/artsholland-platform/core/SailConnectionService");
+		cf = (RepositoryConnectionFactory) ic
+				.lookup("java:global/artsholland-platform/core/RepositoryConnectionService");
 	}
 
 	@Override
 	public void execute(JobExecutionContext context)
 			throws JobExecutionException {
 		try {
-			SailRepositoryConnection conn = cf.getConnection(false);	
+			RepositoryConnection conn = cf.getConnection(false);	
 			Assert.assertNotNull("Enricher class cannot be null");
 //			Assert.assertNotNull("Object URI cannot be null");
 
@@ -88,7 +88,7 @@ public class EnrichObjectJob implements Job {
 				conn.rollback();
 				throw new EnrichException(e.getMessage());
 			} finally {
-				conn.close();
+//				conn.close();
 			}
 		} catch (Exception e) {
 			throw new JobExecutionException(e);

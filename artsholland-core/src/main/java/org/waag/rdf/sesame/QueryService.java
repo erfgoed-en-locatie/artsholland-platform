@@ -28,8 +28,8 @@ public class QueryService {
 //	private static final Logger logger = LoggerFactory
 //			.getLogger(QueryService.class);
 	
-	@EJB(mappedName="java:module/SailConnectionService")
-	private SailConnectionFactory cf;
+	@EJB(mappedName="java:module/RepositoryConnectionService")
+	private RepositoryConnectionFactory cf;
 
 	public GraphQueryResult executeQuery(String query) throws RepositoryException, MalformedQueryException, QueryEvaluationException {
 		RepositoryConnection conn = cf.getConnection();
@@ -37,7 +37,7 @@ public class QueryService {
 			GraphQuery graphQuery = conn.prepareGraphQuery(QueryLanguage.SPARQL, query);
 			return graphQuery.evaluate();
 		} finally {
-			conn.close();
+//			conn.close();
 		}
 	}
 	
