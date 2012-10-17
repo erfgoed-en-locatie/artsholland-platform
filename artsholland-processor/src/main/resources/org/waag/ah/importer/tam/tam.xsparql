@@ -38,15 +38,16 @@ return
 			let $class := { waag:class-uri("webContentType", waag:upper-case-first($ahType)) }
 		
 			let $nid := { $node/nid }
-			let $uri := { waag:object-uri("webcontent", $nid) }			
+			let $uri := { waag:object-uri("webcontent", "ah", $nid) }			
 			
 			let $language-tag := { $node/language }
 			
 			let $title := { $node/title }
 			
 			# TODO: fix to remove inline images that cause errors
-			let $body := { if (contains($node/body, "image/jpeg;base64")) then () else $node/body }
-			#let $body := { $node/body }			
+			#let $body := { if (contains($node/body, "image/jpeg;base64")) then () else $node/body }
+			
+			let $body := { $node/body }			
 			
 			let $short-description := { $node/field_short_descr/n0/value }
 			let $long-description := { $node/field_long_descr/n0/value }
@@ -92,17 +93,17 @@ return
 			let $genreClass := { waag:class-uri("webContentGenre", waag:upper-case-first($genreKey)) }
 			
 			let $pressImage := { waag:parse-string($node/field_press_image/filepath) }			
-			let $piuri := { if ($pressImage) then waag:object-uri("webcontent", $nid, "attachment", "image") else () }
+			let $piuri := { if ($pressImage) then waag:object-uri("webcontent", "ah", $nid, "attachment", "image") else () }
 			
 			let $blogImage := { waag:parse-string($node/field_blog_image/filepath) }
-			let $biuri := { if ($pressImage) then waag:object-uri("webcontent", $nid, "attachment", "image") else () }
+			let $biuri := { if ($pressImage) then waag:object-uri("webcontent", "ah", $nid, "attachment", "image") else () }
 			
 			let $blogVideo := { waag:parse-string($node/field_blog_video/filepath) }
-			let $bvuri := { if ($pressImage) then waag:object-uri("webcontent", $nid, "attachment", "video") else () }
+			let $bvuri := { if ($pressImage) then waag:object-uri("webcontent", "ah", $nid, "attachment", "video") else () }
 			
 						
 			let $kml := { waag:parse-string($node/field_route_kml/n0/filepath) }
-			let $kuri := { if ($kml) then waag:object-uri("webcontent", $nid, "attachment", "kml") else () }
+			let $kuri := { if ($kml) then waag:object-uri("webcontent", "ah", $nid, "attachment", "kml") else () }
 			
 			let $routeSubtitle := { $node/field_route_subtitle/n0/value }
 			let $editorialSubtitle := { $node/field_editorial_subtitle/n0/value }
@@ -212,7 +213,7 @@ return
 				{ for $link in $node/field_essential_links/*
 					let $n := { replace(name($link), 'n', '') }
 					let $url := { waag:parse-string($link/url) }
-					let $luri := { if ($url) then waag:object-uri("webcontent", $nid, "attachment", "link", $n) else () }					
+					let $luri := { if ($url) then waag:object-uri("webcontent", "ah", $nid, "attachment", "link", $n) else () }					
 					
 					construct {					
 						$uri ah:attachment $luri .
@@ -225,7 +226,7 @@ return
 				
 				{ for $link in $node/field_images/*
 					let $n := { replace(name($link), 'n', '') }
-					let $iuri := { if ($node/filepath) then waag:object-uri("webcontent", $nid, "attachment", "image", $n) else () }					
+					let $iuri := { if ($node/filepath) then waag:object-uri("webcontent", "ah", $nid, "attachment", "image", $n) else () }					
 					
 					construct {					
 						$uri ah:attachment $iuri .
@@ -238,7 +239,7 @@ return
 				
 				{ for $step in $node/field_route_location/*
 					let $n := { replace(name($step), 'n', '') }
-					let $ruri := { waag:object-uri("webcontent", $nid, "routestep", $n) }
+					let $ruri := { waag:object-uri("webcontent", "ah", $nid, "routestep", $n) }
 					
 					construct {
 						$uri ah:webContentRouteStep $ruri .
@@ -255,7 +256,7 @@ return
 				
 				{ for $step in $node/field_route_location_text/*
 					let $n := { replace(name($step), 'n', '') }
-					let $ruri := { waag:object-uri("webcontent", $nid, "routestep", $n) }
+					let $ruri := { waag:object-uri("webcontent", "ah", $nid, "routestep", $n) }
 					
 					construct {
 						$ruri dc:description { waag:parse-string($step/value) }@{ $language-tag } .
@@ -265,8 +266,8 @@ return
 				
 				{ for $step in $node/field_route_image/*
 					let $n := { replace(name($step), 'n', '') }
-					let $ruri := { waag:object-uri("webcontent", $nid, "routestep", $n) }
-					let $auri := { waag:object-uri("webcontent", $nid, "routestep", $n, "attachment", "1") }
+					let $ruri := { waag:object-uri("webcontent", "ah", $nid, "routestep", $n) }
+					let $auri := { waag:object-uri("webcontent", "ah", $nid, "routestep", $n, "attachment", "1") }
 					
 					construct {
 						$auri a ah:Attachment ;							
