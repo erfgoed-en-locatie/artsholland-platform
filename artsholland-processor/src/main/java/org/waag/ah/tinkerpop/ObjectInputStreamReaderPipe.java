@@ -17,14 +17,14 @@ public class ObjectInputStreamReaderPipe extends AbstractPipe<ObjectInputStream,
     public String processNextStart() {
         while (true) {
         	try {
-                return tempObjectInputStream.readUTF();
+                return (String) tempObjectInputStream.readObject();
         	} catch(Exception e) {
+        		tempObjectInputStream = this.starts.next();
         		Throwable cause = e.getCause();
         		if (cause instanceof TikaException) {
         			throw new RuntimeException(cause);
         		}
         		logger.warn("Exception while reading ObjectInputStream: "+e);
-        		tempObjectInputStream = this.starts.next();
         	}
         }
     }

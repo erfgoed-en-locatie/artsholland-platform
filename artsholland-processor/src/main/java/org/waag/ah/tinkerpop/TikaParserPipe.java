@@ -106,7 +106,7 @@ public class TikaParserPipe extends AbstractStreamingPipe<URL> {
 		public void endDocument() throws SAXException {
 			super.endDocument();
 			try {
-				outputStream.writeUTF(writer.toString());
+				outputStream.writeObject(writer.toString());
 			} catch (IOException e) {
 				throw new SAXException(e);
 			} finally {

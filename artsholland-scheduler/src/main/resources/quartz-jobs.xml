@@ -71,7 +71,7 @@
         </entry>
         <entry>
           <key>graphUri</key>
-          <value>http://uitburo.nl</value>
+          <value>http://artsholland.com</value>
         </entry>
       </job-data-map>
     </job>
@@ -136,7 +136,7 @@
         </entry>           
       </job-data-map>      
     </job>
-
+<!-- 
     <trigger>
       <cron>
         <name>NBTC</name>
@@ -147,7 +147,7 @@
         <time-zone>Europe/Amsterdam</time-zone>      
       </cron>
     </trigger>
-
+ -->
     <!-- DOSA IMPORTER -->
     <job>
       <name>DOSA</name>
