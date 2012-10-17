@@ -111,7 +111,7 @@ public class UrlImportJob implements Job {
 					//       implement a custom RepositoryConnection to handle
 					//       these cases.
 //					conn.remove(statement, contextUri);
-					logger.info(statement.toString());
+//					logger.info(statement.toString());
 					conn.add(statement, contextUri);
 				}
 				

@@ -90,7 +90,7 @@ public class ToRDFContentHandler extends ToTextContentHandler {
         new HashMap<String, String>();
 
     private ElementInfo currentElement;
-    private Stack<String> stack = new Stack<String>();
+    protected Stack<String> stack = new Stack<String>();
 
     /**
      * Creates an XML serializer that writes to the given byte stream

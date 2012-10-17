@@ -226,13 +226,14 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				mdata.set(Metadata.CONTENT_TYPE, "text/turtle");
 				mdata.set(Metadata.RESOURCE_NAME_KEY, metadata.get(Metadata.RESOURCE_NAME_KEY));
 				
+//				logger.info("GOT POI:"+combined.toString().length());
 				turtleParser.parse(
 						new ByteArrayInputStream(combined.toString().getBytes()), 
 						new MatchingContentHandler(
 						new EmbeddedContentHandler(this.handler), matcher), mdata, context);
 
 			} catch (NoSuchElementException e) {
-				logger.debug("Not enough data to proceed: "+xmlString);
+				logger.info("Not enough data to proceed: "+xmlString);
 			} catch (Exception e) {
 //				logger.error(e.getMessage());
 //				logger.info(xmlString);

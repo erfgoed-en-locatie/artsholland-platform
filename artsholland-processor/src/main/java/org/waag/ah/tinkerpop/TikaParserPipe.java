@@ -16,12 +16,15 @@ import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.waag.ah.tika.ToRDFContentHandler;
+import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 public class TikaParserPipe extends AbstractStreamingPipe<URL> {
-//	private static final Logger logger = LoggerFactory.getLogger(TikaParserPipe.class);
+	private static final Logger logger = LoggerFactory.getLogger(TikaParserPipe.class);
 
 	private ByteArrayOutputStream writer = new ByteArrayOutputStream();
 
@@ -102,11 +105,26 @@ public class TikaParserPipe extends AbstractStreamingPipe<URL> {
 			this.outputStream = outputStream;
 		}
 
+//		@Override
+//		public void startElement(String uri, String localName, String qName,
+//				Attributes atts) throws SAXException {
+//			super.startElement(uri, localName, qName, atts);
+//		}
+		
+//		@Override
+//		public void endElement(String uri, String localName, String qName)
+//				throws SAXException {
+//			super.endElement(uri, localName, qName);
+//			logger.info("STACK:"+stack);
+//		}
+
 		@Override
 		public void endDocument() throws SAXException {
 			super.endDocument();
 			try {
-				outputStream.writeObject(writer.toString());
+				String data = writer.toString();
+//				logger.info("WRITING DATA:"+data.length());
+				outputStream.writeObject(data);
 			} catch (IOException e) {
 				throw new SAXException(e);
 			} finally {
