@@ -6,7 +6,6 @@ import net.sf.saxon.lib.ExtensionFunctionDefinition;
 import net.sf.saxon.om.SequenceIterator;
 import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
-import net.sf.saxon.value.BooleanValue;
 import net.sf.saxon.value.EmptySequence;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;
@@ -28,7 +27,7 @@ public class ParseBooleanFunction extends ExtensionFunctionDefinition {
 
 	@Override
 	public SequenceType getResultType(SequenceType[] suppliedArgumentTypes) {
-		return SequenceType.OPTIONAL_BOOLEAN;
+		return SequenceType.OPTIONAL_STRING;
 	}
 
 	@Override
@@ -46,7 +45,7 @@ public class ParseBooleanFunction extends ExtensionFunctionDefinition {
 				} catch (Exception e) {
 					return Value.asIterator(EmptySequence.getInstance());
 				}
-				return Value.asIterator(BooleanValue.get(result));
+				return Value.asIterator(StringValue.makeStringValue(Boolean.toString(result)));
 			}
 		};
 	}

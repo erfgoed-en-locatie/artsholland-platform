@@ -54,7 +54,8 @@
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
-<!-- 
+
+ <!-- 
     <trigger>
       <cron>
         <name>UitbaseFull</name>
@@ -93,7 +94,7 @@
         </entry>
       </job-data-map>
     </job>
-<!--  
+
     <trigger>
       <cron>
         <name>TAMIncrementalImportTrigger</name>
@@ -110,7 +111,6 @@
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
- -->
 
     <!-- NBTC IMPORT -->
     <job>
@@ -135,7 +135,7 @@
         </entry>           
       </job-data-map>      
     </job>
-<!-- 
+ 
     <trigger>
       <cron>
         <name>NBTC</name>
@@ -146,7 +146,7 @@
         <time-zone>Europe/Amsterdam</time-zone>      
       </cron>
     </trigger>
- -->
+
     <!-- DOSA IMPORTER -->
     <job>
       <name>DOSA</name>
