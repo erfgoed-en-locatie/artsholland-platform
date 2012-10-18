@@ -130,6 +130,7 @@ public class TikaParserPipe extends AbstractStreamingPipe<URL> {
 					super.startPrefixMapping(ns.getKey(), ns.getValue());
 				}
 				super.startPrefixMapping("rdf", RDF.NAMESPACE);
+				super.startPrefixMapping("xml","http://www.w3.org/XML/1998/namespace");
 				super.startElement(RDF.NAMESPACE, "RDF", "rdf:RDF", new AttributesImpl());
 			}
 			super.startElement(uri, localName, qName, atts);
