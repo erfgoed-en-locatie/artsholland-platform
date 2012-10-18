@@ -1,33 +1,38 @@
 package org.waag.ah.tinkerpop;
 
-import java.io.ByteArrayOutputStream;
+import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Stack;
 
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
+import org.openrdf.model.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.ah.tika.ToRDFContentHandler;
+import org.waag.ah.tika.ToXMLContentHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 public class TikaParserPipe extends AbstractStreamingPipe<URL> {
 	private static final Logger logger = LoggerFactory.getLogger(TikaParserPipe.class);
 
-	private ByteArrayOutputStream writer = new ByteArrayOutputStream();
-
+	private CharArrayWriter writer = new CharArrayWriter();
+	
 	class PasswordAuthenticator extends Authenticator {
 	  
 		private String username;
@@ -90,45 +95,63 @@ public class TikaParserPipe extends AbstractStreamingPipe<URL> {
 //		return in.getResult();
 	}
 	
-	@Override
-	public void reset() {
-		writer = null;
-		super.reset();
-	}
-	
-	private class StreamingToRDFContentHandler extends ToRDFContentHandler {
+	private class StreamingToRDFContentHandler extends ToXMLContentHandler {
+		private final Map<String, String> namespaces = new HashMap<String, String>();
+		protected Stack<String> stack = new Stack<String>();
 		private ObjectOutputStream outputStream;
 
-		public StreamingToRDFContentHandler(OutputStream stream, ObjectOutputStream outputStream)
+		public StreamingToRDFContentHandler(CharArrayWriter writer, ObjectOutputStream outputStream)
 				throws UnsupportedEncodingException {
-			super(stream, "UTF-8");
+			super(writer);
 			this.outputStream = outputStream;
 		}
+	    
+		@Override
+		public void startPrefixMapping(String prefix, String uri)
+				throws SAXException {
+			if (!namespaces.containsKey(prefix)) {
+				namespaces.put(prefix, uri);
+			}
+		}
 
-//		@Override
-//		public void startElement(String uri, String localName, String qName,
-//				Attributes atts) throws SAXException {
-//			super.startElement(uri, localName, qName, atts);
-//		}
-		
-//		@Override
-//		public void endElement(String uri, String localName, String qName)
-//				throws SAXException {
-//			super.endElement(uri, localName, qName);
-//			logger.info("STACK:"+stack);
-//		}
+		@Override
+		public void startDocument() throws SAXException {
+		}
 
 		@Override
 		public void endDocument() throws SAXException {
-			super.endDocument();
-			try {
-				String data = writer.toString();
-//				logger.info("WRITING DATA:"+data.length());
-				outputStream.writeObject(data);
-			} catch (IOException e) {
-				throw new SAXException(e);
-			} finally {
-				writer.reset();
+		}
+
+		@Override
+		public void startElement(String uri, String localName, String qName,
+				Attributes atts) throws SAXException {
+			if (stack.size() == 0) {
+				for (Entry<String, String> ns : namespaces.entrySet()) {
+					super.startPrefixMapping(ns.getKey(), ns.getValue());
+				}
+				super.startPrefixMapping("rdf", RDF.NAMESPACE);
+				super.startElement(RDF.NAMESPACE, "RDF", "rdf:RDF", new AttributesImpl());
+			}
+			super.startElement(uri, localName, qName, atts);
+			stack.push(qName);
+		}
+		
+		@Override
+		public void endElement(String uri, String localName, String qName)
+				throws SAXException {
+			super.endElement(uri, localName, qName);
+			stack.pop();
+			if (stack.size() == 0) {
+				super.endElement(RDF.NAMESPACE, "RDF", "rdf:RDF");
+				try {
+					String data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+					data += writer.toString();
+					writer.reset();
+					outputStream.writeObject(data);
+				} catch (IOException e) {
+					throw new SAXException(e);
+				} finally {
+				}
 			}
 		}
 	}

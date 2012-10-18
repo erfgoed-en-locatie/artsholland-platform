@@ -88,7 +88,7 @@ public class RepositoryConnectionService implements RepositoryConnectionFactory,
 //			if (!repository.isInitialized()) {
 			repository.initialize();
 			connection = repository.getConnection();
-//			connection.setAutoCommit(false);
+			connection.setAutoCommit(false);
 //			}
 		} catch (Exception e) {
 //			close();

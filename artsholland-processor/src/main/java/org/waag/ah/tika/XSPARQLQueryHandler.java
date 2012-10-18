@@ -23,14 +23,12 @@ import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XQueryCompiler;
 import net.sf.saxon.s9api.XQueryEvaluator;
 import net.sf.saxon.s9api.XQueryExecutable;
-import net.sf.saxon.s9api.XdmItem;
 import net.sf.saxon.s9api.XdmNode;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.ContentHandlerDecorator;
-import org.apache.tika.sax.EmbeddedContentHandler;
 import org.apache.tika.sax.ToXMLContentHandler;
 import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.apache.tika.sax.xpath.XPathParser;
@@ -52,6 +50,7 @@ import org.waag.ah.saxon.ObjectUriFunction;
 import org.waag.ah.saxon.ParseBooleanFunction;
 import org.waag.ah.saxon.ParseCidnFunction;
 import org.waag.ah.saxon.ParseDateTimeFunction;
+import org.waag.ah.saxon.ParseDecimalFunction;
 import org.waag.ah.saxon.ParseHttpUrlFunction;
 import org.waag.ah.saxon.ParseLocaleFunction;
 import org.waag.ah.saxon.ParseNonZeroNumber;
@@ -135,6 +134,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			config.registerExtensionFunction(new ObjectUriFunction());
 			config.registerExtensionFunction(new ClassUriFunction());
 			config.registerExtensionFunction(new AddressUriFunction());
+			config.registerExtensionFunction(new ParseDecimalFunction());
 			config.registerExtensionFunction(new ParseLocaleFunction());
 			config.registerExtensionFunction(new ParseStringFunction());			
 			config.registerExtensionFunction(new ParseBooleanFunction());
@@ -216,26 +216,24 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				}
 				
 				evaluator.setSource(new StreamSource(new StringReader(xmlString)));
-				StringBuilder combined = new StringBuilder();
+				turtleString = evaluator.evaluate().toString();
 				
-				for (XdmItem item : evaluator) {
-					combined.append(item);
+				if (turtleString.split("\n\n").length < 2) {
+					return;
 				}
 				
 				Metadata mdata = new Metadata();
 				mdata.set(Metadata.CONTENT_TYPE, "text/turtle");
 				mdata.set(Metadata.RESOURCE_NAME_KEY, metadata.get(Metadata.RESOURCE_NAME_KEY));
 				
-//				logger.info("GOT POI:"+combined.toString().length());
 				turtleParser.parse(
-						new ByteArrayInputStream(combined.toString().getBytes()), 
+						new ByteArrayInputStream(turtleString.getBytes()), 
 						new MatchingContentHandler(
-						new EmbeddedContentHandler(this.handler), matcher), mdata, context);
+						this.handler, matcher), mdata, context);
 
 			} catch (NoSuchElementException e) {
 				logger.info("Not enough data to proceed: "+xmlString);
 			} catch (Exception e) {
-//				logger.error(e.getMessage());
 //				logger.info(xmlString);
 //				logger.info(turtleString);
 				throw new SAXException(e);

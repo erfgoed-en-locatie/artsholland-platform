@@ -54,7 +54,25 @@
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
-
+<!-- 
+    <trigger>
+      <cron>
+        <name>UitbaseFull</name>
+        <group>Importer</group>
+        <job-name>Uitbase</job-name>
+        <job-group>Importer</job-group>
+        <job-data-map>
+          <entry>
+            <key>strategy</key>
+            <value>full</value>
+          </entry>
+        </job-data-map>
+        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <time-zone>Europe/Amsterdam</time-zone>
+      </cron>
+    </trigger> 
+-->
+ 
     <!-- TAM IMPORT -->
     
 		<job>
@@ -75,7 +93,7 @@
         </entry>
       </job-data-map>
     </job>
-
+<!--  
     <trigger>
       <cron>
         <name>TAMIncrementalImportTrigger</name>
@@ -92,26 +110,7 @@
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
-
-<!-- 
-    <trigger>
-      <cron>
-        <name>UitbaseFull</name>
-        <group>Importer</group>
-        <job-name>Uitbase</job-name>
-        <job-group>Importer</job-group>
-        <job-data-map>
-          <entry>
-            <key>strategy</key>
-            <value>full</value>
-          </entry>
-        </job-data-map>
-        <cron-expression>0 0/1 * * * ?</cron-expression>
-        <time-zone>Europe/Amsterdam</time-zone>
-      </cron>
-    </trigger> 
--->
- 
+ -->
 
     <!-- NBTC IMPORT -->
     <job>

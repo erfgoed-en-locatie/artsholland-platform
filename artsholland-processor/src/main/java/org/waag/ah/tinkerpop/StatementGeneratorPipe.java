@@ -31,12 +31,14 @@ public class StatementGeneratorPipe extends
 	@Override
 	protected List<Statement> processNextStart() throws NoSuchElementException {
 		List<Statement> statements = new ArrayList<Statement>();
-		InputStream is = new ByteArrayInputStream(this.starts.next().getBytes());//"UTF-8"
+		String data = this.starts.next();
+		InputStream is = new ByteArrayInputStream(data.getBytes());//"UTF-8"
 		try {
 			RDFXMLParser parser = new RDFXMLParser();
 			parser.setRDFHandler(new RDFStatementHandler(statements));
 			parser.parse(is, config.getString("platform.classUri"));
 		} catch (Exception e) {
+			logger.info(data);
 			throw new RuntimeException(e);
 		} finally {
 			try {
