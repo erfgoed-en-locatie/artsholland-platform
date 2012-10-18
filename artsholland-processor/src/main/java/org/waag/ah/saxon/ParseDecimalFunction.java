@@ -28,7 +28,7 @@ public class ParseDecimalFunction extends ExtensionFunctionDefinition {
 
 	@Override
 	public SequenceType getResultType(SequenceType[] suppliedArgumentTypes) {
-		return SequenceType.OPTIONAL_DECIMAL;
+		return SequenceType.OPTIONAL_STRING;
 	}
 
 	@Override
@@ -38,7 +38,9 @@ public class ParseDecimalFunction extends ExtensionFunctionDefinition {
 					XPathContext context) throws XPathException {
 				try {
 					String str = ((StringValue) arguments[0].next()).getStringValue();
-					return Value.asIterator(DecimalValue.parseNumber(str));
+					String number = String.valueOf(Float.parseFloat(str));
+					
+					return Value.asIterator(StringValue.makeStringValue(number));
 				} catch (Exception e) {
 					return Value.asIterator(EmptySequence.getInstance());
 				}
