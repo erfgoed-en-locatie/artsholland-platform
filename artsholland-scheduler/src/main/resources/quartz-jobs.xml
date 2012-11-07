@@ -92,7 +92,7 @@
         </entry>
       </job-data-map>
     </job>
-
+<!-- 
     <trigger>
       <cron>
         <name>TAMIncrementalImportTrigger</name>
@@ -110,7 +110,7 @@
       </cron>
     </trigger>
 
-    <!-- NBTC IMPORT -->
+ -->    <!-- NBTC IMPORT -->
     <job>
       <name>NBTC</name>
       <group>Importer</group>
@@ -133,7 +133,7 @@
         </entry>           
       </job-data-map>      
     </job>
-
+<!-- 
     <trigger>
       <cron>
         <name>NBTC</name>
@@ -145,7 +145,7 @@
       </cron>
     </trigger>
 
-    <!-- DOSA IMPORTER -->
+ -->    <!-- DOSA IMPORTER -->
     <job>
       <name>DOSA</name>
       <group>Importer</group>
@@ -303,6 +303,53 @@
       </cron>
     </trigger> 
 -->
+
+ 
+   <!-- SPARQL DERICHER -->
+   <job>
+      <name>AddressCleanup</name>
+      <group>EnricherService</group>
+      <job-class>org.waag.ah.quartz.EnrichObjectJob</job-class>
+      <durability>true</durability>
+      <recover>false</recover>
+      <job-data-map>
+        <entry>
+          <key>enricherClass</key>
+          <value>org.waag.ah.enricher.AddressCleanup</value>
+        </entry>
+        <entry>
+          <key>sparqlQuery</key>
+          <value>
+            SELECT DISTINCT ?address ?p ?o 
+            WHERE {
+              OPTIONAL { ?address ?p ?o . }
+              {
+                SELECT DISTINCT ?address
+                WHERE {
+                  ?address a ah:Address .
+                  {
+                    ?address vcard:street-address ?o1 .
+                    ?address vcard:street-address ?o2 .
+                    FILTER (?o1 != ?o2)
+                  } 
+                  UNION {
+                    ?address vcard:postal-code ?o1 .
+                    ?address vcard:postal-code ?o2 .
+                    FILTER (?o1 != ?o2)
+                  }
+                  UNION {
+                    ?address vcard:locality ?o1 .
+                    ?address vcard:locality ?o2 .
+                    FILTER (?o1 != ?o2)
+                  }
+                } 
+              }
+            } ORDER BY ?address ?p
+          </value>
+        </entry>
+      </job-data-map>
+    </job>
+
   </schedule>
 
 </job-scheduling-data>

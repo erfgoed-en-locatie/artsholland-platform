@@ -37,6 +37,7 @@ public class EnrichObjectJob implements Job {
 
 	private Class<? extends GraphEnricher> enricher;
 	private String objectUri;
+	private String sparqlQuery;
 	private List<String> includeUris = new ArrayList<String>();
 	private List<String> excludeUris = new ArrayList<String>();
 
@@ -64,7 +65,7 @@ public class EnrichObjectJob implements Job {
 			config.setConnection(conn);
 			
 			try {
-				String queryString = EnrichUtils.getObjectQuery(config, 10);
+				String queryString = sparqlQuery.equals("") ? EnrichUtils.getObjectQuery(config, 10) : sparqlQuery;
 				GraphQueryResult result = queryService.executeQuery(queryString);
 	
 				List<Statement> statements = new ArrayList<Statement>();
@@ -101,6 +102,10 @@ public class EnrichObjectJob implements Job {
 		} catch (ClassNotFoundException e) {
 			throw new JobExecutionException(e.getMessage(), e);
 		}
+	}
+	
+	public void setSparqlQuery(String query) {
+		this.sparqlQuery = query;
 	}
 	
 	public void setObjectUri(String uri) {
