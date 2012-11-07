@@ -57,7 +57,7 @@ public class UitbaseUrlGenerator implements UrlGenerator {
 			dtFromParam = "&modifiedfrom="+fmt.withZone(DateTimeZone.UTC).print(config.getFromDateTime());
 		}
 		if (config.getToDateTime() != null) {
-			dtToParam = "&createdto="+fmt.withZone(DateTimeZone.UTC).print(config.getToDateTime());
+			dtToParam = "&modifiedto="+fmt.withZone(DateTimeZone.UTC).print(config.getToDateTime());
 		}
 		
 		for (String resource : RESOURCES) {
