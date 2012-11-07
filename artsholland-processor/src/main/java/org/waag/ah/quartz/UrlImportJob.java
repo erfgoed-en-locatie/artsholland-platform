@@ -103,6 +103,8 @@ public class UrlImportJob implements Job {
 					conn.clear(config.getContext());
 				}
 				
+				URI predicate = vf.createURI("http://www.w3.org/1999/02/22-rdf-syntax-ns#type");
+				
 				while (pipeline.hasNext()) {
 					Statement statement = pipeline.next();
 					// TODO: Check if quering for the statement is less
@@ -112,6 +114,10 @@ public class UrlImportJob implements Job {
 					//       these cases.
 //					conn.remove(statement, contextUri);
 //					logger.info(statement.toString());
+					if (statement.getPredicate().equals(predicate)) {
+//						logger.info(statement.toString());
+						conn.remove(statement.getSubject(), null, null, contextUri);
+					}
 					conn.add(statement, contextUri);
 				}
 				

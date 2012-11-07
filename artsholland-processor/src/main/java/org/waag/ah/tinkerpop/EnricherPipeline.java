@@ -27,10 +27,9 @@ public class EnricherPipeline extends Pipeline<Statement, Statement> {
 		super();
 		
 		// Create Graph objects from individual statements.
-		GroupByPipe<Statement, URI, Statement> groupByPipe = 
-				new GroupByPipe<Statement, URI, Statement>(
-						new StatementKeyFunction(), 
-						new StatementValueFunction());
+		GroupByPipe<Statement, URI, Statement> groupByPipe = new GroupByPipe<Statement, URI, Statement>(
+			new StatementKeyFunction(), 
+			new StatementValueFunction());
 		Pipeline<Statement, Graph> groupingPipeline = new Pipeline<Statement, Graph>();
 		groupingPipeline.addPipe(groupByPipe);
 		groupingPipeline.addPipe(new SideEffectCapPipe<Statement, Map<URI, List<Statement>>>(groupByPipe));
@@ -39,22 +38,14 @@ public class EnricherPipeline extends Pipeline<Statement, Statement> {
 		this.addPipe(groupingPipeline);
 		
 		List<Pipe> enrichers = new ArrayList<Pipe>();
-//		enrichers.add(new IdentityPipe());
 		for (EnricherConfig config : configs) {
 			enrichers.add(EnricherFactory.getInstance(config));
 		}
 		
-//		EnricherConfig geoNamesConfig = new EnricherConfig();
-//		geoNamesConfig.setObjectUri("http://purl.org/artsholland/1.0/Venue");
-//		geoNamesConfig.addIncludeUri(
-//				"http://www.w3.org/2003/01/geo/wgs84_pos#lat",
-//				"http://www.w3.org/2003/01/geo/wgs84_pos#long");
-//		geoNamesConfig.setEnricher(GeoNamesEnricher.class);
-//		enrichers.add(EnricherFactory.getInstance(geoNamesConfig));
-		
 		// Send incoming data through all enricher instances.
 		CopySplitPipe<NamedGraph> enricherPipe = new CopySplitPipe<NamedGraph>(enrichers);
 		FairMergePipe<List<Statement>> mergerPipe = new FairMergePipe<List<Statement>>(enricherPipe.getPipes());
+
 		this.addPipe(enricherPipe);
 		this.addPipe(mergerPipe);
 		this.addPipe(new ScatterPipe<List<Statement>, Statement>());

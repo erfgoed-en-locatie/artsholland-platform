@@ -28,9 +28,6 @@ public class UitbaseUrlGenerator implements UrlGenerator {
 	private final String apiKey;
 	private final int ROWS = 500;
 	
-//	private static final String UITBASE_OBJECT_PROPERTY_CREATED = "created";
-//	private static final String UITBASE_OBJECT_PROPERTY_MODIFIED = "modified";
-	
 	public static final String[] RESOURCES = { 
 		"events", 
 		"locations", 
@@ -57,7 +54,7 @@ public class UitbaseUrlGenerator implements UrlGenerator {
 		String dtToParam = "";
 		
 		if (config.getStrategy().equals(ImportStrategy.INCREMENTAL) && config.getFromDateTime() != null) {
-			dtFromParam = "&createdfrom="+fmt.withZone(DateTimeZone.UTC).print(config.getFromDateTime());
+			dtFromParam = "&modifiedfrom="+fmt.withZone(DateTimeZone.UTC).print(config.getFromDateTime());
 		}
 		if (config.getToDateTime() != null) {
 			dtToParam = "&createdto="+fmt.withZone(DateTimeZone.UTC).print(config.getToDateTime());
