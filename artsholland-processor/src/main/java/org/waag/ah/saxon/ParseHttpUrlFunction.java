@@ -80,6 +80,7 @@ public class ParseHttpUrlFunction extends ExtensionFunctionDefinition {
 						text = "http://" + text;
 					}
 					text = text.replace(" ", "%20");
+					text = text.replace("\\", "%5C");
 					// Validate URL.
 					if (!urlValidator.isValid(text)) {
 						logger.warn("Invalid URL: " + text);

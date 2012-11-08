@@ -234,8 +234,8 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			} catch (NoSuchElementException e) {
 				logger.info("Not enough data to proceed: "+xmlString);
 			} catch (Exception e) {
-//				logger.info(xmlString);
-//				logger.info(turtleString);
+				logger.info(xmlString);
+				logger.info(turtleString);
 				throw new SAXException(e);
 			} finally {
 				xmlCollector = null;
