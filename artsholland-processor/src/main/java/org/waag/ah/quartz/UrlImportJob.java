@@ -11,6 +11,7 @@ import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
+import org.openrdf.repository.RepositoryResult;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -70,7 +71,12 @@ public class UrlImportJob implements Job {
 			result.put("timestamp", context.getFireTime().getTime());
 			result.put("strategy", this.strategy.toString());
 
-			RepositoryConnection conn = cf.getConnection(false);
+//			HttpClient httpclient = new DefaultHttpClient();
+//			ExecutorService executor = Executors.newFixedThreadPool(1);
+//			RemoteRepository repo = new RemoteRepository("", httpclient, executor);
+//			AddOp addOp = new RemoteRepository.AddOp();
+			
+			RepositoryConnection conn = cf.getReadWriteConnection();
 			ValueFactory vf = conn.getValueFactory();
 			URI contextUri = vf.createURI(graphUri);
 			
@@ -115,7 +121,10 @@ public class UrlImportJob implements Job {
 //					conn.remove(statement, contextUri);
 //					logger.info(statement.toString());
 					if (statement.getPredicate().equals(predicate)) {
-//						logger.info(statement.toString());
+//						RepositoryResult<Statement> statements = conn.getStatements(statement.getSubject(), null, null, false, contextUri);
+//						for (Statement stmt : statements.asList()) {
+//							conn.remove(stmt);
+//						}
 						conn.remove(statement.getSubject(), null, null, contextUri);
 					}
 					conn.add(statement, contextUri);

@@ -53,7 +53,7 @@ public class EnrichObjectJob implements Job {
 	public void execute(JobExecutionContext context)
 			throws JobExecutionException {
 		try {
-			RepositoryConnection conn = cf.getConnection(false);	
+			RepositoryConnection conn = cf.getReadWriteConnection();
 			Assert.assertNotNull("Enricher class cannot be null");
 //			Assert.assertNotNull("Object URI cannot be null");
 
