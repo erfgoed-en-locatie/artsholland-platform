@@ -116,7 +116,7 @@ public class UrlImportJob implements Job {
 //					logger.info(statement.toString());
 					if (statement.getPredicate().equals(predicate)) {
 //						logger.info(statement.toString());
-						conn.remove(statement.getSubject(), null, null, contextUri);
+						//conn.remove(statement.getSubject(), null, null, contextUri);
 					}
 					conn.add(statement, contextUri);
 				}

@@ -46,6 +46,8 @@ import org.slf4j.LoggerFactory;
 import org.waag.ah.exception.ParserException;
 import org.waag.ah.saxon.AddressUriFunction;
 import org.waag.ah.saxon.ClassUriFunction;
+import org.waag.ah.saxon.ExtractStreetNameFunction;
+import org.waag.ah.saxon.LocalityFunction;
 import org.waag.ah.saxon.ObjectUriFunction;
 import org.waag.ah.saxon.ParseBooleanFunction;
 import org.waag.ah.saxon.ParseCidnFunction;
@@ -56,6 +58,9 @@ import org.waag.ah.saxon.ParseLocaleFunction;
 import org.waag.ah.saxon.ParseNonZeroNumber;
 import org.waag.ah.saxon.ParseStringFunction;
 import org.waag.ah.saxon.PostalCodeFunction;
+import org.waag.ah.saxon.ExtractStreetNumberFunction;
+import org.waag.ah.saxon.StreetAddressFunction;
+import org.waag.ah.saxon.StreetNameFunction;
 import org.waag.ah.saxon.StreetNumberFunction;
 import org.waag.ah.saxon.UpperCaseFirstFunction;
 import org.waag.ah.saxon.UrlConcatFunction;
@@ -134,6 +139,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			config.registerExtensionFunction(new ObjectUriFunction());
 			config.registerExtensionFunction(new ClassUriFunction());
 			config.registerExtensionFunction(new AddressUriFunction());
+			
 			config.registerExtensionFunction(new ParseDecimalFunction());
 			config.registerExtensionFunction(new ParseLocaleFunction());
 			config.registerExtensionFunction(new ParseStringFunction());			
@@ -141,8 +147,15 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			config.registerExtensionFunction(new ParseHttpUrlFunction());
 			config.registerExtensionFunction(new ParseNonZeroNumber());
 			config.registerExtensionFunction(new UpperCaseFirstFunction());
+			
 			config.registerExtensionFunction(new PostalCodeFunction());
+			config.registerExtensionFunction(new LocalityFunction());
+			config.registerExtensionFunction(new StreetAddressFunction());
 			config.registerExtensionFunction(new StreetNumberFunction());
+			config.registerExtensionFunction(new StreetNameFunction());
+			config.registerExtensionFunction(new ExtractStreetNumberFunction());
+			config.registerExtensionFunction(new ExtractStreetNameFunction());
+			
 			config.registerExtensionFunction(new WKTGeometryFunction());
 			config.registerExtensionFunction(new WebContentTypeFunction());
 			config.registerExtensionFunction(new ParseCidnFunction());

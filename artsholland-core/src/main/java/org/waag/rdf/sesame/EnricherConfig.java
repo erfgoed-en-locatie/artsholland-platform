@@ -8,6 +8,7 @@ import org.openrdf.model.URI;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.model.impl.ValueFactoryImpl;
 import org.openrdf.repository.RepositoryConnection;
+import org.quartz.JobExecutionContext;
 
 public class EnricherConfig {
 	private Class<? extends GraphEnricher> enricherClass;

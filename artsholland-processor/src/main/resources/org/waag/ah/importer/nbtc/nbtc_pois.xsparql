@@ -13,48 +13,48 @@ declare namespace waag="http://waag.org/saxon-extension";
 declare namespace osgeo="http://rdf.opensahara.com/type/geo/";
 
 declare function waag:get-poi-category($arg as xs:string?) as xs:string? {
-  		 if (compare($arg, "MU") = 0) then fn:data("poiCategoryMuseum")
-  else if (compare($arg, "RE") = 0) then fn:data("poiCategoryRestaurant")
-  else if (compare($arg, "HO") = 0) then fn:data("poiCategoryHotel")
-  else if (compare($arg, "UI") = 0) then fn:data("poiCategoryGoingOut")
-  else if (compare($arg, "CO") = 0) then fn:data("poiCategoryCongressAccomodation")
-  else if (compare($arg, "AT") = 0) then fn:data("poiCategoryAttraction")
-  else if (compare($arg, "CA") = 0) then fn:data("poiCategoryCamping")
-  else if (compare($arg, "BB") = 0) then fn:data("poiCategoryBB")
-  else if (compare($arg, "BU") = 0) then fn:data("poiCategoryBungalowPark")
-  else if (compare($arg, "GR") = 0) then fn:data("poiCategoryGroupAccomodation")
-  else if (compare($arg, "VA") = 0) then fn:data("poiCategoryHolidayRental")
-  else if (compare($arg, "AP") = 0) then fn:data("poiCategoryAppartment")
-  else if (compare($arg, "VV") = 0) then fn:data("poiCategoryTouristOffice")
-  else if (compare($arg, "HT") = 0) then fn:data("poiCategoryHostel")
-  else if (compare($arg, "GO") = 0) then fn:data("poiCategoryGolfClub")
-  else if (compare($arg, "EV") = 0) then fn:data("poiCategoryEvent")
-  else fn:data("poiCategoryUnknown")
+  		 if (compare($arg, "MU") = 0) then fn:data("POICategoryMuseum")
+  else if (compare($arg, "RE") = 0) then fn:data("POICategoryRestaurant")
+  else if (compare($arg, "HO") = 0) then fn:data("POICategoryHotel")
+  else if (compare($arg, "UI") = 0) then fn:data("POICategoryGoingOut")
+  else if (compare($arg, "CO") = 0) then fn:data("POICategoryCongressAccomodation")
+  else if (compare($arg, "AT") = 0) then fn:data("POICategoryAttraction")
+  else if (compare($arg, "CA") = 0) then fn:data("POICategoryCamping")
+  else if (compare($arg, "BB") = 0) then fn:data("POICategoryBB")
+  else if (compare($arg, "BU") = 0) then fn:data("POICategoryBungalowPark")
+  else if (compare($arg, "GR") = 0) then fn:data("POICategoryGroupAccomodation")
+  else if (compare($arg, "VA") = 0) then fn:data("POICategoryHolidayRental")
+  else if (compare($arg, "AP") = 0) then fn:data("POICategoryAppartment")
+  else if (compare($arg, "VV") = 0) then fn:data("POICategoryTouristOffice")
+  else if (compare($arg, "HT") = 0) then fn:data("POICategoryHostel")
+  else if (compare($arg, "GO") = 0) then fn:data("POICategoryGolfClub")
+  else if (compare($arg, "EV") = 0) then fn:data("POICategoryEvent")
+  else fn:data("POICategoryUnknown")
 };
   
 declare function waag:get-poi-attribute($arg as xs:string?) as xs:string? {
-  		 if (compare($arg, "pr_actyp") = 0) then fn:data("poiAttributeAcType")
-  else if (compare($arg, "pr_ambia") = 0) then fn:data("poiAttributeAmbiance")
-  else if (compare($arg, "pr_colle") = 0) then fn:data("poiAttributeCollection")
-  else if (compare($arg, "pr_attyp") = 0) then fn:data("poiAttributeAtrType")
-  else if (compare($arg, "pr_butyp") = 0) then fn:data("poiAttributeBuType")
-  else if (compare($arg, "pr_campg") = 0) then fn:data("poiAttributeCampagne")
-  else if (compare($arg, "pr_colle") = 0) then fn:data("poiAttributeCollection")
-  else if (compare($arg, "pr_condi") = 0) then fn:data("poiAttributeCondition")
-  else if (compare($arg, "pr_evtyp") = 0) then fn:data("poiAttributeEvType")
-  else if (compare($arg, "pr_facdi") = 0) then fn:data("poiAttributeAccessability")
-  else if (compare($arg, "pr_facgn") = 0) then fn:data("poiAttributeFacGen")
-  else if (compare($arg, "pr_facpu") = 0) then fn:data("poiAttributeFac")
-  else if (compare($arg, "pr_facre") = 0) then fn:data("poiAttributeRecreation")
-  else if (compare($arg, "pr_facsa") = 0) then fn:data("poiAttributeSanitary")
-  else if (compare($arg, "pr_impor") = 0) then fn:data("poiAttributeInterest")
-  else if (compare($arg, "pr_kitch") = 0) then fn:data("poiAttributeCuisine")
-  else if (compare($arg, "pr_locat") = 0) then fn:data("poiAttributeSituation")
-  else if (compare($arg, "pr_music") = 0) then fn:data("poiAttributeMusicType")
-  else if (compare($arg, "pr_servi") = 0) then fn:data("poiAttributeServices")
-  else if (compare($arg, "pr_speci") = 0) then fn:data("poiAttributeSpecialities")
-  else if (compare($arg, "pr_targg") = 0) then fn:data("poiAttributeTargetGroup")
-  else fn:data("poiAttributeUnknown")
+  		 if (compare($arg, "pr_actyp") = 0) then fn:data("POIAttributeAcType")
+  else if (compare($arg, "pr_ambia") = 0) then fn:data("POIAttributeAmbiance")
+  else if (compare($arg, "pr_colle") = 0) then fn:data("POIAttributeCollection")
+  else if (compare($arg, "pr_attyp") = 0) then fn:data("POIAttributeAtrType")
+  else if (compare($arg, "pr_butyp") = 0) then fn:data("POIAttributeBuType")
+  else if (compare($arg, "pr_campg") = 0) then fn:data("POIAttributeCampagne")
+  else if (compare($arg, "pr_colle") = 0) then fn:data("POIAttributeCollection")
+  else if (compare($arg, "pr_condi") = 0) then fn:data("POIAttributeCondition")
+  else if (compare($arg, "pr_evtyp") = 0) then fn:data("POIAttributeEvType")
+  else if (compare($arg, "pr_facdi") = 0) then fn:data("POIAttributeAccessability")
+  else if (compare($arg, "pr_facgn") = 0) then fn:data("POIAttributeFacGen")
+  else if (compare($arg, "pr_facpu") = 0) then fn:data("POIAttributeFac")
+  else if (compare($arg, "pr_facre") = 0) then fn:data("POIAttributeRecreation")
+  else if (compare($arg, "pr_facsa") = 0) then fn:data("POIAttributeSanitary")
+  else if (compare($arg, "pr_impor") = 0) then fn:data("POIAttributeInterest")
+  else if (compare($arg, "pr_kitch") = 0) then fn:data("POIAttributeCuisine")
+  else if (compare($arg, "pr_locat") = 0) then fn:data("POIAttributeSituation")
+  else if (compare($arg, "pr_music") = 0) then fn:data("POIAttributeMusicType")
+  else if (compare($arg, "pr_servi") = 0) then fn:data("POIAttributeServices")
+  else if (compare($arg, "pr_speci") = 0) then fn:data("POIAttributeSpecialities")
+  else if (compare($arg, "pr_targg") = 0) then fn:data("POIAttributeTargetGroup")
+  else fn:data("POIAttributeUnknown")
 };
 
 let $pois := //Poi
@@ -72,11 +72,25 @@ return
       let $puri := {waag:object-uri("poi", "nbtc", $pid)}
 			let $lang := {waag:parse-locale($poi/operation/locale)}
 
-			let $locationAddress := {$poi/object/locationAddress}			
-			let $luri := {waag:object-uri("address", waag:address-uri($locationAddress/zipcode, $locationAddress/housenumber))}
+			let $locationAddress := { $poi/object/locationAddress }		
+				
+			let $location-postal-code := { waag:postal-code(waag:parse-string($locationAddress/zipcode)) }
+			let $location-locality := { waag:locality($location-postal-code, waag:parse-string($locationAddress/city)) }
+			let $location-street-name := { waag:street-name($locationAddress/street) }
+			let $location-street-number := { waag:street-number($locationAddress/housenumber) }
+			let $location-street-address := { waag:street-address($location-street-name, $location-street-number) }			
 			
-			let $contactAddress := {$poi/object/contactAddress}
-      let $curi := {waag:object-uri("address", waag:address-uri($contactAddress/zipcode, $contactAddress/housenumber))}
+			let $luri := {waag:object-uri("address", waag:address-uri($location-postal-code, $locationAddress/housenumber))}
+			
+			let $contactAddress := { $poi/object/contactAddress }
+			
+      let $contact-postal-code := { waag:postal-code(waag:parse-string($contactAddress/zipcode)) }
+			let $contact-locality := { waag:locality($contact-postal-code, waag:parse-string($contactAddress/city)) }
+			let $contact-street-name := { waag:street-name($contactAddress/street) }
+			let $contact-street-number := { waag:street-number($contactAddress/housenumber) }
+			let $contact-street-address := { waag:street-address($contact-street-name, $contact-street-number) }			
+			
+      let $curi := {waag:object-uri("address", waag:address-uri($contact-postal-code, $contactAddress/housenumber))}
        
       let $lat := { waag:parse-non-zero-number($poi/object/positionList/position/latitude) }
 			let $long := { waag:parse-non-zero-number($poi/object/positionList/position/longitude) }
@@ -106,14 +120,14 @@ return
         $caturi a {waag:class-uri("POICategory")} .
                 
         $luri a ah:Address ;
-              vcard:street-address {concat($locationAddress/street, " ", $locationAddress/housenumber)} ;
-              vcard:locality {waag:parse-string($locationAddress/city)} ;
-              vcard:postal-code {waag:parse-string($locationAddress/zipcode)} .
+              vcard:street-address { $location-street-address } ;
+              vcard:locality { $location-locality } ;
+              vcard:postal-code { $location-postal-code} .
         
         $curi a ah:Address ;
-              vcard:street-address {concat($contactAddress/street, " ", $contactAddress/housenumber)} ;
-              vcard:locality {waag:parse-string($contactAddress/city)} ;
-              vcard:postal-code {waag:parse-string($contactAddress/zipcode)} .    
+              vcard:street-address { $contact-street-address } ;
+              vcard:locality { $contact-locality } ;
+              vcard:postal-code { $contact-postal-code } .
                         
         { for $attr at $pos in $poi/object/attributeList/*                    
           let $auri := {waag:object-uri("poi", "nbtc", $pid, "attribute", string($pos))}

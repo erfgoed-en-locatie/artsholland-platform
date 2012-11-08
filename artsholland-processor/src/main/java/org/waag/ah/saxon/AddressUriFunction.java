@@ -39,19 +39,22 @@ public class AddressUriFunction extends ExtensionFunctionDefinition {
 		return new ExtensionFunctionCall() {
 			public SequenceIterator call(SequenceIterator[] arguments,
 					XPathContext context) throws XPathException {				
-				String zipcode = "";
+				String postalCode = "";
 				String number = "";
 				String addition = "";				
 				try {					
-					zipcode = ((StringValue) arguments[0].next()).getStringValue();
+					postalCode = ((StringValue) arguments[0].next()).getStringValue();
 					number = ((StringValue) arguments[1].next()).getStringValue();
-					addition = ((StringValue) arguments[2].next()).getStringValue();					
+					if (arguments.length == 3) {
+						addition = ((StringValue) arguments[2].next()).getStringValue();	
+					}		
 				} catch (Exception e) {
+					return Value.asIterator(EmptySequence.getInstance());
 				}				
-				if (zipcode.length() > 0 && number.length() > 0) {
+				if (postalCode.length() > 0 && number.length() > 0) {
 					//addition may be empty sequence					
-					String address = zipcode + number + addition;					
-					address = address.replace(" ", "");						
+					String address = postalCode + number + addition;
+					address = address.replaceAll("\\s","");						
 					return Value.asIterator(StringValue.makeStringValue(address));
 				} else {
 					return Value.asIterator(EmptySequence.getInstance());

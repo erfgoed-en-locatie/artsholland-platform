@@ -1,8 +1,5 @@
 package org.waag.ah.saxon;
 
-import java.util.Arrays;
-import java.util.List;
-
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.lib.ExtensionFunctionDefinition;
@@ -15,11 +12,8 @@ import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.Value;
 
 @SuppressWarnings("serial")
-public class PostalCodeFunction extends ExtensionFunctionDefinition {
+public class ExtractStreetNumberFunction extends ExtensionFunctionDefinition {
 
-	public static final List<String> INCORRECT_POSTAL_CODES =
-			Arrays.asList("1234XX", "9999XX", "XXXX", "0000");
-	
 	@Override
 	public SequenceType[] getArgumentTypes() {
 		return new SequenceType[] { SequenceType.OPTIONAL_STRING };
@@ -28,7 +22,7 @@ public class PostalCodeFunction extends ExtensionFunctionDefinition {
 	@Override
 	public StructuredQName getFunctionQName() {
 		return new StructuredQName("waag", "http://waag.org/saxon-extension",
-				"postal-code");
+				"extract-street-number");
 	}
 
 	@Override
@@ -44,21 +38,29 @@ public class PostalCodeFunction extends ExtensionFunctionDefinition {
 				String text = "";
 				try {
 					text = ((StringValue) arguments[0].next()).getStringValue();
-					text = text.replaceAll("\\s","").toUpperCase();
+
+					// Split street name and number + addition, return number + addition
+					// Find first number, and return everything including and after that
+					// position.
+					// TODO: Problem some street names have numbers in them...
 					
-					if (text.length() != 6) {
-						return Value.asIterator(EmptySequence.getInstance());
-					}
-					
-					for (String incorrectPostalCode : INCORRECT_POSTAL_CODES) {
-						if (incorrectPostalCode.equals(text)) {
-							return Value.asIterator(EmptySequence.getInstance());
+					int i;
+					for (i = 0; i < text.length(); i++) {
+						char c = text.charAt(i);
+						if (Character.isDigit(c)) {
+							break;
 						}
 					}
 					
+					if (i == text.length()) {
+						return Value.asIterator(EmptySequence.getInstance());
+					}
+					
+					text = text.substring(i, text.length()).trim();
+
 				} catch (Exception e) {
 					return Value.asIterator(EmptySequence.getInstance());
-				}				
+				}
 				return Value.asIterator(StringValue.makeStringValue(text));
 			}
 		};

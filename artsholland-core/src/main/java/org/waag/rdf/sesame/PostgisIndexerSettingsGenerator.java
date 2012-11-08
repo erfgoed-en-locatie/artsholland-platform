@@ -43,7 +43,7 @@ public class PostgisIndexerSettingsGenerator {
 		pgDatasource.setDriverClassName("org.postgresql.Driver");
 		
 		// TODO: complete jdbc url in artsholland.properties?
-		pgDatasource.setUrl("jdbc:postgresql://localhost:5432/" + platformConfig.getString("useekm.database"));
+		pgDatasource.setUrl("jdbc:postgresql://localhost:5432/" + platformConfig.getString("postgres.database.useekm"));
 		
 		pgDatasource.setUsername(platformConfig.getString("postgres.username"));
 		pgDatasource.setPassword(platformConfig.getString("postgres.password"));

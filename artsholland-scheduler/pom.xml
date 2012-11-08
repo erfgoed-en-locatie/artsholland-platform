@@ -34,6 +34,12 @@
       <type>ejb</type>
     </dependency>   
     <dependency>
+      <groupId>org.waag.artsholland</groupId>
+      <artifactId>artsholland-processor</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <type>ejb</type>
+    </dependency>   
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <version>1.6.4</version>

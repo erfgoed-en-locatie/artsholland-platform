@@ -20,7 +20,9 @@ let $baseuriUitburo := {"http://resources.uitburo.nl/"}
 let $events := //event
 let $productions := //production
 let $venues := //location
+
 #let $groups := //group
+#let $groups := //*[name() = "group"]
 
 return
 
@@ -31,15 +33,15 @@ return
 	if ($events) then {
 		for $event in $events	
 		
-			let $cidn := {$event/cidn}
+			let $cidn := { waag:parse-cidn($event/cidn) }
 						
 			let $euri := {waag:object-uri("event", $cidn)}
 			let $euriUitburo := {concat($baseuriUitburo, "events/", $cidn)}
 				
-			let $pcidn := {$event/link[@type="production"]/@cidn}
+			let $pcidn := { waag:parse-cidn($event/link[@type="production"]/@cidn) }
 			let $puri := {waag:object-uri("production", $pcidn)}
 			
-			let $vcidn := {$event/link[@type="location"]/@cidn}
+			let $vcidn := { waag:parse-cidn($event/link[@type="location"]/@cidn) }
 			let $vuri := {waag:object-uri("venue", $vcidn)}
 					
 			let $typeKey := {waag:parse-string($event/type/@key)}
@@ -75,10 +77,7 @@ return
 					time:hasBeginning {$event/datetime-start}^^xsd:dateTime ;
 					time:hasEnd {$event/datetime-end}^^xsd:dateTime .		
 				
-				$vuri a ah:Venue ;
-					ah:room $ruri .
-					
-				$puri a ah:Production .
+				$vuri ah:room $ruri .
 				
 				$ruri a ah:Room ;
 					rdfs:label {$room} .
@@ -177,7 +176,7 @@ return
 	else if ($venues) then {
 		for $venue in $venues
 			
-			let $cidn := {$venue/cidn}
+			let $cidn := { waag:parse-cidn($venue/cidn) }
 			
 			let $vuri := {waag:object-uri("venue", $cidn)}
 			let $vuriUitburo := {concat($baseuriUitburo, "locations/", $cidn)}
@@ -185,9 +184,16 @@ return
 			let $venueType := {waag:class-uri("venueType", waag:upper-case-first($venue/type/@key))}
 				
 			let $lat := { waag:parse-non-zero-number($venue/geocode/latitude) }
-			let $long := { waag:parse-non-zero-number($venue/geocode/longitude) }			
+			let $long := { waag:parse-non-zero-number($venue/geocode/longitude) }	
 			
-			let $auri := {waag:object-uri("address", waag:address-uri($venue/postal-code, $venue/street/number, $venue/street/addition))}
+			let $postal-code := { waag:postal-code(waag:parse-string($venue/postal-code)) }
+			let $street-name := { waag:street-name(waag:parse-string($venue/street/name)) }
+			let $street-number := { waag:street-number($venue/street/number, $venue/street/addition) }
+			let $street-address := { waag:street-address($street-name, $street-number) }
+			let $locality := { waag:locality($postal-code, waag:parse-string($venue/city)) }
+			# Gemeente??!?!
+			
+			let $auri := { waag:object-uri("address", waag:address-uri($postal-code, $street-number)) }
 						
 			construct {
 			
@@ -219,11 +225,10 @@ return
 				$venueType a ah:VenueType ;	
 					rdfs:label {waag:parse-string($venue/type)}^^xsd:string .
 				
-				
 			  $auri a ah:Address ;
-        	vcard:street-address {concat($venue/street/name, " ", $venue/street/number, $venue/street/addition)} ;
-					vcard:locality {waag:parse-string($venue/city)} ;
-					vcard:postal-code {waag:postal-code(waag:parse-string($venue/postal-code))} .
+        	vcard:street-address { $street-address } ;
+					vcard:locality { $locality } ;
+					vcard:postal-code { $postal-code } .
 				
 				{ for $room in $venue/rooms//room
 					
@@ -317,7 +322,7 @@ return
 	else if ($productions) then {
 		for $production in $productions
 				
-			let $cidn := {$production/cidn}
+			let $cidn := { waag:parse-cidn($production/cidn) }
 			
 			let $puri := {waag:object-uri("production", $cidn)}
 			let $puriUitburo := {concat($baseuriUitburo, "productions/", $cidn)}

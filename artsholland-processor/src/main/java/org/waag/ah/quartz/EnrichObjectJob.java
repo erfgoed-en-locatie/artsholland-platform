@@ -35,11 +35,9 @@ public class EnrichObjectJob implements Job {
 	private QueryService queryService;
 	private RepositoryConnectionFactory cf;
 
-	private Class<? extends GraphEnricher> enricher;
-	private String objectUri;
 	private String sparqlQuery;
-	private List<String> includeUris = new ArrayList<String>();
-	private List<String> excludeUris = new ArrayList<String>();
+
+	private EnricherConfig config;
 
 	public EnrichObjectJob() throws NamingException, ConnectionException, RepositoryException {
 		InitialContext ic = new InitialContext();
@@ -47,6 +45,7 @@ public class EnrichObjectJob implements Job {
 				.lookup("java:global/artsholland-platform/core/QueryService");
 		cf = (RepositoryConnectionFactory) ic
 				.lookup("java:global/artsholland-platform/core/RepositoryConnectionService");
+		 config = new EnricherConfig();
 	}
 
 	@Override
@@ -56,14 +55,7 @@ public class EnrichObjectJob implements Job {
 			RepositoryConnection conn = cf.getConnection(false);	
 			Assert.assertNotNull("Enricher class cannot be null");
 //			Assert.assertNotNull("Object URI cannot be null");
-
-			EnricherConfig config = new EnricherConfig();
-			config.setEnricher(this.enricher);
-			config.setObjectUri(this.objectUri);
-			config.addIncludeUri(this.includeUris);
-			config.addExcludeUri(this.excludeUris);
 			config.setConnection(conn);
-			
 			try {
 				String queryString = sparqlQuery.equals("") ? EnrichUtils.getObjectQuery(config, 10) : sparqlQuery;
 				GraphQueryResult result = queryService.executeQuery(queryString);
@@ -98,7 +90,7 @@ public class EnrichObjectJob implements Job {
 	
 	public void setEnricherClass(String className) throws JobExecutionException {
 		try {
-			this.enricher = Class.forName(className).asSubclass(GraphEnricher.class);
+			config.setEnricher(Class.forName(className).asSubclass(GraphEnricher.class));
 		} catch (ClassNotFoundException e) {
 			throw new JobExecutionException(e.getMessage(), e);
 		}
@@ -109,15 +101,15 @@ public class EnrichObjectJob implements Job {
 	}
 	
 	public void setObjectUri(String uri) {
-		this.objectUri = uri;
+		config.setObjectUri(uri);
 	}
 	
 	public void setIncludeProperties(String props) {
-		this.includeUris = cleanupUris(props);
+		config.addIncludeUri(cleanupUris(props));
 	}
 	
 	public void setExcludeProperties(String props) {
-		this.excludeUris = cleanupUris(props);
+		config.addExcludeUri(cleanupUris(props));
 	}
 	
 	private List<String> cleanupUris(String uris) {

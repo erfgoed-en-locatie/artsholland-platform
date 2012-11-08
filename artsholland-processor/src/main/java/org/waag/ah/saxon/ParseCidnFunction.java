@@ -46,7 +46,7 @@ public class ParseCidnFunction extends ExtensionFunctionDefinition {
 					
 					// TODO: length limit of 20 characters is arbitrary! FIX!
 					
-					boolean valid = cidn.length() >= 20;
+					boolean valid = cidn.length() >= 4;
 					
 					if (!valid) {
 						return Value.asIterator(EmptySequence.getInstance());

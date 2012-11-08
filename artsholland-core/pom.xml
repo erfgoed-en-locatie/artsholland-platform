@@ -77,6 +77,12 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
       <version>${spring.version}</version>
+      <exclusions>
+      	<exclusion>
+      		<artifactId>spring-aop</artifactId>
+      		<groupId>org.springframework</groupId>
+      	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.ws</groupId>
@@ -98,26 +104,56 @@
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-taglibs</artifactId>
       <version>${spring.version}</version>
+      <exclusions>
+      	<exclusion>
+      		<artifactId>spring-aop</artifactId>
+      		<groupId>org.springframework</groupId>
+      	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.security.oauth</groupId>
       <artifactId>spring-security-oauth</artifactId>
       <version>1.0.0.M5</version>
+      <exclusions>
+      	<exclusion>
+      		<artifactId>spring-aop</artifactId>
+      		<groupId>org.springframework</groupId>
+      	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-core</artifactId>
       <version>${spring.version}</version>
+      <exclusions>
+      	<exclusion>
+      		<artifactId>spring-aop</artifactId>
+      		<groupId>org.springframework</groupId>
+      	</exclusion>
+      </exclusions>
     </dependency>   
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-config</artifactId>
       <version>${spring.version}</version>
+      <exclusions>
+      	<exclusion>
+      		<artifactId>spring-aop</artifactId>
+      		<groupId>org.springframework</groupId>
+      	</exclusion>
+      </exclusions>
     </dependency>     
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-web</artifactId>
       <version>${spring.version}</version>
+      <exclusions>
+      	<exclusion>
+      		<artifactId>spring-aop</artifactId>
+      		<groupId>org.springframework</groupId>
+      	</exclusion>
+      </exclusions>
     </dependency>            
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -201,6 +237,11 @@
       <groupId>commons-dbcp</groupId>
       <artifactId>commons-dbcp</artifactId>
       <version>1.4</version>
+    </dependency>
+    <dependency>
+    	<groupId>org.springframework</groupId>
+    	<artifactId>spring-aop</artifactId>
+    	<version>3.1.0.RELEASE</version>
     </dependency>
   </dependencies>
 
