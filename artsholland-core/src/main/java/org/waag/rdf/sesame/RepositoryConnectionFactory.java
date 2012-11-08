@@ -9,4 +9,5 @@ import org.openrdf.repository.RepositoryException;
 public interface RepositoryConnectionFactory {
 	RepositoryConnection getConnection() throws RepositoryException;
 	RepositoryConnection getConnection(boolean autoCommit) throws RepositoryException;
+	RepositoryConnection getReadWriteConnection() throws RepositoryException;
 }
