@@ -32,6 +32,10 @@ public class PostalCodeLookup {
 		connection = connectionService.getConnection();
 		
 		// Import Dutch postal code list
+		//importCSV();
+	}
+	
+	public static void importCSV() throws SQLException {
 		String csvFilename = PostalCodeLookup.class.getResource("nl.csv").getPath();
 		
 		String sqlDrop = "DROP SCHEMA IF EXISTS " + SCHEMA_NAME + " CASCADE";
@@ -48,7 +52,7 @@ public class PostalCodeLookup {
 		statement.execute(sqlCreateTable);
 		statement.execute(sqlCreateIndex1);
 		statement.execute(sqlCreateIndex2);
-		statement.executeUpdate(sqlInsert);
+		statement.executeUpdate(sqlInsert);		
 	}
 
 	public static String lookupPostalCode(String postalCode)
