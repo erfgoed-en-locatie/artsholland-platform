@@ -55,7 +55,7 @@ function Snorql() {
         this.setApiKey(apiKey);
         //this.setBrowserBase(document.location.href.replace(/\?.*/, '') );
         
-        if (!queryString || queryString == apiKeyUrl) {
+        if (!queryString || (apiKeyUrl && queryString == apiKeyUrl) || (apiKeyUrlOld && queryString == apiKeyUrlOld)) {
             document.getElementById('querytext').value = 'SELECT DISTINCT * WHERE {\n\t?s ?p ?o\n}\nLIMIT 10';
             this._updateGraph(null, false);
             this.createCodeMirror();
