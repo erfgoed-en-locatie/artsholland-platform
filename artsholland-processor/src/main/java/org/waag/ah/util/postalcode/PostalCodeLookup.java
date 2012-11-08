@@ -35,17 +35,19 @@ public class PostalCodeLookup {
 		String csvFilename = PostalCodeLookup.class.getResource("nl.csv").getPath();
 		
 		String sqlDrop = "DROP SCHEMA IF EXISTS " + SCHEMA_NAME + " CASCADE";
-		String sqlCreate =
-				"CREATE SCHEMA " + SCHEMA_NAME + ";\n"
-			+ "CREATE TABLE " + SCHEMA_NAME + ".nl (postal_code_from int, postal_code_to int, city text, municipality text, province text);\n"
- 			+ "CREATE INDEX postal_code_from_idx ON " + SCHEMA_NAME + ".nl (postal_code_from);\n"
-    	+ "CREATE INDEX postal_code_to_idx ON " + SCHEMA_NAME + ".nl (postal_code_to);\n";
+		String sqlCreateSchema = "CREATE SCHEMA " + SCHEMA_NAME + ";\n";
+		String sqlCreateTable = "CREATE TABLE " + SCHEMA_NAME + ".nl (postal_code_from int, postal_code_to int, city text, municipality text, province text);\n";
+		String sqlCreateIndex1 = "CREATE INDEX postal_code_from_idx ON " + SCHEMA_NAME + ".nl (postal_code_from);\n";
+		String sqlCreateIndex2 = "CREATE INDEX postal_code_to_idx ON " + SCHEMA_NAME + ".nl (postal_code_to);\n";
 		
 		String sqlInsert = "COPY " + SCHEMA_NAME + ".nl FROM '" + csvFilename + "' DELIMITERS ',' CSV HEADER"; 
 		
 		Statement statement = connection.createStatement();
-		statement.executeUpdate(sqlDrop);
-		statement.executeUpdate(sqlCreate);
+		statement.execute(sqlDrop);
+		statement.execute(sqlCreateSchema);
+		statement.execute(sqlCreateTable);
+		statement.execute(sqlCreateIndex1);
+		statement.execute(sqlCreateIndex2);
 		statement.executeUpdate(sqlInsert);
 	}
 
