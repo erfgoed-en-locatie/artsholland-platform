@@ -36,10 +36,11 @@ public class PostalCodeLookup {
 		
 		String sqlDrop = "DROP SCHEMA IF EXISTS " + SCHEMA_NAME + " CASCADE";
 		String sqlCreate =
-				"CREATE SCHEMA " + SCHEMA_NAME + "\n"
-			    	+ "\tCREATE TABLE nl (postal_code_from int, postal_code_to int, city text, municipality text, province text)\n"
-  					+ "\tCREATE INDEX ON nl (postal_code_from)\n"
-			    	+ "\tCREATE INDEX ON nl (postal_code_to);";
+				"CREATE SCHEMA " + SCHEMA_NAME + ";\n"
+			+ "CREATE TABLE " + SCHEMA_NAME + ".nl (postal_code_from int, postal_code_to int, city text, municipality text, province text);\n"
+ 			+ "CREATE INDEX postal_code_from_idx ON " + SCHEMA_NAME + ".nl (postal_code_from);\n"
+    	+ "CREATE INDEX postal_code_to_idx ON " + SCHEMA_NAME + ".nl (postal_code_to);\n";
+		
 		String sqlInsert = "COPY " + SCHEMA_NAME + ".nl FROM '" + csvFilename + "' DELIMITERS ',' CSV HEADER"; 
 		
 		Statement statement = connection.createStatement();
