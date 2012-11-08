@@ -92,7 +92,7 @@
         </entry>
       </job-data-map>
     </job>
-<!-- 
+ 
     <trigger>
       <cron>
         <name>TAMIncrementalImportTrigger</name>
@@ -110,7 +110,7 @@
       </cron>
     </trigger>
 
- -->    <!-- NBTC IMPORT -->
+     <!-- NBTC IMPORT -->
     <job>
       <name>NBTC</name>
       <group>Importer</group>
@@ -133,7 +133,7 @@
         </entry>           
       </job-data-map>      
     </job>
-<!-- 
+
     <trigger>
       <cron>
         <name>NBTC</name>
@@ -145,7 +145,7 @@
       </cron>
     </trigger>
 
- -->    <!-- DOSA IMPORTER -->
+    <!-- DOSA IMPORTER -->
     <job>
       <name>DOSA</name>
       <group>Importer</group>
@@ -319,8 +319,10 @@
         </entry>
         <entry>
           <key>sparqlQuery</key>
-          <value>
-            SELECT DISTINCT ?address ?p ?o 
+          <value><![CDATA[
+          	PREFIX ah: <http://purl.org/artsholland/1.0/>
+            PREFIX vcard: <http://www.w3.org/2006/vcard/ns#>
+            CONSTRUCT { ?address ?p ?o }
             WHERE {
               OPTIONAL { ?address ?p ?o . }
               {
@@ -345,10 +347,20 @@
                 } 
               }
             } ORDER BY ?address ?p
-          </value>
+          ]]></value>
         </entry>
       </job-data-map>
     </job>
+    
+    <trigger>
+      <cron>
+        <name>AddressCleanupTrigger</name>
+        <job-name>AddressCleanup</job-name>
+        <job-group>EnricherService</job-group>
+        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <time-zone>Europe/Amsterdam</time-zone>
+      </cron>
+    </trigger> 
 
   </schedule>
 

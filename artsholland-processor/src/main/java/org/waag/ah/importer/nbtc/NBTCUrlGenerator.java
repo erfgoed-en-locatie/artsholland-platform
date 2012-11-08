@@ -16,15 +16,15 @@ public class NBTCUrlGenerator implements UrlGenerator {
 	private final List<URL> urls;
 	private static final String[] RESOURCES = { 
 //		"nbtc/ArtsHollandPois-test.xml",
-		"nbtc/ArtsHollandPois-da_DK.xml",
-		"nbtc/ArtsHollandPois-de_DE.xml",
+//		"nbtc/ArtsHollandPois-da_DK.xml",
+//		"nbtc/ArtsHollandPois-de_DE.xml",
 		"nbtc/ArtsHollandPois-en_GB.xml",
-		"nbtc/ArtsHollandPois-es_ES.xml",
-		"nbtc/ArtsHollandPois-fr_FR.xml",
-		"nbtc/ArtsHollandPois-it_IT.xml",
+//		"nbtc/ArtsHollandPois-es_ES.xml",
+//		"nbtc/ArtsHollandPois-fr_FR.xml",
+//		"nbtc/ArtsHollandPois-it_IT.xml",
 		"nbtc/ArtsHollandPois-nl_NL.xml",
-		"nbtc/ArtsHollandPois-ru_RU.xml",
-		"nbtc/ArtsHollandPois-sv_SE.xml",
+//		"nbtc/ArtsHollandPois-ru_RU.xml",
+//		"nbtc/ArtsHollandPois-sv_SE.xml",
 	};	
 	
 	public NBTCUrlGenerator() throws MalformedURLException, ConfigurationException {
