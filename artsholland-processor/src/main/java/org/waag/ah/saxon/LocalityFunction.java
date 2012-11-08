@@ -1,7 +1,6 @@
 package org.waag.ah.saxon;
 
-import java.util.Arrays;
-import java.util.List;
+import org.waag.ah.util.postalcode.PostalCodeLookup;
 
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExtensionFunctionCall;
@@ -15,20 +14,21 @@ import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.Value;
 
 @SuppressWarnings("serial")
-public class PostalCodeFunction extends ExtensionFunctionDefinition {
+public class LocalityFunction extends ExtensionFunctionDefinition {
 
-	public static final List<String> INCORRECT_POSTAL_CODES =
-			Arrays.asList("1234XX", "9999XX", "XXXX", "0000");
-	
 	@Override
 	public SequenceType[] getArgumentTypes() {
 		return new SequenceType[] { SequenceType.OPTIONAL_STRING };
 	}
+	
+	@Override
+	public int getMaximumNumberOfArguments() {
+		return 2;
+	}
 
 	@Override
 	public StructuredQName getFunctionQName() {
-		return new StructuredQName("waag", "http://waag.org/saxon-extension",
-				"postal-code");
+		return new StructuredQName("waag", "http://waag.org/saxon-extension", "locality");
 	}
 
 	@Override
@@ -40,26 +40,18 @@ public class PostalCodeFunction extends ExtensionFunctionDefinition {
 	public ExtensionFunctionCall makeCallExpression() {
 		return new ExtensionFunctionCall() {
 			public SequenceIterator call(SequenceIterator[] arguments,
-					XPathContext context) throws XPathException {
-				String text = "";
+					XPathContext context) throws XPathException {				
+				String locality = "";
 				try {
-					text = ((StringValue) arguments[0].next()).getStringValue();
-					text = text.replaceAll("\\s","").toUpperCase();
+					// First argument: postal code
+					// Second (optional) argument: locality (ignored for now)
 					
-					if (text.length() != 6) {
-						return Value.asIterator(EmptySequence.getInstance());
-					}
-					
-					for (String incorrectPostalCode : INCORRECT_POSTAL_CODES) {
-						if (incorrectPostalCode.equals(text)) {
-							return Value.asIterator(EmptySequence.getInstance());
-						}
-					}
-					
+					String postalCode = ((StringValue) arguments[0].next()).getStringValue();
+					locality = PostalCodeLookup.lookupPostalCode(postalCode);
 				} catch (Exception e) {
 					return Value.asIterator(EmptySequence.getInstance());
 				}				
-				return Value.asIterator(StringValue.makeStringValue(text));
+				return Value.asIterator(StringValue.makeStringValue(locality));
 			}
 		};
 	}

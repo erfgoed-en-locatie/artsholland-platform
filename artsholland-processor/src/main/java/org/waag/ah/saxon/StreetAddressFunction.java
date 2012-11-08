@@ -1,8 +1,5 @@
 package org.waag.ah.saxon;
 
-import java.util.Arrays;
-import java.util.List;
-
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.lib.ExtensionFunctionDefinition;
@@ -15,11 +12,8 @@ import net.sf.saxon.value.StringValue;
 import net.sf.saxon.value.Value;
 
 @SuppressWarnings("serial")
-public class PostalCodeFunction extends ExtensionFunctionDefinition {
+public class StreetAddressFunction extends ExtensionFunctionDefinition {
 
-	public static final List<String> INCORRECT_POSTAL_CODES =
-			Arrays.asList("1234XX", "9999XX", "XXXX", "0000");
-	
 	@Override
 	public SequenceType[] getArgumentTypes() {
 		return new SequenceType[] { SequenceType.OPTIONAL_STRING };
@@ -28,7 +22,12 @@ public class PostalCodeFunction extends ExtensionFunctionDefinition {
 	@Override
 	public StructuredQName getFunctionQName() {
 		return new StructuredQName("waag", "http://waag.org/saxon-extension",
-				"postal-code");
+				"street-address");
+	}
+	
+	@Override
+	public int getMaximumNumberOfArguments() {
+		return 2;
 	}
 
 	@Override
@@ -41,25 +40,22 @@ public class PostalCodeFunction extends ExtensionFunctionDefinition {
 		return new ExtensionFunctionCall() {
 			public SequenceIterator call(SequenceIterator[] arguments,
 					XPathContext context) throws XPathException {
-				String text = "";
+				// concat twee strings (naam en nummer). Alleen naam mag, alleen nummer niet.
+				String streetName = "";
+				String streetNumber = "";
 				try {
-					text = ((StringValue) arguments[0].next()).getStringValue();
-					text = text.replaceAll("\\s","").toUpperCase();
-					
-					if (text.length() != 6) {
-						return Value.asIterator(EmptySequence.getInstance());
+					streetName = ((StringValue) arguments[0].next()).getStringValue();
+					if (arguments.length > 1) {
+						 streetNumber = arguments[1].next().getStringValue();
 					}
-					
-					for (String incorrectPostalCode : INCORRECT_POSTAL_CODES) {
-						if (incorrectPostalCode.equals(text)) {
-							return Value.asIterator(EmptySequence.getInstance());
-						}
-					}
-					
 				} catch (Exception e) {
 					return Value.asIterator(EmptySequence.getInstance());
-				}				
-				return Value.asIterator(StringValue.makeStringValue(text));
+				}		
+				String streetAddress = streetName;
+				if (streetNumber.length() > 0) {
+					streetAddress += " " + streetNumber;
+				}
+				return Value.asIterator(StringValue.makeStringValue(streetAddress));
 			}
 		};
 	}

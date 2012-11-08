@@ -74,18 +74,19 @@ return
       # 	<country_name>Netherlands</country_name>
     	# 	<phone>+31 30 286 22 86</phone>  
 			# </location>
+				
+			let $street-name := { waag:street-name(waag:extract-street-name($location/street)) }
+			let $street-number := { waag:street-number(waag:extract-street-number($location/street), $location/additional) }
+			let $street-address := { waag:street-address($street-name, $street-number) }
+			let $postal-code := { waag:postal-code(waag:parse-string($location/postal_code)) }
+			let $locality := { waag:locality($postal-code, waag:parse-string($location/city)) }
 			
-			let $street := { $location/street }
-			let $number := { waag:street-number($street) }
-			let $additional := {$location/additional}
-			let $city := { $location/city }
-			let $postal-code := { $location/postal_code }
 			let $lat := { waag:parse-non-zero-number($location/latitude) }
 			let $long := { waag:parse-non-zero-number($location/longitude) }
-			let $country-name := { $location/country_name }
+			let $country-name := { waag:parse-string($location/country_name) }
 			let $phone := { $location/phone }			
 			
-			let $auri := { waag:object-uri("address", waag:address-uri($postal-code, $number, $additional)) }
+			let $auri := { waag:object-uri("address", waag:address-uri($postal-code, $street-number)) }
 				
 			# TODO: genre??
 			let $field_genre := { waag:parse-string($node/field_genre/n0/value) }				
@@ -178,10 +179,10 @@ return
 					ah:attachmentType ah:AttachmentTypeVideo .
 				
 				$auri a ah:Address ;
-        	vcard:street-address { concat($street, $additional) } ;
-					vcard:locality { waag:parse-string($city) } ;
-					vcard:postal-code { waag:postal-code(waag:parse-string($postal-code)) } ;
-					vcard:country-name { waag:parse-string($country-name) } .				
+        	vcard:street-address { $street-address } ;
+					vcard:locality { $locality } ;
+					vcard:postal-code { $postal-code } ;
+					vcard:country-name { $country-name } .				
 				
 				$class a ah:WebContentType ;			
 					rdfs:label { $ahType }^^xsd:string .
