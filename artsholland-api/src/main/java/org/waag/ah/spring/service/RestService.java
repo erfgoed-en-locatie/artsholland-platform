@@ -47,8 +47,8 @@ public class RestService implements InitializingBean {
 		RestRelation webContentRelation = 
 				rootRelation.addRelation("webcontent", "ah:WebContent", RelationQuantity.MULTIPLE, RelationType.SELF, false);
 		
-		webContentRelation.addRelation("nid", "gr:WebContent",	RelationQuantity.SINGLE, RelationType.SELF, true);
-		addressRelation.addRelation("id", "gr:Address",	RelationQuantity.SINGLE, RelationType.SELF, true);
+		webContentRelation.addRelation("nid", "ah:WebContent",	RelationQuantity.SINGLE, RelationType.SELF, true);
+		addressRelation.addRelation("id", "ah:Address",	RelationQuantity.SINGLE, RelationType.SELF, true);
 		
 		rootRelation.addRelation("genre", "ah:Genre", RelationQuantity.MULTIPLE, RelationType.SELF, false);
 		rootRelation.addRelation("venuetype", "ah:VenueType", RelationQuantity.MULTIPLE, RelationType.SELF, false);
