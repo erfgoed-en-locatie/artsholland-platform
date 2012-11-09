@@ -9,27 +9,31 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
-
-import org.apache.commons.configuration.ConfigurationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.waag.ah.exception.PostalCodeNotFoundException;
-import org.waag.ah.importer.tam.TAMParser;
 import org.waag.ah.service.PostgresConnectionService;
 
 @Startup
 @Singleton
 public class PostalCodeLookup {
+	private Logger logger = LoggerFactory.getLogger(PostalCodeLookup.class);
 	
 	static final String SCHEMA_NAME = "postal_code_lookup";
 	
 	static Connection connection;
 		
 	@PostConstruct
-	public void connect() throws NamingException, SQLException {
-		InitialContext ic = new InitialContext();
-		PostgresConnectionService connectionService = (PostgresConnectionService) ic
-				.lookup("java:global/artsholland-platform/datastore/PostgresConnectionServiceImpl");
-		connection = connectionService.getConnection();
+	public void connect() {
+		InitialContext ic;
+		try {
+			ic = new InitialContext();
+			PostgresConnectionService connectionService = (PostgresConnectionService) ic
+					.lookup("java:global/artsholland-platform/datastore/PostgresConnectionServiceImpl");
+			connection = connectionService.getConnection();
+		} catch (Exception e) {
+			logger.warn("Could not connect to database 'artsholland' for postal code lookup.", e);
+		}
 		
 		// Import Dutch postal code list
 		//importCSV();
@@ -57,10 +61,13 @@ public class PostalCodeLookup {
 
 	public static String lookupPostalCode(String postalCode)
 			throws PostalCodeNotFoundException {
+		if (connection == null) {
+			throw new PostalCodeNotFoundException("Postal code lookup failed, no connection to database");
+		}
 		
 		if (postalCode.length() != 6) {
 			throw new PostalCodeNotFoundException();
-		}	
+		}
 		String numeric = postalCode.substring(0, 4);
 		try {
 			Statement statement = connection.createStatement();
@@ -73,7 +80,7 @@ public class PostalCodeLookup {
         return city;
 			}
 		} catch (SQLException e) {
-			throw new PostalCodeNotFoundException();
+			throw new PostalCodeNotFoundException("Postal code lookup failed: SQL error",e);
 		}
 		throw new PostalCodeNotFoundException();
 	}
