@@ -38,7 +38,7 @@ return
 			let $class := { waag:class-uri("webContentType", waag:upper-case-first($ahType)) }
 		
 			let $nid := { $node/nid }
-			let $uri := { waag:object-uri("webcontent", "ah", $nid) }			
+			let $uri := { waag:object-uri("webcontent", $nid) }			
 			
 			let $language-tag := { $node/language }
 			

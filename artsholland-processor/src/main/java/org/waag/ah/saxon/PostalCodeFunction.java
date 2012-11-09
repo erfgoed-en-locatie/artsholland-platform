@@ -41,17 +41,17 @@ public class PostalCodeFunction extends ExtensionFunctionDefinition {
 		return new ExtensionFunctionCall() {
 			public SequenceIterator call(SequenceIterator[] arguments,
 					XPathContext context) throws XPathException {
-				String text = "";
+				String postalCode = "";
 				try {
-					text = ((StringValue) arguments[0].next()).getStringValue();
-					text = text.replaceAll("\\s","").toUpperCase();
+					postalCode = ((StringValue) arguments[0].next()).getStringValue();
+					postalCode = postalCode.replaceAll("\\s","").toUpperCase();
 					
-					if (text.length() != 6) {
+					if (postalCode.length() != 6) {
 						return Value.asIterator(EmptySequence.getInstance());
 					}
 					
 					for (String incorrectPostalCode : INCORRECT_POSTAL_CODES) {
-						if (incorrectPostalCode.equals(text)) {
+						if (postalCode.startsWith(incorrectPostalCode)) {
 							return Value.asIterator(EmptySequence.getInstance());
 						}
 					}
@@ -59,7 +59,7 @@ public class PostalCodeFunction extends ExtensionFunctionDefinition {
 				} catch (Exception e) {
 					return Value.asIterator(EmptySequence.getInstance());
 				}				
-				return Value.asIterator(StringValue.makeStringValue(text));
+				return Value.asIterator(StringValue.makeStringValue(postalCode));
 			}
 		};
 	}
