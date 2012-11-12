@@ -13,25 +13,26 @@ import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.openrdf.repository.Repository;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
+import org.openrdf.repository.sail.SailRepository;
+import org.openrdf.repository.sail.SailRepositoryConnection;
+import org.openrdf.sail.Sail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.PlatformConfig;
 import org.waag.ah.PlatformConfigHelper;
 
 import com.bigdata.journal.Options;
-import com.bigdata.rdf.sail.BigdataSail;
-import com.bigdata.rdf.sail.BigdataSailRepository;
-import com.bigdata.rdf.sail.BigdataSailRepositoryConnection;
+import com.useekm.bigdata.BigdataSail;
+import com.useekm.indexing.IndexingSail;
 
 @Startup
 @Singleton
 public class RepositoryConnectionService implements RepositoryConnectionFactory, Closeable {
 	 private static final Logger logger = LoggerFactory.getLogger(RepositoryConnectionService.class);
 
-	private BigdataSailRepository repository;
+	private SailRepository repository;
 	private RepositoryConnection connection;
 
 	private PlatformConfig config; 
@@ -88,8 +89,10 @@ public class RepositoryConnectionService implements RepositoryConnectionFactory,
 			
 //			config = PlatformConfigHelper.getConfig();
 			Properties properties = ConfigurationConverter.getProperties(loadProperties());
-			BigdataSail sail = new BigdataSail(properties);		
-			repository = new BigdataSailRepository(sail);
+			Sail sail = new BigdataSail(properties);		
+			IndexingSail idxSail = new IndexingSail(sail, PostgisIndexerSettingsGenerator.generateSettings());
+
+			repository = new SailRepository(idxSail);
 
 //			SailRepositoryProvider provider = new SailRepositoryProvider();
 //			provider.setRepository(repository);
@@ -169,12 +172,13 @@ public class RepositoryConnectionService implements RepositoryConnectionFactory,
 		// TDOD: Static connection only needed for BigData, as getConnection()
 		//       blocks after the first call. FIX ASAP.
 //		return connection;
-		return repository.getReadOnlyConnection();
+//		return repository.getReadOnlyConnection();
+		return getReadWriteConnection();
 	}
 	
 	@Override
 	public RepositoryConnection getReadWriteConnection() throws RepositoryException {
-		BigdataSailRepositoryConnection conn = repository.getReadWriteConnection();
+		SailRepositoryConnection conn = repository.getConnection();
 		conn.setAutoCommit(false);
 		return conn;
 	}
