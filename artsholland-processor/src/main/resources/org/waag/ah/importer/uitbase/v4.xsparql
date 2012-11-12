@@ -15,6 +15,8 @@ declare namespace ah="http://purl.org/artsholland/1.0/";
 
 declare namespace waag="http://waag.org/saxon-extension";
 
+declare variable $venueTypesExternal external; 
+
 let $baseuriUitburo := {"http://resources.uitburo.nl/"}
 
 let $events := //event
@@ -181,7 +183,7 @@ return
 			let $vuri := {waag:object-uri("venue", $cidn)}
 			let $vuriUitburo := {concat($baseuriUitburo, "locations/", $cidn)}
 			
-			let $venueType := {waag:class-uri("venueType", waag:upper-case-first($venue/type/@key))}
+			#let $venueType := {waag:class-uri("venueType", waag:upper-case-first($venue/type/@key))}
 				
 			let $lat := { waag:parse-non-zero-number($venue/geocode/latitude) }
 			let $long := { waag:parse-non-zero-number($venue/geocode/longitude) }	
@@ -218,12 +220,7 @@ return
 					
 					# TODO: ah???
 					ah:telephone {waag:parse-string($venue/telephone)}^^xsd:string ;
-					ah:fax {waag:parse-string($venue/fax)}^^xsd:string ;
-					
-					ah:venueType $venueType .
-					
-				$venueType a ah:VenueType ;	
-					rdfs:label {waag:parse-string($venue/type)}^^xsd:string .
+					ah:fax {waag:parse-string($venue/fax)}^^xsd:string .				
 				
 			  $auri a ah:Address ;
         	vcard:street-address { $street-address } ;
@@ -308,6 +305,30 @@ return
 						$vuri ah:pricingInformation {waag:parse-string($language/pricing-information)}@{$language-tag}.
 	
 					}
+				} .
+				
+				{ 
+					if ( $venueTypesExternal//venuetype[@cidn=$cidn] ) then {
+						for $venueTypeExternal in $venueTypesExternal//venuetype[@cidn=$cidn]
+						
+							let $venueType := { waag:class-uri("venueType", waag:upper-case-first($venueTypeExternal)) }
+			
+							construct {
+								$vuri	ah:venueType $venueType .
+						
+								$venueType a ah:VenueType ;	
+									rdfs:label {waag:parse-string($venue/type)}^^xsd:string .
+							}
+					}	else if ($venue/type/@key) then {
+						let $venueType := { waag:class-uri("venueType", waag:upper-case-first($venue/type/@key)) }
+						
+						construct {
+							$vuri	ah:venueType $venueType .
+						
+							$venueType a ah:VenueType ;	
+								rdfs:label {waag:parse-string($venue/type)}^^xsd:string .
+						}
+					}	else ()
 				}
 				
 				#	TODO:

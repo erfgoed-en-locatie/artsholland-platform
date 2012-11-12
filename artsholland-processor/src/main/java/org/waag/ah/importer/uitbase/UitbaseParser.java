@@ -2,7 +2,11 @@ package org.waag.ah.importer.uitbase;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.tika.metadata.Metadata;
@@ -54,8 +58,11 @@ public class UitbaseParser extends AbstractParser {
 				if (xquery == null) {
 					throw new IOException("XQuery definition file not found");
 				}
+				Map<String, URI> includes = new HashMap<String, URI>();
+				includes.put("venueTypesExternal", UitbaseParser.getFileURI(UitbaseParser.class, "venuetypes.xml"));
+				
 				return new MatchingContentHandler(
-						new XSPARQLQueryHandler(handler, metadata, context, xquery),
+						new XSPARQLQueryHandler(handler, metadata, context, xquery, includes),
 						getXPathMatcher("/search/descendant::node()"));
 			}
 		} catch (Exception e) {
@@ -64,4 +71,20 @@ public class UitbaseParser extends AbstractParser {
 		}
 		return handler;
     }
+	
+	/**
+	 * @todo Move to utility class.
+	 */
+
+	public static URI getFileURI(Class<?> clazz, String fileName)
+			throws IOException {
+		URI uri = null;
+		try {
+			uri = new URI(clazz.getResource(fileName).getPath());
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return uri;
+	}
 }
