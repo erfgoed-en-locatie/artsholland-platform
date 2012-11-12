@@ -112,7 +112,7 @@
 
      <!-- NBTC IMPORT -->
     <job>
-      <name>NBTC</name>
+      <name>ImportNBTC</name>
       <group>Importer</group>
       <description>Import POI data from NBTC</description>
       <job-class>org.waag.ah.quartz.UrlImportJob</job-class>
@@ -138,7 +138,7 @@
       <cron>
         <name>NBTC</name>
         <group>Importer</group>
-        <job-name>NBTC</job-name>
+        <job-name>ImportNBTC</job-name>
         <job-group>Importer</job-group>
         <cron-expression>0 0/1 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>      
@@ -357,7 +357,7 @@
         <name>AddressCleanupTrigger</name>
         <job-name>AddressCleanup</job-name>
         <job-group>EnricherService</job-group>
-        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <cron-expression>0 0/5 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger> 

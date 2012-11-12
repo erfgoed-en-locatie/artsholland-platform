@@ -5,6 +5,7 @@
 <urlrewrite>
   <rule>
     <condition name="host" next="or">data.artsholland.com</condition>
+    <condition name="host" next="or">data.ah.waag.org</condition>
     <condition name="host" next="or">data.ah.local</condition>
     <from>^\/(.*)$</from>
     <to>/data/$1</to>
