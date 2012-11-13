@@ -54,7 +54,10 @@ public class AddressUriFunction extends ExtensionFunctionDefinition {
 				if (postalCode.length() > 0 && number.length() > 0) {
 					//addition may be empty sequence					
 					String address = postalCode + number + addition;
-					address = address.replaceAll("\\s","");						
+					address = address
+							.replaceAll("\\s+","")
+							.replaceAll("\\/+", "-")
+							.replaceAll("\\\\+", "-");
 					return Value.asIterator(StringValue.makeStringValue(address));
 				} else {
 					return Value.asIterator(EmptySequence.getInstance());

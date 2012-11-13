@@ -67,7 +67,11 @@ public class ObjectUriFunction extends ExtensionFunctionDefinition {
 						}
 						
 						s += ((StringValue) arg.next()).getStringValue();
-						uri += s.replaceAll("\\/+", "/").replaceAll(" ", "-").toLowerCase();
+						uri += s
+								.replaceAll("\\/+", "/")
+								.replaceAll("\\s+","-")
+								.replaceAll("\\\\+", "-")
+								.toLowerCase();
 						
 					} catch (NullPointerException e) {
 						return Value.asIterator(EmptySequence.getInstance());
