@@ -85,19 +85,22 @@
   </dependencies>
 
   <properties>
+
     <jdkLevel>1.6</jdkLevel>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <ejb.version>3.1</ejb.version>
-    <bigdata.version>1.2.2</bigdata.version>
-    <mongo.version>2.7.2</mongo.version>
-    <quartz.version>2.1.3</quartz.version>
-    <spring.version>3.1.0.RELEASE</spring.version>
-    <sesame.version>2.6.3</sesame.version>
+
     <alibaba.version>2.0-rc1</alibaba.version>
-    <useekm.version>1.2.0-a2</useekm.version>    
+    <bigdata.version>1.2.2</bigdata.version>
+    <ejb.version>3.1</ejb.version>
+    <jts.version>1.12</jts.version>
+    <mongo.version>2.7.2</mongo.version>
+    <postgis.version>1.3.3</postgis.version>
     <postgresql.version>9.1-901.jdbc4</postgresql.version>
-		<postgis.version>1.3.3</postgis.version>
-		<jts.version>1.12</jts.version>
+    <quartz.version>2.1.3</quartz.version>
+    <sesame.version>2.6.3</sesame.version>
+    <spring.version>3.1.0.RELEASE</spring.version>
+    <useekm.version>1.2.0-a2</useekm.version>    
+		<xsparql.version>0.5</xsparql.version>
   </properties>
 </project>
