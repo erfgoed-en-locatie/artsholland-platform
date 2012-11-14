@@ -137,8 +137,8 @@ public class RepositoryConnectionService implements RepositoryConnectionFactory,
 	 */
 	public void close() throws IOException {
 		try {
-			connection.close();
-			repository.shutDown();
+//			connection.close();
+//			repository.shutDown();
 		} catch (Exception e) {
 			throw new IOException(e);
 		}

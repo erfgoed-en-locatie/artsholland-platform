@@ -146,7 +146,7 @@ public class UrlImportJob implements Job {
 			} finally {
 				coll.insert(result);
 				logger.info("Closing connection: "+conn);
-//				conn.close();
+				conn.close();
 			}
 		} catch (Exception e) {
 			throw new JobExecutionException(e);
