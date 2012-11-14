@@ -61,6 +61,7 @@
       <artifactId>easystream</artifactId>
       <version>1.2.12</version>
     </dependency>
+<!-- 
     <dependency>
       <groupId>org.deri.xsparql</groupId>
       <artifactId>rewriter</artifactId>
@@ -71,6 +72,12 @@
       <artifactId>evaluator</artifactId>
       <version>0.4-SNAPSHOT</version>
     </dependency>
+ -->
+    <dependency>
+        <groupId>org.deri.xsparql</groupId>
+        <artifactId>cli</artifactId>
+        <version>${xsparql.version}</version>
+    </dependency>    
     <dependency>
       <groupId>org.openrdf.sesame</groupId>
       <artifactId>sesame-rio-rdfxml</artifactId>
