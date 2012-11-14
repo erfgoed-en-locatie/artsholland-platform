@@ -12,6 +12,7 @@ import java.util.Set;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.ParseContext;
+import org.apache.tika.sax.xpath.Matcher;
 import org.apache.tika.sax.xpath.MatchingContentHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,11 +62,14 @@ public class UitbaseParser extends AbstractParser {
 				Map<String, URI> includes = new HashMap<String, URI>();
 				includes.put("venueTypesExternal", UitbaseParser.getFileURI(UitbaseParser.class, "venuetypes.xml"));
 				
-				return new MatchingContentHandler(
-						new XSPARQLQueryHandler(handler, metadata, context, xquery, includes),
-						getXPathMatcher("/search/descendant::node()"));
+				@SuppressWarnings("deprecation")
+				XSPARQLQueryHandler queryHandler = new XSPARQLQueryHandler(handler, metadata, context, xquery, includes);
+				Matcher xpathMatcher = getXPathMatcher("/search/descendant::node()");
+				
+				return new MatchingContentHandler(queryHandler, xpathMatcher);
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			logger.error(e.getMessage());
 			return null;
 		}

@@ -47,6 +47,7 @@ import org.waag.ah.exception.ParserException;
 import org.waag.ah.saxon.AddressUriFunction;
 import org.waag.ah.saxon.ClassUriFunction;
 import org.waag.ah.saxon.ExtractStreetNameFunction;
+import org.waag.ah.saxon.ExtractStreetNumberFunction;
 import org.waag.ah.saxon.LocalityFunction;
 import org.waag.ah.saxon.ObjectUriFunction;
 import org.waag.ah.saxon.ParseBooleanFunction;
@@ -58,7 +59,6 @@ import org.waag.ah.saxon.ParseLocaleFunction;
 import org.waag.ah.saxon.ParseNonZeroNumber;
 import org.waag.ah.saxon.ParseStringFunction;
 import org.waag.ah.saxon.PostalCodeFunction;
-import org.waag.ah.saxon.ExtractStreetNumberFunction;
 import org.waag.ah.saxon.StreetAddressFunction;
 import org.waag.ah.saxon.StreetNameFunction;
 import org.waag.ah.saxon.StreetNumberFunction;
@@ -175,6 +175,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				}
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new ParserException(e);
 		}		
 	}
@@ -249,6 +250,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			} catch (Exception e) {
 				logger.info(xmlString);
 				logger.info(turtleString);
+//				e.printStackTrace();
 				throw new SAXException(e);
 			} finally {
 				xmlCollector = null;
