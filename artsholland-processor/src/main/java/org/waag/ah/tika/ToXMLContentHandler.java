@@ -17,8 +17,6 @@ package org.waag.ah.tika;
  * limitations under the License.
  */
 
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.Collections;
 import java.util.HashMap;

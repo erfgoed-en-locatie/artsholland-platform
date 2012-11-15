@@ -1,7 +1,7 @@
 package org.waag.ah.importer.nbtc;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.Reader;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -37,14 +37,13 @@ public class NBTCParser extends AbstractParser {
 	protected ContentHandler getContentHandler(ContentHandler handler, 
     		Metadata metadata, ParseContext context) {		
 		try {
-			InputStream xquery = NBTCParser.class.getResourceAsStream("nbtc_pois.xsparql");
+			Reader xquery = getFileReader(getClass(), "nbtc_pois.xsparql");
 			if (xquery == null) {
 				throw new IOException("XQuery definition file not found");
 			}
 			return new MatchingContentHandler(
 					new XSPARQLQueryHandler(handler, metadata, context, xquery),
 					getXPathMatcher("/Pois/descendant::node()"));
-
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return null;
