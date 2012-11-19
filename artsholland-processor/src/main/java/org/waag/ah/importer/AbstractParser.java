@@ -2,6 +2,8 @@ package org.waag.ah.importer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Set;
 
 import org.apache.tika.exception.TikaException;
@@ -29,11 +31,10 @@ public abstract class AbstractParser extends XMLParser {
 		}
 
 		TaggedContentHandler tagged = new TaggedContentHandler(handler);
-		ContentHandler wrappedHandler = getContentHandler(tagged, metadata,
-				context);
+		ContentHandler wrappedHandler = getContentHandler(tagged, metadata, context);
+		
 		if (wrappedHandler == null) {
-			throw new TikaException(
-					"Parsing aborted, unable to init Tika handler");
+			throw new TikaException("Parsing aborted, unable to init Tika handler");
 		}
 
 		try {
@@ -45,10 +46,10 @@ public abstract class AbstractParser extends XMLParser {
 		}
 	}
  	
-    protected InputStream getFileContents(Class<?> clazz, String fileName) throws IOException {
-    	return clazz.getResourceAsStream(fileName);
+    protected Reader getFileReader(Class<?> clazz, String fileName) throws IOException {
+    	return new InputStreamReader(clazz.getResourceAsStream(fileName));
     }
-    
+	
     protected Matcher getXPathMatcher(String selector) {
         return new XPathParser(null, "").parse(selector);
     }

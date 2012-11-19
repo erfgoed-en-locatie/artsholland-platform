@@ -1,13 +1,13 @@
 package org.waag.ah.importer.uitbase;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
@@ -49,46 +49,29 @@ public class UitbaseParser extends AbstractParser {
 			// for XQuery processing, we handle each node separately
 			// (event/production/location/group).
 			if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV3_MIME_TYPE)) {
-				InputStream xquery = getFileContents(getClass(), "v3/event.xsparql");    			
+				Reader xquery = getFileReader(getClass(), "v3/event.xsparql");    			
 				return new MatchingContentHandler(
 					new XSPARQLQueryHandler(handler, metadata, context, xquery), 
 					getXPathMatcher("/nubxml/events/descendant::node()"));
 				
 			} else if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_MIME_TYPE)) {
-				InputStream xquery = getFileContents(getClass(), "v4.xsparql");
+				Reader xquery = getFileReader(getClass(), "v4.xsparql");
 				if (xquery == null) {
 					throw new IOException("XQuery definition file not found");
 				}
-				Map<String, URI> includes = new HashMap<String, URI>();
-				includes.put("venueTypesExternal", UitbaseParser.getFileURI(UitbaseParser.class, "venuetypes.xml"));
 				
-				@SuppressWarnings("deprecation")
+				Map<String, StreamSource> includes = new HashMap<String, StreamSource>();
+//				logger.info("PATH: "+getClass().getResource("venuetypes.xml").getPath());
+				includes.put("venueTypesExternal", new StreamSource(getClass().getResourceAsStream("venuetypes.xml")));
+				
 				XSPARQLQueryHandler queryHandler = new XSPARQLQueryHandler(handler, metadata, context, xquery, includes);
 				Matcher xpathMatcher = getXPathMatcher("/search/descendant::node()");
 				
 				return new MatchingContentHandler(queryHandler, xpathMatcher);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
-			logger.error(e.getMessage());
-			return null;
+			logger.error(e.getMessage(), e);
 		}
-		return handler;
+		return null;
     }
-	
-	/**
-	 * @todo Move to utility class.
-	 */
-
-	public static URI getFileURI(Class<?> clazz, String fileName)
-			throws IOException {
-		URI uri = null;
-		try {
-			uri = new URI(clazz.getResource(fileName).getPath());
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return uri;
-	}
 }

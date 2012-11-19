@@ -1,12 +1,8 @@
 package org.waag.ah.tika;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
-import java.net.URI;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
@@ -23,7 +19,6 @@ import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.XQueryCompiler;
 import net.sf.saxon.s9api.XQueryEvaluator;
 import net.sf.saxon.s9api.XQueryExecutable;
-import net.sf.saxon.s9api.XdmNode;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.tika.metadata.Metadata;
@@ -73,6 +68,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	private Logger logger = LoggerFactory.getLogger(XSPARQLQueryHandler.class);
+	
 	private XQueryEvaluator evaluator;
 	private ToXMLContentHandler xmlCollector;
 	private TurtleParser turtleParser;
@@ -83,27 +79,12 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	private Stack<String> stack;
 
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata,
-			ParseContext context, InputStream xquery) throws ParserException {
+			ParseContext context, Reader xquery) throws ParserException {
 		this(handler, metadata, context, xquery, null);
-	}
-
-	/**
-	 * @param handler
-	 * @param metadata
-	 * @param context
-	 * @param xquery
-	 * @param includes
-	 * @throws ParserException
-	 * @deprecated
-	 */
-	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata,
-			ParseContext context, InputStream xquery, Map<String, URI> includes)
-					throws ParserException {
-		this(handler, metadata, context, new InputStreamReader(xquery), includes);
 	}
 	
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata,
-			ParseContext context, Reader xquery, Map<String, URI> includes)
+			ParseContext context, Reader xquery, Map<String, StreamSource> includes)
 			throws ParserException {
 		this.matcher = new XPathParser("rdf", RDF.NAMESPACE).parse("/rdf:RDF/descendant::node()");
 		this.handler = handler;
@@ -168,10 +149,10 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			
 			if (includes != null) {
 				DocumentBuilder docBuilder = processor.newDocumentBuilder();
-				for (Entry<String, URI> item : includes.entrySet()) {
-//					logger.info(item.getValue().toString());
-					XdmNode document = docBuilder.build(new File(item.getValue().getPath()));
-					evaluator.setExternalVariable(new QName(item.getKey()), document);				
+				for (Entry<String, StreamSource> item : includes.entrySet()) {
+					evaluator.setExternalVariable(
+						new QName(item.getKey()), 
+						docBuilder.build(item.getValue()));				
 				}
 			}
 		} catch (Exception e) {

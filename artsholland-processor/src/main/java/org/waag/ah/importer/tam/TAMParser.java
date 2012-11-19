@@ -1,30 +1,23 @@
 package org.waag.ah.importer.tam;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.tika.exception.TikaException;
-import org.apache.tika.io.CloseShieldInputStream;
+import javax.xml.transform.stream.StreamSource;
+
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.xml.XMLParser;
-import org.apache.tika.sax.OfflineContentHandler;
-import org.apache.tika.sax.TaggedContentHandler;
-import org.apache.tika.sax.xpath.Matcher;
 import org.apache.tika.sax.xpath.MatchingContentHandler;
-import org.apache.tika.sax.xpath.XPathParser;
+import org.waag.ah.importer.AbstractParser;
 import org.waag.ah.tika.XSPARQLQueryHandler;
 import org.xml.sax.ContentHandler;
-import org.xml.sax.SAXException;
 
-public class TAMParser extends XMLParser {
+public class TAMParser extends AbstractParser {
 //	private Logger logger = LoggerFactory.getLogger(TAMParser.class);
 	private static final long serialVersionUID = 116987633414164925L;
 
@@ -42,79 +35,26 @@ public class TAMParser extends XMLParser {
 		return SUPPORTED_TYPES;
 	}
 
-	public void parse(InputStream stream, ContentHandler handler,
-			Metadata metadata, ParseContext context) throws IOException,
-			SAXException, TikaException {
-		if (metadata.get(Metadata.CONTENT_TYPE) == null) {
-			throw new TikaException("No content type set");
-		}
-
-		TaggedContentHandler tagged = new TaggedContentHandler(handler);
-
-		try {
-			ContentHandler wrappedHandler = getContentHandler(tagged, metadata, context);
-			if (wrappedHandler == null) {
-				throw new TikaException("Parsing aborted, unable to init Tika handler");
-			}
-			context.getSAXParser().parse(new CloseShieldInputStream(stream),
-					new OfflineContentHandler(wrappedHandler));
-			// logger.info("OUTPUT: "+wrappedHandler.toString());
-		} catch (SAXException e) {
-            tagged.throwIfCauseOf(e);
-            throw new TikaException("XML parse error", e);
-		}
-	}
-
 	@Override
 	protected ContentHandler getContentHandler(ContentHandler handler,
 			Metadata metadata, ParseContext context) {
 		try {
-			// As we don't want to load the entire input document in memory
-			// for XQuery processing, we handle each node separately
-			// (event/production/location/group).
 			if (metadata.get(Metadata.CONTENT_TYPE).equals(TAM_MIME_TYPE)) {
-				InputStream xquery = getFileContents(getClass(), "tam.xsparql");
+				Reader xquery = getFileReader(getClass(), "tam.xsparql");
 				if (xquery == null) {
 					throw new IOException("XQuery definition file not found");
 				}
 				
-				Map<String, URI> includes = new HashMap<String, URI>();
-				includes.put("taxonomy", TAMParser.getFileURI(TAMParser.class, "taxonomy.xml"));
+				Map<String, StreamSource> includes = new HashMap<String, StreamSource>();
+				includes.put("taxonomy", new StreamSource(getClass().getResourceAsStream("taxonomy.xml")));
 				
-				return new MatchingContentHandler(new XSPARQLQueryHandler(handler,
-						metadata, context, xquery, includes),
-						getXPathMatcher("/node_export/descendant::node()"));
+				XSPARQLQueryHandler queryHandler = new XSPARQLQueryHandler(handler,	metadata, context, xquery, includes);
+				
+				return new MatchingContentHandler(queryHandler,	getXPathMatcher("/node_export/descendant::node()"));
 			}
 		} catch (Exception e) {
-//			logger.error(e.getMessage());
-//			return null;
 			throw new RuntimeException(e);
 		}
 		return handler;
-	}
-
-	/**
-	 * @todo Move to utility class.
-	 */
-
-	public static URI getFileURI(Class<?> clazz, String fileName)
-			throws IOException {
-		URI uri = null;
-		try {
-			uri = new URI(clazz.getResource(fileName).getPath());
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return uri;
-	}
-
-	public static InputStream getFileContents(Class<?> clazz, String fileName)
-			throws IOException {
-		return clazz.getResourceAsStream(fileName);
-	}
-
-	private Matcher getXPathMatcher(String selector) {
-		return new XPathParser(null, "").parse(selector);
 	}
 }

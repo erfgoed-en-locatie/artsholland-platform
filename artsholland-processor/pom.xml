@@ -61,18 +61,6 @@
       <artifactId>easystream</artifactId>
       <version>1.2.12</version>
     </dependency>
-<!-- 
-    <dependency>
-      <groupId>org.deri.xsparql</groupId>
-      <artifactId>rewriter</artifactId>
-      <version>0.4-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.deri.xsparql</groupId>
-      <artifactId>evaluator</artifactId>
-      <version>0.4-SNAPSHOT</version>
-    </dependency>
- -->
     <dependency>
         <groupId>org.deri.xsparql</groupId>
         <artifactId>cli</artifactId>
