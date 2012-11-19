@@ -67,7 +67,7 @@
             <value>incremental</value>
           </entry>
         </job-data-map>
-        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <cron-expression>0 0/5 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
@@ -105,7 +105,7 @@
             <value>incremental</value>
           </entry>
         </job-data-map>
-        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <cron-expression>0 0/15 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
@@ -344,7 +344,7 @@
                     ?address vcard:locality ?o2 .
                     FILTER (?o1 != ?o2)
                   }
-                } 
+                } LIMIT 5
               }
             } ORDER BY ?address ?p
           ]]></value>
@@ -357,7 +357,7 @@
         <name>AddressCleanupTrigger</name>
         <job-name>AddressCleanup</job-name>
         <job-group>EnricherService</job-group>
-        <cron-expression>0 0/5 * * * ?</cron-expression>
+        <cron-expression>0 0 0/1 * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger> 
