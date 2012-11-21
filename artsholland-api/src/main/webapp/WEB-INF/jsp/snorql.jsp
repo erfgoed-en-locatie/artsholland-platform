@@ -11,6 +11,7 @@
 		apiKeyUrl = "&api_key=" + apiKey;
 	}
 	
+	
 %>
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -40,8 +41,14 @@
       <h2>Browse:</h2>
       <ul>
         <li><a class="graph-link" href="?browse=classes<%= apiKeyUrl %>">Classes</a></li>
-        <li><a class="graph-link" href="?browse=properties<%= apiKeyUrl %>">Properties</a></li>
-        <li id="browse-named-graphs-link"><a href="?browse=graphs<%= apiKeyUrl %>">Named Graphs</a></li>
+                
+        <li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FEvent<%= apiKeyUrl %>">Events</a></li>
+        <li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FProducion<%= apiKeyUrl %>">Productions</a></li>
+        <li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FVenue<%= apiKeyUrl %>">Venues</a></li>
+        <li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FPOI<%= apiKeyUrl %>">POIs</a></li>
+
+        <%--<li><a class="graph-link" href="?browse=properties<%= apiKeyUrl %>">Properties</a></li>--%>
+        
       </ul>
     </div>
 
