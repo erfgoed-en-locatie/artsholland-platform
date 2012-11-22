@@ -346,7 +346,7 @@
                     ?address vcard:locality ?o2 .
                     FILTER (?o1 != ?o2)
                   }
-                } LIMIT 5
+                } LIMIT 50
               }
             } ORDER BY ?address ?p
           ]]></value>
