@@ -18,17 +18,13 @@ public class TAMURLGenerator implements UrlGenerator {
 	final static Logger logger = LoggerFactory.getLogger(TAMURLGenerator.class);
 	
 	private final PlatformConfig config;
-	private final String username;
-	private final String password;	
-	private final String baseUrl;
+	private final String endpoint;
 		
 	public TAMURLGenerator() throws ConfigurationException {
 		this.config = PlatformConfigHelper.getConfig();
-		this.username = config.getString("importer.source.tam.username");
-		this.password = config.getString("importer.source.tam.password");	
+		this.endpoint = config.getString("importer.source.tam.endpoint");
 		
 		// http://username:password@acc.artsholland.com/api?timestamp=1349605041			
-		this.baseUrl = "http://username:password@acc.artsholland.com/api";
 	}	
 
 	@Override
@@ -41,9 +37,7 @@ public class TAMURLGenerator implements UrlGenerator {
 		} 
 		
 		// TODO: Niet zo mooi, maar soit.
-		String url = baseUrl.replace("password", password).replace("username", username)
-				+ "?timestamp="
-				+ timestamp;
+		String url = endpoint + "?timestamp=" + timestamp;
 				
 		try {
 			urls.add(new URL(url));
