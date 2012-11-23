@@ -45,6 +45,11 @@
             </ejbModule>
             <ejbModule>
               <groupId>${project.groupId}</groupId>
+              <artifactId>artsholland-recommender</artifactId>
+              <bundleFileName>recommender.jar</bundleFileName>
+            </ejbModule>
+            <ejbModule>
+              <groupId>${project.groupId}</groupId>
               <artifactId>artsholland-scheduler</artifactId>
               <bundleFileName>scheduler.jar</bundleFileName>
             </ejbModule>
@@ -116,6 +121,12 @@
     <dependency>
       <groupId>org.waag.artsholland</groupId>
       <artifactId>artsholland-processor</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <type>ejb</type>
+    </dependency>
+    <dependency>
+      <groupId>org.waag.artsholland</groupId>
+      <artifactId>artsholland-recommender</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <type>ejb</type>
     </dependency>
