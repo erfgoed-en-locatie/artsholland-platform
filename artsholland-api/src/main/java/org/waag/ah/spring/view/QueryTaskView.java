@@ -10,6 +10,7 @@ import java.util.concurrent.TimeoutException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.openrdf.query.MalformedQueryException;
 import org.openrdf.query.parser.ParsedQuery;
 import org.openrdf.rio.RDFFormat;
@@ -20,6 +21,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.view.AbstractView;
 import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.WebUtils;
+import org.waag.ah.PlatformConfig;
+import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.rest.MIMEParse;
 import org.waag.rdf.QueryTask;
 import org.waag.rdf.RDFWriterConfig;
@@ -33,17 +36,29 @@ import com.bigdata.rdf.sparql.ast.QueryType;
 public class QueryTaskView extends AbstractView {
 	final static Logger logger = LoggerFactory.getLogger(QueryTaskView.class);
 	static final UrlPathHelper urlPathHelper = new UrlPathHelper();
+	private static final int DEFAULT_MAX_QUERY_EXECUTION_TIME = 30;
 	public static String MODEL_QUERY = "queryDefinition";
 	
 //	@EJB(mappedName="java:global/artsholland-platform/core/QueryService")
 	private QueryService queryService;
 	
 	private ExecutorService executor;
+	private int maxQueryExecutionTime;
 	
 	public QueryTaskView(QueryService queryService) {
 		RDFFormat.register(RDFJSONFormat.RESTAPIJSON);
 		this.queryService = queryService;
 		this.executor = Executors.newCachedThreadPool();
+		
+		// Read maximum query execution time from config.
+		try {
+			PlatformConfig config = PlatformConfigHelper.getConfig();
+			this.maxQueryExecutionTime = config.getInt("platform.maxQueryExecutionTime");
+		} catch (ConfigurationException e) {
+			this.maxQueryExecutionTime = DEFAULT_MAX_QUERY_EXECUTION_TIME;
+			logger.warn("Maximum query execution time not set in properties file; using default (30 seconds)");
+		}
+		
 	}
 
 	@Override
@@ -96,7 +111,7 @@ public class QueryTaskView extends AbstractView {
 			Future<Void> ft = executor.submit(queryTask);
 
 			try {
-				ft.get(300, TimeUnit.SECONDS);
+				ft.get(maxQueryExecutionTime, TimeUnit.SECONDS);
 			} catch (TimeoutException e) {
 				logger.error("Query execution timeout: " + query.getQuery());
 				ft.cancel(true);

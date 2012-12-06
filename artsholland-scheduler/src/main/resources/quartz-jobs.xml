@@ -67,7 +67,7 @@
             <value>incremental</value>
           </entry>
         </job-data-map>
-        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <cron-expression>0 0/5 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
@@ -105,7 +105,7 @@
             <value>incremental</value>
           </entry>
         </job-data-map>
-        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <cron-expression>0 0/15 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
@@ -119,10 +119,6 @@
       <durability>true</durability>
       <recover>false</recover>
       <job-data-map>
-        <entry>
-          <key>strategy</key>
-          <value>once</value>
-        </entry>      
         <entry>
           <key>urlGeneratorClass</key>
           <value>org.waag.ah.importer.nbtc.NBTCUrlGenerator</value>
@@ -140,6 +136,12 @@
         <group>Importer</group>
         <job-name>ImportNBTC</job-name>
         <job-group>Importer</job-group>
+        <job-data-map>
+          <entry>
+            <key>strategy</key>
+            <value>once</value>
+          </entry>
+        </job-data-map>           
         <cron-expression>0 0/1 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>      
       </cron>
@@ -344,7 +346,7 @@
                     ?address vcard:locality ?o2 .
                     FILTER (?o1 != ?o2)
                   }
-                } 
+                } LIMIT 5
               }
             } ORDER BY ?address ?p
           ]]></value>
@@ -357,7 +359,7 @@
         <name>AddressCleanupTrigger</name>
         <job-name>AddressCleanup</job-name>
         <job-group>EnricherService</job-group>
-        <cron-expression>0 0/5 * * * ?</cron-expression>
+        <cron-expression>0 0 0/1 * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger> 
