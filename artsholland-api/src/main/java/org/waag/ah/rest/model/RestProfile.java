@@ -7,6 +7,8 @@ import org.waag.ah.model.Profile;
 
 public class RestProfile implements Profile {
 	private String uri;
+	private Long fbId;
+//	private String fbAuthKey;
 
 	public RestProfile(String uri) {
 		this.uri = uri;
@@ -26,6 +28,12 @@ public class RestProfile implements Profile {
 		return null;
 	}
 
-	public void setFacebookCredentials(String fbId, String fbAuthKey) {
+	public void setFacebookCredentials(long fbId, String fbAuthKey) {
+		this.fbId = fbId;
+//		this.fbAuthKey = fbAuthKey;
+	}
+	
+	public long getFbId() {
+		return this.fbId;
 	}
 }

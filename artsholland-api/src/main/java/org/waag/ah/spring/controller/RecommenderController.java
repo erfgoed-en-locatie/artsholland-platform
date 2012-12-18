@@ -21,7 +21,7 @@ import org.waag.ah.spring.service.ProfileService;
 import org.waag.ah.spring.service.RecommenderService;
 
 @Controller
-@RequestMapping(value="/recommmend")
+@RequestMapping(value="/recommend")
 public class RecommenderController {
 	final Logger logger = LoggerFactory.getLogger(RecommenderController.class);
 	

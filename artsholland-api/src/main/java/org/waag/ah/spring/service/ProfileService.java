@@ -37,11 +37,11 @@ public class ProfileService /*implements InitializingBean*/  {
 		if (!fbIdToUserId.containsKey(fbId)) {
 			String uri = platformConfig.getString("platform.baseUri")+"/profile/eddepet";
 			RestProfile profile = new RestProfile(uri);
-			profile.setFacebookCredentials(fbId, fbAuthKey);
+			profile.setFacebookCredentials(Long.parseLong(fbId), fbAuthKey);
 			profiles.put("eddepet", profile);
 			fbIdToUserId.put(fbId, "eddepet");
 			
-			recommender.createFbUser(Integer.parseInt(fbId), fbAuthKey);
+			recommender.createFbUser(Long.parseLong(fbId), fbAuthKey);
 		}		
 		return getProfileByFacebookId(fbId);
 	}
