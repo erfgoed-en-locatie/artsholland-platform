@@ -129,6 +129,12 @@
       <artifactId>artsholland-recommender</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <type>ejb</type>
+      <exclusions>
+        <exclusion>
+          <artifactId>bson</artifactId>
+          <groupId>org.mongodb</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.waag.artsholland</groupId>
