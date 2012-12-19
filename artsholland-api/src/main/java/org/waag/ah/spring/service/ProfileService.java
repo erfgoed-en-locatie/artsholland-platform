@@ -2,6 +2,7 @@ package org.waag.ah.spring.service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +36,12 @@ public class ProfileService /*implements InitializingBean*/  {
 	
 	public RestProfile createProfileByFacebookId(String fbId, String fbAuthKey) {
 		if (!fbIdToUserId.containsKey(fbId)) {
-			String uri = platformConfig.getString("platform.baseUri")+"/profile/eddepet";
+			String profileId = UUID.randomUUID().toString();
+			String uri = platformConfig.getString("platform.baseUri")+"/profile/"+profileId;
 			RestProfile profile = new RestProfile(uri);
 			profile.setFacebookCredentials(Long.parseLong(fbId), fbAuthKey);
-			profiles.put("eddepet", profile);
-			fbIdToUserId.put(fbId, "eddepet");
-			
+			profiles.put(profileId, profile);
+			fbIdToUserId.put(fbId, profileId);
 			recommender.createFbUser(Long.parseLong(fbId), fbAuthKey);
 		}		
 		return getProfileByFacebookId(fbId);

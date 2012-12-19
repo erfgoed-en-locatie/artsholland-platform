@@ -22,7 +22,6 @@ public class RecommenderService { //implements InitializingBean {
 //	}
 
 	public List<String> recommendForProfile(RestProfile profile) {
-		List<String> result = recommender.facebookRecommend(profile.getFbId(), 10);
-		return result;
+		return recommender.facebookRecommend(profile.getFbId(), 10);
 	}
 }

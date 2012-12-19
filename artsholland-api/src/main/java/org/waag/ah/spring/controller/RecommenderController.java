@@ -15,10 +15,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.waag.ah.rest.model.RestProfile;
 import org.waag.ah.spring.service.ProfileService;
 import org.waag.ah.spring.service.RecommenderService;
+
+import com.google.gson.Gson;
 
 @Controller
 @RequestMapping(value="/recommend")
@@ -32,15 +34,17 @@ public class RecommenderController {
 	
 	@Secured("ROLE_API_USER")
 	@RequestMapping(method=RequestMethod.GET)
-	public ModelAndView restRequest(
+	public @ResponseBody String restRequest(
 			final HttpServletRequest request,
 			final HttpServletResponse response,
 			final @RequestParam("profile_id") String profileId)
 			throws IOException {
 		RestProfile profile = profileService.getProfileById(profileId);
 		List<String> recommendations = recommenderService.recommendForProfile(profile);
-		ModelAndView view = new ModelAndView();
-		view.addObject(recommendations);
-		return view;
+//		ModelAndView view = new ModelAndView();
+//		view.addObject(recommendations);
+//		return view;
+		Gson gson = new Gson();
+		return gson.toJson(recommendations);
 	}
 }
