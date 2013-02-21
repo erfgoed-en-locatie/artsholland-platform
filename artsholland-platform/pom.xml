@@ -45,6 +45,11 @@
             </ejbModule>
             <ejbModule>
               <groupId>${project.groupId}</groupId>
+              <artifactId>artsholland-recommender</artifactId>
+              <bundleFileName>recommender.jar</bundleFileName>
+            </ejbModule>
+            <ejbModule>
+              <groupId>${project.groupId}</groupId>
               <artifactId>artsholland-scheduler</artifactId>
               <bundleFileName>scheduler.jar</bundleFileName>
             </ejbModule>
@@ -121,6 +126,18 @@
     </dependency>
     <dependency>
       <groupId>org.waag.artsholland</groupId>
+      <artifactId>artsholland-recommender</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+      <type>ejb</type>
+      <exclusions>
+        <exclusion>
+          <artifactId>bson</artifactId>
+          <groupId>org.mongodb</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.waag.artsholland</groupId>
       <artifactId>artsholland-scheduler</artifactId>
       <version>0.0.1-SNAPSHOT</version>
       <type>ejb</type>
@@ -130,7 +147,13 @@
       <groupId>org.tuckey</groupId>
       <artifactId>urlrewritefilter</artifactId>
       <version>3.2.0</version>
-    </dependency>    
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-mapper-asl</artifactId>
+      <version>1.9.11</version>
+    </dependency>
   </dependencies>
   
   <properties>

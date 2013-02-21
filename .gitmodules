@@ -1,0 +1,3 @@
+[submodule "artsholland-recommender"]
+	path = artsholland-recommender
+	url = source:artsholland-recommender
