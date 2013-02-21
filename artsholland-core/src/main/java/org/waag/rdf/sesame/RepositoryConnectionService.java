@@ -2,30 +2,28 @@ package org.waag.rdf.sesame;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.repository.sail.SailRepositoryConnection;
+import org.openrdf.sail.NotifyingSail;
 import org.openrdf.sail.Sail;
+import org.openrdf.sail.inferencer.fc.DirectTypeHierarchyInferencer;
+import org.openrdf.sail.inferencer.fc.ForwardChainingRDFSInferencer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.PlatformConfig;
 import org.waag.ah.PlatformConfigHelper;
 
-import com.bigdata.journal.Options;
-import com.useekm.bigdata.BigdataSail;
 import com.useekm.indexing.IndexingSail;
+import com.useekm.inference.SimpleTypeInferencingSail;
 
 @Startup
 @Singleton
@@ -33,10 +31,9 @@ public class RepositoryConnectionService implements RepositoryConnectionFactory,
 	 private static final Logger logger = LoggerFactory.getLogger(RepositoryConnectionService.class);
 
 	private SailRepository repository;
-	private RepositoryConnection connection;
-
+//	private RepositoryConnection connection;
 	private PlatformConfig config; 
-	private PropertiesConfiguration properties;
+//	private PropertiesConfiguration properties;
 	
 	/**
 	 * Initialize repository and SAIL stack.
@@ -53,28 +50,29 @@ public class RepositoryConnectionService implements RepositoryConnectionFactory,
 		config = PlatformConfigHelper.getConfig();
 		try {
 			// TODO: Maybe introduce something like a RepositoryConfig...
-//			Class<?> clazz = Class.forName(config.getString("repository."
-//					+ config.getString("platform.repository") + ".class"));
-//			
-//			if (SailFactory.class.isAssignableFrom(clazz)) {
-//				SailFactory provider = (SailFactory) clazz.newInstance();
-//				Sail sail = provider.getSail();
+			String repoClassName = config.getString("repository."+config.getString("platform.repository")+".class");
+			logger.info("Using repository class: "+repoClassName);
+			
+			Class<?> clazz = Class.forName(repoClassName);
+			
+			if (SailFactory.class.isAssignableFrom(clazz)) {
+				SailFactory provider = (SailFactory) clazz.newInstance();
+				Sail sail = provider.getSail();
 	
 				// Try to add inferencing...
-//				if (sail instanceof NotifyingSail) {
-//					logger.info("Using full inferencer for native Sail implementation...");
-//					sail = new DirectTypeHierarchyInferencer(
-//						   new ForwardChainingRDFSInferencer(
-//						   (NotifyingSail) sail));
-//				} else {
-//					logger.info("Using simple inferencer for third-party Sail implementation...");
-//					sail = new SimpleTypeInferencingSail(sail);
-//				}
+				if (sail instanceof NotifyingSail) {
+					logger.info("Using full inferencer for native Sail implementation...");
+					sail = new DirectTypeHierarchyInferencer(
+						   new ForwardChainingRDFSInferencer(
+								   (NotifyingSail) sail));
+				} else {
+					logger.info("Using simple inferencer for third-party Sail implementation...");
+					sail = new SimpleTypeInferencingSail(sail);
+				}
 				
 				// Add PostGIS indexer & fulltext search to SAIL stack.
 				// TODO: Update PostgreSQL table latout. 
-//				sail = new IndexingSail(sail,
-//						PostgisIndexerSettingsGenerator.generateSettings());
+				sail = new IndexingSail(sail, PostgisIndexerSettingsGenerator.generateSettings());
 
 				// Optimize performance by allowing concurrent read/writes.
 				// Do we want a (uSeekm) Spring dependency here? Additionally, the
@@ -85,14 +83,14 @@ public class RepositoryConnectionService implements RepositoryConnectionFactory,
 //				sail = new PipelineSail(sail);
 //				new SmartSailWrapper();
 //				repository = new BigdataSailRepository((BigdataSail) sail);
-//			}
+				repository = new SailRepository(sail);
+			}
 			
 //			config = PlatformConfigHelper.getConfig();
-			Properties properties = ConfigurationConverter.getProperties(loadProperties());
-			Sail sail = new BigdataSail(properties);		
-			IndexingSail idxSail = new IndexingSail(sail, PostgisIndexerSettingsGenerator.generateSettings());
-
-			repository = new SailRepository(idxSail);
+			
+//			Properties properties = ConfigurationConverter.getProperties(loadProperties());
+//			Sail sail = new BigdataSail(properties);		
+//			IndexingSail idxSail = new IndexingSail(sail, PostgisIndexerSettingsGenerator.generateSettings());
 
 //			SailRepositoryProvider provider = new SailRepositoryProvider();
 //			provider.setRepository(repository);
@@ -109,11 +107,13 @@ public class RepositoryConnectionService implements RepositoryConnectionFactory,
 			throw new RepositoryException(e);
 		}
 	}
-	private Configuration loadProperties() throws ConfigurationException {
-		properties = new PropertiesConfiguration("bigdata.properties");
-		properties.setProperty(Options.FILE, config.getProperty("repository.bigdata.datastore"));
-		return properties;
-	}
+	
+//	private Configuration loadProperties() throws ConfigurationException {
+//		properties = new PropertiesConfiguration("bigdata.properties");
+//		properties.setProperty(Options.FILE, config.getProperty("repository.bigdata.datastore"));
+//		return properties;
+//	}
+	
 	/**
 	 * Close repository (J2EE).
 	 *
@@ -138,7 +138,7 @@ public class RepositoryConnectionService implements RepositoryConnectionFactory,
 	public void close() throws IOException {
 		try {
 //			connection.close();
-//			repository.shutDown();
+			repository.shutDown();
 		} catch (Exception e) {
 			throw new IOException(e);
 		}
