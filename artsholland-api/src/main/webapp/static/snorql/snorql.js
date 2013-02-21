@@ -222,7 +222,7 @@ function Snorql() {
         if (!this._enableNamedGraphs) {
             $('default-graph-section').hide();
             $('named-graph-section').hide();
-            $('browse-named-graphs-link').hide();
+            //$('browse-named-graphs-link').hide();
             return;
         }
         var changed = (uri != this._graph);
