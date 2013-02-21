@@ -22,11 +22,11 @@
   <bean class="org.waag.ah.spring.view.QueryTaskView">
      <constructor-arg ref="queryService"/>    
   </bean>
-  
+<!--   
   <bean class="org.waag.artsholland.recommender.RecommenderController">
     <constructor-arg value="false"/>
   </bean>
-
+ -->
   <jee:jndi-lookup id="queryService" jndi-name="java:global/artsholland-platform/core/QueryService"/>
   
   <context:component-scan base-package="org.waag.ah.spring" />
