@@ -13,7 +13,6 @@ import org.apache.tika.mime.MediaType;
 import org.apache.tika.parser.ParseContext;
 import org.apache.tika.parser.xml.XMLParser;
 import org.apache.tika.sax.OfflineContentHandler;
-import org.apache.tika.sax.TaggedContentHandler;
 import org.apache.tika.sax.xpath.Matcher;
 import org.apache.tika.sax.xpath.XPathParser;
 import org.xml.sax.ContentHandler;
@@ -30,8 +29,8 @@ public abstract class AbstractParser extends XMLParser {
 			throw new TikaException("No content type set");
 		}
 
-		TaggedContentHandler tagged = new TaggedContentHandler(handler);
-		ContentHandler wrappedHandler = getContentHandler(tagged, metadata, context);
+//		TaggedContentHandler tagged = new TaggedContentHandler(handler);
+		ContentHandler wrappedHandler = getContentHandler(handler, metadata, context);
 		
 		if (wrappedHandler == null) {
 			throw new TikaException("Parsing aborted, unable to init Tika handler");
@@ -41,7 +40,7 @@ public abstract class AbstractParser extends XMLParser {
 			context.getSAXParser().parse(new CloseShieldInputStream(stream),
 					new OfflineContentHandler(wrappedHandler));
 		} catch (Exception e) {
-			tagged.throwIfCauseOf(e);
+//			tagged.throwIfCauseOf(e);
 			throw new TikaException("XML parse error", e);
 		}
 	}

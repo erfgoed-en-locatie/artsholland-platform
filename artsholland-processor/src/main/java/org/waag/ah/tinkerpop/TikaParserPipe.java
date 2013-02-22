@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -20,8 +19,7 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.openrdf.model.vocabulary.RDF;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.waag.ah.PasswordAuthenticator;
 import org.waag.ah.tika.ToXMLContentHandler;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -29,25 +27,9 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 public class TikaParserPipe extends AbstractStreamingPipe<URL> {
-	private static final Logger logger = LoggerFactory.getLogger(TikaParserPipe.class);
+//	private static final Logger logger = LoggerFactory.getLogger(TikaParserPipe.class);
 
 	private CharArrayWriter writer = new CharArrayWriter();
-	
-	class PasswordAuthenticator extends Authenticator {
-	  
-		private String username;
-		private String password;
-		
-	  PasswordAuthenticator(String username, String password) {
-	  	super();
-	  	this.username = username;
-	  	this.password = password;
-	  }
-		
-		protected PasswordAuthentication getPasswordAuthentication() {	    
-	    return new PasswordAuthentication(username, password.toCharArray());
-	  }
-	}	
 	
 	@Override
 	protected void process(URL url, ObjectOutputStream out)
