@@ -24,7 +24,7 @@ public class ObjectInputStreamReaderPipe extends AbstractPipe<ObjectInputStream,
         		if (cause instanceof TikaException) {
         			throw new RuntimeException(cause);
         		}
-        		logger.warn("Exception reading ObjectInputStream: "+e);
+//        		logger.warn("Exception reading ObjectInputStream: "+e);
         	}
         }
     }

@@ -101,5 +101,17 @@
       <artifactId>commons-validator</artifactId>
       <version>1.4.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.zeromq</groupId>
+      <artifactId>jzmq</artifactId>
+      <version>${jzmq.version}</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.zeromq</groupId>
+      <artifactId>jzmq</artifactId>
+      <version>${jzmq.version}</version>
+      <classifier>native-${os.arch}-${os.name}</classifier>
+    </dependency>    
   </dependencies>
 </project>
