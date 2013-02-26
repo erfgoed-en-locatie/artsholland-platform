@@ -20,64 +20,97 @@ import org.waag.ah.PasswordAuthenticator;
 import org.waag.ah.service.MongoConnectionService;
 import org.zeromq.ZMQ;
 
+import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 
 @Startup
 @Singleton
-public class UrlFetcher {
-	private static final Logger logger = LoggerFactory.getLogger(UrlFetcher.class);
+public class Fetcher {
+	private static final Logger logger = LoggerFactory.getLogger(Fetcher.class);
 
+	private FetcherThread fetcher;
 	private ServerThread server;
+
 	private DBCollection collection;
+	private Gson gson = new Gson();
 
 	private @EJB MongoConnectionService mongo;
-	
+
 	@PostConstruct
 	public void listen() {
-		collection = mongo.getCollection(UrlFetcher.class.getName());
+		collection = mongo.getCollection(Fetcher.class.getName());
+		fetcher = new FetcherThread();
+		fetcher.start();
 		server = new ServerThread();
 		server.start();
 	}
 	
 	@PreDestroy
 	public void unlisten() {
+		fetcher.interrupt();
 		server.interrupt();
 	}
 	
 	private class ServerThread extends Thread {
+		@Override
+		public void run() {
+			ZMQ.Context context = ZMQ.context(1);
+			ZMQ.Socket sender = context.socket(ZMQ.PUSH);
+			sender.setHWM(1);
+	        sender.connect(Socket.FETCHER);
+	        while (true) {
+	        	try {
+	        		DBCursor cursor = collection.find().sort(new BasicDBObject().append("_id", 1));
+	        		while (cursor.hasNext()) {
+		        		DBObject data = cursor.next();
+		        		String json = gson.toJson(data.get("data"));
+		        		logger.info("SENDING: "+json);
+		        		if (sender.send(json)) {
+		        			collection.remove(data);
+		        		}
+	        		}
+        			Thread.sleep(100);
+	        	} catch(Exception e) {
+	        		logger.error(e.getMessage(), e);
+	        	}
+	        }
+		}
+	}
+	
+	private class FetcherThread extends Thread {
 		private boolean running = true;
 		@Override
 		public void run() {
 			ZMQ.Context context = ZMQ.context(1);
-			ZMQ.Socket receiver = context.socket(ZMQ.REP);
-	        receiver.bind("tcp://*:5557");
+			ZMQ.Socket receiver = context.socket(ZMQ.PULL);
+	        receiver.bind(Socket.FETCHER_SERVER_URL);
 	        while (running) {
         		BasicDBObject doc = new BasicDBObject();
-        	    collection.insert(doc);	  
         	    try {
-	        		boolean more = true;
-	        		while (more) {
-	        			URL url = getAuthenticatedUrl(new String(receiver.recv(0)).trim());
-	        			logger.info("INCOMING: "+url.toString());
-	        			BasicDBObject updateCommand = new BasicDBObject();
-	        			updateCommand.put("$push", new BasicDBObject()
-	        				.append("url", url.toString())
-	        				.append("data", getUrlContent(url))
-	        			);
-	        			collection.update(doc, updateCommand);
-	        			more = receiver.hasReceiveMore();
-	        		}
-        			receiver.send("BAM!".getBytes(), 0);
-		            logger.info("STORED: "+doc.size()+" URLs");
+        	    	String[] urls = gson.fromJson(receiver.recvStr(), String[].class);
+        	    	if (urls.length > 0) {
+        	    		collection.insert(doc);	  
+	        	    	for (int i=0; i<urls.length; i++) {
+		        			URL url = getAuthenticatedUrl(urls[i]);
+		        			BasicDBObject update = new BasicDBObject();
+		        			update.put("$push", new BasicDBObject()
+		        				.append("url", url.toString())
+		        				.append("data", getUrlContent(url))
+		        			);
+		        			logger.info("FETCHED: "+url);
+		        			collection.update(doc, update);
+		        		}
+        	    	}
 		        } catch(Exception e) {
 		        	collection.remove(doc);	 
 		        	logger.error(e.getMessage());
-		        	receiver.send(("BAH!: "+e.getMessage()).getBytes(), 0);
 		        }
 	        }
-//        	receiver.close();
-//        	context.term();
+        	receiver.close();
+        	context.term();
 	    }
 	}
 	

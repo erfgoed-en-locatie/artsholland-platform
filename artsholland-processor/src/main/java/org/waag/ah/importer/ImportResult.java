@@ -19,6 +19,13 @@ public class ImportResult implements DBObject {
 //			"strategy",
 //			"source"));
 
+//	public ImportResult(ImportJob job) {
+//		this.put("jobKey", job.context.getJobDetail().getKey().toString());
+//		result.put("jobId", context.getFireInstanceId());
+//		result.put("timestamp", context.getFireTime().getTime());
+//		result.put("strategy", this.strategy.toString());
+//	}
+
 	@Override
 	public void markAsPartialObject() {}
 

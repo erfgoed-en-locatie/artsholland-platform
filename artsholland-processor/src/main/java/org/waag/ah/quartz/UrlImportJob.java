@@ -1,7 +1,7 @@
 package org.waag.ah.quartz;
 
 import java.net.URL;
-import java.util.Iterator;
+import java.util.List;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -23,6 +23,7 @@ import org.waag.ah.service.MongoConnectionService;
 import org.waag.ah.zeromq.Socket;
 import org.zeromq.ZMQ;
 
+import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
@@ -74,24 +75,25 @@ public class UrlImportJob extends ImportJob {
 			config.setToDateTime(new DateTime(context.getFireTime().getTime()));
 
 			ZMQ.Context zmq = ZMQ.context(1);
-	        ZMQ.Socket sender = zmq.socket(ZMQ.REQ);
-	        sender.connect(Socket.FETCH_URL);			
+	        ZMQ.Socket sender = zmq.socket(ZMQ.PUSH);
+	        sender.connect(Socket.FETCHER_CLIENT_URL);			
 			
 	        try {
-		        Iterator<URL> urls = urlGenerator.getUrls(config).iterator();
-		        if (urls.hasNext()) {
-			        while (urls.hasNext()) {
-			        	byte[] url = urls.next().toString().getBytes();
-			            boolean status = sender.send(url, (urls.hasNext() ? ZMQ.SNDMORE : 0));
-			        	logger.info("SENDING "+(status?"OK":"ERR")+": "+new String(url));
-				    }
-			        
-			        byte[] response = sender.recv();
-			        logger.info("SEND RESULT "+new String(response));
-		        }
-		        context.setResult("Fetched "+urlGenerator.getUrls(config).size()+" URLs");
-				result.put("success", true);
-				
+//		        Iterator<URL> urls = urlGenerator.getUrls(config).iterator();
+//		        if (urls.hasNext()) {
+//			        while (urls.hasNext()) {
+//			        	byte[] url = urls.next().toString().getBytes();
+//			            boolean status = sender.send(url, (urls.hasNext() ? ZMQ.SNDMORE : 0));
+//			        	logger.info("SENDING "+(status?"OK":"ERR")+": "+new String(url));
+//				    }
+//			        
+//			        byte[] response = sender.recv();
+//			        logger.info("SEND RESULT "+new String(response));
+//		        }
+	        	List<URL> urls = urlGenerator.getUrls(config);
+	        	sender.send(new Gson().toJson(urls).getBytes(), 0);
+		        context.setResult("Sent "+urls.size()+" URLs");
+				result.put("success", true);	        	
 	        } catch (Exception e) {
 	        	result.put("success", false);
 				throw e;
