@@ -21,7 +21,7 @@ public class ImporterPipeline extends Pipeline<URL, Statement> {
 	public ImporterPipeline(ImportConfig config) throws ConfigurationException {
 		super();
 		this.addPipe(new ProgressPipe());
-		this.addPipe(new ParserPipeline());
+		this.addPipe(new ParserPipeline(config));
 		this.addPipe(new ProcessorPipeline());
 	}
 
