@@ -31,6 +31,8 @@ import com.mongodb.DBObject;
 public class Fetcher {
 	private static final Logger logger = LoggerFactory.getLogger(Fetcher.class);
 
+//	public final static String SOCKET = "tcp://localhost:5558"; 
+	
 	private FetcherThread fetcher;
 	private ServerThread server;
 
@@ -42,8 +44,12 @@ public class Fetcher {
 	@PostConstruct
 	public void listen() {
 		collection = mongo.getCollection(Fetcher.class.getName());
+		
+		// Start URL fetcher process.
 		fetcher = new FetcherThread();
 		fetcher.start();
+		
+		// Start docuement server.
 		server = new ServerThread();
 		server.start();
 	}
@@ -57,22 +63,23 @@ public class Fetcher {
 	private class ServerThread extends Thread {
 		@Override
 		public void run() {
+			DBObject sort = new BasicDBObject().append("_id", 1);
 			ZMQ.Context context = ZMQ.context(1);
 			ZMQ.Socket sender = context.socket(ZMQ.PUSH);
 			sender.setHWM(1);
-	        sender.connect(Socket.FETCHER);
+	        sender.connect("tcp://localhost:5558");
 	        while (true) {
 	        	try {
-	        		DBCursor cursor = collection.find().sort(new BasicDBObject().append("_id", 1));
+	        		DBCursor cursor = collection.find(new BasicDBObject("complete", true)).sort(sort);
 	        		while (cursor.hasNext()) {
 		        		DBObject data = cursor.next();
 		        		String json = gson.toJson(data.get("data"));
-		        		logger.info("SENDING: "+json);
 		        		if (sender.send(json)) {
+//			        		logger.info("Sending data: size="+json.length());
 		        			collection.remove(data);
 		        		}
 	        		}
-        			Thread.sleep(100);
+        			Thread.sleep(10);
 	        	} catch(Exception e) {
 	        		logger.error(e.getMessage(), e);
 	        	}
@@ -86,7 +93,7 @@ public class Fetcher {
 		public void run() {
 			ZMQ.Context context = ZMQ.context(1);
 			ZMQ.Socket receiver = context.socket(ZMQ.PULL);
-	        receiver.bind(Socket.FETCHER_SERVER_URL);
+	        receiver.bind("tcp://*:5557");
 	        while (running) {
         		BasicDBObject doc = new BasicDBObject();
         	    try {
@@ -95,18 +102,19 @@ public class Fetcher {
         	    		collection.insert(doc);	  
 	        	    	for (int i=0; i<urls.length; i++) {
 		        			URL url = getAuthenticatedUrl(urls[i]);
-		        			BasicDBObject update = new BasicDBObject();
-		        			update.put("$push", new BasicDBObject()
+		        			BasicDBObject insertDoc = new BasicDBObject()
 		        				.append("url", url.toString())
-		        				.append("data", getUrlContent(url))
-		        			);
-		        			logger.info("FETCHED: "+url);
-		        			collection.update(doc, update);
+		        				.append("data", getUrlContent(url));
+		        			collection.update(doc, new BasicDBObject("$push", 
+		        					new BasicDBObject("data", insertDoc)));
+		        			logger.info("Fetched URL: "+url);
 		        		}
+	        	    	// Mark the document as completely downloaded. (Maybe use some pubsub mechanism here?)
+	        	    	collection.update(doc, new BasicDBObject("$set", new BasicDBObject("complete", true)));
         	    	}
 		        } catch(Exception e) {
-		        	collection.remove(doc);	 
 		        	logger.error(e.getMessage());
+		        	collection.remove(doc);	 
 		        }
 	        }
         	receiver.close();
@@ -114,11 +122,14 @@ public class Fetcher {
 	    }
 	}
 	
-	private URL getAuthenticatedUrl(String fetchUrl) throws MalformedURLException {
+	public static URL getAuthenticatedUrl(String url) throws MalformedURLException {
+		return getAuthenticatedUrl(new URL(url));
+	}
+	
+	public static URL getAuthenticatedUrl(URL url) throws MalformedURLException {
 		boolean authenticated = false;
 		String username = "";
 		String password = "";
-		URL url = new URL(fetchUrl);
 		
 		String userInfo = url.getUserInfo();
 		if (userInfo != null) {

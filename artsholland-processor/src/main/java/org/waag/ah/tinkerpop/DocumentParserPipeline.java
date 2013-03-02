@@ -10,9 +10,9 @@ import org.waag.ah.importer.ImportConfig;
 import com.tinkerpop.pipes.transform.ScatterPipe;
 import com.tinkerpop.pipes.util.Pipeline;
 
-public class ParserPipeline extends Pipeline<URL, Statement> {
+public class DocumentParserPipeline extends Pipeline<URL, Statement> {
 
-	public ParserPipeline() throws ConfigurationException {
+	public DocumentParserPipeline() throws ConfigurationException {
 		super();
 		this.addPipe(new StreamingTikaParserPipe());
 		this.addPipe(new ObjectInputStreamReaderPipe());
@@ -20,7 +20,7 @@ public class ParserPipeline extends Pipeline<URL, Statement> {
 		this.addPipe(new ScatterPipe<List<Statement>, Statement>());
 	}
 
-	public ParserPipeline(ImportConfig config) {
+	public DocumentParserPipeline(ImportConfig config) {
 		// TODO Auto-generated constructor stub
 	}
 }

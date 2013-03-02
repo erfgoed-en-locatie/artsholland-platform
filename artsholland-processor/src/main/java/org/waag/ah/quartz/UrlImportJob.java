@@ -20,7 +20,6 @@ import org.waag.ah.importer.ImportResult;
 import org.waag.ah.importer.ImportStrategy;
 import org.waag.ah.importer.UrlGenerator;
 import org.waag.ah.service.MongoConnectionService;
-import org.waag.ah.zeromq.Socket;
 import org.zeromq.ZMQ;
 
 import com.google.gson.Gson;
@@ -76,23 +75,14 @@ public class UrlImportJob extends ImportJob {
 
 			ZMQ.Context zmq = ZMQ.context(1);
 	        ZMQ.Socket sender = zmq.socket(ZMQ.PUSH);
-	        sender.connect(Socket.FETCHER_CLIENT_URL);			
+	        sender.connect("tcp://localhost:5557");			
 			
 	        try {
-//		        Iterator<URL> urls = urlGenerator.getUrls(config).iterator();
-//		        if (urls.hasNext()) {
-//			        while (urls.hasNext()) {
-//			        	byte[] url = urls.next().toString().getBytes();
-//			            boolean status = sender.send(url, (urls.hasNext() ? ZMQ.SNDMORE : 0));
-//			        	logger.info("SENDING "+(status?"OK":"ERR")+": "+new String(url));
-//				    }
-//			        
-//			        byte[] response = sender.recv();
-//			        logger.info("SEND RESULT "+new String(response));
-//		        }
 	        	List<URL> urls = urlGenerator.getUrls(config);
-	        	sender.send(new Gson().toJson(urls).getBytes(), 0);
-		        context.setResult("Sent "+urls.size()+" URLs");
+	        	if (urls.size() > 0) {
+		        	sender.send(new Gson().toJson(urls).getBytes(), 0);
+			        context.setResult("Sent "+urls.size()+" URLs");
+	        	}
 				result.put("success", true);	        	
 	        } catch (Exception e) {
 	        	result.put("success", false);

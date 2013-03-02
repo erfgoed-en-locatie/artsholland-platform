@@ -88,6 +88,17 @@ public class UitbaseUrlGenerator implements UrlGenerator {
 				throw new RuntimeException(e.getMessage(), e);
 			}
 		}
+		
+		ArrayList<URL> test = new ArrayList<URL>();
+		try {
+			test.add(new URL("http://ps4.uitburo.nl/api/search?key=505642b12881b9a60688411a333bc78b&resolve=true&rows=1&start=0&modifiedto=2013-03-01T21:57:00.002Z&filter=resource:events"));
+			test.add(new URL("http://ps4.uitburo.nl/api/search?key=505642b12881b9a60688411a333bc78b&resolve=true&rows=1&start=1&modifiedto=2013-03-01T21:57:00.002Z&filter=resource:events"));
+			test.add(new URL("http://ps4.uitburo.nl/api/search?key=505642b12881b9a60688411a333bc78b&resolve=true&rows=1&start=2&modifiedto=2013-03-01T21:57:00.002Z&filter=resource:events"));
+			return test;
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		
 		return urls;
 	}
 	
