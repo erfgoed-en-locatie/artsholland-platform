@@ -39,6 +39,7 @@ public class ParseStringFunction extends ExtensionFunctionDefinition {
 				try {
 					text = ((StringValue) arguments[0].next()).getStringValue();
 					text = text.replaceAll("\"", "&quot;");
+//					text = StringEscapeUtils.escapeHtml(text);
 //					text = XSPARQLCharacterEncoder.encode(text);
 
 					// Temporary fix, see:

@@ -19,6 +19,7 @@ import org.zeromq.ZMQ;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.mongodb.DBCollection;
 import com.tinkerpop.pipes.util.Pipeline;
 
 @Startup
@@ -31,13 +32,15 @@ public class Parser {
 	private ParserThread parser;
 	private ServerThread server;
 	private Gson gson = new Gson();
-	private PersistentQueue queue;
+	private PersistentQueue<String> queue;
+	private DBCollection collection;
 	
 	private @EJB MongoConnectionService mongo;
 
 	@PostConstruct
 	public void listen() {
-		queue = new PersistentQueue(mongo.getCollection(Parser.class.getName()));
+		collection = mongo.getCollection(Parser.class.getName());
+		queue = new PersistentQueue<String>(collection);
 		
 		server = new ServerThread();
 		server.start();
@@ -52,6 +55,11 @@ public class Parser {
 		server.interrupt();
 	}
 	
+	/**
+	 * Parsed documents queue.
+	 * 
+	 * @author Raoul Wissink <raoul@raoul.net>
+	 */
 	private class ServerThread extends Thread {
 		@Override
 		public void run() {
@@ -74,6 +82,11 @@ public class Parser {
 		}
 	}
 	
+	/**
+	 * Document parser.
+	 * 
+	 * @author Raoul Wissink <raoul@raoul.net>
+	 */
 	private class ParserThread extends Thread {
 		private Pipeline<Document, String> pipeline = new ParserPipeline();
 		private final Type type = new TypeToken<Collection<Document>>(){}.getType();
@@ -106,7 +119,6 @@ public class Parser {
 	public static class Document {
 		private URL url;
 		private String data;
-//		Metadata metadata = new Metadata();
 		public URL getUrl() {
 			return url;
 		}
@@ -119,23 +131,15 @@ public class Parser {
 		}
 	}
 	
+	/**
+	 * Parser pipeline assembly.
+	 * 
+	 * @author Raoul Wissink <raoul@raoul.net>
+	 */
 	private static class ParserPipeline extends Pipeline<Document, String> {
 		public ParserPipeline() {
 			super();
 			this.addPipe(new TikaParserPipe());
-//			this.addPipe(new ObjectInputStreamReaderPipe());
-//			this.addPipe(new StatementGeneratorPipe());
-//			this.addPipe(new ScatterPipe<List<Statement>, Statement>());
 		}
 	}
-	
-//	private class ProgressPipe extends IdentityPipe<Document> {
-//		@Override
-//		protected Document processNextStart() {
-//			Document url = super.processNextStart();
-//			pos++;
-//			logger.info("Importing "+pos+"/"+count+": "+url);
-//			return url;
-//		}
-//	}	
 }

@@ -9,7 +9,6 @@ import javax.ejb.Startup;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.ah.util.XmlFormatter;
 import org.zeromq.ZMQ;
 
 import com.google.gson.Gson;
@@ -44,8 +43,8 @@ public class Importer {
 		        	try {
 			        	ArrayList<?> data = gson.fromJson(receiver.recvStr(), ArrayList.class);
 			        	for (Object string : data) {
-//			        		logger.info("IMPORTING: size="+string.toString().length());
-			        		logger.info(XmlFormatter.format(string.toString()));
+			        		logger.info("IMPORTING: size="+string.toString().length());
+//			        		logger.info(XmlFormatter.format(string.toString()));
 			        	}
 			        } catch (Exception e) {
 			        	logger.error(e.getMessage(), e);

@@ -11,20 +11,21 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
-public class PersistentQueue {
+public class PersistentQueue<T> {
 	private static final Logger logger = LoggerFactory.getLogger(PersistentQueue.class);
 	
 	private static final int COMPLETED = 1;
 	private static final int PROCESSING = 2;
 	
-	private DBCollection collection;
 	private QueryThread queryThread;
 	private ArrayBlockingQueue<DBObject> buffer;
 
+	private DBCollection collection;
 	private BasicDBObject document = new BasicDBObject();
+	
 	private DBObject current;
-
-	private DBObject status_copmpleted = new BasicDBObject("status", COMPLETED);
+	private DBObject sort = new BasicDBObject().append("_id", 1);
+	private DBObject status_completed = new BasicDBObject("status", COMPLETED);
 	private DBObject status_processing = new BasicDBObject("status", PROCESSING);
 
 	public PersistentQueue(DBCollection collection) {
@@ -35,32 +36,31 @@ public class PersistentQueue {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<String> get() throws InterruptedException {
+	public List<T> get() throws InterruptedException {
 		synchronized (buffer) {
 			if (current != null) {
 				try {
-					// Assuming the previous item was succesfulle processed.
-					logger.info("Removing current buffer item");
+					// Let's assume the previous item was succesfully processed.
+//					logger.info("Removing current buffer item");
 					collection.remove(current);
 				} finally {
 					current = null;
 				}					
 			}
 			current = buffer.take();
-			logger.info("Sending next queued document");
-			return (List<String>) current.get("data");
+			return (List<T>) current.get("data");
 		}
 	}
 
-	public void put(String object) {
+	public void put(T object) {
 		synchronized (document) {
 			if (document.isEmpty()) {
-				logger.info("Creating document container");
+//				logger.info("Creating document container");
 				collection.insert(document);
 			}
-			logger.info("Adding document to container");
+//			logger.info("Adding document to container");
 			BasicDBObject insert = new BasicDBObject().append("data", object);
-			collection.update(document, new BasicDBObject("$push", new BasicDBObject("data", insert)));				
+			collection.update(document, new BasicDBObject("$push", insert));				
 		}
 	}
 	
@@ -69,7 +69,7 @@ public class PersistentQueue {
 			if (document.isEmpty()) {
 				throw new UnsupportedOperationException("No pending transaction");
 			}
-			collection.update(document, new BasicDBObject("$set", status_copmpleted));
+			collection.update(document, new BasicDBObject("$set", status_completed));
 			document = new BasicDBObject();
 		}
 	}
@@ -87,13 +87,12 @@ public class PersistentQueue {
 	private class QueryThread extends Thread {
 		@Override
 		public void run() {
-			DBObject sort = new BasicDBObject().append("_id", 1);
 	        while (true) {
 	        	try {
-	        		DBCursor cursor = collection.find(status_copmpleted).sort(sort).limit(1);
+	        		DBCursor cursor = collection.find(status_completed).sort(sort).limit(1);
 	        		if (cursor.hasNext()) {
 	        			synchronized (document) {
-		        			logger.info("Queueing document");
+//		        			logger.info("Queueing container");
 		        			collection.update(document, new BasicDBObject("$set", status_processing));
 		    				buffer.put(cursor.next());
 	        			}
