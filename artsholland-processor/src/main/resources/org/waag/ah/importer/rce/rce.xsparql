@@ -1,0 +1,41 @@
+declare namespace dc="http://purl.org/dc/terms/";
+declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+declare namespace rdfs="http://www.w3.org/2000/01/rdf-schema#";
+declare namespace xsd="http://www.w3.org/2001/XMLSchema#";
+declare namespace owl="http://www.w3.org/2002/07/owl#";
+declare namespace time="http://www.w3.org/2006/time#"; 
+declare namespace foaf="http://xmlns.com/foaf/0.1/";
+declare namespace geo="http://www.w3.org/2003/01/geo/wgs84_pos#";
+declare namespace vcard="http://www.w3.org/2006/vcard/ns#";
+declare namespace gr="http://purl.org/goodrelations/v1#";
+declare namespace osgeo="http://rdf.opensahara.com/type/geo/";
+
+declare namespace ah="http://purl.org/artsholland/1.0/";
+
+declare namespace waag="http://waag.org/saxon-extension";
+
+let $fileUrl := " http://www.artsholland.com/"
+
+let $docs := //doc
+
+return
+
+	if ($docs) then {
+				
+		for $doc in $docs
+			
+			#[@name="cit_objrijksnr"]/str
+			let $desc := { $doc/hond[@name="rce_omschrijving_redengevend"] }
+			let $uri := { waag:object-uri("monument", "chips") }
+				
+			construct { 
+								
+				$uri a ah:Monument ;
+					ah:rijksmonumentnummer 1 ;
+					dc:description { waag:parse-string($desc) }@{"nl"} .
+			} 
+
+##############################################################################################################################
+##############################################################################################################################
+
+	}	else ()
