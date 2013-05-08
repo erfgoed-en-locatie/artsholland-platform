@@ -36,7 +36,11 @@ public class PostalCodeLookup {
 		}
 		
 		// Import Dutch postal code list
-		//importCSV();
+		try {
+			importCSV();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void importCSV() throws SQLException {
