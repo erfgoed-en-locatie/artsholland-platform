@@ -55,7 +55,6 @@
 		<sub-class-of type="application/xml" />
 		<acronym>RCEXML</acronym>
 		<_comment>RCE XML</_comment>
-		<!-- <glob pattern="https://dl.dropboxusercontent.com/*" /> -->
 		<glob pattern="http://api.rijksmonumenten.info/*" />
 	</mime-type>
 </mime-info>
