@@ -81,10 +81,12 @@ public class ParseHttpUrlFunction extends ExtensionFunctionDefinition {
 					}
 					text = text.replace(" ", "%20");
 					text = text.replace("\\", "%5C");
-					// Validate URL.
-					if (!urlValidator.isValid(text)) {
+
+					// Validate URL.		
+					if (!urlValidator.isValid(text)) {						
+						
 						logger.warn("Invalid URL: " + text);
-						return Value.asIterator(EmptySequence.getInstance());
+						//return Value.asIterator(EmptySequence.getInstance());
 					}			
 
 				} catch (Exception e) {
