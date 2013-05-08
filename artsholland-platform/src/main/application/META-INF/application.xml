@@ -21,6 +21,9 @@
     <ejb>processor.jar</ejb>
   </module>
   <module>
+    <ejb>recommender.jar</ejb>
+  </module>
+  <module>
     <ejb>scheduler.jar</ejb>
   </module>
 </application>

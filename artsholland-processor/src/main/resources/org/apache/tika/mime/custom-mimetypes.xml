@@ -43,12 +43,13 @@
 	</mime-type>
 
 	<!-- TAM Export -->
-	<mime-type type="application/x-waag-tam+xml">
-		<sub-class-of type="application/xml" />
-		<acronym>TAMXML</acronym>
-		<_comment>TAM XML Export</_comment>
-		<glob pattern="*acc.artsholland.com/api*" />
-	</mime-type>
+  <mime-type type="application/x-waag-tam+xml">
+    <sub-class-of type="application/xml" />
+    <acronym>TAMXML</acronym>
+    <_comment>TAM XML Export</_comment>
+    <glob pattern="http://*artsholland.com/api*" />    
+  </mime-type>
+
 	
 	<!-- RCE -->
 	<mime-type type="application/x-waag-rce+xml">
@@ -57,4 +58,5 @@
 		<_comment>RCE XML</_comment>
 		<glob pattern="http://api.rijksmonumenten.info/*" />
 	</mime-type>
+	
 </mime-info>
