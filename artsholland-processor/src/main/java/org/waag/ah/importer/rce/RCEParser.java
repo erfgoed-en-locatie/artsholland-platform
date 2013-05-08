@@ -52,13 +52,7 @@ public class RCEParser extends AbstractParser {
 			super(handler);
 		}
 
-
 	}
-
-	
-	
-	
-	
 
 	@SuppressWarnings("serial")
 	private static final Set<MediaType> SUPPORTED_TYPES = new HashSet<MediaType>() {
@@ -86,9 +80,9 @@ public class RCEParser extends AbstractParser {
 								
 				XSPARQLQueryHandler queryHandler = new XSPARQLQueryHandler(handler,	metadata, context, xquery);	
 				
-				RCEContentHandler blaat = new RCEContentHandler(queryHandler);
+				RCEContentHandler rceHandler = new RCEContentHandler(queryHandler);
 				
-				return new MatchingContentHandler(blaat,	getXPathMatcher("/response/result/descendant::node()"));				
+				return new MatchingContentHandler(rceHandler, getXPathMatcher("/response/result/descendant::node()"));				
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
