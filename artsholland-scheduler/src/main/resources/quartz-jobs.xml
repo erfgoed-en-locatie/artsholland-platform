@@ -185,34 +185,6 @@
     </trigger>
   
 
-    <!-- DOSA IMPORTER -->
-    <job>
-      <name>DOSA</name>
-      <group>Importer</group>
-      <description>Import data from DOSA</description>
-      <job-class>org.waag.ah.quartz.UrlImportJob</job-class>
-      <durability>true</durability>
-      <recover>false</recover>
-      <job-data-map>
-        <entry>
-          <key>urlGeneratorClass</key>
-          <value>org.waag.ah.importer.dosa.DOSAUrlGenerator</value>
-        </entry>        
-      </job-data-map>            
-    </job>
-<!--     
-    <trigger>
-      <cron>
-        <name>DOSAImportTrigger</name>
-        <group>Importer</group>
-        <job-name>DOSA</job-name>
-        <job-group>Importer</job-group>        
-        <cron-expression>0 0/1 * * * ?</cron-expression>
-        <time-zone>Europe/Amsterdam</time-zone>
-      </cron>
-    </trigger> 
- -->
-
     <!-- GEONAMES ENRICHER -->
     <job>
       <name>GeonamesEnricher</name>
