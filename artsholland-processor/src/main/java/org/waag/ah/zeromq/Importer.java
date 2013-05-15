@@ -10,6 +10,7 @@ import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
+import org.jeromq.ZMQ;
 import org.openrdf.model.Statement;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
@@ -20,7 +21,6 @@ import org.openrdf.rio.rdfxml.RDFXMLParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.service.RepositoryConnectionFactory;
-import org.zeromq.ZMQ;
 
 import com.google.gson.Gson;
 

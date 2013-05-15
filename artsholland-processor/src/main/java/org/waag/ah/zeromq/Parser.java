@@ -10,12 +10,12 @@ import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
+import org.jeromq.ZMQ;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.mongo.PersistentQueue;
 import org.waag.ah.service.MongoConnectionService;
 import org.waag.ah.tinkerpop.TikaParserPipe;
-import org.zeromq.ZMQ;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

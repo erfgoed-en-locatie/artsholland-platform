@@ -6,6 +6,7 @@ import java.util.List;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.jeromq.ZMQ;
 import org.joda.time.DateTime;
 import org.openrdf.repository.RepositoryException;
 import org.quartz.DisallowConcurrentExecution;
@@ -20,7 +21,6 @@ import org.waag.ah.importer.ImportResult;
 import org.waag.ah.importer.ImportStrategy;
 import org.waag.ah.importer.UrlGenerator;
 import org.waag.ah.service.MongoConnectionService;
-import org.zeromq.ZMQ;
 
 import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
