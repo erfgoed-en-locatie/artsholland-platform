@@ -91,14 +91,16 @@ public class UitbaseUrlGenerator implements UrlGenerator {
 		
 //		ArrayList<URL> test = new ArrayList<URL>();
 //		try {
-//			test.add(new URL("http://ps4.uitburo.nl/api/search?key=505642b12881b9a60688411a333bc78b&resolve=true&rows=1&start=0&modifiedto=2013-03-01T21:57:00.002Z&filter=resource:events"));
-//			test.add(new URL("http://ps4.uitburo.nl/api/search?key=505642b12881b9a60688411a333bc78b&resolve=true&rows=1&start=1&modifiedto=2013-03-01T21:57:00.002Z&filter=resource:events"));
-//			test.add(new URL("http://ps4.uitburo.nl/api/search?key=505642b12881b9a60688411a333bc78b&resolve=true&rows=1&start=2&modifiedto=2013-03-01T21:57:00.002Z&filter=resource:events"));
-//			return test;
+//			test.add(new URL("http://ps4.uitburo.nl/api/search?key=505642b12881b9a60688411a333bc78b&resolve=true&rows=1&start=0&modifiedto=2013-06-01T21:57:00.002Z&filter=resource:events"));
+//			test.add(new URL("http://ps4.uitburo.nl/api/search?key=505642b12881b9a60688411a333bc78b&resolve=true&rows=1&start=1&modifiedto=2013-06-01T21:57:00.002Z&filter=resource:events"));
+//			test.add(new URL("http://ps4.uitburo.nl/api/search?key=505642b12881b9a60688411a333bc78b&resolve=true&rows=1&start=2&modifiedto=2013-06-01T21:57:00.002Z&filter=resource:events"));
 //		} catch (MalformedURLException e) {
 //			e.printStackTrace();
 //		}
-		
+//		return test;
+//		try {
+//			return urls.subList(0, 2);
+//		} catch(IndexOutOfBoundsException e) {}
 		return urls;
 	}
 	

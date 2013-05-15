@@ -20,12 +20,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.exception.ConnectionException;
 import org.waag.ah.exception.EnrichException;
+import org.waag.ah.service.RepositoryConnectionFactory;
 import org.waag.ah.tinkerpop.EnrichUtils;
 import org.waag.ah.tinkerpop.EnricherPipeline;
 import org.waag.rdf.sesame.EnricherConfig;
 import org.waag.rdf.sesame.GraphEnricher;
 import org.waag.rdf.sesame.QueryService;
-import org.waag.rdf.sesame.RepositoryConnectionFactory;
 
 import com.tinkerpop.pipes.util.Pipeline;
 

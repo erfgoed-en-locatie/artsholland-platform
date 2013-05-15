@@ -17,15 +17,12 @@ public class SesameMemory implements SailFactory {
 		if (sail == null) {
 			try {	
 				PlatformConfig config = PlatformConfigHelper.getConfig();
-				
 				File dataDir = new File(config.getString("repository.SesameMemory.datastore"));
-				sail = new MemoryStore(dataDir);
-				sail.setSyncDelay(config.getLong("repository.SesameMemory.syncDelay", 100L));
-
-//				Repository myRepository = new SailRepository(memStore);
-//				myRepository.initialize();
 				
-//				sail = new NativeStore(dataDir, "spoc,posc,cosp");				
+				sail = new MemoryStore(dataDir);
+				
+				sail.setPersist(config.getBoolean("repository.SesameMemory.persist", true));
+//				sail.setSyncDelay(config.getLong("repository.SesameMemory.syncDelay", 100L));
 			} catch (Exception e) {
 				throw new SailException(e);
 			}

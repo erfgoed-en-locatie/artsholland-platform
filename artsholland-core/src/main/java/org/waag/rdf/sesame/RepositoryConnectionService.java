@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.PlatformConfig;
 import org.waag.ah.PlatformConfigHelper;
+import org.waag.ah.service.RepositoryConnectionFactory;
 
 import com.useekm.indexing.IndexingSail;
 import com.useekm.inference.SimpleTypeInferencingSail;
@@ -32,7 +33,8 @@ public class RepositoryConnectionService implements RepositoryConnectionFactory,
 
 	private SailRepository repository;
 //	private RepositoryConnection connection;
-	private PlatformConfig config; 
+	private PlatformConfig config;
+
 //	private PropertiesConfiguration properties;
 	
 	/**
@@ -181,5 +183,6 @@ public class RepositoryConnectionService implements RepositoryConnectionFactory,
 		SailRepositoryConnection conn = repository.getConnection();
 		conn.setAutoCommit(false);
 		return conn;
+//		return getConnection();
 	}
 }

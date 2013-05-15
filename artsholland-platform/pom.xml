@@ -43,11 +43,11 @@
               <artifactId>artsholland-processor</artifactId>
               <bundleFileName>processor.jar</bundleFileName>
             </ejbModule>
-            <ejbModule>
+<!--             <ejbModule>
               <groupId>${project.groupId}</groupId>
               <artifactId>artsholland-recommender</artifactId>
               <bundleFileName>recommender.jar</bundleFileName>
-            </ejbModule>
+            </ejbModule> -->
             <ejbModule>
               <groupId>${project.groupId}</groupId>
               <artifactId>artsholland-scheduler</artifactId>

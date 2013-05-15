@@ -103,6 +103,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			while (matcher.find()) {
 				super.startPrefixMapping(matcher.group(1), matcher.group(2));
 			}
+			super.startElement("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "RDF", "rdf:RDF", new AttributesImpl());
 
 			Configuration config = new Configuration();
 			
@@ -231,7 +232,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 			} catch (SAXException e) {
 //				logger.info(xmlString);
 //				logger.info(turtleString);
-				logger.error(e.getMessage()+": "+xmlString);
+				logger.error(e.getMessage());//+": "+xmlString
 //				e.printStackTrace();
 //				throw new SAXException(e);
 			} catch (Exception e) {
@@ -240,5 +241,10 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				xmlCollector = null;
 			}
 		}
+	}
+	
+	@Override
+	public void endDocument() throws SAXException {
+		super.endElement("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "RDF", "rdf:RDF");
 	}
 }
