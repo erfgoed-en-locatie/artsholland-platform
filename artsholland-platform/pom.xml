@@ -124,7 +124,7 @@
       <version>0.0.1-SNAPSHOT</version>
       <type>ejb</type>
     </dependency>
-    <dependency>
+<!--     <dependency>
       <groupId>org.waag.artsholland</groupId>
       <artifactId>artsholland-recommender</artifactId>
       <version>0.0.1-SNAPSHOT</version>
@@ -135,7 +135,7 @@
           <groupId>org.mongodb</groupId>
         </exclusion>
       </exclusions>
-    </dependency>
+    </dependency> -->
     <dependency>
       <groupId>org.waag.artsholland</groupId>
       <artifactId>artsholland-scheduler</artifactId>
