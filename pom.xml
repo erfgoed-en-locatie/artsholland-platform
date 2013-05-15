@@ -43,7 +43,7 @@
     <module>artsholland-datastore</module>
     <module>artsholland-platform</module>
     <module>artsholland-processor</module>
-    <module>artsholland-recommender</module>
+    <!-- <module>artsholland-recommender</module> -->
     <module>artsholland-scheduler</module>
   </modules>
                   

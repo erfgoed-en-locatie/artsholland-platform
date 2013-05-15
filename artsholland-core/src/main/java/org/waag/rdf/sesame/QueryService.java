@@ -18,6 +18,7 @@ import org.openrdf.query.parser.QueryParser;
 import org.openrdf.query.parser.sparql.SPARQLParserFactory;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
+import org.waag.ah.service.RepositoryConnectionFactory;
 import org.waag.rdf.QueryTask;
 import org.waag.rdf.WriterConfig;
 

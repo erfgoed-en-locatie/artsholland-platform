@@ -26,8 +26,9 @@ public class TikaParserPipe extends AbstractPipe<Document, String> {
 				
 				metadata.add(Metadata.RESOURCE_NAME_KEY, doc.getUrl().toExternalForm());
 				metadata.add(Metadata.CONTENT_ENCODING, new InputStreamReader(is).getEncoding());
-	
+				
 				parser.parse(is, handler, metadata); //, new ParseContext()
+				handler.endDocument();
 				
 				return handler.toString();
 			} finally {

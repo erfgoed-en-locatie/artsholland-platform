@@ -1,4 +1,4 @@
-package org.waag.rdf.sesame;
+package org.waag.ah.service;
 
 import javax.ejb.Local;
 

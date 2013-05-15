@@ -17,8 +17,9 @@ public class Sesame implements SailFactory {
 		if (sail == null) {
 			try {	
 				PlatformConfig config = PlatformConfigHelper.getConfig();
-				File dataDir = new File(config.getString("repository.sesame.datastore"));
-				sail = new NativeStore(dataDir, "spoc,posc,cosp");				
+				File dataDir = new File(config.getString("repository.SesameNative.datastore"));
+//				sail = new NativeStore(dataDir, "spoc,posc,cosp");				
+				sail = new NativeStore(dataDir);				
 			} catch (Exception e) {
 				throw new SailException(e);
 			}
