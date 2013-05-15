@@ -81,8 +81,13 @@ public class ParseHttpUrlFunction extends ExtensionFunctionDefinition {
 					}
 					text = text.replace(" ", "%20");
 					text = text.replace("\\", "%5C");
+
 					// Validate URL.
-					if (!urlValidator.isValid(text)) {
+					// URLs with unicode characters like 'ë' are not accepted
+					// by Apache Commons UrlValidator, but are valid URLs					
+					String asciiText = text.replaceAll("[^\\x00-\\x7F]", "");
+					if (!urlValidator.isValid(asciiText)) {						
+						
 						logger.warn("Invalid URL: " + text);
 						return Value.asIterator(EmptySequence.getInstance());
 					}			

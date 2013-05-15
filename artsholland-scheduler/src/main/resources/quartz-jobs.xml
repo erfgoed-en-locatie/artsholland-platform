@@ -92,7 +92,7 @@
         </entry>
       </job-data-map>
     </job>
- <!-- 
+
     <trigger>
       <cron>
         <name>TAMIncrementalImportTrigger</name>
@@ -109,7 +109,7 @@
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
- -->
+ 
      <!-- NBTC IMPORT -->
     <job>
       <name>ImportNBTC</name>
@@ -129,7 +129,7 @@
         </entry>           
       </job-data-map>      
     </job>
-<!-- 
+
     <trigger>
       <cron>
         <name>NBTC</name>
@@ -146,34 +146,82 @@
         <time-zone>Europe/Amsterdam</time-zone>      
       </cron>
     </trigger>
- -->
-    <!-- DOSA IMPORTER -->
+    
+    <!-- RCE IMPORT -->
     <job>
-      <name>DOSA</name>
+      <name>ImportRCE</name>
       <group>Importer</group>
-      <description>Import data from DOSA</description>
+      <description>Import RCE monuments</description>
       <job-class>org.waag.ah.quartz.UrlImportJob</job-class>
       <durability>true</durability>
       <recover>false</recover>
       <job-data-map>
         <entry>
           <key>urlGeneratorClass</key>
-          <value>org.waag.ah.importer.dosa.DOSAUrlGenerator</value>
-        </entry>        
-      </job-data-map>            
+          <value>org.waag.ah.importer.rce.RCEURLGenerator</value>
+        </entry>
+        <entry>
+          <key>graphUri</key>
+          <value>http://api.rijksmonumenten.info</value>
+        </entry>           
+      </job-data-map>      
     </job>
-<!--     
+
     <trigger>
       <cron>
-        <name>DOSAImportTrigger</name>
+        <name>RCE</name>
         <group>Importer</group>
-        <job-name>DOSA</job-name>
-        <job-group>Importer</job-group>        
+        <job-name>ImportRCE</job-name>
+        <job-group>Importer</job-group>
+        <job-data-map>
+          <entry>
+            <key>strategy</key>
+            <value>once</value>
+          </entry>
+        </job-data-map>           
         <cron-expression>0 0/1 * * * ?</cron-expression>
-        <time-zone>Europe/Amsterdam</time-zone>
+        <time-zone>Europe/Amsterdam</time-zone>      
       </cron>
-    </trigger> 
- -->
+    </trigger>
+    
+     <!-- ATCB IMPORT -->
+
+    <!-- <job>
+      <name>ImportATCB</name>
+      <group>Importer</group>
+      <description>Import ATCB</description>
+      <job-class>org.waag.ah.quartz.UrlImportJob</job-class>
+      <durability>true</durability>
+      <recover>false</recover>
+      <job-data-map>
+        <entry>
+          <key>urlGeneratorClass</key>
+          <value>org.waag.ah.importer.atcb.ATCBURLGenerator</value>
+        </entry>
+        <entry>
+          <key>graphUri</key>
+          <value>http://www.amsterdammarketing.org/</value>
+        </entry>           
+      </job-data-map>      
+    </job>
+
+    <trigger>
+      <cron>
+        <name>ATCB</name>
+        <group>Importer</group>
+        <job-name>ImportATCB</job-name>
+        <job-group>Importer</job-group>
+        <job-data-map>
+          <entry>
+            <key>strategy</key>
+            <value>once</value>
+          </entry>
+        </job-data-map>           
+        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <time-zone>Europe/Amsterdam</time-zone>      
+      </cron>
+    </trigger> -->
+  
 
     <!-- GEONAMES ENRICHER -->
     <job>

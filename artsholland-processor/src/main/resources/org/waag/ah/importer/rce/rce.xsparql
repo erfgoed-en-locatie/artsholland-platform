@@ -1,0 +1,95 @@
+declare namespace dc="http://purl.org/dc/terms/";
+declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+declare namespace rdfs="http://www.w3.org/2000/01/rdf-schema#";
+declare namespace xsd="http://www.w3.org/2001/XMLSchema#";
+declare namespace owl="http://www.w3.org/2002/07/owl#";
+declare namespace time="http://www.w3.org/2006/time#"; 
+declare namespace foaf="http://xmlns.com/foaf/0.1/";
+declare namespace geo="http://www.w3.org/2003/01/geo/wgs84_pos#";
+declare namespace vcard="http://www.w3.org/2006/vcard/ns#";
+declare namespace gr="http://purl.org/goodrelations/v1#";
+declare namespace osgeo="http://rdf.opensahara.com/type/geo/";
+
+declare namespace ah="http://purl.org/artsholland/1.0/";
+
+declare namespace waag="http://waag.org/saxon-extension";
+
+let $fileUrl := " http://www.artsholland.com/"
+
+let $docs := //doc
+
+return
+
+	if ($docs) then {
+				
+		for $doc in $docs			
+			
+			let $nr := { $doc/rce_str[@name="rce_objrijksnr"] }				
+			let $uri := { waag:object-uri("monument", $nr) }
+			
+			let $lat := { waag:parse-non-zero-number($doc/rce_str[@name="abc_lat"]) }
+			let $long := { waag:parse-non-zero-number($doc/rce_str[@name="abc_lon"]) }	
+			
+			let $url := { waag:parse-http-url(($doc/arr[@name="weblink_link"]/rce_str)[1]) }			
+			let $wiki_url := { waag:parse-http-url($doc/rce_str[@name="wiki_article_url"]) }
+			let $wiki_image_url := { waag:parse-http-url($doc/rce_str[@name="wiki_image_url"]) }
+			
+			let $rce_api :=	{ concat("http://api.rijksmonumenten.info/select/?q=rce_objrijksnr:", $nr) }
+			
+			let $postal-code := { waag:postal-code(waag:parse-string($doc/rce_str[@name="rce_postcode"])) }
+			let $street-name := { waag:street-name(waag:parse-string($doc/rce_str[@name="rce_straat"])) }
+			let $street-number := { waag:street-number($doc/rce_str[@name="rce_huisnummer"], "") }
+			let $street-address := { waag:street-address($street-name, $street-number) }
+			let $locality := { waag:locality($postal-code, waag:parse-string($doc/rce_str[@name="rce_plaats"])) }
+			
+			let $auri := { waag:object-uri("address", waag:address-uri($postal-code, $street-number)) }	
+
+			construct { 
+								
+				$uri a ah:Monument ;
+					ah:rijksmonumentnummer { $nr }^^xsd:integer ;
+					dc:title { waag:parse-string($doc/rce_str[@name="rce_objectnaam"]) }@{"nl"} ;
+					dc:description { waag:parse-string($doc/rce_str[@name="rce_omschrijving_redengevend"]) }@{"nl"} ;
+					
+					geo:lat { $lat }^^xsd:float ;
+					geo:long { $long }^^xsd:float ;
+	
+					geo:geometry { waag:wkt-geometry($lat, $long) }^^osgeo:wkt ;
+					
+					ah:locationAddress $auri ;
+					
+					foaf:homepage { $url } ;
+					owl:sameAs { $wiki_url } ;
+					rdfs:seeAlso { $rce_api } .
+					
+				$auri a ah:Address ;
+        			vcard:street-address { $street-address } ;
+					vcard:locality { $locality } ;
+					vcard:postal-code { $postal-code } .
+					
+				{ 
+					if ( $wiki_image_url ) then {
+											
+						let $muri := {waag:object-uri("monument", $nr, "attachment", "1")}										
+						let $muriTypeClass := {waag:class-uri("attachmentType", "Image")}	
+			
+						construct {
+								
+							$uri ah:attachment $muri .
+						
+							$muri a ah:Attachment ;					
+								ah:url { $wiki_image_url } ;										
+								ah:attachmentType $muriTypeClass .
+							
+							$muriTypeClass a ah:AttachmentType ;
+								rdfs:label { "Image" }^^xsd:string .								
+								
+						}
+					} else ()
+				}
+			} 
+
+##############################################################################################################################
+##############################################################################################################################
+
+	}	else ()
