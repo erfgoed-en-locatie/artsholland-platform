@@ -1,41 +1,27 @@
 package org.waag.ah.tinkerpop;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.NoSuchElementException;
 
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.AutoDetectParser;
-import org.apache.tika.sax.ToXMLContentHandler;
-import org.waag.ah.zeromq.Parser.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.waag.ah.importer.ImportDocument;
+import org.waag.ah.tika.DocumentParser;
 
 import com.tinkerpop.pipes.AbstractPipe;
 
-public class TikaParserPipe extends AbstractPipe<Document, String> {
-	AutoDetectParser parser = new AutoDetectParser();
+public class TikaParserPipe extends AbstractPipe<ImportDocument, String> {
+	private Logger logger = LoggerFactory.getLogger(TikaParserPipe.class);
+	private DocumentParser parser = new DocumentParser();
+	
 	@Override
 	protected String processNextStart() throws NoSuchElementException {
-		final Document doc = starts.next();
-		final String data = doc.toString();
+		ImportDocument doc = starts.next();
 		try {
-			InputStream is = new ByteArrayInputStream(data.getBytes("UTF-8"));
-			try {
-				ToXMLContentHandler handler = new ToXMLContentHandler();
-				Metadata metadata = new Metadata();
-				
-				metadata.add(Metadata.RESOURCE_NAME_KEY, doc.getUrl().toExternalForm());
-				metadata.add(Metadata.CONTENT_ENCODING, new InputStreamReader(is).getEncoding());
-				
-				parser.parse(is, handler, metadata); //, new ParseContext()
-				handler.endDocument();
-				
-				return handler.toString();
-			} finally {
-				is.close();
-			}
+			return parser.parse(doc);
 		} catch(Exception e) {
+			logger.error("Error parsing URL ("+e.getMessage()+"): "+doc.getUrl());
 			throw new RuntimeException(e.getMessage());
 		}
+
 	}
 }

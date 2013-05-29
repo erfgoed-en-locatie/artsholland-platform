@@ -13,7 +13,7 @@ import org.apache.tika.metadata.Metadata;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.parser.ParseContext;
 import org.waag.ah.tika.StreamingToRDFContentHandler;
-import org.waag.ah.zeromq.Fetcher;
+import org.waag.ah.util.URLTools;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -24,7 +24,7 @@ public class StreamingTikaParserPipe extends AbstractStreamingPipe<URL> {
 	@Override
 	protected void process(URL parseUrl, ObjectOutputStream out)
 			throws IOException, SAXException, TikaException {
-		URL url = Fetcher.getAuthenticatedUrl(parseUrl);
+		URL url = URLTools.getAuthenticatedUrl(parseUrl);
 		URLConnection conn = url.openConnection();
 		InputStream in = conn.getInputStream();
 		

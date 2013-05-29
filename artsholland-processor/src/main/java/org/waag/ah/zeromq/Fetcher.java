@@ -1,14 +1,12 @@
 package org.waag.ah.zeromq;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.Authenticator;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.SynchronousQueue;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -19,12 +17,14 @@ import javax.ejb.Startup;
 import org.jeromq.ZMQ;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.ah.PasswordAuthenticator;
-import org.waag.ah.mongo.PersistentQueue;
 import org.waag.ah.service.MongoConnectionService;
+import org.waag.ah.util.URLTools;
 
 import com.google.gson.Gson;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 
 @Startup
 @Singleton
@@ -36,24 +36,21 @@ public class Fetcher {
 	private FetcherThread fetcher;
 	private ServerThread server;
 
+	private @EJB MongoConnectionService mongo;
+
 	private Gson gson = new Gson();
 	private DBCollection collection;
-
-	private @EJB MongoConnectionService mongo;
-	
-	private PersistentQueue<Map<String, String>> queue;
-
+	private BlockingQueue<BasicDBObject> queue = new SynchronousQueue<BasicDBObject>(true);
 
 	@PostConstruct
 	public void listen() {
 		collection = mongo.getCollection(Fetcher.class.getName());
-		queue = new PersistentQueue<Map<String, String>>(collection);
 		
 		// Start URL fetcher process.
 		fetcher = new FetcherThread();
 		fetcher.start();
 		
-		// Start docuement server.
+		// Start document server.
 		server = new ServerThread();
 		server.start();
 	}
@@ -73,7 +70,25 @@ public class Fetcher {
 	        sender.connect("tcp://localhost:5558");
 	        while (true) {
 	        	try {
-	        		sender.send(gson.toJson(queue.get()));
+	        		// Wait for available batch.
+	        		BasicDBObject batch = queue.take();
+	        		BasicDBObject query = new BasicDBObject()
+	        			.append("guid", batch.get("guid"))
+	        			.append("status", null);
+	        		
+	        		// Send data and url field.
+	        		BasicDBObject fields = new BasicDBObject()
+	        			.append("data", 1)
+	        			.append("url", 1);
+	        		
+	        		DBCursor data = collection.find(query, fields);
+	        		while (data.hasNext()) {
+	        			DBObject doc = data.next();
+	        			sender.send(gson.toJson(doc), data.hasNext() ? ZMQ.SNDMORE : 0);
+	        		}
+	        		
+	        		// Remove all references to this batch from DB.
+	        		collection.findAndRemove(new BasicDBObject("guid", batch.get("guid")));
 	        	} catch(Exception e) {
 	        		logger.error(e.getMessage(), e);
 	        	}
@@ -82,28 +97,47 @@ public class Fetcher {
 	}
 	
 	private class FetcherThread extends Thread {
-		private boolean running = true;
 		@Override
 		public void run() {
 			ZMQ.Context context = ZMQ.context(1);
 			ZMQ.Socket receiver = context.socket(ZMQ.PULL);
 	        receiver.bind("tcp://*:5557");
-	        while (running) {
+	        
+	        while (!Thread.currentThread().isInterrupted()) {
         	    try {
+        	    	// Wait for list of URLs (import job). 
         	    	String[] urls = gson.fromJson(receiver.recvStr(), String[].class);
+        	    	
+        	    	// Fetch URLs and store them in DB.
         	    	if (urls.length > 0) {
+            	    	
+            	    	// Get unique ID for this job.
+            	    	String guid = UUID.randomUUID().toString();
+            	    	
 	        	    	for (int i=0; i<urls.length; i++) {
-	        	    		URL url = getAuthenticatedUrl(urls[i]);
-	        	    		queue.put(getDocument(url));
-		        			logger.info("Fetched URL: "+url);
+	        	    		BasicDBObject document = new BasicDBObject();
+	        	    		Map<String, String> data = getDocument(URLTools.getAuthenticatedUrl(urls[i]));
+	        	    		document.append("guid", guid);
+	        	    		document.append("url", data.get("url"));
+	        	    		document.append("data", data.get("data"));
+		        			logger.info("Fetched URL ("+(i+1)+"/"+urls.length+"): "+data.get("url"));
+		        			collection.insert(document);
 		        		}
-	        	    	queue.commit();
+            	    	
+            	    	// Add batch reference to DB.
+            	    	BasicDBObject batch = new BasicDBObject();
+            	    	batch.append("guid", guid);
+            	    	batch.append("status", true);
+            	    	collection.insert(batch);
+            	    	
+            	    	// Make batch available to server.
+            	    	queue.put(batch);
         	    	}
 		        } catch(Exception e) {
 		        	logger.error(e.getMessage());
-		        	queue.rollback();
 		        }
 	        }
+	        
         	receiver.close();
         	context.term();
 	    }
@@ -111,48 +145,8 @@ public class Fetcher {
 		private Map<String, String> getDocument(URL url) throws IOException {
     		Map<String, String> document = new HashMap<String, String>();
     		document.put("url", url.toString());
-    		document.put("data", getUrlContent(url));
+    		document.put("data", URLTools.getUrlContent(url));
     		return document;
 		}
-	}
-	
-	public static URL getAuthenticatedUrl(String url) throws MalformedURLException {
-		return getAuthenticatedUrl(new URL(url));
-	}
-	
-	public static URL getAuthenticatedUrl(URL url) throws MalformedURLException {
-		boolean authenticated = false;
-		String username = "";
-		String password = "";
-		
-		String userInfo = url.getUserInfo();
-		if (userInfo != null) {
-			String[] usernamePassword = userInfo.split(":");
-			if (usernamePassword.length == 2) {
-				username = usernamePassword[0];
-				password = usernamePassword[1];
-				authenticated = true;
-			}
-		}		
-		
-		if (authenticated) {
-			Authenticator.setDefault(new PasswordAuthenticator(username, password));
-		} else {
-			Authenticator.setDefault(null);
-		}	
-		
-		return url;
-	}
-	
-	private String getUrlContent(URL url) throws IOException {
-		StringBuilder content = new StringBuilder();
-		URLConnection conn = url.openConnection();	
-        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-		String inputLine;
-		while ((inputLine = in.readLine()) != null) {
-			content.append(inputLine);
-		}
-		in.close();
-		return content.toString();
 	}
 }

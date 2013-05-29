@@ -1,8 +1,8 @@
 package org.waag.ah.zeromq;
 
-import java.lang.reflect.Type;
-import java.net.URL;
-import java.util.Collection;
+import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.SynchronousQueue;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -13,14 +13,15 @@ import javax.ejb.Startup;
 import org.jeromq.ZMQ;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.waag.ah.mongo.PersistentQueue;
+import org.waag.ah.importer.ImportDocument;
 import org.waag.ah.service.MongoConnectionService;
-import org.waag.ah.tinkerpop.TikaParserPipe;
+import org.waag.ah.tika.DocumentParser;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
-import com.tinkerpop.pipes.util.Pipeline;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 
 @Startup
 @Singleton
@@ -32,7 +33,7 @@ public class Parser {
 	private ParserThread parser;
 	private ServerThread server;
 	private Gson gson = new Gson();
-	private PersistentQueue<String> queue;
+	private BlockingQueue<BasicDBObject> queue;
 	private DBCollection collection;
 	
 	private @EJB MongoConnectionService mongo;
@@ -40,7 +41,7 @@ public class Parser {
 	@PostConstruct
 	public void listen() {
 		collection = mongo.getCollection(Parser.class.getName());
-		queue = new PersistentQueue<String>(collection);
+		queue = new SynchronousQueue<BasicDBObject>(true);
 		
 		server = new ServerThread();
 		server.start();
@@ -67,18 +68,32 @@ public class Parser {
 			ZMQ.Socket sender = context.socket(ZMQ.PUSH);
 			sender.setHWM(1);
 	        sender.connect("tcp://localhost:5559");
-	        try {
-		        while (true) {
-		        	try {
-		        		sender.send(gson.toJson(queue.get()));
-		        	} catch (Exception e) {
-		        		logger.error(e.getMessage(), e);
-		        	}
-		        }
-	        } finally {
-	        	sender.close();
-	        	context.term();
+	        
+	        while (!Thread.currentThread().isInterrupted()) {
+	        	try {
+	        		// Wait for fetched batch.
+	        		BasicDBObject batch = queue.take();
+	        		BasicDBObject query = new BasicDBObject()
+	        			.append("guid", batch.get("guid"))
+	        			.append("status", null);
+	        		
+	        		BasicDBObject fields = new BasicDBObject("data", 1);
+	        		
+	        		DBCursor data = collection.find(query, fields);
+	        		while (data.hasNext()) {
+	        			DBObject doc = data.next();
+	        			sender.send(gson.toJson(doc), data.hasNext() ? ZMQ.SNDMORE : 0);
+	        		}
+	        		
+	        		// Remove all references to this batch from DB.
+	        		collection.findAndRemove(new BasicDBObject("guid", batch.get("guid")));		        		
+	        	} catch (Exception e) {
+	        		logger.error(e.getMessage(), e);
+	        	}
 	        }
+
+	        sender.close();
+        	context.term();
 		}
 	}
 	
@@ -88,58 +103,52 @@ public class Parser {
 	 * @author Raoul Wissink <raoul@raoul.net>
 	 */
 	private class ParserThread extends Thread {
-		private Pipeline<Document, String> pipeline = new ParserPipeline();
-		private final Type type = new TypeToken<Collection<Document>>(){}.getType();
+//		private final Type type = new TypeToken<Collection<Document>>(){}.getType();
+		private DocumentParser parser = new DocumentParser();
+		
 		@Override
 		public void run() {
 			ZMQ.Context context = ZMQ.context(1);
 			ZMQ.Socket receiver = context.socket(ZMQ.PULL);
 	        receiver.bind("tcp://*:5558");
-	        try {
-		        while (true) {
-		        	try {
-			        	Collection<Document> docs = gson.fromJson(receiver.recvStr(), type);	
-			        	pipeline.setStarts(docs.iterator());
-			        	while (pipeline.hasNext()) {
-			        		queue.put(pipeline.next());
-			        	}			     
-			        	queue.commit();
-			        } catch (Exception e) {
-			        	logger.error(e.getMessage(), e);
-			        	queue.rollback();
-			        }
+
+	        while (!Thread.currentThread().isInterrupted()) {
+	        	try {
+	        		// Get unique ID for this job.
+        	    	String guid = UUID.randomUUID().toString();
+
+	        		boolean more = true;
+	        		while (more) {
+		        		String json = receiver.recvStr();
+		        		ImportDocument doc = gson.fromJson(json, ImportDocument.class);
+		        		String data = parser.parse(doc);
+		        		
+		        		BasicDBObject document = new BasicDBObject();
+        	    		document.append("guid", guid);
+        	    		document.append("data", data);
+        	    		
+        	    		collection.insert(document);
+        	    		
+        	    		logger.info("Parsed document: size="+data.length());
+			        	
+        	    		more = receiver.hasReceiveMore();
+		        	}
+        	    	
+        	    	// Add batch reference to DB.
+        	    	BasicDBObject batch = new BasicDBObject();
+        	    	batch.append("guid", guid);
+        	    	batch.append("status", true);
+        	    	collection.insert(batch);
+
+        	    	// Mark batch as finished.
+        	    	queue.put(batch);	
+		        } catch (Exception e) {
+		        	logger.error(e.getMessage(), e);
 		        }
-	        } finally {
-	        	receiver.close();
-	        	context.term();
 	        }
+
+	        receiver.close();
+        	context.term();
 	    }
-	}
-	
-	public static class Document {
-		private URL url;
-		private String data;
-		public URL getUrl() {
-			return url;
-		}
-		protected String getData() {
-			return data;
-		}
-		@Override
-		public String toString() {
-			return getData();
-		}
-	}
-	
-	/**
-	 * Parser pipeline assembly.
-	 * 
-	 * @author Raoul Wissink <raoul@raoul.net>
-	 */
-	private static class ParserPipeline extends Pipeline<Document, String> {
-		public ParserPipeline() {
-			super();
-			this.addPipe(new TikaParserPipe());
-		}
 	}
 }

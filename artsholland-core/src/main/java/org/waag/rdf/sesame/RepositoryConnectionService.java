@@ -13,10 +13,7 @@ import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.repository.sail.SailRepositoryConnection;
-import org.openrdf.sail.NotifyingSail;
 import org.openrdf.sail.Sail;
-import org.openrdf.sail.inferencer.fc.DirectTypeHierarchyInferencer;
-import org.openrdf.sail.inferencer.fc.ForwardChainingRDFSInferencer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.PlatformConfig;
@@ -24,7 +21,6 @@ import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.service.RepositoryConnectionFactory;
 
 import com.useekm.indexing.IndexingSail;
-import com.useekm.inference.SimpleTypeInferencingSail;
 
 @Startup
 @Singleton
@@ -62,15 +58,15 @@ public class RepositoryConnectionService implements RepositoryConnectionFactory,
 				Sail sail = provider.getSail();
 	
 				// Try to add inferencing...
-				if (sail instanceof NotifyingSail) {
-					logger.info("Using full inferencer for native Sail implementation...");
-					sail = new DirectTypeHierarchyInferencer(
-						   new ForwardChainingRDFSInferencer(
-								   (NotifyingSail) sail));
-				} else {
-					logger.info("Using simple inferencer for third-party Sail implementation...");
-					sail = new SimpleTypeInferencingSail(sail);
-				}
+//				if (sail instanceof NotifyingSail) {
+//					logger.info("Using full inferencer for native Sail implementation...");
+//					sail = new DirectTypeHierarchyInferencer(
+//						   new ForwardChainingRDFSInferencer(
+//								   (NotifyingSail) sail));
+//				} else {
+//					logger.info("Using simple inferencer for third-party Sail implementation...");
+//					sail = new SimpleTypeInferencingSail(sail);
+//				}
 				
 				// Add PostGIS indexer & fulltext search to SAIL stack.
 				// TODO: Update PostgreSQL table latout. 
