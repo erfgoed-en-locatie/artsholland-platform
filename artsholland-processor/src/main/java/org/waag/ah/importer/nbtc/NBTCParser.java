@@ -42,7 +42,7 @@ public class NBTCParser extends AbstractParser {
 				throw new IOException("XQuery definition file not found");
 			}
 			return new MatchingContentHandler(
-					new XSPARQLQueryHandler(handler, metadata, context, xquery),
+					new XSPARQLQueryHandler(handler, metadata, /*context,*/ xquery),
 					getXPathMatcher("/Pois/descendant::node()"));
 		} catch (Exception e) {
 			logger.error(e.getMessage());

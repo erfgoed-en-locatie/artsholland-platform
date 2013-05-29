@@ -48,7 +48,7 @@ public class TAMParser extends AbstractParser {
 				Map<String, StreamSource> includes = new HashMap<String, StreamSource>();
 				includes.put("taxonomy", new StreamSource(getClass().getResourceAsStream("taxonomy.xml")));
 				
-				XSPARQLQueryHandler queryHandler = new XSPARQLQueryHandler(handler,	metadata, context, xquery, includes);
+				XSPARQLQueryHandler queryHandler = new XSPARQLQueryHandler(handler,	metadata, /*context,*/ xquery, includes);
 				
 				return new MatchingContentHandler(queryHandler,	getXPathMatcher("/node_export/descendant::node()"));
 			}

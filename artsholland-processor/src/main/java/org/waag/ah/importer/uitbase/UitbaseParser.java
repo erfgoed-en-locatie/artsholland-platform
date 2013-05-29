@@ -51,7 +51,7 @@ public class UitbaseParser extends AbstractParser {
 			if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV3_MIME_TYPE)) {
 				Reader xquery = getFileReader(getClass(), "v3/event.xsparql");    			
 				return new MatchingContentHandler(
-					new XSPARQLQueryHandler(handler, metadata, context, xquery), 
+					new XSPARQLQueryHandler(handler, metadata, /*context,*/ xquery), 
 					getXPathMatcher("/nubxml/events/descendant::node()"));
 				
 			} else if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_MIME_TYPE)) {
@@ -64,7 +64,7 @@ public class UitbaseParser extends AbstractParser {
 //				logger.info("PATH: "+getClass().getResource("venuetypes.xml").getPath());
 				includes.put("venueTypesExternal", new StreamSource(getClass().getResourceAsStream("venuetypes.xml")));
 				
-				XSPARQLQueryHandler queryHandler = new XSPARQLQueryHandler(handler, metadata, context, xquery, includes);
+				XSPARQLQueryHandler queryHandler = new XSPARQLQueryHandler(handler, metadata, /*context,*/ xquery, includes);
 				Matcher xpathMatcher = getXPathMatcher("/search/descendant::node()");
 				
 				return new MatchingContentHandler(queryHandler, xpathMatcher);

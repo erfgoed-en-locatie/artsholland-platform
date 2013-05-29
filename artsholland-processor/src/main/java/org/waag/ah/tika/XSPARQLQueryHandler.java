@@ -1,14 +1,11 @@
 package org.waag.ah.tika;
 
-import java.io.ByteArrayInputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Stack;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.transform.stream.StreamSource;
 
@@ -22,11 +19,8 @@ import net.sf.saxon.s9api.XQueryExecutable;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.tika.metadata.Metadata;
-import org.apache.tika.parser.ParseContext;
 import org.apache.tika.sax.ContentHandlerDecorator;
 import org.apache.tika.sax.ToXMLContentHandler;
-import org.apache.tika.sax.xpath.MatchingContentHandler;
-import org.apache.tika.sax.xpath.XPathParser;
 import org.deri.xquery.saxon.createScopedDatasetExtFunction;
 import org.deri.xquery.saxon.deleteScopedDatasetExtFunction;
 import org.deri.xquery.saxon.jsonDocExtFunction;
@@ -35,7 +29,6 @@ import org.deri.xquery.saxon.sparqlQueryExtFunction;
 import org.deri.xquery.saxon.sparqlScopedDatasetExtFunction;
 import org.deri.xquery.saxon.turtleGraphToURIExtFunction;
 import org.deri.xsparql.rewriter.XSPARQLProcessor;
-import org.openrdf.model.vocabulary.RDF;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.exception.ParserException;
@@ -71,39 +64,40 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 	
 	private XQueryEvaluator evaluator;
 	private ToXMLContentHandler xmlCollector;
-	private TurtleParser turtleParser;
-	private ParseContext context;
+//	private TurtleParser turtleParser;
+//	private ParseContext context;
 	private Metadata metadata;
 	private ContentHandler handler;
-	private org.apache.tika.sax.xpath.Matcher matcher;
+//	private org.apache.tika.sax.xpath.Matcher matcher;
 	private Stack<String> stack;
 
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata,
-			ParseContext context, Reader xquery) throws ParserException {
-		this(handler, metadata, context, xquery, null);
+			/*ParseContext context,*/ Reader xquery) throws ParserException {
+		this(handler, metadata, /*context,*/ xquery, null);
 	}
 	
 	public XSPARQLQueryHandler(ContentHandler handler, Metadata metadata,
-			ParseContext context, Reader xquery, Map<String, StreamSource> includes)
+			/*ParseContext context,*/ Reader xquery, Map<String, StreamSource> includes)
 			throws ParserException {
-		this.matcher = new XPathParser("rdf", RDF.NAMESPACE).parse("/rdf:RDF/descendant::node()");
+//		this.matcher = new XPathParser("rdf", RDF.NAMESPACE).parse("/rdf:RDF/descendant::node()");
 		this.handler = handler;
 		super.setContentHandler(this.handler);
-		this.context = context;
+//		this.context = context;
 		this.metadata = metadata; 
-		this.turtleParser = new TurtleParser();
+//		this.turtleParser = new TurtleParser();
 		this.stack = new Stack<String>();
 		
 		try {
 			XSPARQLProcessor xp = new XSPARQLProcessor();			
 			String q = xp.process(xquery);
+//			logger.info(q);
 			
 			// TODO: This is nasty, but we need the namespaces from our XSPARQL query.
-			Matcher matcher = Pattern.compile("PREFIX ([a-zA-Z]+): <(.*)>").matcher(q);
-			while (matcher.find()) {
-				super.startPrefixMapping(matcher.group(1), matcher.group(2));
-			}
-			super.startElement("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "RDF", "rdf:RDF", new AttributesImpl());
+//			Matcher matcher = Pattern.compile(".*PREFIX ([a-zA-Z]+): <(.*)>").matcher(q);
+//			while (matcher.find()) {
+//				super.startPrefixMapping(matcher.group(1), matcher.group(2));
+//			}
+//			super.startElement("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "RDF", "rdf:RDF", new AttributesImpl());
 
 			Configuration config = new Configuration();
 			
@@ -222,29 +216,38 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 				mdata.set(Metadata.CONTENT_TYPE, "text/turtle");
 				mdata.set(Metadata.RESOURCE_NAME_KEY, metadata.get(Metadata.RESOURCE_NAME_KEY));
 				
-				turtleParser.parse(
-						new ByteArrayInputStream(turtleString.getBytes()), 
-						new MatchingContentHandler(
-						this.handler, matcher), mdata, context);
+				this.handler.characters(turtleString.toCharArray(), 0, turtleString.length());
+//				logger.info("TURTLE: "+turtleString.length());
+//				turtleParser.parse(
+//						new ByteArrayInputStream(turtleString.getBytes()), 
+//						this.handler, mdata, context);
 
 			} catch (NoSuchElementException e) {
 				logger.info("Not enough data to proceed: "+xmlString);
 			} catch (SAXException e) {
-//				logger.info(xmlString);
-//				logger.info(turtleString);
+				logger.info(xmlString);
+				logger.info(turtleString);
 				logger.error(e.getMessage());//+": "+xmlString
 //				e.printStackTrace();
-//				throw new SAXException(e);
+				throw new SAXException(e);
 			} catch (Exception e) {
 				throw new SAXException(e);
+//			} catch (SaxonApiException e) {
+//				throw new SAXException(e);
+//			} catch (IOException e) {
+//				throw new SAXException(e);
+//			} catch (TikaException e) {
+//				throw new SAXException(e);
 			} finally {
+//				logger.info(xmlString);
+//				logger.info(turtleString);
 				xmlCollector = null;
 			}
 		}
 	}
 	
-	@Override
-	public void endDocument() throws SAXException {
-		super.endElement("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "RDF", "rdf:RDF");
-	}
+//	@Override
+//	public void endDocument() throws SAXException {
+//		super.endElement("http://www.w3.org/1999/02/22-rdf-syntax-ns#", "RDF", "rdf:RDF");
+//	}
 }

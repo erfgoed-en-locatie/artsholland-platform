@@ -41,7 +41,7 @@ public class PersistentQueue<T> {
 			if (current != null) {
 				try {
 					// Let's assume the previous item was succesfully processed.
-//					logger.info("Removing current buffer item");
+					logger.info("Removing current buffer item");
 					collection.remove(current);
 				} finally {
 					current = null;
