@@ -107,11 +107,11 @@ public class RestService implements InitializingBean {
   	//public double metersToDegrees(double meters) { return meters / (Math.PI/180) / 6378137; }  	
   	double metersToDegrees = 1 / ((Math.PI/180) * 6378137);
   	
-  	SPARQLFilter eventsNearbyFilter = new SPARQLFilter("nearby", "?object ah:venue ?venue . ?venue geo:asWKT ?geometry .", "geof:distance(?geometry, \"?parameter\"^^<http://www.opengis.net/ont/geosparql#wktLiteral>) < ?distance * " + metersToDegrees);
+  	SPARQLFilter eventsNearbyFilter = new SPARQLFilter("nearby", "?object ah:venue ?venue . ?venue geo:asWKT ?geometry .", "geof:sfWithin(?geometry, geof:buffer(\"?parameter\"^^<http://www.opengis.net/ont/geosparql#wktLiteral>, ?distance *" + metersToDegrees + "))");
   	eventsNearbyFilter.addExtraParameter("distance");
    	eventsRelation.addFilter(eventsNearbyFilter);
-  	   	
-   	SPARQLFilter venuesNearbyFilter = new SPARQLFilter("nearby", "?object geo:asWKT ?geometry .", "geof:distance(?geometry, \"?parameter\"^^<http://www.opengis.net/ont/geosparql#wktLiteral>) < ?distance * " + metersToDegrees);
+      	
+   	SPARQLFilter venuesNearbyFilter = new SPARQLFilter("nearby", "?object geo:asWKT ?geometry .", "geof:sfWithin(?geometry, geof:buffer(\"?parameter\"^^<http://www.opengis.net/ont/geosparql#wktLiteral>, ?distance * " + metersToDegrees + "))");
    	venuesNearbyFilter.addExtraParameter("distance");
   	venuesRelation.addFilter(venuesNearbyFilter);
     // TODO: add search:within(?geometry, "POLYGON((4 53, 4 54, 5 54, 5 53, 4 53))"^^geo:wkt)  	
