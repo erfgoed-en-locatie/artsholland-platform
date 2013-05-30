@@ -67,13 +67,17 @@ public class Importer {
 			ZMQ.Context context = ZMQ.context(1);
 			ZMQ.Socket receiver = context.socket(ZMQ.PULL);
 	        receiver.bind("tcp://*:5559");
+	        
 	        while (!Thread.currentThread().isInterrupted()) {
 	        	boolean more = true;
+	        	
 	        	try {
 	        		while (more) {
 		        		ImportDocument doc = gson.fromJson(receiver.recvStr(), ImportDocument.class);	
-		        		logger.info("IMPORTING: size="+doc.getData().length());
 		        		InputStream in = new ByteArrayInputStream(doc.getData().getBytes("UTF-8"));
+
+		        		logger.info("IMPORTING: size="+doc.getData().length());
+		        		
 		        		try {
 		        			rdfParser.parse(in, "http://artsholland.com");
 		        		} catch(RDFParseException e) {
@@ -83,17 +87,19 @@ public class Importer {
 		        		}
 			        	more = receiver.hasReceiveMore();
 	        		}
-	        		logger.info("SIZE BEFORE: "+conn.size());
-//			        	logger.info("COMMITTING...");
 		        	conn.commit();
 		        	logger.info("SIZE AFTER: "+conn.size());
 		        } catch (Exception e) {
 		        	try {
 						conn.rollback();
-					} catch (RepositoryException e1) {}
+					} catch (Exception e1) { // IllegalStateException
+						// Rollback only fails when the connection has died. 
+						Thread.currentThread().interrupt();
+					}
 		        	logger.error(e.getMessage(), e);
 		        }
 	        }
+	        
         	receiver.close();
         	context.term();
 	    }

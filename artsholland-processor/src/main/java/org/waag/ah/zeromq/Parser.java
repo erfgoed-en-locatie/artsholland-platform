@@ -33,7 +33,7 @@ public class Parser {
 	private ParserThread parser;
 	private ServerThread server;
 	private Gson gson = new Gson();
-	private BlockingQueue<BasicDBObject> queue;
+	private BlockingQueue<DBObject> queue = new SynchronousQueue<DBObject>(true);
 	private DBCollection collection;
 	
 	private @EJB MongoConnectionService mongo;
@@ -41,7 +41,6 @@ public class Parser {
 	@PostConstruct
 	public void listen() {
 		collection = mongo.getCollection(Parser.class.getName());
-		queue = new SynchronousQueue<BasicDBObject>(true);
 		
 		server = new ServerThread();
 		server.start();
@@ -72,21 +71,25 @@ public class Parser {
 	        while (!Thread.currentThread().isInterrupted()) {
 	        	try {
 	        		// Wait for fetched batch.
-	        		BasicDBObject batch = queue.take();
-	        		BasicDBObject query = new BasicDBObject()
-	        			.append("guid", batch.get("guid"))
-	        			.append("status", null);
+	        		DBObject batch = queue.take();
+	        		logger.info("Sending batch: "+batch.get("jobId"));
 	        		
-	        		BasicDBObject fields = new BasicDBObject("data", 1);
+	        		DBCursor data = collection.find(new BasicDBObject()
+	        			.append("jobId", batch.get("jobId"))
+	        			.append("status", null));
 	        		
-	        		DBCursor data = collection.find(query, fields);
+	        		int count = data.count();
+	        		
 	        		while (data.hasNext()) {
+	        			logger.info("Sending batch item ("+(data.numSeen()+1)+"/"+count+"): jobId="+batch.get("jobId"));
 	        			DBObject doc = data.next();
 	        			sender.send(gson.toJson(doc), data.hasNext() ? ZMQ.SNDMORE : 0);
+	        			collection.remove(doc);
 	        		}
 	        		
 	        		// Remove all references to this batch from DB.
-	        		collection.findAndRemove(new BasicDBObject("guid", batch.get("guid")));		        		
+//	        		collection.findAndRemove(new BasicDBObject("jobId", batch.get("jobId")));
+	        		collection.remove(batch);
 	        	} catch (Exception e) {
 	        		logger.error(e.getMessage(), e);
 	        	}
@@ -108,6 +111,19 @@ public class Parser {
 		
 		@Override
 		public void run() {
+			// Load pending jobs (backlog).
+			try {
+				BasicDBObject query = new BasicDBObject("status", true);
+				DBCursor cursor = collection.find(query);
+				while (cursor.hasNext()) {
+					DBObject doc = cursor.next();
+					logger.info("Processing backlog: "+doc.get("jobId"));
+					queue.put(doc);
+				}
+			} catch (InterruptedException e) {
+				logger.error("Error processing backlog", e);
+			}			
+			
 			ZMQ.Context context = ZMQ.context(1);
 			ZMQ.Socket receiver = context.socket(ZMQ.PULL);
 	        receiver.bind("tcp://*:5558");
@@ -115,7 +131,7 @@ public class Parser {
 	        while (!Thread.currentThread().isInterrupted()) {
 	        	try {
 	        		// Get unique ID for this job.
-        	    	String guid = UUID.randomUUID().toString();
+        	    	String jobId = UUID.randomUUID().toString();
 
 	        		boolean more = true;
 	        		while (more) {
@@ -124,7 +140,7 @@ public class Parser {
 		        		String data = parser.parse(doc);
 		        		
 		        		BasicDBObject document = new BasicDBObject();
-        	    		document.append("guid", guid);
+        	    		document.append("jobId", jobId);
         	    		document.append("data", data);
         	    		
         	    		collection.insert(document);
@@ -135,9 +151,9 @@ public class Parser {
 		        	}
         	    	
         	    	// Add batch reference to DB.
-        	    	BasicDBObject batch = new BasicDBObject();
-        	    	batch.append("guid", guid);
-        	    	batch.append("status", true);
+        	    	BasicDBObject batch = new BasicDBObject()
+        	    		.append("jobId", jobId)
+        	    		.append("status", true);
         	    	collection.insert(batch);
 
         	    	// Mark batch as finished.

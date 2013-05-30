@@ -1,9 +1,6 @@
 package org.waag.ah.zeromq;
 
-import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
@@ -40,19 +37,19 @@ public class Fetcher {
 
 	private Gson gson = new Gson();
 	private DBCollection collection;
-	private BlockingQueue<BasicDBObject> queue = new SynchronousQueue<BasicDBObject>(true);
+	private BlockingQueue<DBObject> queue = new SynchronousQueue<DBObject>(true);
 
 	@PostConstruct
 	public void listen() {
 		collection = mongo.getCollection(Fetcher.class.getName());
 		
-		// Start URL fetcher process.
-		fetcher = new FetcherThread();
-		fetcher.start();
-		
 		// Start document server.
 		server = new ServerThread();
 		server.start();
+		
+		// Start URL fetcher process.
+		fetcher = new FetcherThread();
+		fetcher.start();
 	}
 	
 	@PreDestroy
@@ -71,24 +68,26 @@ public class Fetcher {
 	        while (true) {
 	        	try {
 	        		// Wait for available batch.
-	        		BasicDBObject batch = queue.take();
-	        		BasicDBObject query = new BasicDBObject()
-	        			.append("guid", batch.get("guid"))
-	        			.append("status", null);
+	        		DBObject batch = queue.take();
 	        		
 	        		// Send data and url field.
-	        		BasicDBObject fields = new BasicDBObject()
-	        			.append("data", 1)
-	        			.append("url", 1);
+//	        		BasicDBObject fields = new BasicDBObject()
+//	        			.append("data", 1)
+//	        			.append("url", 1);
 	        		
-	        		DBCursor data = collection.find(query, fields);
+	        		DBCursor data = collection.find(new BasicDBObject()
+	        			.append("jobId", batch.get("jobId"))
+	        			.append("status", null));
+	        		
 	        		while (data.hasNext()) {
 	        			DBObject doc = data.next();
 	        			sender.send(gson.toJson(doc), data.hasNext() ? ZMQ.SNDMORE : 0);
+	        			collection.remove(doc);
 	        		}
 	        		
 	        		// Remove all references to this batch from DB.
-	        		collection.findAndRemove(new BasicDBObject("guid", batch.get("guid")));
+//	        		collection.findAndRemove(new BasicDBObject("jobId", batch.get("jobId")));
+	        		collection.remove(batch);
 	        	} catch(Exception e) {
 	        		logger.error(e.getMessage(), e);
 	        	}
@@ -99,6 +98,20 @@ public class Fetcher {
 	private class FetcherThread extends Thread {
 		@Override
 		public void run() {
+			// Load pending jobs (backlog).
+//			try {
+//				BasicDBObject query = new BasicDBObject("status", true);
+//				DBCursor cursor = collection.find(query);
+//				while (cursor.hasNext()) {
+//					DBObject doc = cursor.next();
+//					logger.info("Processing backlog: "+doc.get("jobId"));
+//					queue.put(doc);
+//				}
+//			} catch (InterruptedException e) {
+//				logger.error("Error processing backlog", e);
+//			}
+			
+			// Listen for new jobs (after processing backlog).
 			ZMQ.Context context = ZMQ.context(1);
 			ZMQ.Socket receiver = context.socket(ZMQ.PULL);
 	        receiver.bind("tcp://*:5557");
@@ -112,21 +125,24 @@ public class Fetcher {
         	    	if (urls.length > 0) {
             	    	
             	    	// Get unique ID for this job.
-            	    	String guid = UUID.randomUUID().toString();
+            	    	String jobId = UUID.randomUUID().toString();
             	    	
+            	    	// Fetch URLs and store content in DB.
 	        	    	for (int i=0; i<urls.length; i++) {
-	        	    		BasicDBObject document = new BasicDBObject();
-	        	    		Map<String, String> data = getDocument(URLTools.getAuthenticatedUrl(urls[i]));
-	        	    		document.append("guid", guid);
-	        	    		document.append("url", data.get("url"));
-	        	    		document.append("data", data.get("data"));
-		        			logger.info("Fetched URL ("+(i+1)+"/"+urls.length+"): "+data.get("url"));
-		        			collection.insert(document);
+	        	    		URL url = URLTools.getAuthenticatedUrl(urls[i]);
+	        	    		String data = URLTools.getUrlContent(url);
+	        	    		
+	        	    		collection.insert(new BasicDBObject()
+	        	    			.append("jobId", jobId)
+	        	    			.append("url", url.toExternalForm())
+	        	    			.append("data", data));
+	        	    		
+		        			logger.info("Fetched URL ("+(i+1)+"/"+urls.length+"): "+url);
 		        		}
             	    	
             	    	// Add batch reference to DB.
             	    	BasicDBObject batch = new BasicDBObject();
-            	    	batch.append("guid", guid);
+            	    	batch.append("jobId", jobId);
             	    	batch.append("status", true);
             	    	collection.insert(batch);
             	    	
@@ -141,12 +157,5 @@ public class Fetcher {
         	receiver.close();
         	context.term();
 	    }
-		
-		private Map<String, String> getDocument(URL url) throws IOException {
-    		Map<String, String> document = new HashMap<String, String>();
-    		document.put("url", url.toString());
-    		document.put("data", URLTools.getUrlContent(url));
-    		return document;
-		}
 	}
 }
