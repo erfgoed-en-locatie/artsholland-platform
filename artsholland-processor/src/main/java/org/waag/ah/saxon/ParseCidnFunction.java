@@ -42,11 +42,12 @@ public class ParseCidnFunction extends ExtensionFunctionDefinition {
 					// Check whether cidn is a valid cidn number, 
 					// return empty sequence otherwise
 					// Cidn is valid when longer than, well, let's 
-					// say 20 characters!
-					
-					// TODO: length limit of 20 characters is arbitrary! FIX!
+					// say 4 characters!					
 					
 					boolean valid = cidn.length() >= 4;
+					
+					// And cidn should not be just zeroes!
+					valid &= !cidn.replaceAll("[-0]*", "").equals("");
 					
 					if (!valid) {
 						return Value.asIterator(EmptySequence.getInstance());
