@@ -9,16 +9,15 @@ import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.jeromq.ZMQ;
-import org.openrdf.model.Statement;
 import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
-import org.openrdf.rio.RDFParseException;
-import org.openrdf.rio.RDFParser;
-import org.openrdf.rio.helpers.RDFHandlerBase;
-import org.openrdf.rio.turtle.TurtleParser;
+import org.openrdf.rio.RDFFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.waag.ah.PlatformConfig;
+import org.waag.ah.PlatformConfigHelper;
 import org.waag.ah.importer.ImportDocument;
 import org.waag.ah.service.RepositoryConnectionFactory;
 
@@ -31,15 +30,19 @@ public class Importer {
 	
 	private Gson gson = new Gson();
 	private ImporterThread parser;
-	
+	private PlatformConfig config;
+
 	private @EJB RepositoryConnectionFactory sesame;
 
 	@PostConstruct
 	public void listen() {
 		try {
+			config = PlatformConfigHelper.getConfig();
 			parser = new ImporterThread(sesame);
 			parser.start();
 		} catch (RepositoryException e) {
+			e.printStackTrace();
+		} catch (ConfigurationException e) {
 			e.printStackTrace();
 		}
 	}
@@ -52,14 +55,14 @@ public class Importer {
 	private class ImporterThread extends Thread {
 //		private final Type type = new TypeToken<Collection<Document>>(){}.getType();
 		private RepositoryConnection conn;
-		private RDFParser rdfParser;
+//		private RDFParser rdfParser;
 		
 		public ImporterThread(RepositoryConnectionFactory sesame)
 				throws RepositoryException {
 			super();
 			conn = sesame.getReadWriteConnection();
-			rdfParser = new TurtleParser();
-			rdfParser.setRDFHandler(new StatementAdder(conn));
+//			rdfParser = new TurtleParser();
+//			rdfParser.setRDFHandler(new StatementAdder(conn));
 		}
 		
 		@Override
@@ -77,14 +80,16 @@ public class Importer {
 		        		InputStream in = new ByteArrayInputStream(doc.getData().getBytes("UTF-8"));
 
 		        		logger.info("IMPORTING: size="+doc.getData().length());
+
+		        		conn.add(in, config.getString("platform.baseUri"), RDFFormat.TURTLE);
 		        		
-		        		try {
-		        			rdfParser.parse(in, "http://artsholland.com");
-		        		} catch(RDFParseException e) {
-		        			logger.info(doc.getData());
-		        		} finally {
-		        			in.close();
-		        		}
+//		        		try {
+//		        			rdfParser.parse(in, "http://artsholland.com");
+//		        		} catch(RDFParseException e) {
+//		        			logger.info(doc.getData());
+//		        		} finally {
+//		        			in.close();
+//		        		}
 			        	more = receiver.hasReceiveMore();
 	        		}
 		        	conn.commit();
@@ -105,20 +110,20 @@ public class Importer {
 	    }
 	}
 
-	private static class StatementAdder extends RDFHandlerBase {
-		private final RepositoryConnection repository;
-
-		public StatementAdder(RepositoryConnection repository) {
-			this.repository = repository;
-		}
-
-		@Override
-		public synchronized void handleStatement(Statement st) {
-			try {
-				repository.add(st);
-			} catch (RepositoryException e) {
-				logger.error(e.getMessage(), e);
-			}
-		}
-	}
+//	private static class StatementAdder extends RDFHandlerBase {
+//		private final RepositoryConnection repository;
+//
+//		public StatementAdder(RepositoryConnection repository) {
+//			this.repository = repository;
+//		}
+//
+//		@Override
+//		public synchronized void handleStatement(Statement st) {
+//			try {
+//				repository.add(st);
+//			} catch (RepositoryException e) {
+//				logger.error(e.getMessage(), e);
+//			}
+//		}
+//	}
 }

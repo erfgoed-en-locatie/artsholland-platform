@@ -15,7 +15,9 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.repository.sail.SailRepositoryConnection;
 import org.openrdf.rio.RDFFormat;
+import org.openrdf.sail.NotifyingSail;
 import org.openrdf.sail.Sail;
+import org.openrdf.sail.inferencer.fc.ForwardChainingRDFSInferencer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.PlatformConfig;
@@ -60,10 +62,10 @@ public class RepositoryConnectionService implements RepositoryConnectionFactory,
 				Sail sail = provider.getSail();
 	
 				// Try to add inferencing...
-//				if (sail instanceof NotifyingSail) {
-//					logger.info("Using full inferencer for native Sail implementation...");
-//					sail = new ForwardChainingRDFSInferencer((NotifyingSail) sail);
-//				}
+				if (sail instanceof NotifyingSail) {
+					logger.info("Using full inferencer for native Sail implementation...");
+					sail = new ForwardChainingRDFSInferencer((NotifyingSail) sail);
+				}
 //				new DirectTypeHierarchyInferencer(
 //						   new ForwardChainingRDFSInferencer(
 //								   (NotifyingSail) sail));
