@@ -2,6 +2,7 @@ package org.waag.rdf.sesame;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -13,6 +14,7 @@ import org.openrdf.repository.RepositoryConnection;
 import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.repository.sail.SailRepositoryConnection;
+import org.openrdf.rio.RDFFormat;
 import org.openrdf.sail.Sail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +62,9 @@ public class RepositoryConnectionService implements RepositoryConnectionFactory,
 				// Try to add inferencing...
 //				if (sail instanceof NotifyingSail) {
 //					logger.info("Using full inferencer for native Sail implementation...");
-//					sail = new DirectTypeHierarchyInferencer(
+//					sail = new ForwardChainingRDFSInferencer((NotifyingSail) sail);
+//				}
+//				new DirectTypeHierarchyInferencer(
 //						   new ForwardChainingRDFSInferencer(
 //								   (NotifyingSail) sail));
 //				} else {
@@ -97,8 +101,15 @@ public class RepositoryConnectionService implements RepositoryConnectionFactory,
 			
 //			if (!repository.isInitialized()) {
 			repository.initialize();
-//			connection = repository.getConnection();
-//			connection.setAutoCommit(false);
+			
+			// Add our vocabulary.
+			SailRepositoryConnection connection = repository.getConnection();
+			connection.setAutoCommit(false);
+			InputStream vocabulary = getClass().getResourceAsStream("/org/waag/ah/rdf/schema/artsholland.rdf");
+			connection.add(vocabulary, config.getString("platform.baseUri"), RDFFormat.RDFXML);
+			connection.commit();
+			connection.close();
+			
 //			}
 		} catch (Exception e) {
 //			close();
