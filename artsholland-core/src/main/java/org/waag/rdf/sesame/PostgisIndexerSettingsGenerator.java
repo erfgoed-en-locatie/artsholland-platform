@@ -25,7 +25,7 @@ public class PostgisIndexerSettingsGenerator {
 	private static Map<String, Boolean> createMap() {
 		Map<String, Boolean> result = new LinkedHashMap<String, Boolean>();
 		
-		result.put("ah:geometry", false);
+		result.put("geo:asWKT", false);
 		result.put("rdfs:label", true);
 		result.put("dc:description", true);
 		result.put("dc:title", true);
@@ -72,8 +72,7 @@ public class PostgisIndexerSettingsGenerator {
 			
 			if (predicate != null) {
 			
-				PostgisIndexMatcher matcher = new PostgisIndexMatcher();
-				
+				PostgisIndexMatcher matcher = new PostgisIndexMatcher();				
 				matcher.setPredicate(predicate);
 				if (entry.getValue()) {
 					matcher.setSearchConfig("simple");	

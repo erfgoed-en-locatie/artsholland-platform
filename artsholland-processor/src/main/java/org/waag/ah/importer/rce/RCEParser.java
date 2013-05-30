@@ -78,7 +78,7 @@ public class RCEParser extends AbstractParser {
 					throw new IOException("XQuery definition file not found");
 				}
 								
-				XSPARQLQueryHandler queryHandler = new XSPARQLQueryHandler(handler,	metadata, context, xquery);	
+				XSPARQLQueryHandler queryHandler = new XSPARQLQueryHandler(handler,	metadata, xquery);	
 				
 				RCEContentHandler rceHandler = new RCEContentHandler(queryHandler);
 				
