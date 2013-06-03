@@ -58,7 +58,7 @@ public class PostalCodeLookup {
 		String sqlDrop = "DROP SCHEMA IF EXISTS " + SCHEMA_NAME + " CASCADE";
 		String sqlCreateSchema = "CREATE SCHEMA " + SCHEMA_NAME + ";\n";
 		String sqlCreateTable = "CREATE TABLE " + SCHEMA_NAME + ".nl (postal_code_from int, postal_code_to int, city text, municipality text, province text);\n";
-		String sqlInsert = "INSERT INTO " + SCHEMA_NAME + ".nl (postal_code_from, postal_code_to, city, municipality, province) VALUES (?, ?, ?);\n";
+		String sqlInsert = "INSERT INTO " + SCHEMA_NAME + ".nl (postal_code_from, postal_code_to, city, municipality, province) VALUES (?, ?, ?, ?, ?);\n";
 		//String sqlInsert = "COPY " + SCHEMA_NAME + ".nl FROM '" + csvFilename + "' DELIMITERS ',' CSV HEADER";
 		String sqlCreateIndex1 = "CREATE INDEX postal_code_from_idx ON " + SCHEMA_NAME + ".nl (postal_code_from);\n";
 		String sqlCreateIndex2 = "CREATE INDEX postal_code_to_idx ON " + SCHEMA_NAME + ".nl (postal_code_to);\n";
