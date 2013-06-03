@@ -25,6 +25,13 @@
     </plugins>
   </build>
       
+  <repositories>
+    <repository>
+      <id>useekm</id>
+      <url>https://dev.opensahara.com/nexus/content/groups/public/com/opensahara</url>
+    </repository>
+  </repositories>
+  
   <dependencies>
     <dependency>
       <groupId>org.openrdf.sesame</groupId>
@@ -50,7 +57,7 @@
       <groupId>com.opensahara</groupId>
       <artifactId>useekm-core</artifactId>
       <version>${useekm.version}</version>
-    </dependency>   
+    </dependency>    
     <dependency>
       <groupId>net.fortytwo.sesametools</groupId>
       <artifactId>rdfjson</artifactId>
