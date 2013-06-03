@@ -111,7 +111,7 @@ return
               geo:lat {$lat}^^xsd:float ;
               geo:long {$long}^^xsd:float ;
 	
-              geo:geometry {waag:wkt-geometry($lat, $long)}^^osgeo:wkt ;
+              ah:geometry {waag:wkt-geometry($lat, $long)}^^osgeo:wkt ;
               
 			        vcard:email {waag:parse-string($contactAddress/email)} ;
               ah:telephone {waag:parse-string($contactAddress/phoneGeneral)} ;
