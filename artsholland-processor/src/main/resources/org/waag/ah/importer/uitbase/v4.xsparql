@@ -5,12 +5,10 @@ declare namespace xsd="http://www.w3.org/2001/XMLSchema#";
 declare namespace owl="http://www.w3.org/2002/07/owl#";
 declare namespace time="http://www.w3.org/2006/time#"; 
 declare namespace foaf="http://xmlns.com/foaf/0.1/";
+declare namespace geo="http://www.w3.org/2003/01/geo/wgs84_pos#";
 declare namespace vcard="http://www.w3.org/2006/vcard/ns#";
 declare namespace gr="http://purl.org/goodrelations/v1#";
-
-declare namespace wgs84="http://www.w3.org/2003/01/geo/wgs84_pos#";
-declare namespace geo="http://www.opengis.net/ont/geosparql#";
-declare namespace geof="http://www.opengis.net/def/function/geosparql/";
+declare namespace osgeo="http://rdf.opensahara.com/type/geo/";
 
 declare namespace nub="http://resources.uitburo.nl/";
 declare namespace ah="http://purl.org/artsholland/1.0/";
@@ -208,10 +206,10 @@ return
 							
 					dc:title {waag:parse-string($venue/name)}^^xsd:string ;
 	
-					wgs84:lat {$lat}^^xsd:float ;
-					wgs84:long {$long}^^xsd:float ;
+					geo:lat {$lat}^^xsd:float ;
+					geo:long {$long}^^xsd:float ;
 	
-					geo:asWKT {waag:wkt-geometry($lat, $long)}^^geo:wktLiteral ;
+					ah:geometry{waag:wkt-geometry($lat, $long)}^^osgeo:wkt ;
 				
 					dc:created {waag:parse-string($venue/@date-created)}^^xsd:dateTime ;
 					dc:modified {waag:parse-string($venue/@date-modified)}^^xsd:dateTime ;
