@@ -62,10 +62,11 @@ public class RepositoryConnectionService implements RepositoryConnectionFactory,
 				Sail sail = provider.getSail();
 	
 				// Try to add inferencing...
-				if (sail instanceof NotifyingSail) {
-					logger.info("Using full inferencer for native Sail implementation...");
-					sail = new ForwardChainingRDFSInferencer((NotifyingSail) sail);
-				}
+//				if (sail instanceof NotifyingSail) {
+//					logger.info("Using full inferencer for native Sail implementation...");
+//					sail = new ForwardChainingRDFSInferencer((NotifyingSail) sail);
+//				}
+				
 //				new DirectTypeHierarchyInferencer(
 //						   new ForwardChainingRDFSInferencer(
 //								   (NotifyingSail) sail));
