@@ -2,6 +2,7 @@ package org.waag.ah.util.postalcode;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -52,9 +53,8 @@ public class PostalCodeLookup {
 	}
 	
 	@SuppressWarnings("resource")
-	public static void importCSV() throws SQLException, IOException {
-		String csvFilename = PostalCodeLookup.class.getResource("nl.csv").getPath();
-		
+	private void importCSV() throws SQLException, IOException {
+				
 		String sqlDrop = "DROP SCHEMA IF EXISTS " + SCHEMA_NAME + " CASCADE";
 		String sqlCreateSchema = "CREATE SCHEMA " + SCHEMA_NAME + ";\n";
 		String sqlCreateTable = "CREATE TABLE " + SCHEMA_NAME + ".nl (postal_code_from int, postal_code_to int, city text, municipality text, province text);\n";
@@ -70,7 +70,7 @@ public class PostalCodeLookup {
 		stmt.execute(sqlCreateSchema);
 		stmt.execute(sqlCreateTable);
 		
-		CSVReader reader = new CSVReader(new FileReader(csvFilename));
+		CSVReader reader = new CSVReader(new InputStreamReader(getClass().getResourceAsStream("nl.csv")));
 		List<String[]> csvLines = reader.readAll();
 		csvLines.remove(0); // Remove header line
 	    for (String[] csvLine : csvLines) {
