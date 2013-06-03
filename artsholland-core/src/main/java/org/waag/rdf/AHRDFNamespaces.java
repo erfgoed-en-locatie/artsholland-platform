@@ -24,7 +24,9 @@ public class AHRDFNamespaces {
 		result.put("vcard", "http://www.w3.org/2006/vcard/ns#");		
 		result.put("wgs84", "http://www.w3.org/2003/01/geo/wgs84_pos#");
 		result.put("geo", "http://www.opengis.net/ont/geosparql#");
-		result.put("geof", "http://www.opengis.net/def/function/geosparql/");
+		result.put("geof", "http://www.opengis.net/def/function/geosparql/");		
+		result.put("bd", "http://www.bigdata.com/rdf/search#");
+		//result.put("search", "http://rdf.opensahara.com/search#");
 		result.put("fts", "http://rdf.useekm.com/fts#");		
 		result.put("fn", "http://www.w3.org/2005/xpath-functions#");
 		result.put("gr", "http://purl.org/goodrelations/v1#");
