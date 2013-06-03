@@ -79,6 +79,21 @@ public class ParseHttpUrlFunction extends ExtensionFunctionDefinition {
 					if (!text.startsWith("http://") && !text.startsWith("https://")) {
 						text = "http://" + text;
 					}
+					
+					// Niet doen als er dubbele punt;
+					//text = text.replace("//", "/");
+					   
+					// Remove double slash characters
+					// (except in after ':' (http://)
+					text = text.replaceAll("([^:])[/]+", "$1/");
+					
+					// Remove trailing dots
+					text = text.replaceAll("\\.$", "");
+										
+					//[1] > [%5B1%5D]
+					text = text.replace("[", "%5B");
+					text = text.replace("]", "%5D");
+					
 					text = text.replace(" ", "%20");
 					text = text.replace("\\", "%5C");
 
