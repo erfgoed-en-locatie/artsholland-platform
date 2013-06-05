@@ -43,34 +43,41 @@ public class UitbaseParser extends AbstractParser {
 	}
 
 	protected ContentHandler getContentHandler(ContentHandler handler, 
-    		Metadata metadata, ParseContext context) {		
+    		Metadata metadata, ParseContext context) {
+		Reader xquery;
+		try {
+			xquery = getFileReader(getClass(), "v4.xsparql");
+		} catch (IOException e1) {
+			return null;
+		}
 		try {
 			// As we don't want to load the entire input document in memory
 			// for XQuery processing, we handle each node separately
 			// (event/production/location/group).
-			if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV3_MIME_TYPE)) {
-				Reader xquery = getFileReader(getClass(), "v3/event.xsparql");    			
-				return new MatchingContentHandler(
-					new XSPARQLQueryHandler(handler, metadata, /*context,*/ xquery), 
-					getXPathMatcher("/nubxml/events/descendant::node()"));
-				
-			} else if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_MIME_TYPE)) {
-				Reader xquery = getFileReader(getClass(), "v4.xsparql");
-				if (xquery == null) {
-					throw new IOException("XQuery definition file not found");
-				}
-				
-				Map<String, StreamSource> includes = new HashMap<String, StreamSource>();
-//				logger.info("PATH: "+getClass().getResource("venuetypes.xml").getPath());
-				includes.put("venueTypesExternal", new StreamSource(getClass().getResourceAsStream("venuetypes.xml")));
-				
-				XSPARQLQueryHandler queryHandler = new XSPARQLQueryHandler(handler, metadata, /*context,*/ xquery, includes);
-				Matcher xpathMatcher = getXPathMatcher("/search/descendant::node()");
-				
-				return new MatchingContentHandler(queryHandler, xpathMatcher);
+//			if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV3_MIME_TYPE)) {
+//				return new MatchingContentHandler(
+//					new XSPARQLQueryHandler(handler, metadata, /*context,*/ xquery), 
+//					getXPathMatcher("/nubxml/events/descendant::node()"));
+//				
+//			} else if (metadata.get(Metadata.CONTENT_TYPE).equals(UITBASEV4_MIME_TYPE)) {
+			if (xquery == null) {
+				throw new IOException("XQuery definition file not found");
 			}
+			
+			Map<String, StreamSource> includes = new HashMap<String, StreamSource>();
+			includes.put("venueTypesExternal", new StreamSource(getClass().getResourceAsStream("venuetypes.xml")));
+			
+			XSPARQLQueryHandler queryHandler = new XSPARQLQueryHandler(handler, metadata, /*context,*/ xquery, includes);
+			Matcher xpathMatcher = getXPathMatcher("/search/descendant::node()");
+			
+			return new MatchingContentHandler(queryHandler, xpathMatcher);
+//			}
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
+		} finally {
+			try {
+				xquery.close();
+			} catch (IOException e) {}
 		}
 		return null;
     }

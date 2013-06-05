@@ -27,15 +27,14 @@ public class StreamingTikaParserPipe extends AbstractStreamingPipe<URL> {
 		URL url = URLTools.getAuthenticatedUrl(parseUrl);
 		URLConnection conn = url.openConnection();
 		InputStream in = conn.getInputStream();
-		
+		InputStreamReader ir = new InputStreamReader(in);
 		try {
 			AutoDetectParser parser = new AutoDetectParser();
 			ContentHandler handler = new StreamingToRDFContentHandler(writer, out);
 	
 			Metadata metadata = new Metadata();
 			metadata.add(Metadata.RESOURCE_NAME_KEY, url.toExternalForm());
-			metadata.add(Metadata.CONTENT_ENCODING,
-					new InputStreamReader(in).getEncoding());
+			metadata.add(Metadata.CONTENT_ENCODING, ir.getEncoding());
 	
 			parser.parse(in, handler, metadata, new ParseContext());
 		} catch(Exception e) {
@@ -43,6 +42,7 @@ public class StreamingTikaParserPipe extends AbstractStreamingPipe<URL> {
 		} finally {
 			in.close();
 			out.close();
+			ir.close();
 		}
 	}
 }

@@ -36,8 +36,13 @@ public class NBTCParser extends AbstractParser {
 	@Override
 	protected ContentHandler getContentHandler(ContentHandler handler, 
     		Metadata metadata, ParseContext context) {		
+		Reader xquery;
 		try {
-			Reader xquery = getFileReader(getClass(), "nbtc_pois.xsparql");
+			xquery = getFileReader(getClass(), "nbtc_pois.xsparql");
+		} catch (IOException e) {
+			return null;
+		}
+		try {
 			if (xquery == null) {
 				throw new IOException("XQuery definition file not found");
 			}
@@ -47,6 +52,10 @@ public class NBTCParser extends AbstractParser {
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return null;
+		} finally {
+			try {
+				xquery.close();
+			} catch (IOException e) {}
 		}
     }
 }

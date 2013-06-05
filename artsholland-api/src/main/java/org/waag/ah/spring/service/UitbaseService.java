@@ -7,7 +7,6 @@ import org.apache.http.Header;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +14,7 @@ import org.waag.ah.PlatformConfig;
 
 @Service("uitbaseService")
 public class UitbaseService extends ProxyService implements InitializingBean  {
-	private Logger logger = Logger.getLogger(UitbaseService.class);
+//	private Logger logger = Logger.getLogger(UitbaseService.class);
 	
 	private String UITBASE_ENDPOINT;
 	private String UITBASE_APIKEY;		

@@ -25,6 +25,7 @@ public class RestParametersArgumentResolver extends
 		return RestParameters.class.isAssignableFrom(parameter.getParameterType());
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object resolveArgument(MethodParameter parameter,
 			ModelAndViewContainer mavContainer, NativeWebRequest webRequest,
