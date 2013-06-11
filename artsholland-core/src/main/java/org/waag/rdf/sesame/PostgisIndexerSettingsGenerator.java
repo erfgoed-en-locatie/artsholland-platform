@@ -27,6 +27,7 @@ public class PostgisIndexerSettingsGenerator {
 		
 		result.put("ah:geometry", false);
 		result.put("rdfs:label", true);
+		result.put("ah:shortDescription", true);
 		result.put("dc:description", true);
 		result.put("dc:title", true);
 		result.put("ah:webContentBody", true);
