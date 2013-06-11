@@ -1,0 +1,300 @@
+declare namespace dc="http://purl.org/dc/terms/";
+declare namespace rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+declare namespace rdfs="http://www.w3.org/2000/01/rdf-schema#";
+declare namespace xsd="http://www.w3.org/2001/XMLSchema#";
+declare namespace owl="http://www.w3.org/2002/07/owl#";
+declare namespace time="http://www.w3.org/2006/time#"; 
+declare namespace foaf="http://xmlns.com/foaf/0.1/";
+declare namespace geo="http://www.w3.org/2003/01/geo/wgs84_pos#";
+declare namespace vcard="http://www.w3.org/2006/vcard/ns#";
+declare namespace gr="http://purl.org/goodrelations/v1#";
+declare namespace osgeo="http://rdf.opensahara.com/type/geo/";
+
+declare namespace ah="http://purl.org/artsholland/1.0/";
+
+declare namespace waag="http://waag.org/saxon-extension";
+
+declare variable $taxonomy external; 
+
+let $fileUrl := " http://www.artsholland.com/"
+
+let $nodes := //node
+
+return
+
+	if ($nodes) then {
+		
+##############################################################################################################################
+##################   Default fields for types:                                                                       #########
+##################   [article, blog, editorial, hotel, locatie, press_release, productie, restaurant, route, shop]   #########
+##############################################################################################################################
+		
+		for $node in $nodes
+			
+			let $type := { $node/type }
+			let $ahType := { waag:web-content-type($type) }	
+			
+			# type? class? What about taxonomy and genre?
+			let $class := { waag:class-uri("webContentType", waag:upper-case-first($ahType)) }
+		
+			let $nid := { $node/nid }
+			let $uri := { waag:object-uri("webcontent", $nid) }			
+			
+			let $language-tag := { $node/language }
+			
+			let $title := { $node/title }
+			
+			# TODO: fix to remove inline images that cause errors
+			#let $body := { if (contains($node/body, "image/jpeg;base64")) then () else $node/body }
+			
+			let $body := { $node/body }			
+			
+			let $short-description := { $node/field_short_descr/n0/value }
+			let $long-description := { $node/field_long_descr/n0/value }
+			
+			let $teaser-title := { $node/field_teaser_title/n0/value }
+			let $subheader := { $node/field_subheader/n0/value }					
+			
+			let $website := { $node/field_website/n0/value}
+			let $email := { $node/field_email/n0/value}
+
+			let $opening := { $node/field_opening/n0/value }
+			let $highlights := { $node/field_highlights/n0/value }
+			let $transport := { $node/field_transport/n0/value }
+			
+			let $location := { $node/field_location/n0 }			
+			
+			# <location>  		
+    	# 	<street>J.C. Verthorenpad 100</street>   
+    	# 	<additional/> 
+    	# 	<city>Utrecht</city>    
+    	# 	<postal_code>3541 MV</postal_code>    
+    	# 	<latitude>52.089577</latitude>
+    	# 	<longitude>5.077873</longitude>
+      # 	<country_name>Netherlands</country_name>
+    	# 	<phone>+31 30 286 22 86</phone>  
+			# </location>
+				
+			let $street-name := { waag:street-name(waag:extract-street-name($location/street)) }
+			let $street-number := { waag:street-number(waag:extract-street-number($location/street), $location/additional) }
+			let $street-address := { waag:street-address($street-name, $street-number) }
+			let $postal-code := { waag:postal-code(waag:parse-string($location/postal_code)) }
+			let $locality := { waag:locality($postal-code, waag:parse-string($location/city)) }
+			
+			let $lat := { waag:parse-non-zero-number($location/latitude) }
+			let $long := { waag:parse-non-zero-number($location/longitude) }
+			let $country-name := { waag:parse-string($location/country_name) }
+			let $phone := { $location/phone }			
+			
+			let $auri := { waag:object-uri("address", waag:address-uri($postal-code, $street-number)) }
+				
+			# TODO: genre??
+			let $field_genre := { waag:parse-string($node/field_genre/n0/value) }				
+			let $genreKey := { if ($field_genre) then { $taxonomy//class[@tid=$field_genre] } else () }
+			let $genreClass := { waag:class-uri("webContentGenre", waag:upper-case-first($genreKey)) }
+			
+			let $pressImage := { waag:parse-string($node/field_press_image/filepath) }			
+			let $piuri := { if ($pressImage) then waag:object-uri("webcontent", $nid, "attachment", "image") else () }
+			
+			let $blogImage := { waag:parse-string($node/field_blog_image/filepath) }
+			let $biuri := { if ($pressImage) then waag:object-uri("webcontent", $nid, "attachment", "image") else () }
+			
+			let $blogVideo := { waag:parse-string($node/field_blog_video/filepath) }
+			let $bvuri := { if ($pressImage) then waag:object-uri("webcontent", $nid, "attachment", "video") else () }
+			
+						
+			let $kml := { waag:parse-string($node/field_route_kml/n0/filepath) }
+			let $kuri := { if ($kml) then waag:object-uri("webcontent", $nid, "attachment", "kml") else () }
+			
+			let $routeSubtitle := { $node/field_route_subtitle/n0/value }
+			let $editorialSubtitle := { $node/field_editorial_subtitle/n0/value }
+			
+			let $routeCities := { $node/field_route_cities/n0/value }
+			let $routeDistance := { waag:parse-non-zero-number($node/field_route_distance_total/n0/value) }		
+			
+			# CIDN linking for productions, venues and editorials:			
+			let $cidn := { waag:parse-cidn($node/field_cidn/n0/value) }
+						
+			let $puri := { if ($type eq "productie") then waag:object-uri("production", $cidn) else () }
+			let $vuri := { if ($type eq "locatie") then waag:object-uri("venue", $cidn) else () }					
+				
+			construct { 
+								
+				$uri a ah:WebContent ;
+					ah:cidn $cidn ;			
+					dc:title { waag:parse-string($title) }@{ $language-tag } ;				
+										
+					ah:webContentType $class ;					
+					
+					geo:lat { $lat }^^xsd:float ;
+					geo:long { $long }^^xsd:float ;
+	
+					ah:geometry { waag:wkt-geometry($lat, $long) }^^osgeo:wkt ;
+					
+					ah:locationAddress $auri ;
+					
+					vcard:email { waag:parse-string($email) }^^xsd:string ;
+					foaf:homepage {waag:parse-http-url($website)} ;
+					
+					ah:telephone { waag:parse-string($phone) }^^xsd:string ;
+					
+					ah:webContentBody { waag:parse-string($body) }@{ $language-tag } ;
+					
+					ah:webContentSubtitle { waag:parse-string($routeSubtitle) }@{ $language-tag } ;
+					ah:webContentSubtitle { waag:parse-string($editorialSubtitle) }@{ $language-tag } ;
+					
+					ah:shortDescription { waag:parse-string($short-description) }@{ $language-tag } ;
+					dc:description { waag:parse-string($long-description) }@{ $language-tag } ;
+			
+					ah:webContentTeaserTitle { waag:parse-string($teaser-title) }@{ $language-tag } ;
+					ah:webContentSubheader { waag:parse-string($subheader) }@{ $language-tag } ;
+			
+					ah:webContentHighlights { waag:parse-string($highlights) }@{ $language-tag } ;
+					
+					ah:openingHours {waag:parse-string($opening)}@{$language-tag} ;
+					ah:publicTransportInformation {waag:parse-string($transport)}@{$language-tag} ;
+					
+					ah:webContentRouteCities {waag:parse-string($routeCities)}@{$language-tag} ;
+					ah:webContentRouteDistance { $routeDistance }^^xsd:float ;
+					
+					ah:attachment $kuri ;
+					ah:attachment $piuri ;
+					ah:attachment $biuri ;
+					ah:attachment $bvuri .	
+					
+				$kuri a ah:Attachment ;
+					ah:url {waag:url-concat($fileUrl, $kml) } ;
+					ah:attachmentType ah:AttachmentTypeKML .
+					
+				$piuri a ah:Attachment ;
+					ah:url {waag:url-concat($fileUrl, $pressImage) } ;
+					ah:attachmentType ah:AttachmentTypeImage .
+					
+				$biuri a ah:Attachment ;
+					ah:url {waag:url-concat($fileUrl, $blogImage) } ;
+					ah:attachmentType ah:AttachmentTypeImage .
+					
+				$bvuri a ah:Attachment ;
+					ah:url {waag:url-concat($fileUrl, $blogVideo) } ;
+					ah:attachmentType ah:AttachmentTypeVideo .
+				
+				$auri a ah:Address ;
+        	vcard:street-address { $street-address } ;
+					vcard:locality { $locality } ;
+					vcard:postal-code { $postal-code } ;
+					vcard:country-name { $country-name } .				
+				
+				$class a ah:WebContentType ;			
+					rdfs:label { $ahType }^^xsd:string .
+				
+				$genreClass a ah:WebContentGenre ;
+					rdfs:label { $genreKey }^^xsd:string .
+				
+				$puri ah:webContent $uri .
+				$vuri ah:webContent $uri .
+				
+				{ for $field in $node/taxonomy/*/*
+					
+					let $v := { waag:parse-string($field) }				
+				
+					let $taxonomyKey := { if ($v) then { $taxonomy//class[@tid=$v] } else () }
+					let $taxonomyClass := { waag:class-uri("webContentGenre", waag:upper-case-first($taxonomyKey)) }
+								
+					construct {		
+					
+						$uri ah:webContentTaxonomy $taxonomyClass .
+						
+						$taxonomyClass a ah:WebContentGenre ;			
+							rdfs:label { $taxonomyKey }^^xsd:string .
+						
+					}
+					
+				} .				
+			
+				{ for $link in $node/field_essential_links/*
+					let $n := { replace(name($link), 'n', '') }
+					let $url := { waag:parse-string($link/url) }
+					let $luri := { if ($url) then waag:object-uri("webcontent", $nid, "attachment", "link", $n) else () }					
+					
+					construct {					
+						$uri ah:attachment $luri .
+					
+						$luri a ah:Attachment ;
+							ah:attachmentType ah:AttachmentTypeLink ;
+							ah:url { waag:parse-http-url($url) } .
+						}									
+				} .
+				
+				{ for $link in $node/field_images/*
+					let $n := { replace(name($link), 'n', '') }
+					let $iuri := { if ($node/filepath) then waag:object-uri("webcontent", $nid, "attachment", "image", $n) else () }					
+					
+					construct {					
+						$uri ah:attachment $iuri .
+					
+						$iuri a ah:Attachment ;
+							ah:attachmentType ah:AttachmentTypeImage ;
+							ah:url { waag:url-concat($fileUrl, $node/filepath) } ;							
+					}				
+				} .	
+				
+				{ for $step in $node/field_route_location/*
+					let $n := { replace(name($step), 'n', '') }
+					let $ruri := { waag:object-uri("webcontent", $nid, "routestep", $n) }
+					
+					construct {
+						$uri ah:webContentRouteStep $ruri .
+						
+						$ruri a ah:WebContentRouteStep ;
+							ah:webContentRouteStepNumber { $n }^^xsd:integer ;
+							dc:title { waag:parse-string($step/name) }@{ $language-tag } ; ;
+							
+							geo:lat { waag:parse-non-zero-number($step/latitude) }^^xsd:float ;
+							geo:long { waag:parse-non-zero-number($step/longitude) }^^xsd:float .
+					}		
+
+				} .
+				
+				{ for $step in $node/field_route_location_text/*
+					let $n := { replace(name($step), 'n', '') }
+					let $ruri := { waag:object-uri("webcontent", $nid, "routestep", $n) }
+					
+					construct {
+						$ruri dc:description { waag:parse-string($step/value) }@{ $language-tag } .
+					}
+	
+				} . 
+				
+				{ for $step in $node/field_route_image/*
+					let $n := { replace(name($step), 'n', '') }
+					let $ruri := { waag:object-uri("webcontent", $nid, "routestep", $n) }
+					let $auri := { waag:object-uri("webcontent", $nid, "routestep", $n, "attachment", "1") }
+					
+					construct {
+						$auri a ah:Attachment ;							
+							ah:url { waag:url-concat($fileUrl, $node/filepath) } ;
+							ah:attachmentType ah:AttachmentTypeImage .
+						
+						$ruri ah:attachment $auri .
+					}
+				} .
+				
+				# Create image attachment types
+				ah:AttachmentTypeImage a ah:AttachmentType ;
+					rdfs:label { "Image" }@{ "en" } .
+					
+				ah:AttachmentTypeVideo a ah:AttachmentType ;
+					rdfs:label { "Video" }@{ "en" } . 
+
+				ah:AttachmentTypeKML a ah:AttachmentType ;
+					rdfs:label { "KML" }@{ "en" } .
+					
+				ah:AttachmentTypeLink a ah:AttachmentType ;
+					rdfs:label { "Link" }@{ "en" }
+
+			} 
+
+##############################################################################################################################
+##############################################################################################################################
+
+	}	else ()
