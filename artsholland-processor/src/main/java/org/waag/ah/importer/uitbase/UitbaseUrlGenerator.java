@@ -2,6 +2,7 @@ package org.waag.ah.importer.uitbase;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -134,17 +135,19 @@ public class UitbaseUrlGenerator implements UrlGenerator {
 		 * GetMethod(baseUrl); method.getResponseBodyAsString()
 		 */
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(
-				new URL(url).openStream()));
+		InputStream is = new URL(url).openStream();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
-		StringBuilder sb = new StringBuilder();
-
-		String line;
-		while ((line = reader.readLine()) != null) {
-			sb.append(line);
+		try {
+			StringBuilder sb = new StringBuilder();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line);
+			}
+			return sb.toString();
+		} finally {
+			reader.close();
+			is.close();
 		}
-		reader.close();
-
-		return sb.toString();
 	}
 }

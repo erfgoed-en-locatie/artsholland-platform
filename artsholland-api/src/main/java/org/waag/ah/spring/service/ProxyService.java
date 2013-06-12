@@ -135,6 +135,7 @@ abstract class ProxyService {
 	private List<NameValuePair> getParameters(HttpServletRequest request) {
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
 
+		@SuppressWarnings("unchecked")
 		Enumeration<String> paramNames = request.getParameterNames();
 		while (paramNames.hasMoreElements()) {
 			String paramName = paramNames.nextElement();

@@ -38,9 +38,14 @@ public class TAMParser extends AbstractParser {
 	@Override
 	protected ContentHandler getContentHandler(ContentHandler handler,
 			Metadata metadata, ParseContext context) {
+		Reader xquery;
+		try {
+			xquery = getFileReader(getClass(), "tam.xsparql");
+		} catch (IOException e1) {
+			return  null;
+		}
 		try {
 			if (metadata.get(Metadata.CONTENT_TYPE).equals(TAM_MIME_TYPE)) {
-				Reader xquery = getFileReader(getClass(), "tam.xsparql");
 				if (xquery == null) {
 					throw new IOException("XQuery definition file not found");
 				}
@@ -54,6 +59,10 @@ public class TAMParser extends AbstractParser {
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
+		} finally {
+			try {
+				xquery.close();
+			} catch (IOException e) {}
 		}
 		return handler;
 	}

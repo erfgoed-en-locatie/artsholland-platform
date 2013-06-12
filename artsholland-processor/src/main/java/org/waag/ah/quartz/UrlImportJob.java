@@ -3,6 +3,7 @@ package org.waag.ah.quartz;
 import java.net.URL;
 import java.util.List;
 
+import javax.ejb.EJB;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
@@ -21,6 +22,7 @@ import org.waag.ah.importer.ImportResult;
 import org.waag.ah.importer.ImportStrategy;
 import org.waag.ah.importer.UrlGenerator;
 import org.waag.ah.service.MongoConnectionService;
+import org.waag.ah.zeromq.ZMQContext;
 
 import com.google.gson.Gson;
 import com.mongodb.BasicDBObject;
@@ -35,6 +37,12 @@ public class UrlImportJob extends ImportJob {
 	private UrlGenerator urlGenerator;
 	private ImportStrategy strategy = ImportStrategy.FULL;
 
+//	private @EJB ZMQContext zmq;
+	private static final ZMQ.Context zmq;
+	static {
+		zmq = ZMQ.context(1);
+	}
+	
 	public UrlImportJob() throws NamingException, ConnectionException, RepositoryException {
 		InitialContext ic = new InitialContext();
 		MongoConnectionService mongo = (MongoConnectionService) ic
@@ -73,7 +81,6 @@ public class UrlImportJob extends ImportJob {
 			}
 			config.setToDateTime(new DateTime(context.getFireTime().getTime()));
 
-			ZMQ.Context zmq = ZMQ.context(1);
 	        ZMQ.Socket sender = zmq.socket(ZMQ.PUSH);
 	        sender.connect("tcp://localhost:5557");			
 			
@@ -90,7 +97,6 @@ public class UrlImportJob extends ImportJob {
 	        } finally {
 	        	coll.insert(result);
 	        	sender.close();
-	        	zmq.term();
 	        }
 		} catch (Exception e) {
 			throw new JobExecutionException(e);

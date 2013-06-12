@@ -34,6 +34,7 @@ public class SPARQLParametersArgumentResolver extends
 			HttpServletRequest request = (HttpServletRequest) webRequest
 					.getNativeRequest();
 			
+			@SuppressWarnings("unchecked")
 			Map<String, String[]> paramMap = request.getParameterMap();
 			SPARQLParameters params = new SPARQLParameters();
 			

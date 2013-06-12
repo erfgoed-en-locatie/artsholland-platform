@@ -1,6 +1,5 @@
 package org.waag.ah.util.postalcode;
 
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
@@ -14,6 +13,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.naming.InitialContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.exception.PostalCodeNotFoundException;

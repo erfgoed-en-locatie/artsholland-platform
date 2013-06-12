@@ -54,7 +54,7 @@
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
-    
+  
     <trigger>
       <cron>
         <name>UitbaseUpdate</name>
@@ -105,12 +105,12 @@
             <value>incremental</value>
           </entry>
         </job-data-map>
-        <cron-expression>0 0/15 * * * ?</cron-expression>
+        <cron-expression>0 0/1 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
  
-     <!-- NBTC IMPORT -->
+    <!-- NBTC IMPORT -->
     <job>
       <name>ImportNBTC</name>
       <group>Importer</group>
@@ -129,7 +129,7 @@
         </entry>           
       </job-data-map>      
     </job>
-
+<!-- 
     <trigger>
       <cron>
         <name>NBTC</name>
@@ -147,7 +147,7 @@
       </cron>
     </trigger>
     
-    <!-- RCE IMPORT -->
+ -->    <!-- RCE IMPORT -->
     <job>
       <name>ImportRCE</name>
       <group>Importer</group>
@@ -183,8 +183,8 @@
         <time-zone>Europe/Amsterdam</time-zone>      
       </cron>
     </trigger>
-    
-     <!-- ATCB IMPORT -->
+  
+    <!-- ATCB IMPORT -->
 
     <!-- <job>
       <name>ImportATCB</name>
@@ -401,7 +401,7 @@
         </entry>
       </job-data-map>
     </job>
-    
+<!--     
     <trigger>
       <cron>
         <name>AddressCleanupTrigger</name>
@@ -412,6 +412,6 @@
       </cron>
     </trigger> 
 
-  </schedule>
+ -->  </schedule>
 
 </job-scheduling-data>

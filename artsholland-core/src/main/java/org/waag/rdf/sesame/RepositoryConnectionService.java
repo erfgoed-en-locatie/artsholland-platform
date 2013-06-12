@@ -15,9 +15,7 @@ import org.openrdf.repository.RepositoryException;
 import org.openrdf.repository.sail.SailRepository;
 import org.openrdf.repository.sail.SailRepositoryConnection;
 import org.openrdf.rio.RDFFormat;
-import org.openrdf.sail.NotifyingSail;
 import org.openrdf.sail.Sail;
-import org.openrdf.sail.inferencer.fc.ForwardChainingRDFSInferencer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.waag.ah.PlatformConfig;
@@ -106,12 +104,16 @@ public class RepositoryConnectionService implements RepositoryConnectionFactory,
 			repository.initialize();
 			
 			// Add our vocabulary.
-			SailRepositoryConnection connection = repository.getConnection();
-			connection.setAutoCommit(false);
 			InputStream vocabulary = getClass().getResourceAsStream("/org/waag/ah/rdf/schema/artsholland.rdf");
-			connection.add(vocabulary, config.getString("platform.baseUri"), RDFFormat.RDFXML);
-			connection.commit();
-			connection.close();
+			try {
+				SailRepositoryConnection connection = repository.getConnection();
+				connection.setAutoCommit(false);
+				connection.add(vocabulary, config.getString("platform.baseUri"), RDFFormat.RDFXML);
+				connection.commit();
+				connection.close();
+			} finally {
+				vocabulary.close();
+			}
 			
 //			}
 		} catch (Exception e) {

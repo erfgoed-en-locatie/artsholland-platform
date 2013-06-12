@@ -51,8 +51,13 @@ public class TurtleParser extends AbstractParser {
 			throw new SAXException(e.getMessage());
 		}
 
-		context.getSAXParser().parse(
-                new CloseShieldInputStream(new ByteArrayInputStream(outputStream.toByteArray())),
+		ByteArrayInputStream os = new ByteArrayInputStream(outputStream.toByteArray());
+		try {
+			context.getSAXParser().parse(
+                new CloseShieldInputStream(os),
                 new OfflineContentHandler(handler));
+		} finally {
+			os.close();
+		}
 	}
 }
