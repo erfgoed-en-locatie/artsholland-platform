@@ -7,7 +7,7 @@ class XML{
 	var $name;                                    
 
 	function XML($name = "output.csv") {
-		$this->pre = "<items>";
+		$this->pre = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<items>";
 		$this->post = "</items>";	
 		$this->name = $name;
     $this->text = "";    
@@ -16,7 +16,11 @@ class XML{
   function addArray($rec){
       $this->text .= "<item>";
       foreach ($rec as $key => $value){
-          $this->text .= "<" . $key . ">" . html_entity_decode(htmlspecialchars($value)) . "</" . $key . ">";
+        if ($key == "longitude" || $key == "latitude") {
+          $this->text .= "<" . $key . ">" . str_replace(",", ".", $value) . "</" . $key . ">";
+        } else {
+          $this->text .= "<" . $key . ">" . htmlspecialchars($value) . "</" . $key . ">";          
+        }
       }
       $this->text .= "</item>\n";
   }

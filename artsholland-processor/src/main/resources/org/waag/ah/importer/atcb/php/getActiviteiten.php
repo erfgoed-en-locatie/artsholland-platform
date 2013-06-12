@@ -9,7 +9,7 @@ ini_set('memory_limit', '256M');
 
 $items = new Items();
 $items->setDebug(false);
-$items->setOutput("Activiteiten.csv");
+$items->setOutput("Activiteiten");
 $items->setTypeStart("2.11.");
 $items->setAppend(false);
 $items->getItems();
