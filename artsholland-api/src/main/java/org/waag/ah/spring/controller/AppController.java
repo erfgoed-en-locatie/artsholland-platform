@@ -33,10 +33,13 @@ public class AppController { // implements InitializingBean
 	@RequestMapping(value="/app", method=RequestMethod.GET)
 	public @ResponseBody Collection<AppImpl> findAll (
 			@RequestParam(value="order_by", required=false, defaultValue="id") String orderBy,
+			@RequestParam(value="desc", required=false, defaultValue="false") boolean desc,
+			@RequestParam(value="page", required=false, defaultValue="0") int page,
+			@RequestParam(value="per_page", required=false, defaultValue="0") int perPage,
 			final HttpServletRequest request,
 			final HttpServletResponse response)
 			throws IOException {
-		Collection<AppImpl> apps = appService.findAll(orderBy);
+		Collection<AppImpl> apps = appService.findAll(orderBy, desc, page, perPage);
 		return apps;		
 	}	
 	
