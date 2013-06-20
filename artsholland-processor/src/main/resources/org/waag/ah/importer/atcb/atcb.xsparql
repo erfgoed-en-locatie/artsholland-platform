@@ -72,8 +72,14 @@ return
 					ah:venue $vuri ;	
 					ah:production $puri ;
 					
-					time:hasBeginning {  waag:parse-string($item/datepattern_startdate) }^^xsd:dateTime ;
-					time:hasEnd {  waag:parse-string($item/datepattern_enddate) }^^xsd:dateTime .
+					time:hasBeginning { waag:parse-date($item/datepattern_startdate, "dd-MM-yyyy") }^^xsd:date ;
+					time:hasEnd { waag:parse-date($item/datepattern_enddate, "dd-MM-yyyy") }^^xsd:date .
+					
+					{ for $singledate in $singledates
+						construct {									
+							$euri ah:onDate { waag:parse-date($singledate, "dd-MM-yyyy") }^^xsd:date ;
+						}
+					} .	
 					
 				######## Production #################################
 				

@@ -40,6 +40,7 @@ import org.waag.ah.saxon.LocalityFunction;
 import org.waag.ah.saxon.ObjectUriFunction;
 import org.waag.ah.saxon.ParseBooleanFunction;
 import org.waag.ah.saxon.ParseCidnFunction;
+import org.waag.ah.saxon.ParseDateFunction;
 import org.waag.ah.saxon.ParseDateTimeFunction;
 import org.waag.ah.saxon.ParseDecimalFunction;
 import org.waag.ah.saxon.ParseHttpUrlFunction;
@@ -112,6 +113,7 @@ public class XSPARQLQueryHandler extends ContentHandlerDecorator {
 		    
 			// Custom XSPARQL functions.
 			config.registerExtensionFunction(new ParseDateTimeFunction());
+			config.registerExtensionFunction(new ParseDateFunction());
 			config.registerExtensionFunction(new ObjectUriFunction());
 			config.registerExtensionFunction(new ClassUriFunction());
 			config.registerExtensionFunction(new AddressUriFunction());

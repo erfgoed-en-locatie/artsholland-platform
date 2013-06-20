@@ -1,5 +1,7 @@
 package org.waag.ah.saxon;
 
+import java.text.SimpleDateFormat;
+
 import net.sf.saxon.expr.XPathContext;
 import net.sf.saxon.lib.ExtensionFunctionCall;
 import net.sf.saxon.lib.ExtensionFunctionDefinition;
@@ -16,7 +18,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 @SuppressWarnings("serial")
-public class ParseDateTimeFunction extends ExtensionFunctionDefinition {
+public class ParseDateFunction extends ExtensionFunctionDefinition {
 
 	@Override
 	public int getMinimumNumberOfArguments() {
@@ -45,7 +47,7 @@ public class ParseDateTimeFunction extends ExtensionFunctionDefinition {
 	@Override
 	public StructuredQName getFunctionQName() {
 		return new StructuredQName("waag", "http://waag.org/saxon-extension",
-				"parse-datetime");
+				"parse-date");
 	}
 
 	@Override
@@ -71,13 +73,15 @@ public class ParseDateTimeFunction extends ExtensionFunctionDefinition {
 					// String fmtOutput =
 					// ((StringValue)arguments[2].next()).getStringValue();
 					if (!fmtInput.isEmpty()) {
-						DateTimeFormatter fmt = DateTimeFormat.forPattern(fmtInput);
+						DateTimeFormatter fmt = DateTimeFormat.forPattern(fmtInput);						
 						dt = fmt.parseDateTime(value);
 					} else {
 						dt = new DateTime(value);
 					}
-					// return Value.asIterator(DateTimeValue.fromJavaDate(dt.toDate()));
-					return Value.asIterator(StringValue.makeStringValue(dt.toString()));
+					// return Value.asIterator(DateTimeValue.fromJavaDate(dt.toDate()));	
+
+					String formattedDate = new SimpleDateFormat("yyyy-MM-dd").format(dt.toDate());					
+					return Value.asIterator(StringValue.makeStringValue(formattedDate));
 				} catch (Exception e) {
 					throw new XPathException(e.getMessage(), e);
 				}
