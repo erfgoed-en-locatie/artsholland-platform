@@ -67,10 +67,50 @@
             <value>incremental</value>
           </entry>
         </job-data-map>
-        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <cron-expression>0 0/15 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
+    
+    <!-- ATCB IMPORT -->
+    
+    <job>
+			<name>ImportATCB</name>
+			<group>Importer</group>
+			<description>Import ATCB</description>
+			<job-class>org.waag.ah.quartz.UrlImportJob</job-class>
+			<durability>true</durability>
+			<recover>false</recover>
+			<job-data-map>
+				<entry>
+					<key>urlGeneratorClass</key>
+					<value>org.waag.ah.importer.atcb.ATCBURLGenerator</value>
+				</entry>
+				<entry>
+					<key>graphUri</key>
+					<value>http://www.amsterdammarketing.org/</value>
+				</entry>
+			</job-data-map>
+		</job>
+
+		<trigger>
+			<cron>
+				<name>ATCB</name>
+				<group>Importer</group>
+				<job-name>ImportATCB</job-name>
+				<job-group>Importer</job-group>
+				<job-data-map>
+					<entry>
+						<key>strategy</key>
+						<value>incremental</value>
+					</entry>
+				</job-data-map>				
+				<!-- http://quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger -->
+				<!-- Every night at 5 am. -->
+				<cron-expression>0 0 5 * * ?</cron-expression>				
+				<time-zone>Europe/Amsterdam</time-zone>
+			</cron>
+		</trigger>
  
     <!-- TAM IMPORT -->
     
@@ -105,7 +145,7 @@
             <value>incremental</value>
           </entry>
         </job-data-map>
-        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <cron-expression>0 8/15 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
@@ -179,7 +219,7 @@
             <value>once</value>
           </entry>
         </job-data-map>           
-        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <cron-expression>0 0/10 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>      
       </cron>
     </trigger>
