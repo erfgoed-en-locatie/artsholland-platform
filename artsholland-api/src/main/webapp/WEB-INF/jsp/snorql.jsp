@@ -47,6 +47,10 @@
         <li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FVenue<%= apiKeyUrl %>">Venues</a></li>
         <li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FPOI<%= apiKeyUrl %>">POIs</a></li>
 
+				<li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FAddress<%= apiKeyUrl %>">Addresses</a></li>
+				<li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FWebContent<%= apiKeyUrl %>">Articles</a></li>
+				<li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FMonument<%= apiKeyUrl %>">Monuments</a></li>
+
         <%--<li><a class="graph-link" href="?browse=properties<%= apiKeyUrl %>">Properties</a></li>--%>
         
       </ul>
