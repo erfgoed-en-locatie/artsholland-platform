@@ -106,8 +106,8 @@
 					</entry>
 				</job-data-map>				
 				<!-- http://quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger -->
-				<!-- Every night at 5 am. -->
-				<cron-expression>0 0 5 * * ?</cron-expression>				
+				<!-- Every night at 5 pm. -->
+				<cron-expression>0 0 17 * * ?</cron-expression>				
 				<time-zone>Europe/Amsterdam</time-zone>
 			</cron>
 		</trigger>
@@ -452,6 +452,30 @@
       </cron>
     </trigger> 
 
- -->  </schedule>
+ -->  
+ 
+ 		<!-- REINDEXER -->
+
+    <job>
+      <name>Reindex</name>
+      <group>Reindex</group>
+      <description>Reindex</description>
+      <job-class>org.waag.ah.quartz.ReindexJob</job-class>
+      <durability>true</durability>
+      <recover>false</recover>
+    </job>
+
+    <trigger>
+      <cron>
+        <name>Reindex</name>
+        <group>Reindex</group>
+        <job-name>Reindex</job-name>
+        <job-group>Reindex</job-group>                   
+        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <time-zone>Europe/Amsterdam</time-zone>      
+      </cron>
+    </trigger>
+ 
+ </schedule>
 
 </job-scheduling-data>
