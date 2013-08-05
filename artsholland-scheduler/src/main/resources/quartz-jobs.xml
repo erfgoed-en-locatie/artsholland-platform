@@ -67,13 +67,13 @@
             <value>incremental</value>
           </entry>
         </job-data-map>
-        <cron-expression>0 0/15 * * * ?</cron-expression>
+        <!-- Every 15 minutes: -->
+        <cron-expression>0 0/15 * 1/1 * ? *</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
     
-    <!-- ATCB IMPORT -->
-    
+    <!-- ATCB IMPORT -->    
     <job>
 			<name>ImportATCB</name>
 			<group>Importer</group>
@@ -107,7 +107,7 @@
 				</job-data-map>				
 				<!-- http://quartz-scheduler.org/documentation/quartz-2.x/tutorials/crontrigger -->
 				<!-- Every night at 5 pm. -->
-				<cron-expression>0 0 17 * * ?</cron-expression>				
+				<cron-expression>0 0 5 1/1 * ? *</cron-expression>				
 				<time-zone>Europe/Amsterdam</time-zone>
 			</cron>
 		</trigger>
@@ -145,7 +145,8 @@
             <value>incremental</value>
           </entry>
         </job-data-map>
-        <cron-expression>0 8/15 * * * ?</cron-expression>
+        <!-- Every hour: -->
+        <cron-expression>0 0 0/1 1/1 * ? *</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
     </trigger>
@@ -169,7 +170,6 @@
         </entry>           
       </job-data-map>      
     </job>
-<!-- 
     <trigger>
       <cron>
         <name>NBTC</name>
@@ -181,13 +181,15 @@
             <key>strategy</key>
             <value>once</value>
           </entry>
-        </job-data-map>           
+        </job-data-map>
+        <!-- Once, 1 minute after start: -->           
         <cron-expression>0 0/1 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>      
       </cron>
-    </trigger>
-    
- -->    <!-- RCE IMPORT -->
+    </trigger>    
+ 		    
+ 		
+ <!-- RCE IMPORT -->
     <job>
       <name>ImportRCE</name>
       <group>Importer</group>
@@ -224,45 +226,7 @@
       </cron>
     </trigger>
   
-    <!-- ATCB IMPORT -->
-
-    <!-- <job>
-      <name>ImportATCB</name>
-      <group>Importer</group>
-      <description>Import ATCB</description>
-      <job-class>org.waag.ah.quartz.UrlImportJob</job-class>
-      <durability>true</durability>
-      <recover>false</recover>
-      <job-data-map>
-        <entry>
-          <key>urlGeneratorClass</key>
-          <value>org.waag.ah.importer.atcb.ATCBURLGenerator</value>
-        </entry>
-        <entry>
-          <key>graphUri</key>
-          <value>http://www.amsterdammarketing.org/</value>
-        </entry>           
-      </job-data-map>      
-    </job>
-
-    <trigger>
-      <cron>
-        <name>ATCB</name>
-        <group>Importer</group>
-        <job-name>ImportATCB</job-name>
-        <job-group>Importer</job-group>
-        <job-data-map>
-          <entry>
-            <key>strategy</key>
-            <value>once</value>
-          </entry>
-        </job-data-map>           
-        <cron-expression>0 0/1 * * * ?</cron-expression>
-        <time-zone>Europe/Amsterdam</time-zone>      
-      </cron>
-    </trigger> -->
-  
-
+ 
     <!-- GEONAMES ENRICHER -->
     <job>
       <name>GeonamesEnricher</name>
@@ -441,18 +405,17 @@
         </entry>
       </job-data-map>
     </job>
-<!--     
+
     <trigger>
       <cron>
         <name>AddressCleanupTrigger</name>
         <job-name>AddressCleanup</job-name>
         <job-group>EnricherService</job-group>
+        <!-- Every hour: -->
         <cron-expression>0 0 0/1 * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>
       </cron>
-    </trigger> 
-
- -->  
+    </trigger>  
  
  		<!-- REINDEXER -->
 
@@ -470,7 +433,8 @@
         <name>Reindex</name>
         <group>Reindex</group>
         <job-name>Reindex</job-name>
-        <job-group>Reindex</job-group>                   
+        <job-group>Reindex</job-group>
+        <!-- First minute; job gets unscheduled after first execution: -->          
         <cron-expression>0 0/1 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>      
       </cron>
