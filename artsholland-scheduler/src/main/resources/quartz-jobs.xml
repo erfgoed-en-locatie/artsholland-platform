@@ -152,7 +152,7 @@
     </trigger>
  
     <!-- NBTC IMPORT -->
-    <job>
+   <!--  <job>
       <name>ImportNBTC</name>
       <group>Importer</group>
       <description>Import POI data from NBTC</description>
@@ -182,11 +182,11 @@
             <value>once</value>
           </entry>
         </job-data-map>
-        <!-- Once, 1 minute after start: -->           
+        Once, 1 minute after start:           
         <cron-expression>0 0/1 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>      
       </cron>
-    </trigger>    
+    </trigger>  -->   
  		    
  		
  <!-- RCE IMPORT -->
@@ -435,7 +435,7 @@
         <job-name>Reindex</job-name>
         <job-group>Reindex</job-group>
         <!-- First minute; job gets unscheduled after first execution: -->          
-        <cron-expression>0 0/1 * * * ?</cron-expression>
+        <cron-expression>0 0/15 * * * ?</cron-expression>
         <time-zone>Europe/Amsterdam</time-zone>      
       </cron>
     </trigger>
