@@ -39,6 +39,7 @@ public class SPARQLController {
 			final HttpServletResponse response,
 			@SPARQLRequestParameters() SPARQLParameters params
 			)	throws IOException { 
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		String extension = QueryTaskView.getExtension(request);
 		if (extension == null) {
 			return new ModelAndView("snorql");

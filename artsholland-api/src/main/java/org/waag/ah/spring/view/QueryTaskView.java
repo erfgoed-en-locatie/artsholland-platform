@@ -64,7 +64,9 @@ public class QueryTaskView extends AbstractView {
 	@Override
 	protected void renderMergedOutputModel(Map<String, Object> model,
 			HttpServletRequest request, HttpServletResponse response)
-			throws Exception {
+			throws Exception {		
+		response.addHeader("Access-Control-Allow-Origin", "*");
+	
 		Assert.isTrue(model.containsKey(MODEL_QUERY));
 		RdfQueryDefinition query = (RdfQueryDefinition) model.get(MODEL_QUERY);
 		RDFWriterConfig config = query.getWriterConfig();
@@ -94,6 +96,8 @@ public class QueryTaskView extends AbstractView {
 				} else if (config.getContentType() == RDFJSONFormat.MIMETYPE) {
 					// Or when content-type is our custom "application/x-waag-artsholland-restapi+json",
 					// change to default JSON content-type
+					contentType = WriterContentTypeConfig.MIME_APPLICATION_JSON;
+				} else if (contentType == WriterContentTypeConfig.MIME_SPARQL_RESULTS_JSON) {
 					contentType = WriterContentTypeConfig.MIME_APPLICATION_JSON;
 				}
 			}

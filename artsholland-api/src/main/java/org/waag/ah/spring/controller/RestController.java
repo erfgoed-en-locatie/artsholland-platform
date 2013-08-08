@@ -37,6 +37,7 @@ public class RestController { // implements InitializingBean
 			@RestRequestParameters(prefixLength=1) RestParameters params)
 			throws IOException {
 		try {
+			response.addHeader("Access-Control-Allow-Origin", "*");
 			return new ModelAndView(view, QueryTaskView.MODEL_QUERY,
 					restService.getObjectQuery(params));
 		} catch (MalformedQueryException e) {
@@ -55,6 +56,7 @@ public class RestController { // implements InitializingBean
 			@RestRequestParameters(prefixLength=1, paging=true) RestParameters params)
 			throws IOException {
 		try {
+			response.addHeader("Access-Control-Allow-Origin", "*"); 
 			return new ModelAndView(view, QueryTaskView.MODEL_QUERY,
 					restService.getPagedQuery(params));
 		} catch (MalformedQueryException e) {

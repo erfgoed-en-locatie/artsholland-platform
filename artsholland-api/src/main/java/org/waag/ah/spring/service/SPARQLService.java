@@ -23,7 +23,7 @@ public class SPARQLService {
 		config.setContentTypeConfig(new SPARQLWriterTypeConfig());
 		config.setJSONPCallback(params.getJSONPCallback());
 		if (params.isPlainText()) {
-			config.setResponseContentType(WriterContentTypeConfig.MIME_TEXT_PLAIN);
+//			config.setResponseContentType(WriterContentTypeConfig.MIME_TEXT_PLAIN);
 		} else {
 //			config.setResponseContentType(WriterContentTypeConfig.MIME_SPARQL_RESULTS_JSON);
 		}
