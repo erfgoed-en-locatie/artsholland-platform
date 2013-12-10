@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.waag.ah.rest.SPARQLParameters;
 import org.waag.rdf.RDFWriterConfig;
 import org.waag.rdf.SPARQLWriterTypeConfig;
-import org.waag.rdf.WriterContentTypeConfig;
 import org.waag.rdf.sesame.RdfQueryDefinition;
 
 @Service(value="sparqlService")

@@ -6,13 +6,12 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.waag.ah.spring.service.UitbaseService;
 
-@Secured("ROLE_API_USER")
+//@Secured("ROLE_API_USER")
 @Controller
 public class UitbaseController {
 //	private Logger logger = Logger.getLogger(UitbaseController.class);

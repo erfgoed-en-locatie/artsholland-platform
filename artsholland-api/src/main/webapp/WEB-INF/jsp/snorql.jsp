@@ -1,18 +1,3 @@
-<%
-	String apiKey = "";
-	String apiKeyUrl = "";
-	if (request.getParameterMap().containsKey("api_key")) {
-		apiKey = request.getParameter("api_key");					
-	}	else if (request.getParameterMap().containsKey("apiKey")) {
-		apiKey = request.getParameter("apiKey");
-	}
-	
-	if (apiKey.length() > 0) {
-		apiKeyUrl = "&api_key=" + apiKey;
-	}
-	
-	
-%>
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -40,18 +25,18 @@
     <div class="section" style="float: right; width: 8em">
       <h2>Browse:</h2>
       <ul>
-        <li><a class="graph-link" href="?browse=classes<%= apiKeyUrl %>">Classes</a></li>
+        <li><a class="graph-link" href="?browse=classes">Classes</a></li>
                 
-        <li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FEvent<%= apiKeyUrl %>">Events</a></li>
-        <li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FProduction<%= apiKeyUrl %>">Productions</a></li>
-        <li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FVenue<%= apiKeyUrl %>">Venues</a></li>
-        <%-- <li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FPOI<%= apiKeyUrl %>">POIs</a></li> --%>
+        <li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FEvent">Events</a></li>
+        <li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FProduction">Productions</a></li>
+        <li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FVenue">Venues</a></li>
+        <%-- <li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FPOI">POIs</a></li> --%>
 
-				<li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FAddress<%= apiKeyUrl %>">Addresses</a></li>
-				<li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FWebContent<%= apiKeyUrl %>">Articles</a></li>
-				<li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FMonument<%= apiKeyUrl %>">Monuments</a></li>
+				<li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FAddress">Addresses</a></li>
+				<li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FWebContent">Articles</a></li>
+				<li><a class="graph-link" href="?class=http%3A%2F%2Fpurl.org%2Fartsholland%2F1.0%2FMonument">Monuments</a></li>
 
-        <%--<li><a class="graph-link" href="?browse=properties<%= apiKeyUrl %>">Properties</a></li>--%>
+        <%--<li><a class="graph-link" href="?browse=properties">Properties</a></li>--%>
         
       </ul>
     </div>
@@ -77,7 +62,6 @@
       <pre id="prefixestext"></pre>
       <form id="queryform" action="#" method="get"><div>
         <input type="hidden" name="query" value="" id="query" />
-        <input type="hidden" name="api_key" value="<%= apiKey %>" id="apiKey" />
         <input type="hidden" name="output" value="json" id="jsonoutput" disabled="disabled" />
         <input type="hidden" name="stylesheet" value="" id="stylesheet" disabled="disabled" />
         <input type="hidden" name="graph" value="" id="graph-uri" disabled="disabled" />

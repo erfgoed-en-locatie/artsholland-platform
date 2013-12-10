@@ -10,7 +10,6 @@ import org.openrdf.query.MalformedQueryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -48,7 +47,7 @@ public class RestController { // implements InitializingBean
 		return null;
 	}
 
-	@Secured("ROLE_API_USER")
+	//@Secured("ROLE_API_USER")
 	@RequestMapping(value="/rest/**", method=RequestMethod.GET)
 	public ModelAndView restRequest(
 			final HttpServletRequest request,

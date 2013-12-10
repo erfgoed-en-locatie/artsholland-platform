@@ -18,7 +18,6 @@ function Snorql() {
     this._enableNamedGraphs = false;
 
     this._browserBase = null;
-    this._apiKey = null;
     this._namespaces = {};
     this._graph = null;
     this._xsltDOM = null;
@@ -38,24 +37,9 @@ function Snorql() {
         //document.getElementById('toggleprefixes').setAttribute('onclick', this._togglePrefixes());
         document.getElementById('toggleprefixes').onclick = this._togglePrefixes;
         
-        var apiKeyRegEx = queryString.match(/api_key=([^&]*)/);
-        var apiKeyRegExOld = queryString.match(/apiKey=([^&]*)/);
-        
-        var apiKeyUrl = apiKeyRegEx ? apiKeyRegEx[0] : null;
-        var apiKey = apiKeyRegEx ? apiKeyRegEx[1] : null;
-        
-        var apiKeyUrlOld = apiKeyRegExOld ? apiKeyRegExOld[0] : null;
-        var apiKeyOld = apiKeyRegExOld ? apiKeyRegExOld[1] : null;
-        
-        apiKeyUrl = apiKeyUrl ? apiKeyUrl : apiKeyUrlOld;
-        apiKeyUrl = apiKeyUrl.replace("apiKey", "api_key");
-        
-        apiKey = apiKey ? apiKey : apiKeyOld;
-        
-        this.setApiKey(apiKey);
         //this.setBrowserBase(document.location.href.replace(/\?.*/, '') );
         
-        if (!queryString || (apiKeyUrl && queryString == apiKeyUrl) || (apiKeyUrlOld && queryString == apiKeyUrlOld)) {
+        if (!queryString) {
             document.getElementById('querytext').value = 'SELECT DISTINCT * WHERE {\n\t?s ?p ?o\n}\nLIMIT 10';
             this._updateGraph(null, false);
             this.createCodeMirror();
@@ -129,7 +113,7 @@ function Snorql() {
         }
         document.getElementById('querytext').value = querytext;
         this.displayBusyMessage();
-        var service = new SPARQL.Service(this._endpoint + '?api_key=' + apiKey);        
+        var service = new SPARQL.Service(this._endpoint);        
         
         if (this._graph) {
             service.addDefaultGraph(this._graph);
@@ -178,10 +162,6 @@ function Snorql() {
 
     this.setBrowserBase = function(url) {
         this._browserBase = url;
-    };
-    
-    this.setApiKey = function(apiKey) {
-        this._apiKey = apiKey;
     };
     
     this.createCodeMirror = function() {
@@ -271,7 +251,7 @@ function Snorql() {
     };
 
     this.resetQuery = function() {
-        document.location = this._browserBase + "?api_key=" + this._apiKey;
+        document.location = this._browserBase;
     };
 
     this.submitQuery = function() {
@@ -347,7 +327,7 @@ function Snorql() {
             p.appendChild(document.createTextNode('[no results]'));
             div.appendChild(p);
         } else {
-            div.appendChild(new SPARQLResultFormatter(json, this._namespaces, this._apiKey).toDOM());
+            div.appendChild(new SPARQLResultFormatter(json, this._namespaces).toDOM());
         }
         this._display(div, 'result');
         this._updateGraph(this._graph); // refresh links in new result
@@ -415,9 +395,8 @@ var namespaces = { 'xsd': '', 'foaf': 'http://xmlns.com/foaf/0.1' };
 var formatter = new SPARQLResultFormatter(json, namespaces);
 var tableObject = formatter.toDOM();
 */
-function SPARQLResultFormatter(json, namespaces, apiKey) {
+function SPARQLResultFormatter(json, namespaces) {
     this._json = json;
-    this._apiKey = apiKey;
     this._variables = this._json.head.vars;
     this._results = this._json.results.bindings;
     this._namespaces = namespaces;
@@ -513,7 +492,7 @@ function SPARQLResultFormatter(json, namespaces, apiKey) {
         var span = document.createElement('span');
         span.className = 'uri';
         var a = document.createElement('a');
-        a.href = (this._getLinkMaker(varName)(node.value)) + (this._apiKey ? ('&api_key=' + this._apiKey) : '');
+        a.href = (this._getLinkMaker(varName)(node.value));
         a.title = '<' + node.value + '>';
         a.className = 'graph-link';
         var qname = this._toQName(node.value);
