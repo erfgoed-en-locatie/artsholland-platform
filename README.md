@@ -2,7 +2,9 @@
 
 Arts Holland was a central collection of open data on Dutch culture and tourism, from general information on places to visit to real-time event information. Offered as open data according to semantic web standards. 
 
-This repository holds the platform - documentation and developer info can be found in the [artsholland-dev](/erfgoed-en-locatie/artsholland-dev) repo.
+* _This_ repository holds the platform.
+* documentation and developer info can be found in the [artsholland-dev](/erfgoed-en-locatie/artsholland-dev) repo.
+* The sparql tutorial is in a separate repo at [artsholland-tutorial](/artsholland-tutorial).
 
 
 # About Arts Holland
