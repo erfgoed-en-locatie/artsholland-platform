@@ -1,5 +1,10 @@
 # artsholland-platform
 
+Arts Holland was a central collection of open data on Dutch culture and tourism, from general information on places to visit to real-time event information. Offered as open data according to semantic web standards. 
+
+This repository holds the platform - documentation and developer info can be found in the [artsholland-dev](/erfgoed-en-locatie/artsholland-dev) repo.
+
+
 # About Arts Holland
 
 Arts Holland is a consortium of three leading players in the field of arts, culture, new media and tourism. The institutes part of this consortium are the Netherlands Board of Tourism & Conventions, Netherlands Uitburo and Waag Society.
